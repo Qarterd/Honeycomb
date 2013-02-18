@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+<!--
+Honeycomb visualizer for enhanced debugging in Visual Studio 11
+Copy this file to %USERPROFILE%\My Documents\Visual Studio 11\Visualizers\
+-->
+  
+<Type Name="honey::EnumElemBase">
+    <DisplayString>{_val}</DisplayString>
+    <Expand>
+        <Item Name="[val]">_val</Item>
+    </Expand>
+</Type>
+    
+<!-- Fixed matrix and vector -->
+<Type Name="honey::Matrix&lt;*,*,*,*&gt;">
+    <AlternativeType Name="honey::Vec&lt;*,*,*&gt;"/>
+    <Expand>
+        <Item Name="[rows]">s_rows</Item>
+        <Item Name="[cols]">s_cols</Item>
+        <ArrayItems>
+            <Size>s_size</Size>
+            <ValuePointer>_a.a</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<!-- Dynamic matrix and vector -->
+<Type Name="honey::Matrix&lt;-1,-1,*,*&gt;">
+    <AlternativeType Name="honey::Matrix&lt;-1,*,*,*&gt;"/>
+    <AlternativeType Name="honey::Matrix&lt;*,-1,*,*&gt;"/>
+    <AlternativeType Name="honey::Vec&lt;-1,*,*&gt;"/>
+    <Expand>
+        <Item Name="[rows]">_rows</Item>
+        <Item Name="[cols]">_cols</Item>
+        <ArrayItems>
+            <Size>_size</Size>
+            <ValuePointer>_a</ValuePointer>
+        </ArrayItems>
+    </Expand>
+</Type>
+
+<!-- 1D vector -->
+<Type Name="honey::Vec&lt;1,*,*&gt;">
+    <DisplayString>x={x}</DisplayString>
+    <Expand>
+        <Item Name="x">x</Item>
+    </Expand>
+</Type>
+
+<!-- 2D vector -->
+<Type Name="honey::Vec&lt;2,*,*&gt;">
+    <DisplayString>{{x={x} y={y}}}</DisplayString>
+    <Expand>
+        <Item Name="x">x</Item>
+        <Item Name="y">y</Item>
+    </Expand>
+</Type>
+
+<!-- 3D vector -->
+<Type Name="honey::Vec&lt;3,*,*&gt;">
+    <DisplayString>{{x={x} y={y} z={z}}}</DisplayString>
+    <Expand>
+        <Item Name="x">x</Item>
+        <Item Name="y">y</Item>
+        <Item Name="z">z</Item>
+    </Expand>
+</Type>
+
+<!-- 4D vector -->
+<Type Name="honey::Vec&lt;4,*,*&gt;">
+    <DisplayString>{{x={x} y={y} z={z} w={w}}}</DisplayString>
+    <Expand>
+        <Item Name="x">x</Item>
+        <Item Name="y">y</Item>
+        <Item Name="z">z</Item>
+        <Item Name="w">w</Item>
+    </Expand>
+</Type>
+
+</AutoVisualizer>

@@ -1,0 +1,854 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Test\Test.h" />
+    <ClInclude Include="..\common\Honey\Core\Meta.h" />
+    <ClInclude Include="..\common\Honey\Core\Preprocessor.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Alge.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Base.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Block.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Builder.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Iter.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix4.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\priv\Storage.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Traits.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Base.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\priv\Storage.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Swiz.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec1.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec2.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec3.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec4.h" />
+    <ClInclude Include="..\common\Honey\Math\Double.h" />
+    <ClInclude Include="..\common\Honey\Math\Duration.h" />
+    <ClInclude Include="..\common\Honey\Math\Float.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BackSub.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Bisect.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BisectN.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Eigen.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Interp.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\LinearLeastSqr.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Minimize.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\MinimizeN.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Polynomial.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Qrd.h" />
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Svd.h" />
+    <ClInclude Include="..\common\Honey\Math\Numeral.h" />
+    <ClInclude Include="..\common\Honey\Math\Quad.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\StudentT.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Beta.h" />
+    <ClInclude Include="..\common\Honey\Math\Ratio.h" />
+    <ClInclude Include="..\common\Honey\Math\Real.h" />
+    <ClInclude Include="..\common\Honey\Misc\BitSet.h" />
+    <ClInclude Include="..\common\Honey\Misc\BloomFilter.h" />
+    <ClInclude Include="..\common\Honey\Misc\Debug.h" />
+    <ClInclude Include="..\common\Honey\Misc\Lazy.h" />
+    <ClInclude Include="..\common\Honey\Misc\MtMap.h" />
+    <ClInclude Include="..\common\Honey\Misc\Option.h" />
+    <ClInclude Include="..\common\Honey\Misc\Range.h" />
+    <ClInclude Include="..\common\Honey\Misc\ScopeGuard.h" />
+    <ClInclude Include="..\common\Honey\Object\ComObject.h" />
+    <ClInclude Include="..\common\Honey\Object\Listener.h" />
+    <ClInclude Include="..\common\Honey\Object\ListenerList.h" />
+    <ClInclude Include="..\common\Honey\Object\ListenerQueue.h" />
+    <ClInclude Include="..\common\Honey\Object\PropertyList.h" />
+    <ClInclude Include="..\common\Honey\Object\PropertyObject.h" />
+    <ClInclude Include="..\common\Honey\Object\Signal.h" />
+    <ClInclude Include="..\common\Honey\Scene\Component.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\Light.h" />
+    <ClInclude Include="..\common\Honey\Thread\Atomic.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Binomial.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\BinomialNeg.h" />
+    <ClInclude Include="..\common\Honey\Misc\BitOp.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Bootstrap.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\BoundVol.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Box.h" />
+    <ClInclude Include="..\common\Honey\Scene\Camera.h" />
+    <ClInclude Include="..\common\Honey\Scene\CameraArcBall.h" />
+    <ClInclude Include="..\common\Honey\Scene\CameraOrtho.h" />
+    <ClInclude Include="..\common\Honey\Scene\CameraPersp.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Capsule.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\ChiSqr.h" />
+    <ClInclude Include="..\common\Honey\Misc\Clock.h" />
+    <ClInclude Include="..\common\Honey\Object\Component.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Cone.h" />
+    <ClInclude Include="..\common\Honey\Core\Mem.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\CullVol.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Cylinder.h" />
+    <ClInclude Include="..\common\Honey\Graph\Dep.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Discrete.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\DiscreteGen.h" />
+    <ClInclude Include="..\common\Honey\Honeycomb.h" />
+    <ClInclude Include="..\common\Honey\Misc\Enum.h" />
+    <ClInclude Include="..\common\Honey\Misc\Exception.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Frustum.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\FrustumOrtho.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\FrustumPersp.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gamma.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gaussian.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Geom.h" />
+    <ClInclude Include="..\common\Honey\String\Hash.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\HyperGeo.h" />
+    <ClInclude Include="..\common\Honey\String\Id.h" />
+    <ClInclude Include="..\common\Honey\String\IdCache.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Intersect.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Line.h" />
+    <ClInclude Include="..\common\Honey\Graph\NspTree.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\NspTreeSpace.h" />
+    <ClInclude Include="..\common\Honey\Object\Object.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\OrientBox.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Permute.h" />
+    <ClInclude Include="..\common\Honey\Physics\Physics.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Plane.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Poisson.h" />
+    <ClInclude Include="..\common\Honey\Memory\Pool.h" />
+    <ClInclude Include="..\common\Honey\Object\Property.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Quat.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Random.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Dist.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Gen.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Ray.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Rect.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Salsa.h" />
+    <ClInclude Include="..\common\Honey\Scene\Scene.h" />
+    <ClInclude Include="..\common\Honey\Scene\List.h" />
+    <ClInclude Include="..\common\Honey\Scene\Object.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\Space.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\Tm.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\Tree.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Shape.h" />
+    <ClInclude Include="..\common\Honey\Memory\SharedPtr.h" />
+    <ClInclude Include="..\common\Honey\Memory\SmallAllocator.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Sphere.h" />
+    <ClInclude Include="..\common\Honey\Misc\StdUtil.h" />
+    <ClInclude Include="..\common\Honey\String\String.h" />
+    <ClInclude Include="..\common\Honey\Core\Core.h" />
+    <ClInclude Include="..\common\Honey\String\Stream.h" />
+    <ClInclude Include="..\common\Honey\Thread\Task.h" />
+    <ClInclude Include="..\common\Honey\Thread\Thread.h" />
+    <ClInclude Include="..\common\Honey\Misc\TimePoint.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Transform.h" />
+    <ClInclude Include="..\common\Honey\Graph\Tree.h" />
+    <ClInclude Include="..\common\Honey\Graph\TreeClone.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\TreeIdMap.h" />
+    <ClInclude Include="..\common\Honey\Scene\Com\TreeSpace.h" />
+    <ClInclude Include="..\common\Honey\Math\Geom\Triangle.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Trig.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Uniform.h" />
+    <ClInclude Include="..\common\Honey\Memory\UniquePtr.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Vegas.h" />
+    <ClInclude Include="..\common\Honey\Scene\Viewport.h" />
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Weibull.h" />
+    <ClInclude Include="..\common\Honey\Thread\Concur\Deque.h" />
+    <ClInclude Include="..\common\Honey\Thread\Concur\Salsa.h" />
+    <ClInclude Include="..\common\Honey\Thread\Condition\Any.h" />
+    <ClInclude Include="..\common\Honey\Thread\Condition\Condition.h" />
+    <ClInclude Include="..\common\Honey\Thread\Condition\Lock.h" />
+    <ClInclude Include="..\common\Honey\Thread\Future\Future.h" />
+    <ClInclude Include="..\common\Honey\Thread\Future\PackagedTask.h" />
+    <ClInclude Include="..\common\Honey\Thread\Future\Promise.h" />
+    <ClInclude Include="..\common\Honey\Thread\Future\SharedFuture.h" />
+    <ClInclude Include="..\common\Honey\Thread\Future\Util.h" />
+    <ClInclude Include="..\common\Honey\Thread\LockFree\Backoff.h" />
+    <ClInclude Include="..\common\Honey\Thread\LockFree\List.h" />
+    <ClInclude Include="..\common\Honey\Thread\LockFree\Mem.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Mutex.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Shared.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\SharedMutex.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Spin.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Transfer.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Unique.h" />
+    <ClInclude Include="..\common\Honey\Thread\Lock\Util.h" />
+    <ClInclude Include="Honey\Core\platform\Core.h" />
+    <ClInclude Include="Honey\Core\platform\priv\Core.h" />
+    <ClInclude Include="Honey\Math\Alge\Matrix\platform\Matrix4.h" />
+    <ClInclude Include="Honey\Math\Alge\platform\Quat.h" />
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec2.h" />
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec3.h" />
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec4.h" />
+    <ClInclude Include="Honey\Math\platform\Numeral.h" />
+    <ClInclude Include="Honey\Misc\platform\Clock.h" />
+    <ClInclude Include="Honey\Misc\platform\Debug.h" />
+    <ClInclude Include="Honey\String\platform\Stream.h" />
+    <ClInclude Include="Honey\Thread\Condition\platform\Condition.h" />
+    <ClInclude Include="Honey\Thread\Lock\platform\Mutex.h" />
+    <ClInclude Include="Honey\Thread\platform\Atomic.h" />
+    <ClInclude Include="Honey\Thread\platform\Thread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Test\Test.cpp" />
+    <ClCompile Include="..\common\Honey\Graph\NspTree.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Alge.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Math/Alge/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Math/Alge/%(filename).h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Bisect.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\BisectN.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Eigen.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Interp.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\LinearLeastSqr.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Minimize.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\MinimizeN.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Polynomial.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Qrd.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Svd.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Beta.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Binomial.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\BinomialNeg.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\BoundVol.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Box.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Matrix\Matrix4.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Double.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Float.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Quad.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\StudentT.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Misc\BitSet.cpp" />
+    <ClCompile Include="..\common\Honey\Misc\BloomFilter.cpp" />
+    <ClCompile Include="..\common\Honey\Misc\Debug.cpp" />
+    <ClCompile Include="..\common\Honey\Object\ComObject.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Object/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Object/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Object/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Object/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\Component.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\Listener.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\ListenerList.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\ListenerQueue.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Object/ComObject.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Camera.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Capsule.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\ChiSqr.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Cone.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Com\CullVol.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Cylinder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Discrete.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\DiscreteGen.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\FrustumOrtho.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\FrustumPersp.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gamma.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gaussian.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Geom.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Math/Geom/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Math/Geom/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Com\Light.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Com\NspTreeSpace.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Hash.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)String/String.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)String/String.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\HyperGeo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Intersect.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Line.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\OrientBox.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Physics\Physics.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Geom\Plane.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Poisson.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Memory\Pool.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Memory/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Memory/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Quat.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Random.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Math/Random/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Math/Random/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Dist.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Ray.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Salsa.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Scene.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\List.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Scene/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Scene/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/%(filename).pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Object.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Com\Tm.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Sphere.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\String.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/String/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)String/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/String/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)String/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Core\Core.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Core/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Core/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Core/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Core/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Task.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Thread.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Honey/Thread/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/%(filename).pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Honey/Thread/%(filename).h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/%(filename).pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Transform.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Scene\Com\TreeSpace.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Scene/List.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Geom\Triangle.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Geom/Geom.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Trig.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Uniform.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Weibull.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Random/Random.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Lock\SharedMutex.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Lock\Spin.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec2.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec3.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec4.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Math/Alge/Alge.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="Honey\Misc\platform\Clock.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Misc/platform/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Misc/platform/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Honey\Misc\platform\Debug.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Misc/platform/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Misc/platform/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Honey\Thread\Condition\platform\Condition.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Condition/platform/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Condition/platform/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Honey\Thread\Lock\platform\Mutex.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Lock/platform/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Lock/platform/</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="Honey\Thread\platform\Thread.cpp">
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/Thread.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)Thread/platform/</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)Thread/platform/</ObjectFileName>
+    </ClCompile>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{653063B2-FCFC-4949-B9CD-90F7D375CFB3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Honeycomb</RootNamespace>
+    <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath11)</VCTargetsPath>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>../../dist/$(ProjectName)-1.0-Win-App-$(Configuration)/</OutDir>
+    <IntDir>../../build/$(ProjectName)-1.0-Win-App-$(Configuration)/</IntDir>
+    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>../../dist/$(ProjectName)-1.0-Win-App-$(Configuration)/</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>../../build/$(ProjectName)-1.0-Win-App-$(Configuration)/</IntDir>
+    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;Core_priv;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../common/;./</AdditionalIncludeDirectories>
+      <PrecompiledHeaderOutputFile>$(IntDir)Core/Core.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalOptions>-Zm250 -D_SCL_SECURE_NO_WARNINGS</AdditionalOptions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <DisableSpecificWarnings>4355; 4709; 4512; 4127;</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;Core_priv;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../common/;./</AdditionalIncludeDirectories>
+      <PrecompiledHeaderOutputFile>$(IntDir)Core/Core.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalOptions>-Zm250 -D_SCL_SECURE_NO_WARNINGS</AdditionalOptions>
+      <DisableSpecificWarnings>4355; 4709; 4512; 4127;</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

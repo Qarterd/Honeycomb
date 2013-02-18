@@ -1,0 +1,11 @@
+/**
+    \mainpage Manual
+
+    [Project Homepage](https://qarterd.github.io/Honeycomb)
+*/
+
+/// Global Honeycomb namespace
+/**
+    \namespace honey
+*/
+

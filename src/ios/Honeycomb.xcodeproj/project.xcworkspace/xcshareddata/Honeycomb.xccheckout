@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>F7F4943E-F7B8-410A-B7B5-58C71AF175AB</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Honeycomb</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2E8B46F2A7748C8FE6341C3B784F68FF881A603A</key>
+		<string>github.com:Kometes/yajl.git</string>
+		<key>E27B62CDC93ED4548B6505B121BBBD2B2AC7FD89</key>
+		<string>ngplus.ca:/repo/Honeycomb.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>src/ios/Honeycomb.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2E8B46F2A7748C8FE6341C3B784F68FF881A603A</key>
+		<string>../../../..ext/yajl</string>
+		<key>E27B62CDC93ED4548B6505B121BBBD2B2AC7FD89</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ngplus.ca:/repo/Honeycomb.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E27B62CDC93ED4548B6505B121BBBD2B2AC7FD89</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E27B62CDC93ED4548B6505B121BBBD2B2AC7FD89</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Honeycomb</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2E8B46F2A7748C8FE6341C3B784F68FF881A603A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>yajl</string>
+		</dict>
+	</array>
+</dict>
+</plist>

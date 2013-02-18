@@ -1,0 +1,7 @@
+*.suo
+*.sdf
+*.vcxproj.user
+.DS_Store
+xcuserdata
+build
+dist
