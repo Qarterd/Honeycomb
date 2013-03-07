@@ -1,0 +1,7 @@
+<map id="honey::PropertyBase" name="honey::PropertyBase">
+<area shape="rect" id="node6" href="$classhoney_1_1_property.html" title="Generic property. " alt="" coords="4,323,149,351"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_property_3_01vector_3_01_t_01_4_01_4.html" title="Generic vector property. " alt="" coords="174,315,337,359"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_object.html" title="Base class for objects. " alt="" coords="115,161,217,189"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Object \&gt;" alt="" coords="72,83,261,111"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="172,6,307,34"/>
+</map>

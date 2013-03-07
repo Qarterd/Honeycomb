@@ -1,0 +1,15 @@
+<map id="honey::log::FileSink" name="honey::log::FileSink">
+<area shape="rect" id="node2" href="$structhoney_1_1log_1_1_stream_sink.html" title="Formats record to a stream. " alt="" coords="262,371,420,399"/>
+<area shape="rect" id="node3" href="$structhoney_1_1log_1_1_sink.html" title="honey::log::Sink" alt="" coords="141,270,256,298"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Sink \&gt;" alt="" coords="72,174,249,202"/>
+<area shape="rect" id="node6" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,86,273,114"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="294,270,388,298"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="275,166,407,210"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="343,86,496,114"/>
+<area shape="rect" id="node15" title="STL class. " alt="" coords="432,166,564,210"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="370,6,469,34"/>
+<area shape="rect" id="node11" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="585,371,684,399"/>
+<area shape="rect" id="node12" title="STL class. " alt="" coords="588,262,713,306"/>
+<area shape="rect" id="node13" title="STL class. " alt="" coords="447,371,544,399"/>
+<area shape="rect" id="node14" title="STL class. " alt="" coords="428,262,564,306"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="honey::PeriodicTask::Cancelled" name="honey::PeriodicTask::Cancelled">
+<area shape="rect" id="node2" href="$classhoney_1_1_exception.html" title="Base exception class. Exceptions inherited from this class provide debug info and can be thrown polym..." alt="" coords="162,161,285,189"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Exception \&gt;" alt="" coords="28,83,237,111"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,6,273,34"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="263,83,365,111"/>
+</map>

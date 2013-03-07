@@ -1,0 +1,6 @@
+<map id="honey::future::AsyncSched" name="honey::future::AsyncSched">
+<area shape="rect" id="node2" href="$classhoney_1_1thread_1_1_pool.html" title="Spreads task execution across a pool of re&#45;usable threads. Uses a lock&#45;free work&#45;stealing queue to en..." alt="" coords="65,161,201,189"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Pool \&gt;" alt="" coords="44,83,221,111"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,6,273,34"/>
+<area shape="rect" id="node6" href="$structhoney_1_1future_1_1_async_sched__tag.html" title="honey::future::AsyncSched_tag" alt="" coords="226,161,432,189"/>
+</map>

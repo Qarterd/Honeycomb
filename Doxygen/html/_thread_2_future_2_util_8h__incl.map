@@ -1,0 +1,33 @@
+<map id="src/common/Honey/Thread/Future/Util.h" name="src/common/Honey/Thread/Future/Util.h">
+<area shape="rect" id="node2" href="$_shared_future_8h.html" title="Honey/Thread/Future\l/SharedFuture.h" alt="" coords="735,99,883,143"/>
+<area shape="rect" id="node47" href="$_packaged_task_8h.html" title="Honey/Thread/Future\l/PackagedTask.h" alt="" coords="907,99,1055,143"/>
+<area shape="rect" id="node48" href="$_thread_2_pool_8h.html" title="Honey/Thread/Pool.h" alt="" coords="1080,107,1227,135"/>
+<area shape="rect" id="node28" href="$_range_8h.html" title="Honey/Misc/Range.h" alt="" coords="959,1001,1104,1029"/>
+<area shape="rect" id="node3" href="$_future_8h.html" title="Honey/Thread/Future\l/Future.h" alt="" coords="738,193,885,237"/>
+<area shape="rect" id="node4" href="$_promise_8h.html" title="Honey/Thread/Future\l/Promise.h" alt="" coords="538,286,685,330"/>
+<area shape="rect" id="node43" href="$_small_allocator_8h.html" title="Honey/Memory/SmallAllocator.h" alt="" coords="710,294,921,322"/>
+<area shape="rect" id="node5" href="$_exception_8h.html" title="Honey/Misc/Exception.h" alt="" coords="647,761,811,789"/>
+<area shape="rect" id="node30" href="$_lock_8h.html" title="Honey/Thread/Condition\l/Lock.h" alt="" coords="996,379,1161,423"/>
+<area shape="rect" id="node6" href="$_string_2_stream_8h.html" title="Honey/String/Stream.h" alt="" coords="662,846,817,874"/>
+<area shape="rect" id="node7" href="$_string_8h.html" title="Honey/String/String.h" alt="" coords="737,1001,884,1029"/>
+<area shape="rect" id="node25" href="$_std_util_8h.html" title="Honey/Misc/StdUtil.h" alt="" coords="850,923,995,951"/>
+<area shape="rect" id="node29" href="$_shared_ptr_8h.html" title="Honey/Memory/SharedPtr.h" alt="" coords="606,1078,791,1106"/>
+<area shape="rect" id="node8" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="717,1163,861,1191"/>
+<area shape="rect" id="node9" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="519,1257,655,1285"/>
+<area shape="rect" id="node26" href="$common_2_honey_2_math_2_numeral_8h.html" title="Honey/Math/Numeral.h" alt="" coords="953,1078,1111,1106"/>
+<area shape="rect" id="node31" href="$common_2_honey_2_thread_2_condition_2_condition_8h.html" title="Honey/Thread/Condition\l/Condition.h" alt="" coords="996,473,1161,517"/>
+<area shape="rect" id="node32" href="$common_2_honey_2_thread_2_thread_8h.html" title="Honey/Thread/Thread.h" alt="" coords="885,574,1048,602"/>
+<area shape="rect" id="node38" href="$_unique_8h.html" title="Honey/Thread/Lock/Unique.h" alt="" coords="641,574,836,602"/>
+<area shape="rect" id="node33" href="$common_2_honey_2_chrono_2_clock_8h.html" title="Honey/Chrono/Clock.h" alt="" coords="889,667,1044,695"/>
+<area shape="rect" id="node34" href="$_time_point_8h.html" title="Honey/Chrono/TimePoint.h" alt="" coords="1071,761,1252,789"/>
+<area shape="rect" id="node36" href="$mac_2_honey_2_chrono_2platform_2_clock_8h.html" title="Honey/Chrono/platform\l/Clock.h" alt="" coords="887,753,1045,797"/>
+<area shape="rect" id="node35" href="$_duration_8h.html" title="Honey/Chrono/Duration.h" alt="" coords="1128,846,1300,874"/>
+<area shape="rect" id="node39" href="$_enum_8h.html" title="Honey/Misc/Enum.h" alt="" coords="724,667,864,695"/>
+<area shape="rect" id="node40" href="$_scope_guard_8h.html" title="Honey/Misc/ScopeGuard.h" alt="" coords="480,923,660,951"/>
+<area shape="rect" id="node41" href="$common_2_honey_2_thread_2_lock_2_mutex_8h.html" title="Honey/Thread/Lock/Mutex.h" alt="" coords="371,846,559,874"/>
+<area shape="rect" id="node44" href="$_memory_2_pool_8h.html" title="Honey/Memory/Pool.h" alt="" coords="778,387,931,415"/>
+<area shape="rect" id="node45" href="$_mt_map_8h.html" title="Honey/Misc/MtMap.h" alt="" coords="825,481,971,509"/>
+<area shape="rect" id="node46" href="$_spin_8h.html" title="Honey/Thread/Lock/Spin.h" alt="" coords="622,481,801,509"/>
+<area shape="rect" id="node49" href="$_queue_8h.html" title="Honey/Thread/LockFree\l/Queue.h" alt="" coords="945,193,1109,237"/>
+<area shape="rect" id="node50" href="$_free_list_8h.html" title="Honey/Thread/LockFree\l/FreeList.h" alt="" coords="945,286,1109,330"/>
+</map>

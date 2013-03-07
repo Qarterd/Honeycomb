@@ -1,0 +1,5 @@
+<map id="honey::FutureBase" name="honey::FutureBase">
+<area shape="rect" id="node3" href="$classhoney_1_1_future.html" title="Unique future, guarantees sole access to a future function result. " alt="" coords="5,161,141,189"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_shared_future.html" title="Shared future, allows multiple access to a future function result. " alt="" coords="165,161,344,189"/>
+<area shape="rect" id="node2" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="96,6,231,34"/>
+</map>

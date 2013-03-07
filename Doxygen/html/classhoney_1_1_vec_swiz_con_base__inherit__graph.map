@@ -1,0 +1,5 @@
+<map id="honey::VecSwizConBase&lt; SwizT &gt;" name="honey::VecSwizConBase&lt; SwizT &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_vec.html" title="honey::Vec\&lt; matrix\l::priv::Traits\&lt; SwizT\l \&gt;::dim, matrix::priv\l::Traits\&lt; SwizT \&gt;::Real,\l matrix::priv::Traits\&lt; SwizT\l \&gt;::options \&gt;" alt="" coords="643,5,821,113"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_vec_base.html" title="honey::VecBase\&lt; Vec\l\&lt; Dim, matrix::priv\l::Traits\&lt; SwizT \&gt;::Real,\l Options, Alloc \&gt; \&gt;" alt="" coords="435,21,594,97"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_matrix_base.html" title="honey::MatrixBase\&lt;\l Vec\&lt; Dim, matrix::priv\l::Traits\&lt; SwizT \&gt;::Real,\l Options, Alloc \&gt; \&gt;" alt="" coords="227,21,386,97"/>
+</map>

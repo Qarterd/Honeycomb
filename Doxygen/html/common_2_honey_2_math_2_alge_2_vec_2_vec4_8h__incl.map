@@ -1,0 +1,27 @@
+<map id="src/common/Honey/Math/Alge/Vec/Vec4.h" name="src/common/Honey/Math/Alge/Vec/Vec4.h">
+<area shape="rect" id="node2" href="$_swiz_8h.html" title="Honey/Math/Alge/Vec\l/Swiz.h" alt="" coords="817,286,967,330"/>
+<area shape="rect" id="node45" href="$common_2_honey_2_math_2_alge_2_vec_2_vec3_8h.html" title="Honey/Math/Alge/Vec\l/Vec3.h" alt="" coords="812,99,961,143"/>
+<area shape="rect" id="node3" href="$_vec_8h.html" title="Honey/Math/Alge/Vec\l/Vec.h" alt="" coords="644,379,793,423"/>
+<area shape="rect" id="node4" href="$_vec_2_base_8h.html" title="Honey/Math/Alge/Vec\l/Base.h" alt="" coords="733,473,883,517"/>
+<area shape="rect" id="node44" href="$_vec_2priv_2_storage_8h.html" title="Honey/Math/Alge/Vec\l/priv/Storage.h" alt="" coords="571,566,720,610"/>
+<area shape="rect" id="node5" href="$_matrix_2_base_8h.html" title="Honey/Math/Alge/Matrix\l/Base.h" alt="" coords="797,566,960,610"/>
+<area shape="rect" id="node6" href="$_optional_8h.html" title="Honey/Misc/Optional.h" alt="" coords="433,761,588,789"/>
+<area shape="rect" id="node30" href="$_builder_8h.html" title="Honey/Math/Alge/Matrix\l/Builder.h" alt="" coords="825,753,988,797"/>
+<area shape="rect" id="node40" href="$_iter_8h.html" title="Honey/Math/Alge/Matrix\l/Iter.h" alt="" coords="944,659,1107,703"/>
+<area shape="rect" id="node41" href="$_block_8h.html" title="Honey/Math/Alge/Matrix\l/Block.h" alt="" coords="706,659,869,703"/>
+<area shape="rect" id="node43" href="$_trig_8h.html" title="Honey/Math/Alge/Trig.h" alt="" coords="1073,854,1233,882"/>
+<area shape="rect" id="node7" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="562,1094,707,1122"/>
+<area shape="rect" id="node8" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="780,1179,916,1207"/>
+<area shape="rect" id="node31" href="$_traits_8h.html" title="Honey/Math/Alge/Matrix\l/Traits.h" alt="" coords="793,846,956,890"/>
+<area shape="rect" id="node32" href="$_alge_8h.html" title="Honey/Math/Alge/Alge.h" alt="" coords="1073,939,1237,967"/>
+<area shape="rect" id="node36" href="$_string_2_stream_8h.html" title="Honey/String/Stream.h" alt="" coords="734,939,889,967"/>
+<area shape="rect" id="node33" href="$_float_8h.html" title="Honey/Math/Float.h" alt="" coords="1087,1017,1224,1045"/>
+<area shape="rect" id="node34" href="$_double_8h.html" title="Honey/Math/Double.h" alt="" coords="1249,1017,1399,1045"/>
+<area shape="rect" id="node35" href="$_quad_8h.html" title="Honey/Math/Quad.h" alt="" coords="1423,1017,1563,1045"/>
+<area shape="rect" id="node37" href="$_string_8h.html" title="Honey/String/String.h" alt="" coords="537,1017,684,1045"/>
+<area shape="rect" id="node38" href="$_std_util_8h.html" title="Honey/Misc/StdUtil.h" alt="" coords="709,1017,853,1045"/>
+<area shape="rect" id="node39" href="$_shared_ptr_8h.html" title="Honey/Memory/SharedPtr.h" alt="" coords="878,1017,1063,1045"/>
+<area shape="rect" id="node42" href="$_matrix_2priv_2_storage_8h.html" title="Honey/Math/Alge/Matrix\l/priv/Storage.h" alt="" coords="637,753,800,797"/>
+<area shape="rect" id="node46" href="$common_2_honey_2_math_2_alge_2_vec_2_vec2_8h.html" title="Honey/Math/Alge/Vec\l/Vec2.h" alt="" coords="644,193,793,237"/>
+<area shape="rect" id="node47" href="$_vec1_8h.html" title="Honey/Math/Alge/Vec\l/Vec1.h" alt="" coords="471,286,620,330"/>
+</map>

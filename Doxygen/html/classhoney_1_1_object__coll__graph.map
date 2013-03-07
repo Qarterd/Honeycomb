@@ -1,0 +1,7 @@
+<map id="honey::Object" name="honey::Object">
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Object \&gt;" alt="" coords="104,195,293,223"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,102,273,130"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="318,195,393,223"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="306,102,405,130"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="293,6,419,50"/>
+</map>

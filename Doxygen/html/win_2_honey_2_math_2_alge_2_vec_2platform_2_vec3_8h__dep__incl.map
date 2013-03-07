@@ -1,0 +1,37 @@
+<map id="src/win/Honey/Math/Alge/Vec/platform/Vec3.h" name="src/win/Honey/Math/Alge/Vec/platform/Vec3.h">
+<area shape="rect" id="node2" href="$common_2_honey_2_math_2_alge_2_vec_2_vec3_8h.html" title="src/common/Honey/Math\l/Alge/Vec/Vec3.h" alt="" coords="4065,99,4233,143"/>
+<area shape="rect" id="node3" href="$_honeycomb_8h.html" title="src/common/Honey/Honeycomb.h" alt="" coords="3146,761,3368,789"/>
+<area shape="rect" id="node4" href="$common_2_honey_2_math_2_alge_2_quat_8h.html" title="src/common/Honey/Math\l/Alge/Quat.h" alt="" coords="4065,286,4233,330"/>
+<area shape="rect" id="node33" href="$common_2_honey_2_math_2_alge_2_vec_2_vec4_8h.html" title="src/common/Honey/Math\l/Alge/Vec/Vec4.h" alt="" coords="3942,193,4111,237"/>
+<area shape="rect" id="node5" href="$_quat_8cpp.html" title="src/common/Honey/Math\l/Alge/Quat.cpp" alt="" coords="3815,566,3984,610"/>
+<area shape="rect" id="node6" href="$_transform_8h.html" title="src/common/Honey/Math\l/Alge/Transform.h" alt="" coords="3526,379,3695,423"/>
+<area shape="rect" id="node7" href="$_matrix4_8cpp.html" title="src/common/Honey/Math\l/Alge/Matrix/Matrix4.cpp" alt="" coords="2107,473,2276,517"/>
+<area shape="rect" id="node8" href="$_transform_8cpp.html" title="src/common/Honey/Math\l/Alge/Transform.cpp" alt="" coords="3622,473,3791,517"/>
+<area shape="rect" id="node9" href="$_interp_8h.html" title="src/common/Honey/Math\l/NumAnalysis/Interp.h" alt="" coords="3429,473,3597,517"/>
+<area shape="rect" id="node10" href="$_alge_8cpp.html" title="src/common/Honey/Math\l/Alge/Alge.cpp" alt="" coords="3525,566,3693,610"/>
+<area shape="rect" id="node11" href="$_trig_8cpp.html" title="src/common/Honey/Math\l/Alge/Trig.cpp" alt="" coords="3331,566,3500,610"/>
+<area shape="rect" id="node12" href="$_interp_8cpp.html" title="src/common/Honey/Math\l/NumAnalysis/Interp.cpp" alt="" coords="2215,566,2384,610"/>
+<area shape="rect" id="node13" href="$common_2_honey_2_math_2_random_2_random_8h.html" title="src/common/Honey/Math\l/Random/Random.h" alt="" coords="2409,566,2577,610"/>
+<area shape="rect" id="node14" href="$_bootstrap_8h.html" title="src/common/Honey/Math\l/Random/Bootstrap.h" alt="" coords="2725,659,2893,703"/>
+<area shape="rect" id="node15" href="$_chacha_8cpp.html" title="src/common/Honey/Math\l/Random/Chacha.cpp" alt="" coords="398,659,567,703"/>
+<area shape="rect" id="node16" href="$_beta_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Beta.cpp" alt="" coords="591,659,760,703"/>
+<area shape="rect" id="node17" href="$_binomial_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Binomial.cpp" alt="" coords="785,659,967,703"/>
+<area shape="rect" id="node18" href="$_binomial_neg_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/BinomialNeg.cpp" alt="" coords="991,659,1197,703"/>
+<area shape="rect" id="node19" href="$_chi_sqr_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/ChiSqr.cpp" alt="" coords="1222,659,1393,703"/>
+<area shape="rect" id="node20" href="$_discrete_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Discrete.cpp" alt="" coords="1418,659,1597,703"/>
+<area shape="rect" id="node21" href="$_discrete_gen_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/DiscreteGen.cpp" alt="" coords="1621,659,1825,703"/>
+<area shape="rect" id="node22" href="$_gamma_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Gamma.cpp" alt="" coords="1851,659,2028,703"/>
+<area shape="rect" id="node23" href="$_gaussian_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Gaussian.cpp" alt="" coords="2053,659,2240,703"/>
+<area shape="rect" id="node24" href="$_hyper_geo_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/HyperGeo.cpp" alt="" coords="2264,659,2455,703"/>
+<area shape="rect" id="node25" href="$_poisson_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Poisson.cpp" alt="" coords="3356,659,3533,703"/>
+<area shape="rect" id="node26" href="$_student_t_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/StudentT.cpp" alt="" coords="2463,753,2645,797"/>
+<area shape="rect" id="node27" href="$_student_t_8h.html" title="src/common/Honey/Math\l/Random/Dist/StudentT.h" alt="" coords="2531,659,2700,703"/>
+<area shape="rect" id="node28" href="$_uniform_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Uniform.cpp" alt="" coords="3559,659,3736,703"/>
+<area shape="rect" id="node29" href="$_weibull_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Weibull.cpp" alt="" coords="3761,659,3935,703"/>
+<area shape="rect" id="node30" href="$_permute_8h.html" title="src/common/Honey/Math\l/Random/Permute.h" alt="" coords="2918,659,3087,703"/>
+<area shape="rect" id="node31" href="$common_2_honey_2_math_2_random_2_random_8cpp.html" title="src/common/Honey/Math\l/Random/Random.cpp" alt="" coords="205,659,373,703"/>
+<area shape="rect" id="node32" href="$_vegas_8h.html" title="src/common/Honey/Math\l/Random/Vegas.h" alt="" coords="3111,659,3280,703"/>
+<area shape="rect" id="node34" href="$common_2_honey_2_math_2_alge_2_matrix_2_matrix4_8h.html" title="src/common/Honey/Math\l/Alge/Matrix/Matrix4.h" alt="" coords="2881,286,3049,330"/>
+<area shape="rect" id="node35" href="$_polynomial_8h.html" title="src/common/Honey/Math\l/NumAnalysis/Polynomial.h" alt="" coords="2301,473,2483,517"/>
+<area shape="rect" id="node36" href="$_polynomial_8cpp.html" title="src/common/Honey/Math\l/NumAnalysis/Polynomial.cpp" alt="" coords="43,566,239,610"/>
+</map>

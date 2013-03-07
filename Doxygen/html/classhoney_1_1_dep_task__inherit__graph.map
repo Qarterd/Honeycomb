@@ -1,0 +1,8 @@
+<map id="honey::DepTask" name="honey::DepTask">
+<area shape="rect" id="node7" href="$classhoney_1_1_dep_task__.html" title="honey::DepTask_\&lt; void \&gt;" alt="" coords="106,254,277,282"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_dep_task__.html" title="Holds a functor and dependency information, enqueue in a scheduler to run the task. " alt="" coords="302,254,487,282"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; DepTask \&gt;" alt="" coords="94,91,297,119"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,6,273,34"/>
+<area shape="rect" id="node5" href="$structhoney_1_1thread_1_1_pool_1_1_task.html" title="All tasks must inherit from this class. std::function is not used here to avoid the operator() virtua..." alt="" coords="322,83,459,127"/>
+<area shape="rect" id="node6" href="$structhoney_1_1mt_1_1_funcptr_base.html" title="Inherit to enable non&#45;virtual functor calling. " alt="" coords="309,6,472,34"/>
+</map>

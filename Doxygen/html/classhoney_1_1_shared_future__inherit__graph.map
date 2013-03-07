@@ -1,0 +1,5 @@
+<map id="honey::SharedFuture&lt; R &gt;" name="honey::SharedFuture&lt; R &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_future_base.html" title="Base class for Future types. " alt="" coords="5,91,139,119"/>
+<area shape="rect" id="node3" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="4,6,139,34"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_future_common.html" title="honey::FutureCommon\l\&lt; SharedFuture\&lt; R \&gt;, R \&gt;" alt="" coords="163,83,337,127"/>
+</map>

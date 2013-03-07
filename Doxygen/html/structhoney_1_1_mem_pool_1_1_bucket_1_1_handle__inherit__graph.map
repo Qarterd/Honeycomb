@@ -1,0 +1,3 @@
+<map id="honey::MemPool::Bucket::Handle" name="honey::MemPool::Bucket::Handle">
+<area shape="rect" id="node2" href="$structhoney_1_1_mem_pool_1_1_bucket_1_1_tagged_handle.html" title="Holds block handle and tag to prevent lock&#45;free ABA issues. " alt="" coords="5,99,173,143"/>
+</map>

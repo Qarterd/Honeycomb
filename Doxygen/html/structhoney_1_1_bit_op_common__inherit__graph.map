@@ -1,0 +1,4 @@
+<map id="honey::BitOpCommon" name="honey::BitOpCommon">
+<area shape="rect" id="node2" href="$structhoney_1_1_bit_op_endian_3_01static__cast_3_01int_01_4_07_endian_1_1big_08_4.html" title="Specialization for big endian. " alt="" coords="206,5,346,65"/>
+<area shape="rect" id="node3" href="$structhoney_1_1_bit_op_endian_3_01static__cast_3_01int_01_4_07_endian_1_1little_08_4.html" title="Specialization for little endian. " alt="" coords="206,89,346,149"/>
+</map>

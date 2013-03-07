@@ -1,0 +1,6 @@
+<map id="honey::EnumInfo_&lt; EnumType &gt;::Elem" name="honey::EnumInfo_&lt; EnumType &gt;::Elem">
+<area shape="rect" id="node2" href="$classhoney_1_1_name_id.html" title="Holds both a name string and its hashed value, and unlike Id the name is never compiled out..." alt="" coords="51,275,161,303"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="69,195,144,223"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="57,102,156,130"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="44,6,169,50"/>
+</map>

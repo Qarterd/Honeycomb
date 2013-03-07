@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_ptr.html" title="Combined intrusive/non&#45;intrusive smart pointer. Can reference and share any object automatically..." alt="" coords="194,5,350,33"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_weak_ptr.html" title="Point to a shared object without holding a reference. The object is accessible through a lock..." alt="" coords="199,57,345,85"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_shared_ptr.html" title="honey::SharedPtr\&lt; Periodic\lTask \&gt;" alt="" coords="180,109,364,153"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_shared_ptr.html" title="honey::SharedPtr\&lt; State \&gt;" alt="" coords="182,177,362,205"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_shared_ptr.html" title="honey::SharedPtr\&lt; thread\l::Pool \&gt;" alt="" coords="185,229,359,273"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_weak_ptr.html" title="honey::WeakPtr\&lt; honey\l::DepTask \&gt;" alt="" coords="190,297,354,341"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="honey::PeriodicTask_&lt; Result &gt;" name="honey::PeriodicTask_&lt; Result &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_periodic_task.html" title="Base class of PeriodicTask_, returned by scheduler. " alt="" coords="223,177,363,205"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Periodic\lTask \&gt;" alt="" coords="106,83,293,127"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,6,273,34"/>
+<area shape="rect" id="node6" href="$structhoney_1_1thread_1_1_pool_1_1_task.html" title="All tasks must inherit from this class. std::function is not used here to avoid the operator() virtua..." alt="" coords="318,83,455,127"/>
+<area shape="rect" id="node7" href="$structhoney_1_1mt_1_1_funcptr_base.html" title="Inherit to enable non&#45;virtual functor calling. " alt="" coords="305,6,468,34"/>
+</map>

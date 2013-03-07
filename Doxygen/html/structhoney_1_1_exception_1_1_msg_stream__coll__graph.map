@@ -1,0 +1,11 @@
+<map id="honey::Exception::MsgStream" name="honey::Exception::MsgStream">
+<area shape="rect" id="node2" title="STL class. " alt="" coords="56,358,183,386"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="5,262,171,306"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="21,166,153,210"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="11,86,164,114"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="38,6,137,34"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_exception.html" title="Base exception class. Exceptions inherited from this class provide debug info and can be thrown polym..." alt="" coords="238,358,361,386"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Exception \&gt;" alt="" coords="195,270,404,298"/>
+<area shape="rect" id="node10" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="346,174,480,202"/>
+<area shape="rect" id="node11" title="STL class. " alt="" coords="430,270,532,298"/>
+</map>

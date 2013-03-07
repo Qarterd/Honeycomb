@@ -1,0 +1,5 @@
+<map id="honey::ConditionLock" name="honey::ConditionLock">
+<area shape="rect" id="node2" href="$classhoney_1_1_condition.html" title="Method to synchronize threads. Condition variables eliminate the need for repeated polling to check t..." alt="" coords="169,83,289,111"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="162,6,296,34"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_mutex.html" title="A thread lock where the lock is acquired by suspending thread execution until it becomes available..." alt="" coords="320,83,421,111"/>
+</map>

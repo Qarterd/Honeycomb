@@ -1,0 +1,6 @@
+<map id="honey::VecSwizCon&lt; 2, Real, Options &gt;" name="honey::VecSwizCon&lt; 2, Real, Options &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_vec_swiz_con_base.html" title="honey::VecSwizConBase\l\&lt; VecSwizCon\&lt; 2, Real,\l Options \&gt; \&gt;" alt="" coords="950,45,1120,105"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_vec.html" title="honey::Vec\&lt; matrix\l::priv::Traits\&lt; VecSwizCon\l\&lt; 2, Real, Options \&gt; \&gt;::\ldim, matrix::priv::Traits\l\&lt; VecSwizCon\&lt; 2, Real, Options\l \&gt; \&gt;::Real, matrix::priv::Traits\l\&lt; VecSwizCon\&lt; 2, Real, Options \&gt;\l \&gt;::options \&gt;" alt="" coords="675,5,901,145"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_vec_base.html" title="honey::VecBase\&lt; Vec\l\&lt; Dim, matrix::priv\l::Traits\&lt; VecSwizCon\l\&lt; 2, Real, Options \&gt; \&gt;\l::Real, Options, Alloc \&gt; \&gt;" alt="" coords="459,29,627,121"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_matrix_base.html" title="honey::MatrixBase\&lt;\l Vec\&lt; Dim, matrix::priv\l::Traits\&lt; VecSwizCon\&lt; 2,\l Real, Options \&gt; \&gt;::Real,\l Options, Alloc \&gt; \&gt;" alt="" coords="240,29,411,121"/>
+</map>

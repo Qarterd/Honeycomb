@@ -1,0 +1,14 @@
+<map id="honey::RandomDist&lt; Real &gt;" name="honey::RandomDist&lt; Real &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_beta__.html" title="Generate a random variate from a beta distribution . " alt="" coords="217,5,367,33"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_binomial__.html" title="Generate a random integer variate from a binomial distribution. " alt="" coords="205,57,379,85"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_binomial_neg__.html" title="Generate a random integer variate from a negative binomial distribution. " alt="" coords="222,109,362,153"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_chi_sqr__.html" title="Generate a random variate from a noncentral chi&#45;square &#160;distribution. " alt="" coords="210,177,374,205"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_discrete_gen__.html" title="Generate a random integer variate from a generalized discrete distribution. " alt="" coords="222,229,362,273"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_gamma__.html" title="Generate a random variate from a gamma distribution . " alt="" coords="207,297,377,325"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_gaussian__.html" title="Generate a normally (Gaussian) distributed random variate. " alt="" coords="202,349,382,377"/>
+<area shape="rect" id="node9" href="$classhoney_1_1_hyper_geo__.html" title="Generate a random integer variate from a hypergeometric distribution. " alt="" coords="200,401,384,429"/>
+<area shape="rect" id="node10" href="$classhoney_1_1_poisson__.html" title="Generate a random integer variate from a poisson distribution. " alt="" coords="207,453,377,481"/>
+<area shape="rect" id="node11" href="$classhoney_1_1_student_t__.html" title="Generate a random variate from a Student&#39;s t&#45;distribution. " alt="" coords="204,505,380,533"/>
+<area shape="rect" id="node12" href="$classhoney_1_1_uniform__.html" title="Generate a random variate between min and max non&#45;inclusive with uniform (flat) distribution. " alt="" coords="207,557,377,585"/>
+<area shape="rect" id="node13" href="$classhoney_1_1_weibull__.html" title="Generate a random integer variate from a weibull distribution. " alt="" coords="209,609,375,637"/>
+</map>

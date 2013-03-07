@@ -1,0 +1,13 @@
+<map id="src/mac/Honey/Chrono/platform/Clock.cpp" name="src/mac/Honey/Chrono/platform/Clock.cpp">
+<area shape="rect" id="node2" href="$common_2_honey_2_chrono_2_clock_8h.html" title="Honey/Chrono/Clock.h" alt="" coords="1408,99,1563,127"/>
+<area shape="rect" id="node3" href="$_time_point_8h.html" title="Honey/Chrono/TimePoint.h" alt="" coords="1297,185,1479,213"/>
+<area shape="rect" id="node41" href="$mac_2_honey_2_chrono_2platform_2_clock_8h.html" title="Honey/Chrono/platform\l/Clock.h" alt="" coords="1503,177,1661,221"/>
+<area shape="rect" id="node4" href="$_duration_8h.html" title="Honey/Chrono/Duration.h" alt="" coords="1302,270,1473,298"/>
+<area shape="rect" id="node5" href="$_ratio_8h.html" title="Honey/Math/Ratio.h" alt="" coords="1232,347,1371,375"/>
+<area shape="rect" id="node37" href="$common_2_honey_2_math_2_numeral_8h.html" title="Honey/Math/Numeral.h" alt="" coords="1395,347,1553,375"/>
+<area shape="rect" id="node6" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="1233,526,1369,554"/>
+<area shape="rect" id="node34" href="$_allocator_8h.html" title="Honey/Memory/Allocator.h" alt="" coords="2518,619,2695,647"/>
+<area shape="rect" id="node35" href="$_meta_8h.html" title="Honey/Core/Meta.h" alt="" coords="2549,705,2685,733"/>
+<area shape="rect" id="node36" href="$_preprocessor_8h.html" title="Honey/Core/Preprocessor.h" alt="" coords="2582,782,2767,810"/>
+<area shape="rect" id="node38" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="1365,433,1509,461"/>
+</map>

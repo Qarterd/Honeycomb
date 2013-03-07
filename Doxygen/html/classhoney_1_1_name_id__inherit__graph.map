@@ -1,0 +1,4 @@
+<map id="honey::NameId" name="honey::NameId">
+<area shape="rect" id="node3" href="$classhoney_1_1_com_registry_1_1_type.html" title="Component type. " alt="" coords="5,161,147,205"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="38,6,113,34"/>
+</map>

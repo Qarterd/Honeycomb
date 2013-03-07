@@ -1,0 +1,17 @@
+<map id="honey::PeriodicTask_&lt; Result &gt;" name="honey::PeriodicTask_&lt; Result &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_periodic_task.html" title="Base class of PeriodicTask_, returned by scheduler. " alt="" coords="774,299,914,327"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Periodic\lTask \&gt;" alt="" coords="471,33,660,77"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="204,57,340,85"/>
+<area shape="rect" id="node18" href="$classhoney_1_1_thread.html" title="Thread class. " alt="" coords="512,101,619,129"/>
+<area shape="rect" id="node6" href="$structhoney_1_1thread_1_1_pool_1_1_task.html" title="All tasks must inherit from this class. std::function is not used here to avoid the operator() virtua..." alt="" coords="497,153,634,197"/>
+<area shape="rect" id="node7" href="$structhoney_1_1mt_1_1_funcptr_base.html" title="Inherit to enable non&#45;virtual functor calling. " alt="" coords="191,161,353,189"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_mutex.html" title="A thread lock where the lock is acquired by suspending thread execution until it becomes available..." alt="" coords="515,221,616,249"/>
+<area shape="rect" id="node10" href="$classhoney_1_1_periodic_sched.html" title="Scheduler that executes tasks periodically or after a delay given a pool of threads. " alt="" coords="490,273,641,301"/>
+<area shape="rect" id="node11" href="$classhoney_1_1_atomic.html" title="honey::Atomic\&lt; State \&gt;" alt="" coords="485,325,645,353"/>
+<area shape="rect" id="node12" href="$classhoney_1_1_shared_ptr.html" title="honey::SharedPtr\&lt; Periodic\lTask \&gt;" alt="" coords="473,377,658,421"/>
+<area shape="rect" id="node14" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="527,445,603,473"/>
+<area shape="rect" id="node15" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="222,450,322,478"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="5,442,131,486"/>
+<area shape="rect" id="node17" href="$classhoney_1_1_atomic.html" title="honey::Atomic\&lt; honey\l::MonoClock::honey::TimePoint \&gt;" alt="" coords="457,497,674,541"/>
+<area shape="rect" id="node20" href="$classhoney_1_1optional.html" title="honey::optional\&lt; honey\l::MonoClock::honey::Duration \&gt;" alt="" coords="461,565,670,609"/>
+</map>

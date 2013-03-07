@@ -1,0 +1,4 @@
+<map id="honey::Condition" name="honey::Condition">
+<area shape="rect" id="node4" href="$classhoney_1_1_condition_lock.html" title="Lock that is bound to a single condition. This is the common usage case of condition variables..." alt="" coords="75,161,224,189"/>
+<area shape="rect" id="node3" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="162,6,296,34"/>
+</map>

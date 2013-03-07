@@ -1,0 +1,7 @@
+<map id="honey::log::Sink" name="honey::log::Sink">
+<area shape="rect" id="node5" href="$structhoney_1_1log_1_1_buffer_sink.html" title="Captures records in a buffer. " alt="" coords="4,238,155,266"/>
+<area shape="rect" id="node6" href="$structhoney_1_1log_1_1_stream_sink.html" title="Formats record to a stream. " alt="" coords="180,238,339,266"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Sink \&gt;" alt="" coords="80,83,257,111"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="175,6,309,34"/>
+<area shape="rect" id="node7" href="$structhoney_1_1log_1_1_file_sink.html" title="Formats record to a file stream. " alt="" coords="191,315,328,343"/>
+</map>

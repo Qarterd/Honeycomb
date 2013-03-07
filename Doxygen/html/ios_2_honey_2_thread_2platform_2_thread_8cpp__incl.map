@@ -1,0 +1,21 @@
+<map id="src/ios/Honey/Thread/platform/Thread.cpp" name="src/ios/Honey/Thread/platform/Thread.cpp">
+<area shape="rect" id="node2" href="$common_2_honey_2_thread_2_thread_8h.html" title="Honey/Thread/Thread.h" alt="" coords="669,99,832,127"/>
+<area shape="rect" id="node44" href="$_unique_8h.html" title="Honey/Thread/Lock/Unique.h" alt="" coords="872,99,1067,127"/>
+<area shape="rect" id="node3" href="$_exception_8h.html" title="Honey/Misc/Exception.h" alt="" coords="767,278,931,306"/>
+<area shape="rect" id="node39" href="$common_2_honey_2_chrono_2_clock_8h.html" title="Honey/Chrono/Clock.h" alt="" coords="657,185,812,213"/>
+<area shape="rect" id="node4" href="$_string_2_stream_8h.html" title="Honey/String/Stream.h" alt="" coords="863,363,1019,391"/>
+<area shape="rect" id="node5" href="$_string_8h.html" title="Honey/String/String.h" alt="" coords="1025,441,1172,469"/>
+<area shape="rect" id="node35" href="$_std_util_8h.html" title="Honey/Misc/StdUtil.h" alt="" coords="805,441,949,469"/>
+<area shape="rect" id="node38" href="$_shared_ptr_8h.html" title="Honey/Memory/SharedPtr.h" alt="" coords="894,518,1079,546"/>
+<area shape="rect" id="node6" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="1039,603,1184,631"/>
+<area shape="rect" id="node7" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="1139,689,1275,717"/>
+<area shape="rect" id="node36" href="$common_2_honey_2_math_2_numeral_8h.html" title="Honey/Math/Numeral.h" alt="" coords="699,518,857,546"/>
+<area shape="rect" id="node40" href="$_time_point_8h.html" title="Honey/Chrono/TimePoint.h" alt="" coords="561,278,743,306"/>
+<area shape="rect" id="node42" href="$mac_2_honey_2_chrono_2platform_2_clock_8h.html" title="Honey/Chrono/platform\l/Clock.h" alt="" coords="378,270,536,314"/>
+<area shape="rect" id="node41" href="$_duration_8h.html" title="Honey/Chrono/Duration.h" alt="" coords="570,363,741,391"/>
+<area shape="rect" id="node45" href="$_enum_8h.html" title="Honey/Misc/Enum.h" alt="" coords="899,185,1039,213"/>
+<area shape="rect" id="node48" href="$_scope_guard_8h.html" title="Honey/Misc/ScopeGuard.h" alt="" coords="1196,441,1376,469"/>
+<area shape="rect" id="node49" href="$common_2_honey_2_thread_2_lock_2_mutex_8h.html" title="Honey/Thread/Lock/Mutex.h" alt="" coords="1322,185,1509,213"/>
+<area shape="rect" id="node46" href="$_id_8h.html" title="Honey/String/Id.h" alt="" coords="1007,278,1131,306"/>
+<area shape="rect" id="node47" href="$_hash_8h.html" title="Honey/String/Hash.h" alt="" coords="1102,363,1247,391"/>
+</map>

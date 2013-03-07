@@ -1,0 +1,10 @@
+<map id="honey::Object" name="honey::Object">
+<area shape="rect" id="node5" href="$classhoney_1_1_com_object.html" title="Component object. Object that consists of a collection of components. " alt="" coords="5,238,136,266"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_component.html" title="Base class for components. Components can only be attached to one ComObject at a time. " alt="" coords="161,238,295,266"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_property_base.html" title="Base class for all properties. " alt="" coords="319,238,464,266"/>
+<area shape="rect" id="node10" href="$classhoney_1_1_property_object.html" title="Object that contains properties. " alt="" coords="488,238,641,266"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Object \&gt;" alt="" coords="214,83,404,111"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="315,6,449,34"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_property.html" title="Generic property. " alt="" coords="230,323,375,351"/>
+<area shape="rect" id="node9" href="$classhoney_1_1_property_3_01vector_3_01_t_01_4_01_4.html" title="Generic vector property. " alt="" coords="400,315,563,359"/>
+</map>

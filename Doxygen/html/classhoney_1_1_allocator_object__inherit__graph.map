@@ -1,0 +1,5 @@
+<map id="honey::AllocatorObject&lt; Alloc &gt;" name="honey::AllocatorObject&lt; Alloc &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1_listener.html" title="Holds a slot that can receive signals. " alt="" coords="4,99,224,127"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_slot_base.html" title="Multicast receiver. " alt="" coords="249,99,475,127"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_listener_queue.html" title="Listener that holds queued slot for delayed processing of signals. " alt="" coords="38,177,191,205"/>
+</map>

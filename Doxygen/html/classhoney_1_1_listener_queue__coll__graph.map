@@ -1,0 +1,10 @@
+<map id="honey::ListenerQueue" name="honey::ListenerQueue">
+<area shape="rect" id="node2" href="$classhoney_1_1_listener.html" title="Holds a slot that can receive signals. " alt="" coords="690,106,803,134"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Listener \&gt;" alt="" coords="411,11,610,39"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="182,63,317,91"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_unique_ptr.html" title="honey::UniquePtr\&lt; honey\l::SlotBase \&gt;" alt="" coords="425,63,597,107"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_allocator_object.html" title="Objects that inherit from this class will use Alloc for new/delete ops. " alt="" coords="438,131,583,159"/>
+<area shape="rect" id="node8" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="473,183,549,211"/>
+<area shape="rect" id="node9" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="199,183,299,211"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="5,175,131,219"/>
+</map>

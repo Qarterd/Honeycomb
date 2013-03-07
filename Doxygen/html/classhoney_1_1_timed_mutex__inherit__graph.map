@@ -1,0 +1,3 @@
+<map id="honey::TimedMutex" name="honey::TimedMutex">
+<area shape="rect" id="node2" href="$classhoney_1_1_mutex.html" title="A thread lock where the lock is acquired by suspending thread execution until it becomes available..." alt="" coords="23,83,124,111"/>
+</map>

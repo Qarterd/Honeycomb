@@ -1,0 +1,6 @@
+<map id="honey::App" name="honey::App">
+<area shape="rect" id="node2" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="4,6,139,34"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_thread.html" title="Thread class. " alt="" coords="145,86,252,114"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_mutex.html" title="A thread lock where the lock is acquired by suspending thread execution until it becomes available..." alt="" coords="276,86,377,114"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_atomic.html" title="honey::Atomic\&lt; RunMode \&gt;" alt="" coords="401,86,587,114"/>
+</map>

@@ -1,0 +1,19 @@
+<map id="honey::Exception" name="honey::Exception">
+<area shape="rect" id="node6" href="$structhoney_1_1_app_1_1_terminated.html" title="Process terminated. Use this interrupt to exit the run loop. " alt="" coords="643,5,805,33"/>
+<area shape="rect" id="node7" href="$structhoney_1_1debug_1_1_assertion_failure.html" title="Thrown on debug assert() failure. " alt="" coords="621,57,827,85"/>
+<area shape="rect" id="node8" href="$structhoney_1_1_enum_error.html" title="honey::EnumError" alt="" coords="659,109,789,137"/>
+<area shape="rect" id="node9" href="$structhoney_1_1exception_1_1_std.html" title="Wrapper around std exception to allow for polymorphic throw. " alt="" coords="634,161,814,189"/>
+<area shape="rect" id="node10" href="$structhoney_1_1exception_1_1_unknown.html" title="honey::exception::Unknown" alt="" coords="631,213,817,241"/>
+<area shape="rect" id="node11" href="$structhoney_1_1future_1_1_already_satisfied.html" title="honey::future::AlreadySatisfied" alt="" coords="623,265,825,293"/>
+<area shape="rect" id="node12" href="$structhoney_1_1future_1_1_broken.html" title="Exceptions. " alt="" coords="650,317,798,345"/>
+<area shape="rect" id="node13" href="$structhoney_1_1future_1_1_future_already_retrieved.html" title="honey::future::FutureAlready\lRetrieved" alt="" coords="629,369,819,413"/>
+<area shape="rect" id="node14" href="$structhoney_1_1future_1_1_no_state.html" title="honey::future::NoState" alt="" coords="647,437,801,465"/>
+<area shape="rect" id="node15" href="$structhoney_1_1json_1_1_value_error.html" title="honey::json::ValueError" alt="" coords="644,489,804,517"/>
+<area shape="rect" id="node16" href="$structhoney_1_1_periodic_task_1_1_cancelled.html" title="Future result when cancelled. " alt="" coords="654,541,794,585"/>
+<area shape="rect" id="node17" href="$structhoney_1_1_property_error.html" title="honey::PropertyError" alt="" coords="651,609,797,637"/>
+<area shape="rect" id="node18" href="$structhoney_1_1thread_1_1_interrupted.html" title="Interrupted exception. " alt="" coords="637,661,811,689"/>
+<area shape="rect" id="node19" href="$structhoney_1_1_variant_error.html" title="honey::VariantError" alt="" coords="656,713,792,741"/>
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Exception \&gt;" alt="" coords="189,321,400,349"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="6,347,141,375"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="243,373,346,401"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="honey::ComObject" name="honey::ComObject">
+<area shape="rect" id="node2" href="$classhoney_1_1_object.html" title="Base class for objects. " alt="" coords="82,161,184,189"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Object \&gt;" alt="" coords="38,83,228,111"/>
+<area shape="rect" id="node5" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="139,6,273,34"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="src/common/Honey/Math/Random/Dist/Beta.h" name="src/common/Honey/Math/Random/Dist/Beta.h">
+<area shape="rect" id="node2" href="$_honeycomb_8h.html" title="src/common/Honey/Honeycomb.h" alt="" coords="577,387,799,415"/>
+<area shape="rect" id="node3" href="$_beta_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Beta.cpp" alt="" coords="627,99,796,143"/>
+<area shape="rect" id="node4" href="$_binomial_8h.html" title="src/common/Honey/Math\l/Random/Dist/Binomial.h" alt="" coords="434,99,603,143"/>
+<area shape="rect" id="node12" href="$_hyper_geo_8h.html" title="src/common/Honey/Math\l/Random/Dist/HyperGeo.h" alt="" coords="1014,99,1191,143"/>
+<area shape="rect" id="node14" href="$_student_t_8h.html" title="src/common/Honey/Math\l/Random/Dist/StudentT.h" alt="" coords="821,99,989,143"/>
+<area shape="rect" id="node5" href="$_binomial_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Binomial.cpp" alt="" coords="437,193,619,237"/>
+<area shape="rect" id="node6" href="$_poisson_8h.html" title="src/common/Honey/Math\l/Random/Dist/Poisson.h" alt="" coords="243,193,412,237"/>
+<area shape="rect" id="node7" href="$_binomial_neg_8h.html" title="src/common/Honey/Math\l/Random/Dist/BinomialNeg.h" alt="" coords="205,286,397,330"/>
+<area shape="rect" id="node9" href="$_poisson_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Poisson.cpp" alt="" coords="421,286,599,330"/>
+<area shape="rect" id="node10" href="$_weibull_8h.html" title="src/common/Honey/Math\l/Random/Dist/Weibull.h" alt="" coords="11,286,180,330"/>
+<area shape="rect" id="node8" href="$_binomial_neg_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/BinomialNeg.cpp" alt="" coords="203,379,409,423"/>
+<area shape="rect" id="node11" href="$_weibull_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/Weibull.cpp" alt="" coords="5,379,179,423"/>
+<area shape="rect" id="node13" href="$_hyper_geo_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/HyperGeo.cpp" alt="" coords="1035,193,1225,237"/>
+<area shape="rect" id="node15" href="$_student_t_8cpp.html" title="src/common/Honey/Math\l/Random/Dist/StudentT.cpp" alt="" coords="776,193,959,237"/>
+</map>

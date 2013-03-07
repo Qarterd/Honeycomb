@@ -1,0 +1,4 @@
+<map id="honey::ComRegistry::Type" name="honey::ComRegistry::Type">
+<area shape="rect" id="node2" href="$classhoney_1_1_name_id.html" title="Holds both a name string and its hashed value, and unlike Id the name is never compiled out..." alt="" coords="20,83,131,111"/>
+<area shape="rect" id="node3" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="38,6,113,34"/>
+</map>

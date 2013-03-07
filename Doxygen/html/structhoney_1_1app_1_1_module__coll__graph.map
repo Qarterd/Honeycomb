@@ -1,0 +1,17 @@
+<map id="honey::app::Module" name="honey::app::Module">
+<area shape="rect" id="node2" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; Module \&gt;" alt="" coords="253,21,448,49"/>
+<area shape="rect" id="node4" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="34,125,169,153"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_shared_obj.html" title="honey::SharedObj\&lt; DepTask \&gt;" alt="" coords="249,125,453,153"/>
+<area shape="rect" id="node17" href="$classhoney_1_1_thread.html" title="Thread class. " alt="" coords="297,177,404,205"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_dep_task__.html" title="honey::DepTask_\&lt; void \&gt;" alt="" coords="761,134,933,162"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_dep_task.html" title="Base class of DepTask_, can be added to scheduler. Instances must be created through class DepTask_..." alt="" coords="592,297,709,325"/>
+<area shape="rect" id="node9" href="$structhoney_1_1thread_1_1_pool_1_1_task.html" title="All tasks must inherit from this class. std::function is not used here to avoid the operator() virtua..." alt="" coords="282,229,419,273"/>
+<area shape="rect" id="node10" href="$structhoney_1_1mt_1_1_funcptr_base.html" title="Inherit to enable non&#45;virtual functor calling. " alt="" coords="20,243,183,271"/>
+<area shape="rect" id="node11" href="$classhoney_1_1_mutex.html" title="A thread lock where the lock is acquired by suspending thread execution until it becomes available..." alt="" coords="300,521,401,549"/>
+<area shape="rect" id="node13" href="$classhoney_1_1_atomic.html" title="honey::Atomic\&lt; int \&gt;" alt="" coords="279,297,422,325"/>
+<area shape="rect" id="node14" href="$classhoney_1_1_dep_node.html" title="honey::DepNode\&lt; DepTask * \&gt;" alt="" coords="248,349,453,377"/>
+<area shape="rect" id="node15" href="$classhoney_1_1_atomic.html" title="honey::Atomic\&lt; State \&gt;" alt="" coords="271,401,431,429"/>
+<area shape="rect" id="node16" href="$classhoney_1_1_dep_graph_1_1_vertex.html" title="A vertex is initially associated with one key and acts like a multi&#45;map, storing all nodes and graph ..." alt="" coords="253,453,448,497"/>
+<area shape="rect" id="node19" href="$classhoney_1_1_weak_ptr.html" title="honey::WeakPtr\&lt; honey\l::DepTask \&gt;" alt="" coords="269,574,433,618"/>
+<area shape="rect" id="node21" href="$classhoney_1_1_dep_sched.html" title="Scheduler that serializes and parallelizes task execution given a dependency graph of tasks and a poo..." alt="" coords="287,73,414,101"/>
+</map>

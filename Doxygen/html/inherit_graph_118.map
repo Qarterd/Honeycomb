@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$structhoney_1_1lockfree_1_1_hazard_mem_link.html" title="Base link class, contains a generic Cas&#45;able data chunk. The data chunk contains a pointer to a Hazar..." alt="" coords="5,13,197,57"/>
+<area shape="rect" id="node2" href="$structhoney_1_1lockfree_1_1_list_1_1_node_1_1_link.html" title="Combines node pointer and delete mark in one Cas&#45;able integer. " alt="" coords="246,5,397,65"/>
+</map>

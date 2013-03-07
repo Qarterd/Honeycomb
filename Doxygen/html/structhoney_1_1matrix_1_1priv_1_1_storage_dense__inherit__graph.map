@@ -1,0 +1,6 @@
+<map id="honey::matrix::priv::StorageDense&lt; Subclass &gt;" name="honey::matrix::priv::StorageDense&lt; Subclass &gt;">
+<area shape="rect" id="node2" href="$classhoney_1_1matrix_1_1priv_1_1_storage_auto.html" title="Automatic (stack&#45;compatible) dense storage. " alt="" coords="258,5,438,49"/>
+<area shape="rect" id="node3" href="$classhoney_1_1matrix_1_1priv_1_1_storage_block.html" title="Block wrapper around any constant matrix with auto / dynamic dense storage type. Fully recursive..." alt="" coords="255,73,441,117"/>
+<area shape="rect" id="node4" href="$classhoney_1_1matrix_1_1priv_1_1_storage_dynamic.html" title="dynamic (heap) dense storage " alt="" coords="246,141,450,185"/>
+<area shape="rect" id="node5" href="$classhoney_1_1vec_1_1priv_1_1_storage_fields.html" title="Automatic (stack&#45;compatible) vector storage that allows direct access to dimension fields..." alt="" coords="264,209,432,253"/>
+</map>

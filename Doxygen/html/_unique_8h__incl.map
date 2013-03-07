@@ -1,0 +1,21 @@
+<map id="src/common/Honey/Thread/Lock/Unique.h" name="src/common/Honey/Thread/Lock/Unique.h">
+<area shape="rect" id="node2" href="$_enum_8h.html" title="Honey/Misc/Enum.h" alt="" coords="722,99,861,127"/>
+<area shape="rect" id="node44" href="$_scope_guard_8h.html" title="Honey/Misc/ScopeGuard.h" alt="" coords="1163,510,1343,538"/>
+<area shape="rect" id="node45" href="$common_2_honey_2_chrono_2_clock_8h.html" title="Honey/Chrono/Clock.h" alt="" coords="1097,99,1252,127"/>
+<area shape="rect" id="node49" href="$common_2_honey_2_thread_2_lock_2_mutex_8h.html" title="Honey/Thread/Lock/Mutex.h" alt="" coords="1330,99,1517,127"/>
+<area shape="rect" id="node3" href="$_id_8h.html" title="Honey/String/Id.h" alt="" coords="507,270,631,298"/>
+<area shape="rect" id="node39" href="$common_2_honey_2_math_2_numeral_8h.html" title="Honey/Math/Numeral.h" alt="" coords="773,425,931,453"/>
+<area shape="rect" id="node41" href="$_exception_8h.html" title="Honey/Misc/Exception.h" alt="" coords="650,185,813,213"/>
+<area shape="rect" id="node4" href="$_string_8h.html" title="Honey/String/String.h" alt="" coords="498,347,645,375"/>
+<area shape="rect" id="node36" href="$_hash_8h.html" title="Honey/String/Hash.h" alt="" coords="329,347,473,375"/>
+<area shape="rect" id="node5" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="613,510,757,538"/>
+<area shape="rect" id="node6" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="1185,603,1321,631"/>
+<area shape="rect" id="node34" href="$_allocator_8h.html" title="Honey/Memory/Allocator.h" alt="" coords="2518,697,2695,725"/>
+<area shape="rect" id="node37" href="$_optional_8h.html" title="Honey/Misc/Optional.h" alt="" coords="322,425,477,453"/>
+<area shape="rect" id="node38" href="$_bytes_8h.html" title="Honey/String/Bytes.h" alt="" coords="501,425,647,453"/>
+<area shape="rect" id="node42" href="$_string_2_stream_8h.html" title="Honey/String/Stream.h" alt="" coords="655,270,811,298"/>
+<area shape="rect" id="node43" href="$_std_util_8h.html" title="Honey/Misc/StdUtil.h" alt="" coords="670,347,815,375"/>
+<area shape="rect" id="node46" href="$_time_point_8h.html" title="Honey/Chrono/TimePoint.h" alt="" coords="889,185,1071,213"/>
+<area shape="rect" id="node48" href="$mac_2_honey_2_chrono_2platform_2_clock_8h.html" title="Honey/Chrono/platform\l/Clock.h" alt="" coords="1095,177,1253,221"/>
+<area shape="rect" id="node47" href="$_duration_8h.html" title="Honey/Chrono/Duration.h" alt="" coords="891,270,1063,298"/>
+</map>

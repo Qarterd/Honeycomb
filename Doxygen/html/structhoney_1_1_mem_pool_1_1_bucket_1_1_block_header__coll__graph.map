@@ -1,0 +1,4 @@
+<map id="honey::MemPool::Bucket::BlockHeader" name="honey::MemPool::Bucket::BlockHeader">
+<area shape="rect" id="node2" href="$structhoney_1_1_mem_pool_1_1_bucket_1_1_block_header_1_1_debug.html" title="honey::MemPool::Bucket\l::BlockHeader::Debug" alt="" coords="5,115,173,159"/>
+<area shape="rect" id="node3" href="$structhoney_1_1_mem_pool_1_1_bucket_1_1_handle.html" title="Enables blocks to be referenced via index rather than pointer so that they can include a tag while st..." alt="" coords="93,6,261,50"/>
+</map>

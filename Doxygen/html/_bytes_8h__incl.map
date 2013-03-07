@@ -1,0 +1,16 @@
+<map id="src/common/Honey/String/Bytes.h" name="src/common/Honey/String/Bytes.h">
+<area shape="rect" id="node2" href="$_bit_op_8h.html" title="Honey/Misc/BitOp.h" alt="" coords="1236,331,1375,359"/>
+<area shape="rect" id="node38" href="$_range_8h.html" title="Honey/Misc/Range.h" alt="" coords="1342,177,1487,205"/>
+<area shape="rect" id="node39" href="$_buffer_8h.html" title="Honey/Memory/Buffer.h" alt="" coords="1482,99,1643,127"/>
+<area shape="rect" id="node3" href="$common_2_honey_2_core_2_core_8h.html" title="Honey/Core/Core.h" alt="" coords="1233,587,1369,615"/>
+<area shape="rect" id="node34" href="$common_2_honey_2_math_2_numeral_8h.html" title="Honey/Math/Numeral.h" alt="" coords="1338,409,1496,437"/>
+<area shape="rect" id="node31" href="$_allocator_8h.html" title="Honey/Memory/Allocator.h" alt="" coords="2518,681,2695,709"/>
+<area shape="rect" id="node32" href="$_meta_8h.html" title="Honey/Core/Meta.h" alt="" coords="2549,766,2685,794"/>
+<area shape="rect" id="node33" href="$_preprocessor_8h.html" title="Honey/Core/Preprocessor.h" alt="" coords="2582,843,2767,871"/>
+<area shape="rect" id="node35" href="$common_2_honey_2_misc_2_debug_8h.html" title="Honey/Misc/Debug.h" alt="" coords="1341,494,1485,522"/>
+<area shape="rect" id="node40" href="$_alge_8h.html" title="Honey/Math/Alge/Alge.h" alt="" coords="1557,177,1721,205"/>
+<area shape="rect" id="node41" href="$_float_8h.html" title="Honey/Math/Float.h" alt="" coords="1451,254,1588,282"/>
+<area shape="rect" id="node43" href="$_double_8h.html" title="Honey/Math/Double.h" alt="" coords="1613,254,1763,282"/>
+<area shape="rect" id="node44" href="$_quad_8h.html" title="Honey/Math/Quad.h" alt="" coords="1787,254,1927,282"/>
+<area shape="rect" id="node42" href="$_real_8h.html" title="Honey/Math/Real.h" alt="" coords="1536,331,1671,359"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="honey::app::ModuleRegistry" name="honey::app::ModuleRegistry">
+<area shape="rect" id="node3" href="$classhoney_1_1_shared_ptr.html" title="Combined intrusive/non&#45;intrusive smart pointer. Can reference and share any object automatically..." alt="" coords="6,211,161,239"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_id.html" title="Holds a name string and its hashed value for fast comparison ops. See String Identifier. " alt="" coords="187,211,263,239"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_string.html" title="Unicode UTF&#45;16 string class, wrapper around std::u16string. " alt="" coords="182,110,281,138"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="169,6,295,50"/>
+</map>

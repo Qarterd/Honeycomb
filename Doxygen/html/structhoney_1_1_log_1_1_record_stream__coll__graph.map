@@ -1,0 +1,10 @@
+<map id="honey::Log::RecordStream" name="honey::Log::RecordStream">
+<area shape="rect" id="node2" title="STL class. " alt="" coords="34,366,160,394"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="5,262,171,306"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="21,166,153,210"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="11,86,164,114"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="38,6,137,34"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_unique_lock.html" title="honey::UniqueLock\&lt;\l SpinLock \&gt;" alt="" coords="187,358,329,402"/>
+<area shape="rect" id="node8" href="$structhoney_1_1mt_1_1_no_copy.html" title="Inherit to declare that class is not copyable. " alt="" coords="195,270,329,298"/>
+<area shape="rect" id="node9" href="$classhoney_1_1_log.html" title="Logger. " alt="" coords="354,366,440,394"/>
+</map>

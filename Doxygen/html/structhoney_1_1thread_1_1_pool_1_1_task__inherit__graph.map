@@ -1,0 +1,8 @@
+<map id="honey::thread::Pool::Task" name="honey::thread::Pool::Task">
+<area shape="rect" id="node3" href="$classhoney_1_1_dep_task.html" title="Base class of DepTask_, can be added to scheduler. Instances must be created through class DepTask_..." alt="" coords="235,177,351,205"/>
+<area shape="rect" id="node6" href="$classhoney_1_1_periodic_task.html" title="Base class of PeriodicTask_, returned by scheduler. " alt="" coords="392,177,532,205"/>
+<area shape="rect" id="node2" href="$structhoney_1_1mt_1_1_funcptr_base.html" title="Inherit to enable non&#45;virtual functor calling. " alt="" coords="288,6,451,34"/>
+<area shape="rect" id="node4" href="$classhoney_1_1_dep_task__.html" title="honey::DepTask_\&lt; void \&gt;" alt="" coords="5,262,176,290"/>
+<area shape="rect" id="node5" href="$classhoney_1_1_dep_task__.html" title="Holds a functor and dependency information, enqueue in a scheduler to run the task. " alt="" coords="201,262,385,290"/>
+<area shape="rect" id="node7" href="$classhoney_1_1_periodic_task__.html" title="Holds a functor and period information, returned by scheduler. " alt="" coords="410,254,549,298"/>
+</map>
