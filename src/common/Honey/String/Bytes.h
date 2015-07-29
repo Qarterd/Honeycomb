@@ -14,15 +14,21 @@ constexpr byte operator"" _b(unsigned long long int i)  { return static_cast<byt
 /// Construct byte from character literal (eg. 'x'_b)
 constexpr byte operator"" _b(char c)                    { return static_cast<byte>(c); }
 
+template<int N> struct ByteArray;
+
 /// String of bytes
 class Bytes : public vector<byte>
 {
 public:
     using vector::vector;
     
-    /// Convert bytes to encoded string
+    Bytes() = default;
+    template<int N>
+    Bytes(const ByteArray<N>& bs)                       : vector(bs.begin(), bs.end()) {}
+    
+    /// Write bytes to string stream using current encoding
     friend ostream& operator<<(ostream& os, const Bytes& val);
-    /// Convert encoded string to bytes
+    /// Read bytes from string stream using current decoding
     friend istream& operator>>(istream& is, Bytes& val);
 };
 
@@ -76,7 +82,10 @@ struct ByteArray : array<byte, N>
     ByteArray(byte b, Bytes&&... bs)    : Super{b, forward<Bytes>(bs)...} {}
     ByteArray(const Bytes& bs)          { assert(bs.size() == this->size()); std::copy(bs.begin(), bs.end(), this->begin()); }
     
-    Bytes toBytes() const               { return Bytes(this->begin(), this->end()); }
+    /// Write byte array to string stream using current encoding
+    friend ostream& operator<<(ostream& os, const ByteArray& val)   { os << Bytes(val); return os; }
+    /// Read byte array from string stream using current decoding
+    friend istream& operator>>(istream& is, ByteArray& val)         { Bytes bs; is >> bs; val = bs; return is; }
 };
 
 }

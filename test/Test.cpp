@@ -678,14 +678,14 @@ void test()
         debug_print(sout() << "Hash 1: " << hash::fast("some string") << " " << fromBytes<int>(toBytes(hash::fast("some string"))) << endl);
         debug_print(sout() << "Hash 2: " << toBytes(hash::fast("some string")) << endl);
         debug_print(sout() << "Hash 3: " << toBytes(hash::fast("some string", 1)) << endl);
-        debug_print(sout() << "Secure Hash 1: " << hash::secure("some string").toBytes() << endl);
-        debug_print(sout() << "Secure Hash 2: " << hash::secure("some string", hash::secure("key")).toBytes() << endl);
+        debug_print(sout() << "Secure Hash 1: " << hash::secure("some string") << endl);
+        debug_print(sout() << "Secure Hash 2: " << hash::secure("some string", hash::secure("key")) << endl);
     
         ByteArray<5> literals(255_b,'2'_b,256_b,'4'_b,5_b);
         auto time = MonoClock::now();
         auto keys = hash::secureKeys("password", "some string"_b, 1 << 15, 2);
-        debug_print(sout() << "Secure Key 1: " << keys[0].toBytes() << endl);
-        debug_print(sout() << "Secure Key 2: " << keys[1].toBytes() << endl);
+        debug_print(sout() << "Secure Key 1: " << keys[0] << endl);
+        debug_print(sout() << "Secure Key 2: " << keys[1] << endl);
         debug_print(sout() << "Secure Key Time: " << Millisec(MonoClock::now()-time) / 1000. << endl);
     }
     
