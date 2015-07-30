@@ -23,58 +23,28 @@ const byte Chacha::_sigma[] = "expand 32-byte k";
 
 void Chacha::setSeed()
 {
-    setSeed(scrambleSeed(random::deviceEntropy(mt::arraySize<Seed>::value)));
-}
-
-#define SCRAMBLE(a)                             \
-    {                                           \
-       a[0]^=a[1]<<11; a[3]+=a[0]; a[1]+=a[2];  \
-       a[1]^=a[2]>>2;  a[4]+=a[1]; a[2]+=a[3];  \
-       a[2]^=a[3]<<8;  a[5]+=a[2]; a[3]+=a[4];  \
-       a[3]^=a[4]>>16; a[6]+=a[3]; a[4]+=a[5];  \
-       a[4]^=a[5]<<10; a[7]+=a[4]; a[5]+=a[6];  \
-       a[5]^=a[6]>>4;  a[8]+=a[5]; a[6]+=a[7];  \
-       a[6]^=a[7]<<8;  a[9]+=a[6]; a[7]+=a[8];  \
-       a[7]^=a[8]>>9;  a[0]+=a[7]; a[8]+=a[9];  \
-       a[8]^=a[9]<<7;  a[1]+=a[8]; a[9]+=a[0];  \
-       a[9]^=a[0]>>5;  a[2]+=a[9]; a[0]+=a[1];  \
-    }
-
-Chacha::Seed Chacha::scrambleSeed(const Seed& seed)
-{
-    Seed res;
-    //Golden ratio: (sqrt(5/4) - 0.5) * 2^32
-    res.ints().fill(0x9e3779b9);
-    //Scramble the ratio
-    for (auto i: range(4)) { mt_unused(i); SCRAMBLE(res.ints()); }
-    //Scramble the seed
-    for (auto i: range(res.ints().size())) res.ints()[i] += seed.ints()[i];
-    SCRAMBLE(res.ints());
-    //Further scramble the seed with itself
-    for (auto& e: res.ints()) e += e;
-    SCRAMBLE(res.ints());
-    return res;
+    setSeed(random::deviceEntropy(mt::arraySize<Seed>::value));
 }
 
 void Chacha::setSeed(const Seed& seed)
 {
     //Key
-    _state.core[1] = seed.ints()[0];
-    _state.core[2] = seed.ints()[1];
-    _state.core[3] = seed.ints()[2];
-    _state.core[4] = seed.ints()[3];
-    _state.core[11] = seed.ints()[4];
-    _state.core[12] = seed.ints()[5];
-    _state.core[13] = seed.ints()[6];
-    _state.core[14] = seed.ints()[7];
+    _state.core[1] = BitOp::fromPartsBig<uint32>(seed.data() + 0*sizeof(uint32));
+    _state.core[2] = BitOp::fromPartsBig<uint32>(seed.data() + 1*sizeof(uint32));
+    _state.core[3] = BitOp::fromPartsBig<uint32>(seed.data() + 2*sizeof(uint32));
+    _state.core[4] = BitOp::fromPartsBig<uint32>(seed.data() + 3*sizeof(uint32));
+    _state.core[11] = BitOp::fromPartsBig<uint32>(seed.data() + 4*sizeof(uint32));
+    _state.core[12] = BitOp::fromPartsBig<uint32>(seed.data() + 5*sizeof(uint32));
+    _state.core[13] = BitOp::fromPartsBig<uint32>(seed.data() + 6*sizeof(uint32));
+    _state.core[14] = BitOp::fromPartsBig<uint32>(seed.data() + 7*sizeof(uint32));
     //Constants
-    _state.core[0] = BitOp::fromPartsLittle<uint32>(_sigma + 0);
-    _state.core[5] = BitOp::fromPartsLittle<uint32>(_sigma + 4);
-    _state.core[10] = BitOp::fromPartsLittle<uint32>(_sigma + 8);
-    _state.core[15] = BitOp::fromPartsLittle<uint32>(_sigma + 12);
+    _state.core[0] = BitOp::fromPartsLittle<uint32>(_sigma + 0*sizeof(uint32));
+    _state.core[5] = BitOp::fromPartsLittle<uint32>(_sigma + 1*sizeof(uint32));
+    _state.core[10] = BitOp::fromPartsLittle<uint32>(_sigma + 2*sizeof(uint32));
+    _state.core[15] = BitOp::fromPartsLittle<uint32>(_sigma + 3*sizeof(uint32));
     //IV
-    _state.core[6] = seed.ints()[8];
-    _state.core[7] = seed.ints()[9];
+    _state.core[6] = BitOp::fromPartsBig<uint32>(seed.data() + 8*sizeof(uint32));
+    _state.core[7] = BitOp::fromPartsBig<uint32>(seed.data() + 9*sizeof(uint32));
     //Block counter
     _state.core[8] = 0;
     _state.core[9] = 0;
@@ -154,26 +124,26 @@ uint64 Chacha::next()
 void Chacha::setKey(const Key& key)
 {
     //Key
-    _state.core[1] = key.ints()[0];
-    _state.core[2] = key.ints()[1];
-    _state.core[3] = key.ints()[2];
-    _state.core[4] = key.ints()[3];
-    _state.core[11] = key.ints()[4];
-    _state.core[12] = key.ints()[5];
-    _state.core[13] = key.ints()[6];
-    _state.core[14] = key.ints()[7];
+    _state.core[1] = BitOp::fromPartsBig<uint32>(key.data() + 0*sizeof(uint32));
+    _state.core[2] = BitOp::fromPartsBig<uint32>(key.data() + 1*sizeof(uint32));
+    _state.core[3] = BitOp::fromPartsBig<uint32>(key.data() + 2*sizeof(uint32));
+    _state.core[4] = BitOp::fromPartsBig<uint32>(key.data() + 3*sizeof(uint32));
+    _state.core[11] = BitOp::fromPartsBig<uint32>(key.data() + 4*sizeof(uint32));
+    _state.core[12] = BitOp::fromPartsBig<uint32>(key.data() + 5*sizeof(uint32));
+    _state.core[13] = BitOp::fromPartsBig<uint32>(key.data() + 6*sizeof(uint32));
+    _state.core[14] = BitOp::fromPartsBig<uint32>(key.data() + 7*sizeof(uint32));
     //Constants
-    _state.core[0] = BitOp::fromPartsLittle<uint32>(_sigma + 0);
-    _state.core[5] = BitOp::fromPartsLittle<uint32>(_sigma + 4);
-    _state.core[10] = BitOp::fromPartsLittle<uint32>(_sigma + 8);
-    _state.core[15] = BitOp::fromPartsLittle<uint32>(_sigma + 12);
+    _state.core[0] = BitOp::fromPartsLittle<uint32>(_sigma + 0*sizeof(uint32));
+    _state.core[5] = BitOp::fromPartsLittle<uint32>(_sigma + 1*sizeof(uint32));
+    _state.core[10] = BitOp::fromPartsLittle<uint32>(_sigma + 2*sizeof(uint32));
+    _state.core[15] = BitOp::fromPartsLittle<uint32>(_sigma + 3*sizeof(uint32));
 }
 
 void Chacha::setIv(const Iv& iv)
 {
     //IV
-    _state.core[6] = iv.ints()[0];
-    _state.core[7] = iv.ints()[1];
+    _state.core[6] = BitOp::fromPartsBig<uint32>(iv.data() + 0*sizeof(uint32));
+    _state.core[7] = BitOp::fromPartsBig<uint32>(iv.data() + 1*sizeof(uint32));
     //Block counter
     _state.core[8] = 0;
     _state.core[9] = 0;

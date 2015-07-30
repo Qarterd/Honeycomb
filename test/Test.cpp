@@ -650,9 +650,9 @@ void test()
     Chacha crypt;
     Chacha::Key key;
     Chacha::Iv iv, iv2;
-    for (auto& e : key.ints()) e = Discrete_<uint32>::nextStd(gen);
-    for (auto& e : iv.ints()) e = Discrete_<uint32>::nextStd(gen);
-    for (auto& e : iv2.ints()) e = Discrete_<uint32>::nextStd(gen);
+    for (auto i : range(0, size(key), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), key.data() + i);
+    for (auto i : range(0, size(iv), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv.data() + i);
+    for (auto i : range(0, size(iv2), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv2.data() + i);
     
     String msg = "Test msg la la la la ";
     for (auto i : range(50)) { msg += sout() << i << " "; }

@@ -44,34 +44,19 @@ public:
     /// 256-bit Cryptographic Key
     struct Key : ByteArray<32>
     {
-        typedef array<uint32,8> IntArray;
-    
         using ByteArray::ByteArray;
-
-        const IntArray& ints() const                { return reinterpret_cast<const IntArray&>(*this); }
-        IntArray& ints()                            { return reinterpret_cast<IntArray&>(*this); }
     };
 
     /// 64-bit Cryptographic IV
     struct Iv : ByteArray<8>
     {
-        typedef array<uint32,2> IntArray;
-    
         using ByteArray::ByteArray;
-
-        const IntArray& ints() const                { return reinterpret_cast<const IntArray&>(*this); }
-        IntArray& ints()                            { return reinterpret_cast<IntArray&>(*this); }
     };
 
     /// 320-bit Seed (Key+IV)
     struct Seed : ByteArray<40>
     {
-        typedef array<uint32,10> IntArray;
-    
         using ByteArray::ByteArray;
-
-        const IntArray& ints() const                { return reinterpret_cast<const IntArray&>(*this); }
-        IntArray& ints()                            { return reinterpret_cast<IntArray&>(*this); }
     };
 
     /// Generator State
@@ -116,9 +101,6 @@ public:
     State& getState()                               { return _state; }
 
 private:
-    /// Spread out entropy in a seed uniformly across the all the bits
-    Seed scrambleSeed(const Seed& seed);
-
     /// Take one step in the random generator state
     void step();
 
