@@ -34,6 +34,7 @@ istream& operator>>(istream& is, Bytes& val)
     case encode::priv::Encoding::hex:
         {
             String str;
+            auto flags = is.flags(); //save flags
             is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isHex(is.peek()))
             {
@@ -41,20 +42,30 @@ istream& operator>>(istream& is, Bytes& val)
                 is >> c;
                 str += c;
             }
-            is >> std::skipws; //restore
+            is.flags(flags); //restore flags
             val = encode::hex_decode(str);
             break;
         }
     case encode::priv::Encoding::u8:
         {
-            //all stream chars are valid, read until end
-            std::string str{std::istreambuf_iterator<char>(is), {}};
+            //all chars are valid, read until end
+            String str;
+            auto flags = is.flags(); //save flags
+            is >> std::noskipws; //disable whitespace skipping
+            while (is.peek() != std::stringstream::traits_type::eof())
+            {
+                char c;
+                is >> c;
+                str += c;
+            }
+            is.flags(flags); //restore flags
             val = Bytes(str.begin(), str.end());
             break;
         }
     case encode::priv::Encoding::base64:
         {
             String str;
+            auto flags = is.flags(); //save flags
             is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isBase64(is.peek()))
             {
@@ -62,13 +73,14 @@ istream& operator>>(istream& is, Bytes& val)
                 is >> c;
                 str += c;
             }
-            is >> std::skipws; //restore
+            is.flags(flags); //restore flags
             val = encode::base64_decode(str);
             break;
         }
     case encode::priv::Encoding::base58:
         {
             String str;
+            auto flags = is.flags(); //save flags
             is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isBase58(is.peek()))
             {
@@ -76,7 +88,7 @@ istream& operator>>(istream& is, Bytes& val)
                 is >> c;
                 str += c;
             }
-            is >> std::skipws; //restore
+            is.flags(flags); //restore flags
             val = encode::base58_decode(str);
             break;
         }
