@@ -13,6 +13,9 @@ ostream& operator<<(ostream& os, const Bytes& val)
     case encode::priv::Encoding::hex:
         os << encode::hex_encode(val.data(), size(val));
         break;
+    case encode::priv::Encoding::dec:
+        os << encode::dec_encode(val.data(), size(val));
+        break;
     case encode::priv::Encoding::u8:
         os << std::string(val.begin(), val.end());
         break;
@@ -44,6 +47,21 @@ istream& operator>>(istream& is, Bytes& val)
             }
             is.flags(flags); //restore flags
             val = encode::hex_decode(str);
+            break;
+        }
+    case encode::priv::Encoding::dec:
+        {
+            String str;
+            auto flags = is.flags(); //save flags
+            is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
+            while (encode::isDec(is.peek()))
+            {
+                char c;
+                is >> c;
+                str += c;
+            }
+            is.flags(flags); //restore flags
+            val = encode::dec_decode(str);
             break;
         }
     case encode::priv::Encoding::u8:

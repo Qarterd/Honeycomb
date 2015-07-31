@@ -85,6 +85,76 @@ Bytes hex_decode(const String& string)
     return ret;
 }
 
+String dec_encode(const byte* data, int len)
+{
+    const byte* cur = data, *end = data + len;
+    
+    //skip and count leading zeroes
+    int zeroes;
+    for (zeroes = 0; cur != end && *cur == 0; ++cur, ++zeroes);
+    
+    //convert big-endian base256 integer to base10 integer
+    Bytes b10((end - cur) * 241 / 100 + 1); //length * log(256) / log(10), rounded up
+    int high, j;
+    for (high = size(b10); cur != end; ++cur, high = j+1)
+    {
+        //b10 = b10 * 256 + ch
+        int carry;
+        for (carry = *cur, j = size(b10)-1; j >= high || carry; --j)
+        {
+            assert(j >= 0);
+            carry += 256 * b10[j];
+            b10[j] = carry % 10;
+            carry /= 10;
+        }
+    }
+    
+    //skip leading zeroes in base10 result
+    auto it = b10.begin() + high;
+    
+    //translate the result into a string
+    String ret;
+    ret.reserve(zeroes + (b10.end() - it));
+    ret.assign(zeroes, toDec(0));
+    while (it != b10.end()) ret += toDec(*(it++));
+    return ret;
+}
+
+Bytes dec_decode(const String& string)
+{
+    auto cur = string.begin(), end = string.end();
+    
+    //skip and count leading '0's
+    int zeroes;
+    for (zeroes = 0; cur != end && *cur == toDec(0); ++cur, ++zeroes);
+    
+    //convert big-endian base10 integer to base256 integer
+    Bytes b256((end - cur) * 416 / 1000 + 1); //length * log(10) / log(256), rounded up
+    int high, j;
+    for (high = size(b256); cur != end && isDec(*cur); ++cur, high = j+1)
+    {
+        //b256 = b256 * 10 + ch
+        int carry;
+        for (carry = fromDec(*cur), j = size(b256)-1; j >= high || carry; --j)
+        {
+            assert(j >= 0);
+            carry += 10 * b256[j];
+            b256[j] = carry % 256;
+            carry /= 256;
+        }
+    }
+    
+    //skip leading zeroes in base256 result
+    auto it = b256.begin() + high;
+    
+    //assemble the final bytes
+    Bytes ret;
+    ret.reserve(zeroes + (b256.end() - it));
+    ret.assign(zeroes, 0);
+    while (it != b256.end()) ret.push_back(*(it++));
+    return ret;
+}
+
 String base64_encode(const byte* data, int len)
 {
     String ret;
@@ -134,7 +204,7 @@ Bytes base64_decode(const String& string)
         if (!isBase64(e) || e == '=') break;
         chars_4[i++] = e;
         if (i == 4)
-        {
+        { 
             for(auto i: range(4)) chars_4[i] = fromBase64(chars_4[i]);
 
             chars_3[0] = (chars_4[0] << 2) + ((chars_4[1] & 0x30) >> 4);

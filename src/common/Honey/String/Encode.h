@@ -17,6 +17,7 @@ namespace priv
     enum class Encoding
     {
         hex,
+        dec,
         u8,
         base64,
         base58
@@ -55,6 +56,24 @@ Bytes hex_decode(const String& string);
 inline ostream& hex(ostream& os)            { priv::EncoderManip::inst(os).encoding = priv::Encoding::hex; return os; }
 /// Use hexadecimal decoding (high-nibble-first) when reading bytes from a string stream
 inline istream& hex(istream& is)            { priv::EncoderManip::inst(is).encoding = priv::Encoding::hex; return is; }
+
+
+/// Check if character is in decimal charset (numeric)
+inline bool isDec(Char c)                   { return c >= '0' && c <= '9'; }
+/// Convert byte to decimal character
+inline Char toDec(byte b)                   { return '0' + b; }
+/// Convert decimal character to byte
+inline byte fromDec(Char c)                 { return c - '0'; }
+
+/// Convert bytes to string using decimal encoding (big-endian integer)
+String dec_encode(const byte* data, int len);
+/// Convert string to bytes using decimal decoding (big-endian integer)
+Bytes dec_decode(const String& string);
+
+/// Use decimal encoding (big-endian integer) when writing bytes to a string stream
+inline ostream& dec(ostream& os)            { priv::EncoderManip::inst(os).encoding = priv::Encoding::dec; return os; }
+/// Use decimal decoding (big-endian integer) when reading bytes from a string stream
+inline istream& dec(istream& is)            { priv::EncoderManip::inst(is).encoding = priv::Encoding::dec; return is; }
 
 
 /// Use UTF-8 encoding when writing bytes to a string stream

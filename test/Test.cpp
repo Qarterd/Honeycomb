@@ -701,6 +701,16 @@ void test()
     
     {
         ostringstream os;
+        os << encode::dec << "some string"_b;
+        debug_print(sout() << "Encode Dec: " << os.str() << endl);
+        istringstream is(os.str());
+        Bytes bs;
+        is >> encode::dec >> bs;
+        debug_print(sout() << "Decode Dec: " << encode::u8 << bs << endl);
+    }
+    
+    {
+        ostringstream os;
         os << encode::u8 << "some string"_b;
         debug_print(sout() << "Encode UTF-8: " << os.str() << endl);
         istringstream is(os.str());
