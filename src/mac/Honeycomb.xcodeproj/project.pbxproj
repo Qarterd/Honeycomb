@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		376C06261B669B16007439A4 /* Bytes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C06251B669B16007439A4 /* Bytes.cpp */; };
 		376C06291B6754CC007439A4 /* Encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C06281B6754CC007439A4 /* Encode.cpp */; };
+		376C062E1B6B562C007439A4 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C062D1B6B562C007439A4 /* Util.cpp */; };
 		37AB04BA1B64572100A95E28 /* libBLAKE2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB04B91B64572100A95E28 /* libBLAKE2.a */; };
 		37AB0D941B61232B0087FBDC /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AB0D931B61232B0087FBDC /* Random.cpp */; };
 		37AD1DC31B57ACAA000F8AF4 /* libyajl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD1DC21B57ACAA000F8AF4 /* libyajl.a */; };
@@ -75,6 +76,8 @@
 		376C06251B669B16007439A4 /* Bytes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bytes.cpp; sourceTree = "<group>"; };
 		376C06271B6754C6007439A4 /* Encode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Encode.h; sourceTree = "<group>"; };
 		376C06281B6754CC007439A4 /* Encode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encode.cpp; sourceTree = "<group>"; };
+		376C062D1B6B562C007439A4 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		376C062F1B6B5633007439A4 /* Util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		37AB04B91B64572100A95E28 /* libBLAKE2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libBLAKE2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37AB0D921B61217C0087FBDC /* Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
 		37AB0D931B61232B0087FBDC /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
@@ -601,6 +604,8 @@
 		37FEB4E81B52477D0095BB69 /* String */ = {
 			isa = PBXGroup;
 			children = (
+				376C062F1B6B5633007439A4 /* Util.h */,
+				376C062D1B6B562C007439A4 /* Util.cpp */,
 				376C06271B6754C6007439A4 /* Encode.h */,
 				376C06281B6754CC007439A4 /* Encode.cpp */,
 				376C06241B6699A8007439A4 /* Bytes.h */,
@@ -895,6 +900,7 @@
 				37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */,
 				37FEB5651B52477D0095BB69 /* Interp.cpp in Sources */,
 				37FEB5831B52477D0095BB69 /* DiscreteGen.cpp in Sources */,
+				376C062E1B6B562C007439A4 /* Util.cpp in Sources */,
 				37FEB5381B52477D0095BB69 /* Double.cpp in Sources */,
 				37FEB5611B52477D0095BB69 /* BisectN.cpp in Sources */,
 				37AB0D941B61232B0087FBDC /* Random.cpp in Sources */,

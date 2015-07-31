@@ -34,43 +34,49 @@ istream& operator>>(istream& is, Bytes& val)
     case encode::priv::Encoding::hex:
         {
             String str;
+            is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isHex(is.peek()))
             {
                 char c;
                 is >> c;
                 str += c;
             }
+            is >> std::skipws; //restore
             val = encode::hex_decode(str);
             break;
         }
     case encode::priv::Encoding::u8:
         {
-            std::string str;
-            is >> str;
+            //all stream chars are valid, read until end
+            std::string str{std::istreambuf_iterator<char>(is), {}};
             val = Bytes(str.begin(), str.end());
             break;
         }
     case encode::priv::Encoding::base64:
         {
             String str;
+            is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isBase64(is.peek()))
             {
                 char c;
                 is >> c;
                 str += c;
             }
+            is >> std::skipws; //restore
             val = encode::base64_decode(str);
             break;
         }
     case encode::priv::Encoding::base58:
         {
             String str;
+            is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
             while (encode::isBase58(is.peek()))
             {
                 char c;
                 is >> c;
                 str += c;
             }
+            is >> std::skipws; //restore
             val = encode::base58_decode(str);
             break;
         }

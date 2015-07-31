@@ -90,6 +90,7 @@
 #include "Honey/String/Json.h"
 #include "Honey/String/Stream.h"
 #include "Honey/String/String.h"
+#include "Honey/String/Util.h"
 #include "Honey/Thread/Concur/Deque.h"
 #include "Honey/Thread/Condition/Any.h"
 #include "Honey/Thread/Condition/Condition.h"

@@ -673,7 +673,7 @@ void test()
     crypt.setIv(iv2);
     crypt.decrypt(cipher+msg.length(), reinterpret_cast<byte*>(decipher+msg.length()), msg2.length());
     decipher[msg.length()+msg2.length()] = 0;
-
+    
     {
         debug_print(sout() << "Hash 1: " << hash::fast("some string") << " " << fromBytes<int>(toBytes(hash::fast("some string"))) << endl);
         debug_print(sout() << "Hash 2: " << toBytes(hash::fast("some string")) << endl);
@@ -701,6 +701,16 @@ void test()
     
     {
         ostringstream os;
+        os << encode::u8 << "some string"_b;
+        debug_print(sout() << "Encode UTF-8: " << os.str() << endl);
+        istringstream is(os.str());
+        Bytes bs;
+        is >> encode::u8 >> bs;
+        debug_print(sout() << "Decode UTF-8: " << encode::u8 << bs << endl);
+    }
+    
+    {
+        ostringstream os;
         os << encode::base64 << "some string"_b;
         debug_print(sout() << "Encode Base64: " << os.str() << endl);
         istringstream is(os.str());
@@ -718,6 +728,11 @@ void test()
         is >> encode::base58 >> bs;
         debug_print(sout() << "Decode Base58: " << encode::u8 << bs << endl);
     }
+    
+    int argc;
+    char** argv;
+    string::parseArgv("srhasnehrane hsanerhsra \"srasr\" 'srasra' \"sras's\" 12312", argc, argv);
+    string::deleteArgv(argc, argv);
     
     typedef Vegas<5, 4, Double> Vegas;
     struct VegasFunc
