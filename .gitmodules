@@ -1,10 +1,6 @@
 [submodule "ext/yajl"]
 	path = ext/yajl
 	url = git@github.com:Qarterd/yajl.git
-    
 [submodule "ext/blake2"]
 	path = ext/blake2
 	url = git@github.com:Qarterd/BLAKE2.git
-[submodule "ext/tclap"]
-	path = ext/tclap
-	url = git@github.com:Qarterd/tclap.git
