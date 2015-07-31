@@ -19,17 +19,17 @@ struct Parser
     typedef typename Value::Array Array;
     typedef typename Value::Object Object;
     
-    bool error_(const String& msg)
+    bool err(const String& msg)
     {
         //It's not safe to throw exceptions from callback, save error to throw later and debug break here
         error = sout() << "Parse error: " << msg;
-        error(error);
+        debug_break(error);
         return false;
     }
 
     pair<Value*, bool> add(Value&& val)
     {
-        if (stack.empty()) return make_pair(nullptr, error_("stack empty"));
+        if (stack.empty()) return make_pair(nullptr, err("stack empty"));
         Value& parent = stack.back();
         switch (parent.type())
         {
@@ -38,13 +38,13 @@ struct Parser
             return make_pair(&parent.back(), true);
         case ValueType::Object:
             {
-                if (key.empty()) return make_pair(nullptr, error_("invalid key, can't insert value into object"));
+                if (key.empty()) return make_pair(nullptr, err("invalid key, can't insert value into object"));
                 auto pair = parent.insert(key, move(val));
-                if (!pair.second) return make_pair(nullptr, error_(sout() << "duplicate key in json object: " << key));
+                if (!pair.second) return make_pair(nullptr, err(sout() << "duplicate key in json object: " << key));
                 return make_pair(pair.first->second.ptr(), true);
             }
         default:
-            return make_pair(nullptr, error_("invalid parent type"));
+            return make_pair(nullptr, err("invalid parent type"));
         }
     }
 
@@ -81,7 +81,7 @@ struct Parser
     static int ObjectKey(void* ctx, const uint8* str, size_t len)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        if (parser.stack.empty()) return parser.error_("stack empty");
+        if (parser.stack.empty()) return parser.err("stack empty");
         parser.key = String(reinterpret_cast<const char*>(str), (int)len);
         return true;
     }
@@ -89,11 +89,11 @@ struct Parser
     static int ObjectStart(void* ctx)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        if (parser.stack.empty()) return parser.error_("stack empty");
+        if (parser.stack.empty()) return parser.err("stack empty");
         Value& parent = parser.stack.back();
         if (parent.type() == ValueType::Null)
         {
-            if (parser.stack.size() > 1) return parser.error_("invalid parent type");
+            if (parser.stack.size() > 1) return parser.err("invalid parent type");
             parent = Object();
         }
         else
@@ -108,9 +108,9 @@ struct Parser
     static int ObjectEnd(void* ctx)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        if (parser.stack.empty()) return parser.error_("stack empty");
+        if (parser.stack.empty()) return parser.err("stack empty");
         Value& val = parser.stack.back();
-        if (val.type() != ValueType::Object) return parser.error_("unexpected end of object");
+        if (val.type() != ValueType::Object) return parser.err("unexpected end of object");
         parser.stack.pop_back();
         return true;
     }
@@ -118,11 +118,11 @@ struct Parser
     static int ArrayStart(void* ctx)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        if (parser.stack.empty()) return parser.error_("stack empty");
+        if (parser.stack.empty()) return parser.err("stack empty");
         Value& parent = parser.stack.back();
         if (parent.type() == ValueType::Null)
         {
-            if (parser.stack.size() > 1) return parser.error_("invalid parent type");
+            if (parser.stack.size() > 1) return parser.err("invalid parent type");
             parent = Array();
         }
         else
@@ -137,9 +137,9 @@ struct Parser
     static int ArrayEnd(void* ctx)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        if (parser.stack.empty()) return parser.error_("stack empty");
+        if (parser.stack.empty()) return parser.err("stack empty");
         Value& val = parser.stack.back();
-        if (val.type() != ValueType::Array) return parser.error_("unexpected end of array");
+        if (val.type() != ValueType::Array) return parser.err("unexpected end of array");
         parser.stack.pop_back();
         return true;
     }
@@ -197,9 +197,9 @@ istream& operator>>(istream& is, Value_<Config>& val)
         throw_ ValueError() << parser.error;
     case yajl_status_error:
         {
-            uint8* error_ = yajl_get_error(hand, true, reinterpret_cast<uint8*>(buf), is.gcount());
-            String error = reinterpret_cast<char*>(error_);
-            yajl_free_error(hand, error_);
+            uint8* err = yajl_get_error(hand, true, reinterpret_cast<uint8*>(buf), is.gcount());
+            String error = reinterpret_cast<char*>(err);
+            yajl_free_error(hand, err);
             throw_ ValueError() << error;
         }
     default:
@@ -233,16 +233,14 @@ struct Writer
     
     Writer(yajl_gen hand)               : hand(hand) {}
     
-    void error_(const String& msg)
+    void err(const String& msg)
     {
-        String error = sout() << "Write error: " << msg;
-        error(error);
-        throw_ ValueError() << error;
+        throw_ ValueError() << "Write error: " << msg;
     }
     
     void verifyStatus()
     {
-        if (stat != yajl_gen_status_ok) error_(sout() << "yajl_gen_status " << stat);
+        if (stat != yajl_gen_status_ok) err(sout() << "yajl_gen_status " << stat);
     }
     
     void write(const Value& val)

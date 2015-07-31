@@ -33,7 +33,7 @@ void ComObject::insertCom_priv(Component& com, int index, bool createDeps)
             if (createDeps)
                 addCom(ComRegistry::inst().create(key), true);
             else
-                error(sout()    << "Component dependency missing: " << key
+                error_(sout()   << "Component dependency missing: " << key
                                 << ".  Add the missing component first, or add with createDeps = true.");
         } 
     }

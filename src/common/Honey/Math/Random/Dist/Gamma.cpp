@@ -192,7 +192,7 @@ Real GammaFunc_<Real>::gt1(Real z)
    if (z >= 1.9) return near2(z);   
    if (z >= 1.1) return lanczos(z);
    if (z >= 0.9) return near1(z);
-   error("Argument less than 1");
+   error_("Argument less than 1");
    return 0;
 }
 
@@ -208,7 +208,7 @@ Real GammaFunc_<Real>::gammaLn(Real z, int& sign)
       Real cz = Alge::ceil(z); Real cz2 = cz / 2.0;
       sign = Alge::abs(Alge::ceil(cz2) - cz2) > 0.25 ? 1 : -1;
       Real fz = cz - z;
-      if (fz == 0) error("Non-positive integer argument");
+      if (fz == 0) error_("Non-positive integer argument");
       Real piz = 3.14159265358979323846 * (1.0 - z);
       return
          Alge::log(piz / Trig::sin(3.14159265358979323846 * fz)) - gt1(2.0 - z);
@@ -220,7 +220,7 @@ Real GammaFunc_<Real>::gammaLn(Real z)
 {
    int sign;
    Real lg = gammaLn(z, sign);
-   if (sign < 0) error("Negative gamma value");
+   if (sign < 0) error_("Negative gamma value");
    return lg;
 }
 

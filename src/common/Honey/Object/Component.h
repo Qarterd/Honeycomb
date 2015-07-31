@@ -75,7 +75,7 @@ namespace component
         create() { return *new Com; }
     template<class Com>
     typename mt::disable_if<std::is_default_constructible<Com>::value && !std::is_abstract<Com>::value, Component&>::type
-        create() { error("ComRegistry can't create non-default-constructible components. Must specialize component::create()."); return *static_cast<Component*>(nullptr); }
+        create() { error_("ComRegistry can't create non-default-constructible components. Must specialize component::create()."); return *static_cast<Component*>(nullptr); }
 }
 
 /// Holds global list of all component types

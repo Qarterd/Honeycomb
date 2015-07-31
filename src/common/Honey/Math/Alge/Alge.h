@@ -117,14 +117,14 @@ public:
     /// Check if x is a power of two
     static bool isPow2(UInt x)                                              { return !((x-1) & x); }
     /// Calculate nearest power of two >= x
-    static UInt pow2Ceil(UInt x)                                            { mt_unused(x); error("Unimplemented"); return 0; }
+    static UInt pow2Ceil(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
     /// Calculate nearest power of two <= x
     static UInt pow2Floor(UInt x)                                           { return isPow2(x) ? x : pow2Ceil(x) >> 1; }
 
     /// Calculate floor of the base 2 log of x
-    static UInt log2Floor(UInt x)                                           { mt_unused(x); error("Unimplemented"); return 0; }
+    static UInt log2Floor(UInt x)                                           { mt_unused(x); error_("Unimplemented"); return 0; }
     /// Calculate ceil of the base 2 log of x
-    static UInt log2Ceil(UInt x)                                            { mt_unused(x); error("Unimplemented"); return 0; }
+    static UInt log2Ceil(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
 
     /// Get the hypotenuse of a right angle triangle with side lengths `a` and `b`.  This method is more numerically stable than the direct approach: sqrt(a*a + b*b)
     static Real hypot(Real a, Real b);
@@ -143,7 +143,7 @@ public:
 
 private:
     /// Get number of 1 bits in integer
-    static int onesCount(UInt x)                                            { mt_unused(x); error("Unimplemented"); return 0; }
+    static int onesCount(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
 };  
 
 template<> inline uint32 Alge_<Float>::pow2Ceil(uint32 x)                   { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; return ++x; }

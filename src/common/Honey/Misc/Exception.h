@@ -98,7 +98,7 @@ public:
     /// Create a clone of the current exception caught with (...)
     static Exception& current();
 
-    friend ostream& operator<<(ostream& os, const Exception& e)   { return os << e.what_(); }
+    friend ostream& operator<<(ostream& os, const Exception& e)             { return os << e.what_(); }
 
 protected:
 

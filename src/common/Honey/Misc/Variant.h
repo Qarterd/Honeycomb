@@ -194,7 +194,7 @@ namespace priv
         template<class... Args>
         void construct_convert(Args&&...)                   { static_assert(!mt::True<Args...>::value, "No bounded types constructible with args"); }
         
-        void destroy()                                      { error("Should not get here, variant destruction failed"); }
+        void destroy()                                      { error_("Should not get here, variant destruction failed"); }
         
         template<class T> void bind(T&& val)                { subc().bind_convert(forward<T>(val)); }
         template<class T> void bind_convert(T&&)            { static_assert(!mt::True<T>::value, "No bounded reference types can bind to type"); }

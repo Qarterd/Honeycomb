@@ -30,24 +30,27 @@ namespace debug
         #define debug_if(...)                           __VA_ARGS__
         /// Print string to debug output window.  Does nothing in final mode.
         #define debug_print(...)                        { honey::debug::platform::print(__VA_ARGS__); }
+        /// Cause debugger to break. Debugger must have exception breakpoints enabled.
+        #define debug_break(msg)                        { try { error_(msg); } catch (Exception) {} }
         /// Assert that an expression is true, otherwise throws AssertionFailure with the expression. Does nothing in final mode.
-        #define assert_1(Expr)                          assert_2(Expr, "")
+        #define assert_1(expr)                          assert_2(expr, "")
         /// Assert with extra message to be displayed on failure
-        #define assert_2(Expr, Msg)                     if (!(Expr)) { honey::debug::platform::assertFail(#Expr, __FUNC__, __FILE__, __LINE__, (Msg)); }
+        #define assert_2(expr, msg)                     if (!(expr)) { honey::debug::platform::assertFail(#expr, __FUNC__, __FILE__, __LINE__, (msg)); }
         /// Similar to assert() but evaluates the expression and throws an error even in final mode
-        #define verify_1(Expr)                          assert_1(Expr)
+        #define verify_1(expr)                          assert_1(expr)
         /// Verify with extra message to be displayed on failure.  Message ignored in final mode.
-        #define verify_2(Expr, Msg)                     assert_2(Expr, Msg)
+        #define verify_2(expr, msg)                     assert_2(expr, msg)
         /// Throw AssertionFailure with a message.  Message ignored in final mode.
-        #define error(Msg)                              assert_2(false, Msg)
+        #define error_(msg)                             assert_2(false, msg)
     #else
         #define debug_if(...)
         #define debug_print(...) {}
-        #define assert_1(Expr) {}
-        #define assert_2(Expr, Msg) {}
-        #define verify_1(Expr)                          verify_2(Expr, "")
-        #define verify_2(Expr, Msg)                     if (!(Expr)) { honey::debug::platform::assertFail("", "", "", 0, ""); }
-        #define error(Msg)                              verify_2(false, Msg)
+        #define debug_break(msg) {}
+        #define assert_1(expr) {}
+        #define assert_2(expr, msg) {}
+        #define verify_1(expr)                          verify_2(expr, "")
+        #define verify_2(expr, msg)                     if (!(expr)) { honey::debug::platform::assertFail("", "", "", 0, ""); }
+        #define error_(msg)                             verify_2(false, msg)
     #endif
     
     /// @}

@@ -229,14 +229,14 @@ void TaskSched::bind(Task& root)
                 Task& e = ****vertex->nodes().begin();
                 if (e.active())
                 {
-                    error(sout()    << "Bind failed: Upstream task already active. "
+                    error_(sout()   << "Bind failed: Upstream task already active. "
                                     << "Task: " << e.getId() << "; Task's root: " << (e._root.lock() ? e._root.lock()->getId() : idnull) << endl
                                     << "Task stack:" << endl << stackTrace());
                 }
                 
                 if (e._onStack)
                 {
-                    error(sout()    << "Bind failed: Upstream cyclic dependency detected. "
+                    error_(sout()   << "Bind failed: Upstream cyclic dependency detected. "
                                     << "From task: " << task.getId() << "; To task: " << e.getId() << endl
                                     << "Task stack:" << endl << stackTrace());
                 }

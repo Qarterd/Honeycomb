@@ -26,7 +26,7 @@ public:
     Uniform_(RandomGen& gen, Real min, Real max)    : Super(gen), _std(false)   { this->min = min;  this->max = max; assert(min <= max);    }
 
     /// Static function for standard distribution. Generate random real variate between 0 and 1 non-inclusive
-    static Real nextStd(RandomGen& gen)             { error("Unsupported Real Type"); return 0; }
+    static Real nextStd(RandomGen& gen)             { error_("Unsupported Real Type"); return 0; }
 
     virtual Real next() const                       { return _std ? nextStd(getGen()) : (max-min)*nextStd(getGen()) + min;  }
     virtual Real pdf(Real x) const                  { return Alge::isInRange(x,min,max) ? 1 / (max-min) : 0; }
