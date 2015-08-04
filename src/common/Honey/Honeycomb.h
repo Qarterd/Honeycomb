@@ -69,6 +69,7 @@
 #include "Honey/Misc/Enum.h"
 #include "Honey/Misc/Exception.h"
 #include "Honey/Misc/Lazy.h"
+#include "Honey/Misc/Log.h"
 #include "Honey/Misc/MtMap.h"
 #include "Honey/Misc/Optional.h"
 #include "Honey/Misc/Range.h"

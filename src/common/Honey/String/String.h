@@ -63,7 +63,7 @@ public:
     String& append(int n, Char c)                                           { return insert(length(), n, c); }
     String& append(int n, char c)                                           { return insert(length(), n, c); }
     template<class InputIterator>
-    String& append(InputIterator first, InputIterator last)                 { return insert(begin() + length(), first, last); }
+    String& append(InputIterator first, InputIterator last)                 { insert(begin() + length(), first, last); return *this; }
     /// @}
 
     /// @{

@@ -17,6 +17,7 @@
 #include <cctype>
 #include <complex>
 #include <deque>
+#include <fstream>
 #include <functional>
 #include <initializer_list>
 #include <iomanip>

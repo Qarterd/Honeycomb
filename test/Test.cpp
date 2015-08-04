@@ -744,6 +744,12 @@ void test()
     string::parseArgv("srhasnehrane hsanerhsra \"srasr\" 'srasra' \"sras's\" 12312", argc, argv);
     string::deleteArgv(argc, argv);
     
+    Log log;
+    log.filter("std"_id, {&log::level::debug}, true, {&log::level::info});
+    log << log::level::debug << "test1 " << 101;
+    log << log::level::info << "test2 " << 102;
+    log << log::level::warning << "test3 " << 103;
+    
     typedef Vegas<5, 4, Double> Vegas;
     struct VegasFunc
     {

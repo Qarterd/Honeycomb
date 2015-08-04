@@ -145,6 +145,7 @@ class NameId : public Id
 public:
     NameId() = default;
     NameId(const String& name)                      : Id(name), _name(name) {}
+    NameId(const char* name)                        : Id(name), _name(name) {}
     /// Create with id, leaving name empty
     explicit NameId(const Id& id)                   : Id(id) {}
     /// Create with name and precalculated id

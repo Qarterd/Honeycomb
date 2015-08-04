@@ -13,6 +13,7 @@
 		37AB04BA1B64572100A95E28 /* libBLAKE2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB04B91B64572100A95E28 /* libBLAKE2.a */; };
 		37AB0D941B61232B0087FBDC /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AB0D931B61232B0087FBDC /* Random.cpp */; };
 		37AD1DC31B57ACAA000F8AF4 /* libyajl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD1DC21B57ACAA000F8AF4 /* libyajl.a */; };
+		37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */; };
 		37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB43A1B52477D0095BB69 /* Alge.cpp */; };
 		37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4421B52477D0095BB69 /* Matrix4.cpp */; };
 		37FEB52A1B52477D0095BB69 /* Quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4471B52477D0095BB69 /* Quat.cpp */; };
@@ -82,6 +83,8 @@
 		37AB0D921B61217C0087FBDC /* Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
 		37AB0D931B61232B0087FBDC /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		37AD1DC21B57ACAA000F8AF4 /* libyajl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyajl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
+		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEB42E1B52477D0095BB69 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		37FEB42F1B52477D0095BB69 /* Meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meta.h; sourceTree = "<group>"; };
@@ -568,6 +571,8 @@
 				37FEB4D01B52477D0095BB69 /* Enum.h */,
 				37FEB4D11B52477D0095BB69 /* Exception.h */,
 				37FEB4D21B52477D0095BB69 /* Lazy.h */,
+				37B4F3FE1B6FEAF500B26BDC /* Log.h */,
+				37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */,
 				37FEB4D31B52477D0095BB69 /* MtMap.h */,
 				37FEB4D41B52477D0095BB69 /* Optional.h */,
 				37FEB4D51B52477D0095BB69 /* Range.h */,
@@ -914,6 +919,7 @@
 				37FEB5931B52477D0095BB69 /* Weibull.cpp in Sources */,
 				37FEB57D1B52477D0095BB69 /* BinomialNeg.cpp in Sources */,
 				37FEB5C51B52477D0095BB69 /* Json.cpp in Sources */,
+				37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */,
 				37FEB55F1B52477D0095BB69 /* Bisect.cpp in Sources */,
 				37FEB5851B52477D0095BB69 /* Dist.cpp in Sources */,
 				37FEB57B1B52477D0095BB69 /* Binomial.cpp in Sources */,

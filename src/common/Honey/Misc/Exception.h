@@ -39,33 +39,30 @@ namespace honey
   *
   *     {
   *         throw_ MyExB() << "Optional Message";    //throw_ directly
-  *         MyExA::Ptr a = new MyExB;
   *
+  *         MyExA::Ptr a = new MyExB;
   *         throw_ *a << "Error";                    //throw_ polymorphically from base class, catch (MyExB& e)
   *     }
   */
 class Exception : public SharedObj<Exception>, public std::exception
 {
 public:
-    Exception()                                                             {}
-    Exception(const Exception& rhs)                                         { operator=(rhs); }
-
-    Exception& operator=(const Exception& rhs)
+    /// Custom error message builder
+    struct MsgStream : ostringstream
     {
-        _source = rhs._source;
-        _message = rhs._message;
-        _what = nullptr;
-        _what_u8 = nullptr;
-        return *this;
-    }
+        MsgStream(Exception& e)                                             : e(&e) {}
+        MsgStream(MsgStream&& rhs)                                          : ostringstream(std::move(rhs)), e(rhs.e) { rhs.e = nullptr; }
+        Exception* e;
+    };
 
     /// Info about source where exception was thrown
     struct Source
     {
         Source()                                                            : func(nullptr), file(nullptr), line(0) {}
         Source(const char* func, const char* file, int line)                : func(func), file(file), line(line) {}
-        template<class E> E& operator<<(E&& e)                              { e._source = *this; return e; }
-
+        Exception& operator<<(Exception& e)                                 { e._source = *this; return e; }
+        Exception&& operator<<(Exception&& e)                               { e._source = *this; return move(e); }
+        
         friend ostream& operator<<(ostream& os, const Source& source)
         {
             return os   << "Function:   " << c_str(source.func) << endl
@@ -80,9 +77,22 @@ public:
     /// Helper to raise an exception after the right side of ^ has been evaluated
     struct Raiser
     {
-        template<class E> void operator^(const E& e)                        { e.raise(); }
+        void operator^(const Exception& e)                                  { e.raise(); }
+        void operator^(const ostream& os)                                   { auto& ms = static_cast<const MsgStream&>(os); assert(ms.e); ms.e->_message += ms.str(); ms.e->raise(); }
     };
 
+    Exception()                                                             {}
+    Exception(const Exception& rhs)                                         { operator=(rhs); }
+
+    Exception& operator=(const Exception& rhs)
+    {
+        _source = rhs._source;
+        _message = rhs._message;
+        _what = nullptr;
+        _what_u8 = nullptr;
+        return *this;
+    }
+    
     EXCEPTION(Exception)
 
     /// Get info about source where exception was thrown
@@ -98,10 +108,13 @@ public:
     /// Create a clone of the current exception caught with (...)
     static Exception& current();
 
+    /// Append custom error message
+    template<class T>
+    MsgStream operator<<(T&& val)                                           { return forward<MsgStream>(MsgStream(*this) << std::forward<T>(val)); }
+    
     friend ostream& operator<<(ostream& os, const Exception& e)             { return os << e.what_(); }
-
+    
 protected:
-
     /// Create what message.  Called only on demand and result is cached.
     virtual String createWhat()
     {
@@ -112,11 +125,6 @@ protected:
     }
 
 private:
-    /// operator<<(Exception, String)   Append custom error message to exception
-    template<class E>
-    friend typename std::enable_if<mt::is_base_of<Exception, E>::value, E>::type&
-        operator<<(E&& e, const String& message)                            { e._message += message; return e; }
-
     void cacheWhat()
     {
         if (_what) return;
