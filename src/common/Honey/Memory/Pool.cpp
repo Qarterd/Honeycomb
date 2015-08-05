@@ -216,7 +216,7 @@ MemPool::MemPool(const Factory& factory) :
     }
 
     //Build sorted bucket list
-    for (auto& e : stdutil::values(_bucketMap))
+    for (auto& e : values(_bucketMap))
     {
         e->_bucketIndex = size(_bucketList);
         _bucketList.push_back(e);

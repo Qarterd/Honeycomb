@@ -18,6 +18,20 @@ namespace honey
 template<class StdContainer>
 int size(const StdContainer& cont)                      { return numeric_cast<int>(cont.size()); }
 
+/// Create a range over the keys of a map or map iterator range. \see values()
+template<class Range>
+auto keys(Range&& range) -> Range_<TupleIter<mt_iterOf(range),0>, TupleIter<mt_iterOf(range),0>>
+{
+    return honey::range(TupleIter<mt_iterOf(range),0>(begin(range)), TupleIter<mt_iterOf(range),0>(end(range)));
+}
+
+/// Create a range over the values of a map or map iterator range. \see keys()
+template<class Range>
+auto values(Range&& range) -> Range_<TupleIter<mt_iterOf(range),1>, TupleIter<mt_iterOf(range),1>>
+{
+    return honey::range(TupleIter<mt_iterOf(range),1>(begin(range)), TupleIter<mt_iterOf(range),1>(end(range)));
+}
+
 /** \cond */
 namespace priv
 {
@@ -39,20 +53,6 @@ namespace priv
 /// See \ref StdUtil
 namespace stdutil
 {
-    /// Create a range over the keys of a map or map iterator range. \see values()
-    template<class Range>
-    auto keys(Range&& range) -> Range_<TupleIter<mt_iterOf(range),0>, TupleIter<mt_iterOf(range),0>>
-    {
-        return honey::range(TupleIter<mt_iterOf(range),0>(begin(range)), TupleIter<mt_iterOf(range),0>(end(range)));
-    }
-
-    /// Create a range over the values of a map or map iterator range. \see keys()
-    template<class Range>
-    auto values(Range&& range) -> Range_<TupleIter<mt_iterOf(range),1>, TupleIter<mt_iterOf(range),1>>
-    {
-        return honey::range(TupleIter<mt_iterOf(range),1>(begin(range)), TupleIter<mt_iterOf(range),1>(end(range)));
-    }
-
     /// Convert reverse iterator to forward iterator
     template<class Iter>
     auto reverseIterToForward(Iter&& it) -> typename mt::removeRef<decltype(--it.base())>::type
@@ -64,7 +64,7 @@ namespace stdutil
     {
         return typename List::reverse_iterator(list.erase(reverseIterToForward(iter)));
     }
-    
+
     /// Erase first occurrence of value.  Returns iterator to next element after the erased element, or end if not found.
     template<class List>
     typename List::iterator eraseVal(List& list, const typename List::value_type& val)
@@ -95,7 +95,7 @@ namespace stdutil
     {
         return honey::find(range(set.equal_range(val)), [&](mt_elemOf(set)& e) { return e == val; });
     }
-    
+
     /// std::unordered_map with custom allocator
     template<class Key, class Value, template<class> class Alloc>
     using unordered_map = std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, Alloc<pair<const Key, Value>>>;

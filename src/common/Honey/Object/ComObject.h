@@ -98,8 +98,8 @@ public:
     }
 
     /// Get iterator over all slots in this object.  A slot may contain one or many components.
-    auto comSlots() const -> decltype(stdutil::keys(declval<const SlotMap>()))
-                                                                { return stdutil::keys(_slotMap); } 
+    auto comSlots() const -> decltype(keys(declval<const SlotMap>()))
+                                                                { return keys(_slotMap); } 
 
     /// Get component of type `Com`. Returns first component in slot, must exist.
     template<class Com>

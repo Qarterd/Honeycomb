@@ -311,7 +311,7 @@ namespace task { namespace priv
         tasks['b']->deps().add(*tasks['a']);
         
         TaskSched sched(future::AsyncSched::inst());
-        for (auto& e: stdutil::values(tasks)) sched.reg(*e);
+        for (auto& e: values(tasks)) sched.reg(*e);
 
         auto future = tasks['j']->future();
         sched.enqueue(*tasks['j']);

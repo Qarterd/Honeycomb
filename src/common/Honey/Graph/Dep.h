@@ -31,7 +31,6 @@ public:
     typedef stdutil::unordered_map<Key, DepType, SmallAllocator> DepMap;
 
     DepNode(const Data& data = Data(), const Key& key = Key())      : _data(data), _key(key) {}
-    ~DepNode() {}
 
     /// Set the data that this node contains
     void setData(const Data& data)              { _data = data; }
@@ -121,10 +120,10 @@ public:
         /// Get all keys mapped to this vertex
         const KeyList& keys() const                     { return keyList; }
         /// Get all vertices along in/out links
-        auto links(DepType type = DepType::out) -> decltype(stdutil::keys(declval<const LinkMap>()))
-                                                        { return stdutil::keys(const_cast<const Vertex*>(this)->linkMaps[type]); }
-        auto links(DepType type = DepType::out) const -> decltype(stdutil::keys(declval<const LinkMapConst>()))
-                                                        { return stdutil::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[type])); }
+        auto links(DepType type = DepType::out) -> decltype(honey::keys(declval<const LinkMap>()))
+                                                        { return honey::keys(const_cast<const Vertex*>(this)->linkMaps[type]); }
+        auto links(DepType type = DepType::out) const -> decltype(honey::keys(declval<const LinkMapConst>()))
+                                                        { return honey::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[type])); }
 
     private:
         /// Add link, increment reference by count
@@ -510,7 +509,7 @@ public:
         CondenseData data;
         VertexLinkList linkList;
 
-        for (auto& vertex : stdutil::values(_vertexMap))
+        for (auto& vertex : values(_vertexMap))
         {
             assert(data.stackS.empty() && data.stackP.empty(), "Condense algorithm failure");
             linkList.clear();
@@ -640,7 +639,7 @@ private:
         for (auto& e : linkList)
         {
             auto links = honey::range(e[k_linkIt()], e[k_linkMap()]->end());
-            for (auto& linkVertex : stdutil::keys(links))
+            for (auto& linkVertex : keys(links))
             {
                 auto itPreOrd = data.preOrdMap.find(linkVertex);
                 if (itPreOrd == data.preOrdMap.end())
@@ -727,7 +726,7 @@ private:
             auto type = DepType(i);
             auto depTypeOpp = DepNode::depTypeOpp(type);
 
-            for (auto& e : stdutil::keys(mergeVertex.linkMap(type)))
+            for (auto& e : keys(mergeVertex.linkMap(type)))
             {
                 auto& vertex = *e;
                 //Remove link to merged vertex

@@ -3,6 +3,7 @@
 
 #include "Honey/String/String.h"
 #include "Honey/Graph/Dep.h"
+#include "Honey/Thread/Lock/Spin.h"
 
 namespace honey
 {
@@ -25,21 +26,25 @@ namespace log
     /// Format record with date and level id
     String format(const Level& level, const String& record);
     
-    struct Sink
+    struct Sink : SharedObj<Sink>
     {
         virtual void operator()(const Level& level, const String& record) = 0;
     };
     
-    /// Standard streams sink (default sink)
-    struct StdSink : public Sink
+    struct StreamSink : Sink
     {
+        StreamSink(ostream& os)                 : os(os) {}
         virtual void operator()(const Level& level, const String& record);
+        ostream& os;
     };
     
-    /// File sink
-    struct FileSink : public Sink
+    struct FileSink : StreamSink
     {
+        FileSink(String filepath);
+        ~FileSink();
         virtual void operator()(const Level& level, const String& record);
+        String filepath;
+        std::ofstream os;
     };
 }
 
@@ -53,12 +58,17 @@ public:
     /// Builds a record
     struct RecordStream : ostringstream
     {
-        RecordStream(Log& log)                  : log(&log) {}
-        RecordStream(RecordStream&& rhs)        : ostringstream(std::move(rhs)), log(rhs.log) { rhs.log = nullptr; }
-        ~RecordStream()                         { if (!log) return; log->push(str()); }
+        RecordStream(Log& log, const log::Level& level) : log(&log), lock(log._lock) { log._level = &level; }
+        RecordStream(RecordStream&& rhs)                : ostringstream(std::move(rhs)), log(rhs.log), lock(std::move(rhs.lock)) { rhs.log = nullptr; }
+        ~RecordStream()                                 { if (!log) return; log->push(str()); }
         Log* log;
+        SpinLock::Scoped lock;
     };
     
+    /// Get singleton
+    mt_staticObj(Log, inst,);
+
+    /// Create logger with default levels and a standard streams sinks ("stdout" and "stderr")
     Log();
     
     /// Add a severity level to categorize records
@@ -73,14 +83,16 @@ public:
     /**
       * \param sink         sink to filter
       * \param includes     levels to push to sink
-      * \param includeDeps  also push to sink any levels that the includes depend on
+      * \param includeDeps  also include any levels that the includes depend on
       * \param excludes     levels to not push to sink
+      * \param excludeDeps  also exclude any levels that the excludes depend on
       */  
-    void filter(const Id& sink, const vector<log::Level*>& includes, bool includeDeps = true, const vector<log::Level*>& excludes = {});
+    void filter(const Id& sink, const vector<log::Level*>& includes, bool includeDeps = true,
+                const vector<log::Level*>& excludes = {}, bool excludeDeps = true);
     void clearFilter(const Id& sink);
     
-    /// Push a record with severity level to all sinks
-    RecordStream operator<<(const log::Level& level)    { _level = &level; return RecordStream(*this); }
+    /// Push a record with level to all sinks
+    RecordStream operator<<(const log::Level& level)    { return RecordStream(*this, level); }
     
 private:
     void push(const String& record);
@@ -92,6 +104,7 @@ private:
     const log::Level* _level;
     SinkMap _sinks;
     FilterMap _filters;
+    SpinLock _lock;
 };
 
 }

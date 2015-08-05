@@ -31,7 +31,7 @@ namespace debug
         /// Print string to debug output window.  Does nothing in final mode.
         #define debug_print(...)                        { honey::debug::platform::print(__VA_ARGS__); }
         /// Cause debugger to break. Debugger must have exception breakpoints enabled.
-        #define debug_break(msg)                        { try { error_(msg); } catch (Exception) {} }
+        #define debug_break(msg)                        { try { error_(msg); } catch (Exception&) {} }
         /// Assert that an expression is true, otherwise throws AssertionFailure with the expression. Does nothing in final mode.
         #define assert_1(expr)                          assert_2(expr, "")
         /// Assert with extra message to be displayed on failure

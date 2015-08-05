@@ -109,11 +109,11 @@ public:
     void clear()
     {
         //Remove listeners from orig nodes
-        for (auto& node : stdutil::keys(_regMap)) for (auto& e : _listeners) const_cast<TreeNode*>(node)->listeners().remove(*e);
+        for (auto& node : keys(_regMap)) for (auto& e : _listeners) const_cast<TreeNode*>(node)->listeners().remove(*e);
         for (auto& e : _listeners) e->clear();
 
         //Free clone resources
-        deleteRange(stdutil::values(_cloneMap));
+        deleteRange(values(_cloneMap));
         _cloneMap.clear();
         _cloneRMap.clear();
         _regMap.clear();

@@ -120,7 +120,7 @@ public:
     /**
       * \throws future::FutureAlreadyRetrieved      if future() has been called more than once per task execution.
       */
-    Future<Result> future()                         { Mutex::Scoped _(_lock); return _func.future(); }
+    Future<Result> future()                         { return _func.future(); }
 
     /// Wrapper for Task::current()
     static Task_& current()                         { return static_cast<Task_&>(Task::current()); }
@@ -131,8 +131,7 @@ public:
 
 private:
     virtual void exec()                             { _func.invoke_delayedReady(); }
-    //Called by finalizer, already has the lock
-    virtual void resetFunctor()                     { _func.setReady(); _func.reset(); }
+    virtual void resetFunctor()                     { _func.setReady(true); }
 
     PackagedTask<Result ()> _func;
 };
@@ -166,10 +165,10 @@ public:
     /// Schedule a task for execution.  Returns false if task is already active.
     /**
       * Enqueuing a task performs a `binding`:
-      * - The enqueued task becomes a `root` task, and the entire subgraph of upstream tasks (dependencies) are bound to this root.
-      * - The subgraph of tasks are bound to this scheduler
+      * - the enqueued task becomes a `root` task, and the entire subgraph of upstream tasks (dependencies) are bound to this root
+      * - the subgraph of tasks are bound to this scheduler
       *
-      * A task can be enqueued again once it is complete. Wait for completion by calling Task::future().get() or Task::future().wait().
+      * A task can be enqueued again once it is complete. Wait for completion by calling Task::future().get().
       * Be wary of enqueueing tasks that are upstream of other currently active tasks.
       *
       * This method will error if:

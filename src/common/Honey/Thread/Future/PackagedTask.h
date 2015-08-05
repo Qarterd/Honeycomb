@@ -41,24 +41,20 @@ public:
     template<class... Args>
     void invoke_delayedReady(Args&&... args)        { invoke(false, forward<Args>(args)...); }
 
-    /// Signal to future that result is ready for retrieval.  This is only needed after a call to invoke_delayedReady().
-    void setReady()
+    /// Signal to future that result is ready for retrieval, and optionally reset task before signalling. Call only after invoke_delayedReady().
+    void setReady(bool reset = false)
     {
         if (!valid()) throw_ future::NoState();
         assert(_invoked);
-        _promise._state->setReady();
+        Promise<R> promise(move(_promise));
+        if (reset) this->reset();
+        promise._state->setReady();
     }
 
     /// Check if this instance has state and can be used.  State can be transferred out to another instance through move-assignment.
     bool valid() const                              { return _promise.valid(); }
-
-    /// Reset the function so it can be invoked again, a new future is created for the next result
-    void reset()
-    {
-        if (!valid() || !_invoked) return;
-        _promise = Promise<R>();
-        _invoked = false;
-    }
+    /// Reset the task so it can be invoked again, a new future is created for the next result
+    void reset()                                    { *this = PackagedTask(move(_func)); }
 
 private:
     template<class F, class Alloc>

@@ -38,18 +38,29 @@ namespace log
                             record;
     }
     
-    void StdSink::operator()(const Level& level, const String& record)
+    void StreamSink::operator()(const Level& level, const String& record)
     {
-        switch (level.getKey())
-        {
-        case "critical"_id:
-        case "error"_id:
-            std::cerr << format(level, record) << endl;
-            break;
-        default:
-            std::cout << format(level, record) << endl;
-            break;
-        }
+        os << format(level, record) << endl;
+        os.flush();
+    }
+    
+    FileSink::FileSink(String filepath) :
+        StreamSink(os),
+        filepath(filepath)
+    {
+        os.exceptions(std::ofstream::failbit | std::ofstream::badbit); //enable exceptions
+        os.open(filepath, std::ofstream::out | std::ofstream::app); //open for append
+    }
+    
+    FileSink::~FileSink()
+    {
+        os.exceptions(std::ofstream::goodbit); //disable exceptions
+        os.close();
+    }
+
+    void FileSink::operator()(const Level& level, const String& record)
+    {
+        StreamSink::operator()(level, record);
     }
 }
 
@@ -61,7 +72,12 @@ Log::Log()
     addLevel(log::level::warning);
     addLevel(log::level::info);
     addLevel(log::level::debug);
-    addSink("std"_id, new log::StdSink);
+    
+    addSink("stdout"_id, new log::StreamSink(std::cout));
+    filter("stdout"_id, {&log::level::debug}, true, {&log::level::error});
+    addSink("stderr"_id, new log::StreamSink(std::cerr));
+    filter("stderr"_id, {&log::level::error});
+    
     _level = &log::level::info;
 }
 
@@ -83,9 +99,11 @@ void Log::addSink(const Id& name, const SinkPtr& sink)
 void Log::removeSink(const Id& name)
 {
     _sinks.erase(name);
+    clearFilter(name);
 }
     
-void Log::filter(const Id& sink, const vector<log::Level*>& includes, bool includeDeps, const vector<log::Level*>& excludes)
+void Log::filter(   const Id& sink, const vector<log::Level*>& includes, bool includeDeps,
+                    const vector<log::Level*>& excludes, bool excludeDeps)
 {
     auto& filter = _filters[sink];
     for (auto level: includes)
@@ -95,7 +113,13 @@ void Log::filter(const Id& sink, const vector<log::Level*>& includes, bool inclu
         else
             filter.insert(level->getKey());
     }
-    for (auto level: excludes) filter.erase(level->getKey());
+    for (auto level: excludes)
+    {
+        if (excludeDeps)
+            for (auto e: _levelGraph.range(level->getKey())) filter.erase(*e.keys().begin());
+        else
+            filter.erase(level->getKey());
+    }
 }
 
 void Log::clearFilter(const Id& sink)
