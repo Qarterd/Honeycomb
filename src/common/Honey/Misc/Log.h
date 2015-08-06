@@ -33,6 +33,16 @@ namespace log
         virtual void operator()(const Level& level, const String& record) = 0;
     };
     
+    /// Captures records in a buffer
+    struct BufferSink : Sink
+    {
+        typedef SharedPtr<BufferSink> Ptr;
+        
+        virtual void operator()(const Level& level, const String& record);
+        vector<tuple<const Level*, String>> records;
+    };
+    
+    /// Formats record to a stream
     struct StreamSink : Sink
     {
         typedef SharedPtr<StreamSink> Ptr;
@@ -42,6 +52,7 @@ namespace log
         ostream& os;
     };
     
+    /// Formats record to a file stream
     struct FileSink : StreamSink
     {
         typedef SharedPtr<FileSink> Ptr;
@@ -59,6 +70,7 @@ class Log
 {
 public:
     typedef DepGraph<const log::Level> LevelGraph;
+    typedef std::map<Id, log::Sink::Ptr> SinkMap;
     
     /// Builds a record
     struct RecordStream : ostringstream
@@ -79,10 +91,12 @@ public:
     /// Add a severity level to categorize records
     void addLevel(const log::Level& level);
     void removeLevel(const log::Level& level);
+    const LevelGraph& levels() const                    { return _levelGraph; }
     
     /// Add a sink to receive records
     void addSink(const Id& name, const log::Sink::Ptr& sink);
     void removeSink(const Id& name);
+    const SinkMap& sinks() const                        { return _sinks; }
     
     /// Add a record filter to a sink
     /**
@@ -92,18 +106,17 @@ public:
       * \param excludes     levels to not push to sink
       * \param excludeDeps  also exclude any levels that the excludes depend on
       */  
-    void filter(const Id& sink, const vector<log::Level*>& includes, bool includeDeps = true,
-                const vector<log::Level*>& excludes = {}, bool excludeDeps = true);
+    void filter(const Id& sink, const vector<const log::Level*>& includes, bool includeDeps = true,
+                const vector<const log::Level*>& excludes = {}, bool excludeDeps = true);
     void clearFilter(const Id& sink);
     
     /// Push a record with level to all sinks
     RecordStream operator<<(const log::Level& level)    { return RecordStream(*this, level); }
     
 private:
-    void push(const String& record);
-    
-    typedef std::map<Id, log::Sink::Ptr> SinkMap;
     typedef std::map<Id, std::set<Id>> FilterMap;
+
+    void push(const String& record);
     
     LevelGraph _levelGraph;
     const log::Level* _level;

@@ -421,7 +421,7 @@ ITERATE(0, RANGE_ARG_MAX, FUNC)
 
 /// Count number of elements in range
 template<class Range>
-int countOf(Range&& range)                                          { return reduce(range, 0, [](int a, mt_elemOf(range)&) { return ++a; }); }
+int countOf(Range&& range)                                          { return reduce(range, 0, [](int a, auto&) { return ++a; }); }
 
 /// Delete all elements in range
 template<class Range>

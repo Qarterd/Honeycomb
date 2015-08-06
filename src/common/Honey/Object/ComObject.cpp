@@ -92,7 +92,7 @@ void ComObject::removeComInSlot(SlotMap::iterator slotIt, Slot::List::iterator i
                 auto vertex = ComRegistry::inst().depGraph().vertex(depSlotType);
                 assert(vertex, sout() << "Component not registered: " << depSlotType);
                 auto links = vertex->links(ComRegistry::DepNode::DepType::out);
-                if (find(links, [&](mt_elemOf(links)& e) { return *e->keys().begin() == *type; }) == links.end()) continue;
+                if (find(links, [&](auto& e) { return *e->keys().begin() == *type; }) == links.end()) continue;
                 //slot depends on type
                 if (removeDeps)
                 {

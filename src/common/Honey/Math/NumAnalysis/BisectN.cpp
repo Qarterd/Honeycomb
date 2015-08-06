@@ -41,7 +41,7 @@ bool BisectN<Real,Dim>::root()
     //For each corner, return true if all functions are zero
     for (auto i: range(childCount))
     {
-        Real sum = reduce(_funcsCorners, Real(0), [&](Real a, mt_elemOf(_funcsCorners)& e) { return a + Alge::abs(e[i]); });
+        Real sum = reduce(_funcsCorners, Real(0), [&](Real a, auto& e) { return a + Alge::abs(e[i]); });
         if (sum >= _minRes) continue;
         //Best guess so far
         _minRes = sum;

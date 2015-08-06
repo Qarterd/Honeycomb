@@ -479,7 +479,7 @@ public:
     bool depends(const Key& vertex, const DepNode& dependency, DepType type = DepType::out) const
     {
         auto range = this->range(vertex, type);
-        return find(range, [&](mt_elemOf(range)& e) { return e.nodes().count(&dependency); }) != end(range);
+        return find(range, [&](auto& e) { return e.nodes().count(&dependency); }) != end(range);
     }
 
     /// Get a vertex which contains a list of cyclical (strongly connected) dependency nodes.

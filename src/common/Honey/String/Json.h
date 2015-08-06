@@ -54,7 +54,7 @@ struct Config
         void clear()                                { orderedNames.clear(); ObjectUnordered::clear(); }
         
         /// Get name for id
-        const String& name(const Id& id)
+        const String& name(const Id& id) const
         {
             auto it = this->find(NameId(id));
             if (it == this->end()) throw_ ValueError() << "Value not found. Id: " debug_if(<< id);

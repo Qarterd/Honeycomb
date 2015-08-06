@@ -42,6 +42,8 @@ namespace debug
         #define verify_2(expr, msg)                     assert_2(expr, msg)
         /// Throw AssertionFailure with a message.  Message ignored in final mode.
         #define error_(msg)                             assert_2(false, msg)
+        /// Flag to check if debug mode is enabled at compile-time/runtime
+        static const bool enabled                       = true;
     #else
         #define debug_if(...)
         #define debug_print(...) {}
@@ -51,6 +53,7 @@ namespace debug
         #define verify_1(expr)                          verify_2(expr, "")
         #define verify_2(expr, msg)                     if (!(expr)) { honey::debug::platform::assertFail("", "", "", 0, ""); }
         #define error_(msg)                             verify_2(false, msg)
+        static const bool enabled                       = false;
     #endif
     
     /// @}

@@ -87,13 +87,13 @@ namespace stdutil
     template<class MultiMap, class Key, class Val>
     auto findVal(MultiMap& map, const Key& key, const Val& val) -> mt_iterOf(map)
     {
-        return honey::find(range(map.equal_range(key)), [&](mt_elemOf(map)& e) { return e.second == val; });
+        return honey::find(range(map.equal_range(key)), [&](auto& e) { return e.second == val; });
     }
     /// Get iterator to value.  Returns end if not found.
     template<class MultiSet, class Val>
     auto findVal(MultiSet& set, const Val& val) -> mt_iterOf(set)
     {
-        return honey::find(range(set.equal_range(val)), [&](mt_elemOf(set)& e) { return e == val; });
+        return honey::find(range(set.equal_range(val)), [&](auto& e) { return e == val; });
     }
 
     /// std::unordered_map with custom allocator

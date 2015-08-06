@@ -38,6 +38,11 @@ namespace log
                             record;
     }
     
+    void BufferSink::operator()(const Level& level, const String& record)
+    {
+        records.push_back(make_tuple(&level, record));
+    }
+    
     void StreamSink::operator()(const Level& level, const String& record)
     {
         os << format(level, record) << endl;
@@ -77,7 +82,7 @@ Log::Log()
     addLevel(log::level::debug);
     
     addSink("stdout"_id, new log::StreamSink(std::cout));
-    filter("stdout"_id, {&log::level::debug}, true, {&log::level::error});
+    filter("stdout"_id, {debug::enabled ? &log::level::debug : &log::level::info}, true, {&log::level::error});
     addSink("stderr"_id, new log::StreamSink(std::cerr));
     filter("stderr"_id, {&log::level::error});
     
@@ -105,8 +110,8 @@ void Log::removeSink(const Id& name)
     clearFilter(name);
 }
     
-void Log::filter(   const Id& sink, const vector<log::Level*>& includes, bool includeDeps,
-                    const vector<log::Level*>& excludes, bool excludeDeps)
+void Log::filter(   const Id& sink, const vector<const log::Level*>& includes, bool includeDeps,
+                    const vector<const log::Level*>& excludes, bool excludeDeps)
 {
     auto& filter = _filters[sink];
     for (auto level: includes)

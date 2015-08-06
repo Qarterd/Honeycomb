@@ -54,7 +54,7 @@ namespace priv
             ConditionLock::Scoped _(td.cond);
             while(true)
             {
-                auto it = find(td.states, [&](mt_elemOf(td.states)& e) { return e == readyState; });
+                auto it = find(td.states, [&](auto& e) { return e == readyState; });
                 if (it != td.states.end()) return (int)(it - td.states.begin());
                 td.cond.wait();
             }
@@ -301,7 +301,7 @@ namespace priv
     int whenAny_valIndex(StateBase& src, Futures& fs, mt::IntSeq<Seq...>)
                                                             { return mt::valIndex(&src, &get<Seq>(fs).__state()...); }
     template<class Range>
-    int whenAny_valIndex(StateBase& src, Range& range)      { int i = -1; return find(range, [&](mt_elemOf(range)& e) { return ++i, &src == &e.__state(); }) != end(range) ? i : -1; }
+    int whenAny_valIndex(StateBase& src, Range& range)      { int i = -1; return find(range, [&](auto& e) { return ++i, &src == &e.__state(); }) != end(range) ? i : -1; }
     
     template<class Result_>
     struct whenAny_onReady
