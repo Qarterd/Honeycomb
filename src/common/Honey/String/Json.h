@@ -53,6 +53,14 @@ struct Config
         Iter erase(ConstIter pos)                   { stdutil::eraseVal(orderedNames, pos->first); return ObjectUnordered::erase(pos); }
         void clear()                                { orderedNames.clear(); ObjectUnordered::clear(); }
         
+        /// Get name for id
+        const String& name(const Id& id)
+        {
+            auto it = this->find(NameId(id));
+            if (it == this->end()) throw_ ValueError() << "Value not found. Id: " debug_if(<< id);
+            return it->first.name();
+        }
+    
         /// List of names in order of name/value pair insertion
         vector<Id, SmallAllocator<Id>> orderedNames;
     };

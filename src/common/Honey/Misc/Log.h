@@ -28,11 +28,15 @@ namespace log
     
     struct Sink : SharedObj<Sink>
     {
+        typedef SharedPtr<Sink> Ptr;
+        
         virtual void operator()(const Level& level, const String& record) = 0;
     };
     
     struct StreamSink : Sink
     {
+        typedef SharedPtr<StreamSink> Ptr;
+        
         StreamSink(ostream& os)                 : os(os) {}
         virtual void operator()(const Level& level, const String& record);
         ostream& os;
@@ -40,6 +44,8 @@ namespace log
     
     struct FileSink : StreamSink
     {
+        typedef SharedPtr<FileSink> Ptr;
+        
         FileSink(String filepath);
         ~FileSink();
         virtual void operator()(const Level& level, const String& record);
@@ -53,7 +59,6 @@ class Log
 {
 public:
     typedef DepGraph<const log::Level> LevelGraph;
-    typedef SharedPtr<log::Sink> SinkPtr;
     
     /// Builds a record
     struct RecordStream : ostringstream
@@ -76,7 +81,7 @@ public:
     void removeLevel(const log::Level& level);
     
     /// Add a sink to receive records
-    void addSink(const Id& name, const SinkPtr& sink);
+    void addSink(const Id& name, const log::Sink::Ptr& sink);
     void removeSink(const Id& name);
     
     /// Add a record filter to a sink
@@ -97,7 +102,7 @@ public:
 private:
     void push(const String& record);
     
-    typedef std::map<Id, SinkPtr> SinkMap;
+    typedef std::map<Id, log::Sink::Ptr> SinkMap;
     typedef std::map<Id, std::set<Id>> FilterMap;
     
     LevelGraph _levelGraph;

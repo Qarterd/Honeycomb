@@ -118,7 +118,7 @@ public:
     /// Same as u8()
     operator std::string() const                                            { return u8(); }
    
-    static const int npos                                                   = -1;
+    static const int npos                                                   = (int)Super::npos;
  
     friend ostream& operator<<(ostream& os, const String& str)              { return os << str.u8(); }
     friend istream& operator>>(istream& is, String& str)                    { std::string str_; is >> str_; str = str_; return is; }

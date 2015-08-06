@@ -49,7 +49,8 @@ namespace log
         filepath(filepath)
     {
         os.exceptions(std::ofstream::failbit | std::ofstream::badbit); //enable exceptions
-        os.open(filepath, std::ofstream::out | std::ofstream::app); //open for append
+        try { os.open(filepath, std::ofstream::out | std::ofstream::app); } //open for append
+        catch (...) { std::cerr << "unable to open log file: " << filepath << endl << Exception::current(); }
     }
     
     FileSink::~FileSink()
@@ -60,7 +61,9 @@ namespace log
 
     void FileSink::operator()(const Level& level, const String& record)
     {
-        StreamSink::operator()(level, record);
+        if (!os.is_open()) return;
+        try { StreamSink::operator()(level, record); }
+        catch (...) { std::cerr << "failed to append to log file: " << filepath << endl << Exception::current(); }
     }
 }
 
@@ -91,7 +94,7 @@ void Log::removeLevel(const log::Level& level)
     _levelGraph.remove(level);
 }
 
-void Log::addSink(const Id& name, const SinkPtr& sink)
+void Log::addSink(const Id& name, const log::Sink::Ptr& sink)
 {
     _sinks[name] = sink;
 }
