@@ -32,7 +32,7 @@ public:
     virtual ~Task() {}
     
     /// Check if task is in queue or executing
-    bool active() const                             { return _state != State::idle; }
+    bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
     
     /// Set id used for dependency graph and debug output.
     void setId(const Id& id)                        { assert(!_regCount, "Must unregister prior to modifying"); _depNode.setKey(id); }
@@ -99,6 +99,7 @@ protected:
     int             _depDownWait;
     DepGraph::Vertex* _vertex;
     bool            _onStack;
+    Thread*         _thread;
 };
 
 /// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see TaskSched

@@ -96,7 +96,7 @@ public:
       *
       * \see std::atomic_thread_fence for details.
       */
-    static void fence(Order o)                                                  { Super::fence(o); }
+    static void fence(Order o = Order::seqCst)                                  { Super::fence(o); }
 };
 
 /** \cond */

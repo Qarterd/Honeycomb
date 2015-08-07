@@ -25,12 +25,10 @@ public:
 
     /// Release lock and wait until thread is signaled
     void wait(UniqueLock<Mutex>& lock)                                  { Super::wait(lock); }
-
-    /// Wait for an amount of time before giving up.  Returns true if signaled, false if timed out.
+    /// Release lock and wait until thread is signaled or until an amount of time has passed. Returns true if signaled, false if timed out.
     template<class Rep, class Period>
     bool wait(UniqueLock<Mutex>& lock, Duration<Rep,Period> time)       { return Super::wait(lock, time); }
-
-    /// Wait until a certain time before giving up. Returns true if signaled, false if timed out.
+    /// Release lock and wait until thread is signaled or until a certain time. Returns true if signaled, false if timed out.
     template<class Clock, class Dur>
     bool wait(UniqueLock<Mutex>& lock, TimePoint<Clock,Dur> time)       { return Super::wait(lock, time); }
 };

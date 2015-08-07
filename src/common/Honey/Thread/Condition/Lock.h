@@ -45,10 +45,8 @@ public:
 
     /// No lock arg required
     void wait()                                                         { wait(MonoClock::TimePoint::max); }
-
     template<class Rep, class Period>
     bool wait(Duration<Rep,Period> time)                                { return wait(MonoClock::now() + time); }
-
     template<class Clock, class Dur>
     bool wait(TimePoint<Clock,Dur> time)
     {

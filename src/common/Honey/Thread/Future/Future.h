@@ -29,10 +29,10 @@ public:
     
     /// Wait until result is ready. \throws future::NoState
     void wait() const                                           { wait(MonoClock::TimePoint::max); }
-    /// Wait for an amount of time before giving up. \throws future::NoState
+    /// Wait until result is ready or until an amount of time has passed. \throws future::NoState
     template<class Rep, class Period>
     future::Status wait(Duration<Rep,Period> time) const        { return wait(MonoClock::now() + time); }
-    /// Wait until a certain time before giving up. \throws future::NoState
+    /// Wait until result is ready or until a certain time. \throws future::NoState
     template<class Clock, class Dur>
     future::Status wait(TimePoint<Clock,Dur> time) const
     {
