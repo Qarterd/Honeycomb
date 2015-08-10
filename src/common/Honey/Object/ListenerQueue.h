@@ -35,10 +35,10 @@ namespace priv
         static T& load(T* lhs)                  { return *lhs; }
     };
 
-    template<class Signal, class F, class Seq = mt::IntSeqGen<Signal::arity>>
+    template<class Signal, class F, class Seq = std::make_index_sequence<Signal::arity>>
     class SlotQueue;
-    template<class Signal, class F, int... Seq>
-    class SlotQueue<Signal,F,mt::IntSeq<Seq...>> : public priv::SlotSignal<Signal>, public SlotQueueBase
+    template<class Signal, class F, size_t... Seq>
+    class SlotQueue<Signal,F,std::index_sequence<Seq...>> : public priv::SlotSignal<Signal>, public SlotQueueBase
     {
         typedef priv::SlotSignal<Signal> Super;
     public:

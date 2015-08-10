@@ -159,9 +159,9 @@ namespace priv
         Bind(const Bind& rhs)               : Bind(move(const_cast<Bind&>(rhs))) {}
         Bind(Bind&&) = default;
         
-        R operator()()                      { return func(mt::IntSeqGen<sizeof...(Args)>()); }
-        template<int... Seq>
-        R func(mt::IntSeq<Seq...>)          { return f(forward<Args>(get<Seq>(args))...); }
+        R operator()()                          { return func(std::make_index_sequence<sizeof...(Args)>()); }
+        template<size_t... Seq>
+        R func(std::index_sequence<Seq...>)     { return f(forward<Args>(get<Seq>(args))...); }
         
         Func f;
         tuple<Args...> args;
@@ -170,13 +170,13 @@ namespace priv
     template<class Func, class... Args>
     struct Bind<void, Func, Args...>
     {
-        Bind(Func&& f, Args&&... args)      : f(forward<Func>(f)), args(forward<Args>(args)...) {}
-        Bind(const Bind& rhs)               : Bind(move(const_cast<Bind&>(rhs))) {}
+        Bind(Func&& f, Args&&... args)          : f(forward<Func>(f)), args(forward<Args>(args)...) {}
+        Bind(const Bind& rhs)                   : Bind(move(const_cast<Bind&>(rhs))) {}
         Bind(Bind&&) = default;
         
-        void operator()()                   { func(mt::IntSeqGen<sizeof...(Args)>()); }
-        template<int... Seq>
-        void func(mt::IntSeq<Seq...>)       { f(forward<Args>(get<Seq>(args))...); }
+        void operator()()                       { func(std::make_index_sequence<sizeof...(Args)>()); }
+        template<size_t... Seq>
+        void func(std::index_sequence<Seq...>)  { f(forward<Args>(get<Seq>(args))...); }
         
         Func f;
         tuple<Args...> args;
@@ -283,15 +283,15 @@ namespace future
 /** \cond */
 namespace priv
 {
-    template<class Func, class Futures, int... Seq>
-    void when_init(Func& func, Futures& fs, mt::IntSeq<Seq...>)
+    template<class Func, class Futures, size_t... Seq>
+    void when_init(Func& func, Futures& fs, std::index_sequence<Seq...>)
                                                             { mt_unpackEval(get<Seq>(fs).__state().addOnReady(func)); }
     
     template<class Result>
     struct whenAll_onReady
     {        
-        template<class Futures, int... Seq>
-        static void func(Promise<Result>& promise, Futures& fs, mt::IntSeq<Seq...>)
+        template<class Futures, size_t... Seq>
+        static void func(Promise<Result>& promise, Futures& fs, std::index_sequence<Seq...>)
                                                             { promise.setValue(make_tuple(get<Seq>(fs).__state().result()...)); }
         template<class Range>
         static void func(Promise<Result>& promise, Range& range)
@@ -301,16 +301,16 @@ namespace priv
     template<>
     struct whenAll_onReady<void>
     {        
-        template<class Futures, int... Seq>
-        static void func(Promise<void>& promise, Futures&, mt::IntSeq<Seq...>)
+        template<class Futures, size_t... Seq>
+        static void func(Promise<void>& promise, Futures&, std::index_sequence<Seq...>)
                                                             { promise.setValue(); }
         template<class Range>
         static void func(Promise<void>& promise, Range&)
                                                             { promise.setValue(); }
     };
     
-    template<class Futures, int... Seq>
-    int whenAny_valIndex(StateBase& src, Futures& fs, mt::IntSeq<Seq...>)
+    template<class Futures, size_t... Seq>
+    int whenAny_valIndex(StateBase& src, Futures& fs, std::index_sequence<Seq...>)
                                                             { return mt::valIndex(&src, &get<Seq>(fs).__state()...); }
     template<class Range>
     int whenAny_valIndex(StateBase& src, Range& range)      { int i = -1; return find(range, [&](auto& e) { return ++i, &src == &e.__state(); }) != end(range) ? i : -1; }
@@ -318,8 +318,8 @@ namespace priv
     template<class Result_>
     struct whenAny_onReady
     {
-        template<class Futures, int... Seq, class Result = tuple<int, Result_>>
-        static void func(Promise<Result>& promise, Futures& fs, mt::IntSeq<Seq...>, int i)
+        template<class Futures, size_t... Seq, class Result = tuple<int, Result_>>
+        static void func(Promise<Result>& promise, Futures& fs, std::index_sequence<Seq...>, int i)
                                                             { promise.setValue(make_tuple(i, mt::valAt(i, get<Seq>(fs)...).__state().result())); }
         template<class Range, class Result = tuple<typename mt::iterOf<Range>::type, Result_>>
         static void func(Promise<Result>& promise, Range& range, int i)
@@ -329,8 +329,8 @@ namespace priv
     template<>
     struct whenAny_onReady<void>
     {        
-        template<class Futures, int... Seq>
-        static void func(Promise<int>& promise, Futures&, mt::IntSeq<Seq...>, int i)
+        template<class Futures, size_t... Seq>
+        static void func(Promise<int>& promise, Futures&, std::index_sequence<Seq...>, int i)
                                                             { promise.setValue(i); }
         template<class Range, class Result = typename mt::iterOf<Range>::type>
         static void func(Promise<Result>& promise, Range& range, int i)
@@ -366,7 +366,7 @@ Future<Result> whenAll(Futures&&... fs)
                 if (src.ex)
                     this->promise.setException(*src.ex);
                 else if (++this->ready == this->max)
-                    priv::whenAll_onReady<Result>::func(this->promise, this->fs, mt::IntSeqGen<sizeof...(Futures)>());
+                    priv::whenAll_onReady<Result>::func(this->promise, this->fs, std::make_index_sequence<sizeof...(Futures)>());
             }
             if (++this->count == this->max) { _.unlock(); delete_(this); }
         }
@@ -380,7 +380,7 @@ Future<Result> whenAll(Futures&&... fs)
     };
 
     auto& func = *new onReady(move(promise), forward<Futures>(fs)...);
-    priv::when_init(func, func.fs, mt::IntSeqGen<sizeof...(Futures)>());
+    priv::when_init(func, func.fs, std::make_index_sequence<sizeof...(Futures)>());
     return future;
 }
 
@@ -453,7 +453,7 @@ Future<Result> whenAny(Futures&&... fs)
                     this->promise.setException(*src.ex);
                 else
                 {
-                    auto seq = mt::IntSeqGen<sizeof...(Futures)>();
+                    auto seq = std::make_index_sequence<sizeof...(Futures)>();
                     priv::whenAny_onReady<Result_>::func(this->promise, this->fs, seq, whenAny_valIndex(src, this->fs, seq));
                 }
             }
@@ -468,7 +468,7 @@ Future<Result> whenAny(Futures&&... fs)
     };
 
     auto& func = *new onReady(move(promise), forward<Futures>(fs)...);
-    priv::when_init(func, func.fs, mt::IntSeqGen<sizeof...(Futures)>());
+    priv::when_init(func, func.fs, std::make_index_sequence<sizeof...(Futures)>());
     return future;
 }
 

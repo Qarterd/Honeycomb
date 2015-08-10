@@ -32,34 +32,34 @@ template<class...> struct True                                  : std::true_type
 /// Variant of True for integers
 template<int...> struct True_int                                : std::true_type {};
 /// Check if type is std::true_type
-template<class T> struct isTrue                                 : Value<bool, std::is_same<T, std::true_type>::value> {};
+template<class T> using isTrue                                  = Value<bool, std::is_same<T, std::true_type>::value>;
 /// Special void type, use where void is intended but implicit members are required (default ctor, copyable, etc.)
 struct Void {};
 /// Use to differentiate an overloaded function by type. Accepts dummy parameter default value: `func(tag<0> = 0)`
 template<int> struct tag                                        { tag() = default; tag(int) {} };
 
 /// Add reference to type
-template<class T> struct addRef                                 : std::add_lvalue_reference<T> {};
+template<class T> using addRef                                  = std::add_lvalue_reference<T>;
 /// Remove reference from type
-template<class T> struct removeRef                              : std::remove_reference<T> {};
+template<class T> using removeRef                               = std::remove_reference<T>;
 /// Add pointer to type
-template<class T> struct addPtr                                 : std::add_pointer<T> {};
+template<class T> using addPtr                                  = std::add_pointer<T>;
 /// Remove pointer from type
-template<class T> struct removePtr                              : std::remove_pointer<T> {};
+template<class T> using removePtr                               = std::remove_pointer<T>;
 /// Add top-level const qualifier and reference to type.  Use std::decay to remove top-level const/ref.
-template<class T> struct addConstRef                            : addRef<typename std::add_const<T>::type> {};
+template<class T> using addConstRef                             = addRef<typename std::add_const<T>::type>;
 
 /// Check if type is an lvalue reference
-template<class T> struct isLref                                 : Value<bool, std::is_lvalue_reference<T>::value> {};
+template<class T> using isLref                                  = Value<bool, std::is_lvalue_reference<T>::value>;
 /// Check if type is an rvalue reference
-template<class T> struct isRref                                 : Value<bool, std::is_rvalue_reference<T>::value> {};
+template<class T> using isRref                                  = Value<bool, std::is_rvalue_reference<T>::value>;
 /// Check if type is a reference
-template<class T> struct isRef                                  : Value<bool, std::is_reference<T>::value> {};
+template<class T> using isRef                                   = Value<bool, std::is_reference<T>::value>;
 /// Check if type is a pointer
-template<class T> struct isPtr                                  : Value<bool, std::is_pointer<T>::value> {};
+template<class T> using isPtr                                   = Value<bool, std::is_pointer<T>::value>;
     
 /// Opposite of std::enable_if
-template<bool b, class T = void> struct disable_if              : std::enable_if<!b, T> {};
+template<bool b, class T = void> using disable_if               = std::enable_if<!b, T>;
 
 /// Variant of std::conditional for integers, stores result in `value`
 template<bool b, int64 t, int64 f> struct conditional_int       : Value<int64, f> {};
@@ -75,8 +75,7 @@ template <template <class...> class Template, class... Param>
 struct isSpecializationOf<Template<Param...>, Template>         : std::true_type {};
     
 /// Check if type is a tuple or a reference to one
-template<class T>
-struct isTuple                                                  : isSpecializationOf<typename std::decay<T>::type, tuple> {};
+template<class T> using isTuple                                 = isSpecializationOf<typename std::decay<T>::type, tuple>;
 
 /// Check if functor is callable with arguments
 template<class Func, class... Args>
@@ -106,47 +105,24 @@ namespace priv
 /// Get type at index of parameter pack
 template<int I, class... Ts> using typeAt                       = typename priv::typeAt<0, I, Ts...>::type;
 /// Get index of first matching type in parameter pack, returns -1 if not found
-template<class Match, class... Ts> struct typeIndex             : priv::typeIndex<0, Match, Ts...> {};
-
-/// Integer type sequence. \see IntSeqGen
-template<int...> struct IntSeq {};
+template<class Match, class... Ts> using typeIndex              = priv::typeIndex<0, Match, Ts...>;
 
 /** \cond */
 namespace priv
 {
-    template<int N, int... Ns> struct IntSeqGen                 : IntSeqGen<N-1, N-1, Ns...> {};
-    template<int... Ns> struct IntSeqGen<0, Ns...>              { typedef IntSeq<Ns...> type; };
-}
-/** \endcond */
-
-/// Generate an integer type sequence <0,1,...N-1>. Can be used to unpack the values in a tuple.
-/**
-  * Use IntSeq as a parameter to capture the generated sequence:
-  *
-  * \code
-  * myTuple(IntSeqGen<sizeof...(Args)>());
-  *
-  * template<int... Seq> auto myTuple(IntSeq<Seq...>)   { return make_tuple(get<Seq>(some_tuple)...); }
-  * \endcode
-  */
-template<int N> using IntSeqGen                                 = typename priv::IntSeqGen<N>::type;
-
-/** \cond */
-namespace priv
-{
-    template<class Func, class Tuple, int... Seq>
-    auto applyTuple(Func&& f, Tuple&& t, IntSeq<Seq...>) -> decltype(f(get<Seq>(forward<Tuple>(t))...))
+    template<class Func, class Tuple, size_t... Seq>
+    auto applyTuple(Func&& f, Tuple&& t, std::index_sequence<Seq...>) -> decltype(f(get<Seq>(forward<Tuple>(t))...))
                                                                 { return f(get<Seq>(forward<Tuple>(t))...); }
 }
 /** \endcond */
 
 /// Call a function with arguments from an unpacked tuple. ie. `f(get<Indices>(t)...)`
 template<class Func, class Tuple>
-auto applyTuple(Func&& f, Tuple&& t) -> decltype(priv::applyTuple(forward<Func>(f), forward<Tuple>(t), IntSeqGen<tuple_size<typename removeRef<Tuple>::type>::value>()))
-                                                                { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), IntSeqGen<tuple_size<typename removeRef<Tuple>::type>::value>()); }
+auto applyTuple(Func&& f, Tuple&& t) -> decltype(priv::applyTuple(forward<Func>(f), forward<Tuple>(t), std::make_index_sequence<tuple_size<typename removeRef<Tuple>::type>::value>()))
+                                                                { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), std::make_index_sequence<tuple_size<typename removeRef<Tuple>::type>::value>()); }
 
 /// Get size (number of elements) of a std::array
-template<class Array> struct arraySize                          : Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)> {};
+template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;
 
 /// Create a method to check if a class has a member with matching name and type
 /**
@@ -211,7 +187,7 @@ namespace priv
 /** \endcond */
 
 /// Check if type is an iterator or a reference to one.  An iterator is a type that has member iterator_category or is a pointer.
-template<class T> struct isIterator                             : priv::isIterator<typename removeRef<T>::type> {};
+template<class T> using isIterator                              = priv::isIterator<typename removeRef<T>::type>;
 
 /// Get function type traits
 /**
@@ -304,9 +280,9 @@ template<int64 val, int64... vals> struct max<val, vals...>     : Value<int64, (
 template<int64 val> struct max<val>                             : Value<int64, val> {};
 
 /// Get the absolute value of a number
-template<int64 val> struct abs                                  : Value<int64, (val < 0) ? -val : val> {};
+template<int64 val> using abs                                   = Value<int64, (val < 0) ? -val : val>;
 /// Get the sign of a number
-template<int64 val> struct sign                                 : Value<int64, (val < 0) ? -1 : 1> {};
+template<int64 val> using sign                                  = Value<int64, (val < 0) ? -1 : 1>;
 
 /// Calc the floor of the base 2 log of x
 template<int64 x> struct log2Floor                              : Value<int, log2Floor<x/2>::value+1> {};
