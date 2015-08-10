@@ -36,7 +36,8 @@ String& String::replace(int pos, int len, const String& str, int subpos, int sub
     return *this;
 }
 
-int String::compareIgnoreCase(const String& str, int pos, int len, int subpos, int sublen) const
+int String::icompare(   int pos, int len,
+                        const String& str, int subpos, int sublen) const
 {
     if (len == npos) len = length() - pos;
     if (sublen == npos) sublen = str.length() - subpos;

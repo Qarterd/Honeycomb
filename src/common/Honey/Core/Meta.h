@@ -286,7 +286,7 @@ Funcptr<Sig> FuncptrCreate(F&& f)                               { return Funcptr
 
 
 /// Create an object that can be retrieved safely from a static context
-#define mt_staticObj(Class, Func, Ctor)                         static inline UNBRACKET(Class)& Func()  { static UNBRACKET(Class) obj Ctor; return obj; }
+#define mt_staticObj(Class, Func, Ctor)                         inline UNBRACKET(Class)& Func()  { static UNBRACKET(Class) obj Ctor; return obj; }
 
 /// Inherit to declare that class is not copyable
 struct NoCopy

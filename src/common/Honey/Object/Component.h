@@ -126,7 +126,7 @@ public:
     typedef DepGraph<DepNode> DepGraph;
 
     /// Get singleton
-    mt_staticObj(ComRegistry, inst,);
+    static mt_staticObj(ComRegistry, inst,);
 
     /// Register a component type
     template<class Com>

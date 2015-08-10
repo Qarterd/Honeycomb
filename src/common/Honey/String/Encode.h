@@ -4,6 +4,7 @@
 #include "Honey/String/String.h"
 #include "Honey/String/Stream.h"
 #include "Honey/String/Bytes.h"
+#include "Honey/Misc/MtMap.h"
 
 namespace honey
 {
@@ -14,32 +15,26 @@ namespace encode
 /** \cond */
 namespace priv
 {
-    enum class Encoding
-    {
-        hex,
-        dec,
-        u8,
-        base64,
-        base58
-    };
+    mtkey(encode);
+    mtkey(decode);
+    mt_staticObj((std::map<Id, MtMap<   function<ostream& (ostream& os, const Bytes& val)>, encode,
+                                        function<istream& (istream& os, Bytes& val)>, decode>>),
+                                        exts,);
     
-    struct EncoderManip : Manip<EncoderManip>
-    {
-        Encoding encoding = Encoding::hex;
-    };
-    
+    struct Manip : honey::Manip<Manip> { Id encoding = "hex"_id; };
+ 
     extern const String hex_chars;
     extern const int8 hex_chars_rev[55];
     
     extern const String base64_chars;
     extern const int8 base64_chars_rev[80];
-    
-    extern const String base58_chars;
-    extern const int8 base58_chars_rev[74];
 }
 /** \endcond */
 
-
+/// Register an encoding
+bool reg(const Id& id,  const function<ostream& (ostream& os, const Bytes& val)>& encode,
+                        const function<istream& (istream& os, Bytes& val)>& decode);
+    
 /// Check if character is in hexadecimal charset (numeric and case-insensitive [a-f])
 inline bool isHex(Char c)                   { return c >= '0' && c < '0' + sizeof(priv::hex_chars_rev) && priv::hex_chars_rev[c - '0'] != -1; }
 /// Convert byte to hexadecimal character
@@ -53,9 +48,9 @@ String hex_encode(const byte* data, int len);
 Bytes hex_decode(const String& string);
 
 /// Use hexadecimal encoding (high-nibble-first) when writing bytes to a string stream
-inline ostream& hex(ostream& os)            { priv::EncoderManip::inst(os).encoding = priv::Encoding::hex; return os; }
+inline ostream& hex(ostream& os)            { priv::Manip::inst(os).encoding = "hex"_id; return os; }
 /// Use hexadecimal decoding (high-nibble-first) when reading bytes from a string stream
-inline istream& hex(istream& is)            { priv::EncoderManip::inst(is).encoding = priv::Encoding::hex; return is; }
+inline istream& hex(istream& is)            { priv::Manip::inst(is).encoding = "hex"_id; return is; }
 
 
 /// Check if character is in decimal charset (numeric)
@@ -71,15 +66,15 @@ String dec_encode(const byte* data, int len);
 Bytes dec_decode(const String& string);
 
 /// Use decimal encoding (big-endian integer) when writing bytes to a string stream
-inline ostream& dec(ostream& os)            { priv::EncoderManip::inst(os).encoding = priv::Encoding::dec; return os; }
+inline ostream& dec(ostream& os)            { priv::Manip::inst(os).encoding = "dec"_id; return os; }
 /// Use decimal decoding (big-endian integer) when reading bytes from a string stream
-inline istream& dec(istream& is)            { priv::EncoderManip::inst(is).encoding = priv::Encoding::dec; return is; }
+inline istream& dec(istream& is)            { priv::Manip::inst(is).encoding = "dec"_id; return is; }
 
 
 /// Use UTF-8 encoding when writing bytes to a string stream
-inline ostream& u8(ostream& os)             { priv::EncoderManip::inst(os).encoding = priv::Encoding::u8; return os; }
+inline ostream& u8(ostream& os)             { priv::Manip::inst(os).encoding = "u8"_id; return os; }
 /// Use UTF-8 decoding when reading bytes from a string stream
-inline istream& u8(istream& is)             { priv::EncoderManip::inst(is).encoding = priv::Encoding::u8; return is; }
+inline istream& u8(istream& is)             { priv::Manip::inst(is).encoding = "u8"_id; return is; }
 
 
 /// Check if character is in base64 charset (alphanumeric and [+/=])
@@ -95,26 +90,8 @@ String base64_encode(const byte* data, int len);
 Bytes base64_decode(const String& string);
 
 /// Use base64 encoding when writing bytes to a string stream
-inline ostream& base64(ostream& os)         { priv::EncoderManip::inst(os).encoding = priv::Encoding::base64; return os; }
+inline ostream& base64(ostream& os)         { priv::Manip::inst(os).encoding = "base64"_id; return os; }
 /// Use base64 decoding when reading bytes from a string stream
-inline istream& base64(istream& is)         { priv::EncoderManip::inst(is).encoding = priv::Encoding::base64; return is; }
-
-
-/// Check if character is in base58 charset (alphanumeric except [0IOl])
-inline bool isBase58(Char c)                { return c >= '1' && c < '1' + sizeof(priv::base58_chars_rev) && priv::base58_chars_rev[c - '1'] != -1; }
-/// Convert byte to base58 character
-inline Char toBase58(byte b)                { return priv::base58_chars[b]; }
-/// Convert base58 character to byte
-inline byte fromBase58(Char c)              { return priv::base58_chars_rev[c - '1']; }
-
-/// Convert bytes to string using base58 encoding
-String base58_encode(const byte* data, int len);
-/// Convert string to bytes using base58 decoding
-Bytes base58_decode(const String& string);
-
-/// Use base58 encoding when writing bytes to a string stream
-inline ostream& base58(ostream& os)         { priv::EncoderManip::inst(os).encoding = priv::Encoding::base58; return os; }
-/// Use base58 decoding when reading bytes from a string stream
-inline istream& base58(istream& is)         { priv::EncoderManip::inst(is).encoding = priv::Encoding::base58; return is; }
+inline istream& base64(istream& is)         { priv::Manip::inst(is).encoding = "base64"_id; return is; }
 
 } }

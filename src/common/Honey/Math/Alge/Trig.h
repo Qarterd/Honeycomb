@@ -91,7 +91,7 @@ private:
     Trig_()                                                         : _tableEnable(false) {}
 
     /// Get singleton
-    mt_staticObj(Trig_, inst,);
+    static mt_staticObj(Trig_, inst,);
 
     SinTable<Real> _table;
     bool _tableEnable;

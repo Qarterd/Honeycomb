@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Misc/BitOp.h"
+#include "Honey/Misc/Range.h"
 
 namespace honey
 {
@@ -15,7 +16,8 @@ constexpr byte operator"" _b(unsigned long long int i)  { return static_cast<byt
 constexpr byte operator"" _b(char c)                    { return static_cast<byte>(c); }
 
 template<int N> struct ByteArray;
-
+template<class Block, class Alloc> class BitSet_;
+    
 /// String of bytes
 class Bytes : public vector<byte>
 {
@@ -25,6 +27,15 @@ public:
     Bytes() = default;
     template<int N>
     Bytes(const ByteArray<N>& bs)                       : vector(bs.begin(), bs.end()) {}
+    
+    /// Construct from big-endian bits (the first index contains the MSB)
+    template<class Block, class Alloc>
+    Bytes(const BitSet_<Block,Alloc>& bs)
+    {
+        resize(bs.size()/8 + (bs.size()%8 != 0));
+        int i = 0;
+        for (auto& b: *this) for (auto j: range(8)) if (i < bs.size()) b |= bs.test(i++) << (7-j);
+    }
     
     /// Write bytes to string stream using current encoding
     friend ostream& operator<<(ostream& os, const Bytes& val);

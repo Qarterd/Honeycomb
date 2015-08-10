@@ -241,7 +241,7 @@ private:
         int                     storeCount;
         UniquePtr<SpinLock>     storeLock;
     };
-    mt_staticObj(Static, getStatic,);
+    static mt_staticObj(Static, getStatic,);
 };
 
 

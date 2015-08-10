@@ -147,7 +147,7 @@ class TaskSched
     
 public:
     /// Get singleton, uses global future::AsyncSched pool
-    mt_staticObj(TaskSched, inst, (future::AsyncSched::inst()));
+    static mt_staticObj(TaskSched, inst, (future::AsyncSched::inst()));
     
     /**
       * \param pool     Shared ref to thread pool with which all tasks will be enqueued.

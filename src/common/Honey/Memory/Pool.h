@@ -56,8 +56,7 @@ public:
 
         mtkey(blockSize);
         mtkey(blockCount);
-        typedef vector<MtMap<int, blockSize, int, blockCount>> BucketList;
-        BucketList bucketList;
+        vector<MtMap<int, blockSize, int, blockCount>> bucketList;
     };
     friend class Factory;
 

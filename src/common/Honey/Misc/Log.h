@@ -83,7 +83,7 @@ public:
     };
     
     /// Get singleton
-    mt_staticObj(Log, inst,);
+    static mt_staticObj(Log, inst,);
 
     /// Create logger with default levels and a standard streams sinks ("stdout" and "stderr")
     Log();

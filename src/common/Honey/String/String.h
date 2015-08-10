@@ -100,7 +100,10 @@ public:
 
     String substr(int pos = 0, int len = npos) const                        { return Super::substr(pos, len); }
 
-    int compareIgnoreCase(const String& str, int pos = 0, int len = npos, int subpos = 0, int sublen = npos) const;
+    /// Case-insensitive compare
+    int icompare(const String& str) const                                   { return icompare(0, npos, str); }
+    int icompare(   int pos, int len,
+                    const String& str, int subpos = 0, int sublen = npos) const;
 
     /// Split a string into a list of separate substrings delimited by delim
     List split(const String& delim = String(1, ' '), int pos = 0, int count = npos) const;

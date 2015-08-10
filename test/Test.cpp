@@ -729,16 +729,6 @@ void test()
         debug_print(sout() << "Decode Base64: " << encode::u8 << bs << endl);
     }
     
-    {
-        ostringstream os;
-        os << encode::base58 << "some string"_b;
-        debug_print(sout() << "Encode Base58: " << os.str() << endl);
-        istringstream is(os.str());
-        Bytes bs;
-        is >> encode::base58 >> bs;
-        debug_print(sout() << "Decode Base58: " << encode::u8 << bs << endl);
-    }
-    
     int argc;
     char** argv;
     string::parseArgv("srhasnehrane hsanerhsra \"srasr\" 'srasra' \"sras's\" 12312", argc, argv);

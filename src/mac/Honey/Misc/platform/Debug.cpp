@@ -10,6 +10,7 @@ namespace honey { namespace debug { namespace platform
 void print(const String& str)
 {
     std::cout << str;
+    std::cout.flush();
 }
 
 void assertFail(const char* expr, const char* func, const char* file, int line, const String& msg)

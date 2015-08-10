@@ -14,6 +14,7 @@
 //====================================================
 #include <algorithm>
 #include <array>
+#include <bitset>
 #include <cctype>
 #include <complex>
 #include <deque>

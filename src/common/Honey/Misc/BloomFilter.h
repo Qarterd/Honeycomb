@@ -72,11 +72,11 @@ namespace bloom_filter
   * By comparison unordered_set uses about 20 bytes per element. \n
   * Note that the elements themselves aren't stored in the bloom filter, and further, elements can't be removed once added.
   */
-template<class T, class Block = uint32, class Alloc = std::allocator<Block>>
+template<class T, class Block = uint64, class Alloc = std::allocator<Block>>
 class BloomFilter
 {
 public:
-    typedef BitSet<Block, Alloc> BitSet;
+    typedef BitSet_<Block, Alloc> BitSet;
 
     /**
       * \param elemCount    Number of elements expected to be inserted into the set
