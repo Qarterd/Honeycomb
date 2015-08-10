@@ -107,19 +107,24 @@ template<int I, class... Ts> using typeAt                       = typename priv:
 /// Get index of first matching type in parameter pack, returns -1 if not found
 template<class Match, class... Ts> using typeIndex              = priv::typeIndex<0, Match, Ts...>;
 
+/// Shorthand for std::index_sequence
+template<size_t... Ints> using idxseq                           = std::index_sequence<Ints...>;
+/// Shorthand for std::make_index_sequence
+template<size_t N> using make_idxseq                            = std::make_index_sequence<N>;
+
 /** \cond */
 namespace priv
 {
     template<class Func, class Tuple, size_t... Seq>
-    auto applyTuple(Func&& f, Tuple&& t, std::index_sequence<Seq...>) -> decltype(f(get<Seq>(forward<Tuple>(t))...))
+    auto applyTuple(Func&& f, Tuple&& t, mt::idxseq<Seq...>) -> decltype(f(get<Seq>(forward<Tuple>(t))...))
                                                                 { return f(get<Seq>(forward<Tuple>(t))...); }
 }
 /** \endcond */
 
 /// Call a function with arguments from an unpacked tuple. ie. `f(get<Indices>(t)...)`
 template<class Func, class Tuple>
-auto applyTuple(Func&& f, Tuple&& t) -> decltype(priv::applyTuple(forward<Func>(f), forward<Tuple>(t), std::make_index_sequence<tuple_size<typename removeRef<Tuple>::type>::value>()))
-                                                                { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), std::make_index_sequence<tuple_size<typename removeRef<Tuple>::type>::value>()); }
+auto applyTuple(Func&& f, Tuple&& t) -> decltype(priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()))
+                                                                { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
 
 /// Get size (number of elements) of a std::array
 template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;

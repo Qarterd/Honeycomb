@@ -82,7 +82,7 @@ namespace priv
     }
 
     template<class Locks, size_t... Seq>
-    void lock(Locks&& locks, std::index_sequence<Seq...>)
+    void lock(Locks&& locks, mt::idxseq<Seq...>)
     {
         auto switch_ = make_array<function<int ()>>([&]() -> int
         {
@@ -107,7 +107,7 @@ namespace priv
   *     If L2 failed then restart, lock L2 and call:    tryLock(L3,L4,L5,L1)
   */
 template<class... Locks, typename mt::disable_if<mt::isRange<mt::typeAt<0, Locks...>>::value, int>::type=0>
-void lock(Locks&&... locks)                     { priv::lock(forward_as_tuple(forward<Locks>(locks)...), std::make_index_sequence<sizeof...(Locks)>()); }
+void lock(Locks&&... locks)                     { priv::lock(forward_as_tuple(forward<Locks>(locks)...), mt::make_idxseq<sizeof...(Locks)>()); }
 
 /// Lock all lockables in a range safely without deadlocking.
 template<class Range, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>

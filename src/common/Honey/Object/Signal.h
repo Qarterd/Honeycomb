@@ -43,19 +43,19 @@ private:
 /** \cond */
 namespace priv
 {
-    template<class Signal, class Seq = std::make_index_sequence<Signal::arity>>
+    template<class Signal, class Seq = mt::make_idxseq<Signal::arity>>
     struct SlotSignal;
     template<class Signal, size_t... Seq>
-    struct SlotSignal<Signal,std::index_sequence<Seq...>> : SlotBase
+    struct SlotSignal<Signal,mt::idxseq<Seq...>> : SlotBase
     {
         SlotSignal(const Id& id)                : SlotBase(id, Signal::id()) {}
         virtual void operator()(const typename Signal::template param<Seq>&... args) = 0;
     };
 
-    template<class Signal, class F, class Seq = std::make_index_sequence<Signal::arity>>
+    template<class Signal, class F, class Seq = mt::make_idxseq<Signal::arity>>
     struct Slot;
     template<class Signal, class F, size_t... Seq>
-    struct Slot<Signal,F,std::index_sequence<Seq...>> : public SlotSignal<Signal>
+    struct Slot<Signal,F,mt::idxseq<Seq...>> : public SlotSignal<Signal>
     {
         typedef SlotSignal<Signal> Super;
     public:
