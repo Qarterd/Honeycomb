@@ -266,8 +266,8 @@ template<class F, class Sig = typename funcTraits<typename removeRef<F>::type>::
 Funcptr<Sig> FuncptrCreate(F&& f)                               { return Funcptr<Sig>(forward<F>(f)); }
 
 
-/// Create an object that can be retrieved safely from a static context
-#define mt_staticObj(Class, Func, Ctor)                         inline UNBRACKET(Class)& Func()  { static UNBRACKET(Class) obj Ctor; return obj; }
+/// Create a global object that will be initialized upon first access, so it can be accessed safely from a static context
+#define mt_global(Class, Func, Ctor)                            inline UNBRACKET(Class)& Func()  { static UNBRACKET(Class) obj Ctor; return obj; }
 
 /// Inherit to declare that class is not copyable
 struct NoCopy

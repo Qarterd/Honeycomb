@@ -17,11 +17,11 @@ namespace honey
 
 /// Call once inside a class that has signals
 #define SIGNAL_DECL(BaseClass) \
-    static mt_staticObj(const String, _signalBase, (#BaseClass));
+    static mt_global(const String, _signalBase, (#BaseClass));
 
 /// Call inside a class to declare a signal
 #define SIGNAL(Name, Param) \
-    struct Name                                 : Signal<void Param> { static mt_staticObj(const Id, id, (sout() << _signalBase() << "::"#Name)); };
+    struct Name                                 : Signal<void Param> { static mt_global(const Id, id, (sout() << _signalBase() << "::"#Name)); };
 
 /// Multicast sender
 template<class Sig_> struct Signal              : mt::funcTraits<Sig_> { typedef Sig_ Sig; };

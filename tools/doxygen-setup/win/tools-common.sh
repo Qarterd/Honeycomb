@@ -1,9 +1,10 @@
 self=`basename $0`
 self_dir=`dirname $0`
 home=$USERPROFILE
-build=$self_dir/../../build
-doc=$self_dir/../../doc
-src=$self_dir/../../src
+project_dir=$self_dir/../../..
+build=$project_dir/build
+src=$project_dir/src
+doc=$project_dir/doc
 log=$build/tools.log
 
 check_error()

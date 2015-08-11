@@ -81,7 +81,7 @@ namespace priv
             vector<StateBase*> states;
             ConditionLock cond;
         };
-        static mt_staticObj((thread::Local<ThreadData>), threadData,);
+        static mt_global((thread::Local<ThreadData>), threadData,);
         
         ThreadData& td;
         StateBase* readyState;

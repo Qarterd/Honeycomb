@@ -64,7 +64,7 @@ struct MtPair
     struct Name                                                                 \
     {                                                                           \
         /** Id can be accessed with id() */                                     \
-        static mt_staticObj(const Id, id, (#Name));                             \
+        static mt_global(const Id, id, (#Name));                                \
         /** Generate pairs with any value. Pair may store ref to rvalue. */     \
         template<class Val> MtPair<Name, Val> operator=(Val&& val)              \
         { return MtPair<Name, Val>(forward<Val>(val)); }                        \
@@ -74,7 +74,7 @@ struct MtPair
 #define mtkeygen(Name)                                                          \
     template<int Index> struct Name                                             \
     {                                                                           \
-        static mt_staticObj(const Id, id, (sout() << #Name << "<" << Index << ">"));   \
+        static mt_global(const Id, id, (sout() << #Name << "<" << Index << ">"));   \
         template<class Val> MtPair<Name, Val> operator=(Val&& val)              \
         { return MtPair<Name, Val>(forward<Val>(val)); }                        \
     };                                                                          \
