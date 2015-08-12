@@ -3,58 +3,55 @@
 
 #include "Honey/String/String.h"
 
-/** \cond */
-namespace std
-{
-/** \endcond */
-    /// \name iostream methods
-    /// @{
-    
-    /// Allow generic function as manipulator. \ingroup String
-    inline ostream& operator<<(ostream& os, function<ostream& (ostream&)>& f)   { return f(os); }
-    /// \ingroup String
-    inline istream& operator>>(istream& is, function<istream& (istream&)>& f)   { return f(is); }
-    /// @}
-/** \cond */
-}
-/** \endcond */
-
 namespace honey
 {
 
 /// \addtogroup String
 /// @{
 
-/// Base class for iostream manipulators.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
+/// \name stringstream methods
+/// @{
+
+/// Base class to hold iostream manipulator state.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
 template<class Subclass>
 class Manip
 {
 public:
-    static bool hasInst(ios_base& ios)                      { return ios.pword(pword); }
+    static bool hasInst(ios_base& ios)                                  { return ios.pword(pword); }
     static Subclass& inst(ios_base& ios)
     {
-        if (!hasInst(ios))
-        {
-            ios.pword(pword) = new Subclass();
-            ios.register_callback(&Manip::delete_, 0);
-        }
+        if (!hasInst(ios)) { ios.pword(pword) = new Subclass(); ios.register_callback(&Manip::delete_, 0); }
         return *static_cast<Subclass*>(ios.pword(pword));
     }
     
 private:
-    static void delete_(ios_base::event ev, ios_base& ios, int)
-    {
-        if (ev != ios_base::erase_event) return;
-        honey::delete_(&inst(ios));
-    }
-    
+    static void delete_(ios_base::event ev, ios_base& ios, int)         { if (ev != ios_base::erase_event) return;honey::delete_(&inst(ios)); }
     static const int pword;
 };
-
 template<class Subclass> const int Manip<Subclass>::pword = ios_base::xalloc();
 
-/// \name ostream methods
-/// @{
+/// \see manipFunc()
+template<class Func, class Tuple>
+struct ManipFunc
+{
+    template<class Func_, class Tuple_>
+    ManipFunc(Func_&& f, Tuple_&& args)                                 : f(forward<Func_>(f)), args(forward<Tuple_>(args)) {}
+    
+    friend ostream& operator<<(ostream& os, const ManipFunc& manip)     { manip.apply(os, mt::make_idxseq<tuple_size<Tuple>::value>()); return os; }
+    friend istream& operator>>(istream& is, ManipFunc& manip)           { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    
+    template<size_t... Seq>
+    void apply(ostream& os, mt::idxseq<Seq...>) const                   { f(os, get<Seq>(args)...); }
+    template<size_t... Seq>
+    void apply(istream& is, mt::idxseq<Seq...>) const                   { f(is, get<Seq>(args)...); }
+    
+    Func f;
+    Tuple args;
+};
+
+/// Helper to create a manipulator that takes arguments. eg. A manip named 'foo': `auto foo(int val) { return manipFunc([=](ios_base& ios) { FooManip::inst(ios).val = val; }); }`
+template<class Func, class... Args>
+inline auto manipFunc(Func&& f, Args&&... args)             { return ManipFunc<Func, decltype(make_tuple(forward<Args>(args)...))>(forward<Func>(f), make_tuple(forward<Args>(args)...)); }
 
 /// Shorthand to create ostringstream
 inline ostringstream sout()                                 { return ostringstream(); }
@@ -76,7 +73,7 @@ inline ostream& indentInc(ostream& os)                      { ++priv::Indent::in
 /// Decrease stream indent level by 1
 inline ostream& indentDec(ostream& os)                      { --priv::Indent::inst(os).level; return os; }
 /// Set number of spaces per indent level
-inline function<ostream& (ostream&)> indentSize(int size)   { return [=](ostream& os) -> ostream& { priv::Indent::inst(os).size = size; return os; }; }
+inline auto indentSize(int size)                            { return manipFunc([=](ostream& os) { priv::Indent::inst(os).size = size; }); }
 
 /// End line and apply any indentation to the next line
 inline ostream& endl(ostream& os)

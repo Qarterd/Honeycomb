@@ -457,7 +457,7 @@ void test()
     debug_print(sout() << "Poly roots 4 (generic): " << Polynomial<Real>::roots((VecN().resize(5) << 1080,-126,-123,6,3).eval(), 1e-04f) << endl);
 
     assert(String::join(String("foo bar blah").split()) == "foo bar blah");
-    assert(String::join(String::List() << "foo" << "bar" << "blah") == "foo bar blah");
+    assert(String::join(String::List{"foo", "bar", "blah"}) == "foo bar blah");
 
     {
         Chacha gen;

@@ -116,15 +116,13 @@ template<size_t N> using make_idxseq                            = std::make_inde
 namespace priv
 {
     template<class Func, class Tuple, size_t... Seq>
-    auto applyTuple(Func&& f, Tuple&& t, mt::idxseq<Seq...>) -> decltype(f(get<Seq>(forward<Tuple>(t))...))
-                                                                { return f(get<Seq>(forward<Tuple>(t))...); }
+    auto applyTuple(Func&& f, Tuple&& t, mt::idxseq<Seq...>)    { return f(get<Seq>(forward<Tuple>(t))...); }
 }
 /** \endcond */
 
 /// Call a function with arguments from an unpacked tuple. ie. `f(get<Indices>(t)...)`
 template<class Func, class Tuple>
-auto applyTuple(Func&& f, Tuple&& t) -> decltype(priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()))
-                                                                { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
+auto applyTuple(Func&& f, Tuple&& t)                            { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
 
 /// Get size (number of elements) of a std::array
 template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;

@@ -33,7 +33,7 @@ public:
     /// Copy UTF-16 string
     String(const std::basic_string<Char>& str)                              : Super(str) {}
     /// Move UTF-16 string
-    String(std::basic_string<Char>&& str)                                   : Super(forward<std::basic_string<Char>>(str)) {}
+    String(std::basic_string<Char>&& str)                                   : Super(move(str)) {}
     /// Convert from UTF-8 string
     String(const std::string& str)                                          : Super(str.begin(), str.end()) {}
     /// Convert from UTF-8 stringstream
@@ -142,14 +142,6 @@ inline bool operator< (const String& lhs, const String& rhs)                { re
 inline bool operator> (const String& lhs, const String& rhs)                { return std::operator>(lhs, rhs); }
 inline bool operator<=(const String& lhs, const String& rhs)                { return std::operator<=(lhs, rhs); }
 inline bool operator>=(const String& lhs, const String& rhs)                { return std::operator>=(lhs, rhs); }
-/// @}
-
-/// \name String::List methods
-/// @{
-
-/// Append to string list
-inline String::List& operator<<(String::List& list, const String& str)      { list.push_back(str); return list; }
-inline String::List&& operator<<(String::List&& list, const String& str)    { return move(operator<<(list, str)); }
 /// @}
 
 /// @}
