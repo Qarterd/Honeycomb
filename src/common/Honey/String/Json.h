@@ -57,7 +57,7 @@ struct Config
         const String& name(const Id& id) const
         {
             auto it = this->find(NameId(id));
-            if (it == this->end()) throw_ ValueError() << "Value not found. Id: " debug_if(<< id);
+            if (it == this->end()) throw_ ValueError() << "Value not found. Id: " << id;
             return it->first.name();
         }
     
@@ -133,7 +133,7 @@ public:
         assert(type() == ValueType::Object);
         auto& obj = get_<Object>();
         auto it = obj.find(NameId(id));
-        if (it == obj.end()) throw_ ValueError() << "Value not found. Id: " debug_if(<< id);
+        if (it == obj.end()) throw_ ValueError() << "Value not found. Id: " << id;
         return it->second;
     }
     const Value_& operator[](const Id& id) const    { return const_cast<Value_&>(this)[id]; }

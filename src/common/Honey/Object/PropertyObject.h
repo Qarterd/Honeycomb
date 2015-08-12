@@ -123,7 +123,7 @@ private:
     Property<T>& prop_(const Id& id) const
     {
         auto it = _propMap.find(id);
-        if (it == _propMap.end()) throw_ PropertyError() << "Property not found. Id: " debug_if(<< id);
+        if (it == _propMap.end()) throw_ PropertyError() << "Property not found. Id: " << id;
         PropertyBase* prop = it->second;
         assert(prop->type() == Property<T>::s_type(),
                     sout()  << "Component type mismatch: "
@@ -135,7 +135,7 @@ private:
     PropertyBase& prop_(const Id& id) const
     {
         auto it = _propMap.find(id);
-        if (it == _propMap.end()) throw_ PropertyError() << "Property not found. Id: " debug_if(<< id);
+        if (it == _propMap.end()) throw_ PropertyError() << "Property not found. Id: " << id;
         return *it->second;
     }
     

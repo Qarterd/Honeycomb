@@ -64,8 +64,7 @@ public:
     #ifndef FINAL
         friend ostream& operator<<(ostream& os, const Id& val)  { return os << (val.hash() ? val.name() : "idnull"); }
     #else
-        template<class _=void>
-        friend ostream& operator<<(ostream& os, const Id& val)  { static_assert(!mt::True<_>::value, "Name not available in final mode, store name separately if needed."); }
+        friend ostream& operator<<(ostream& os, const Id& val)  { return os << val.hash(); }
     #endif
     
 private:
@@ -111,8 +110,7 @@ public:
     #ifndef FINAL
         friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return os << (val.hash() ? val.name() : "idnull"); }
     #else
-        template<class _=void>
-        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { static_assert(!mt::True<_>::value, "Name not available in final mode, store name separately if needed."); }
+        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return os << val.hash(); }
     #endif
     
 private:
