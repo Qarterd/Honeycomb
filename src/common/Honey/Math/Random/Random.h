@@ -136,14 +136,14 @@ public:
 
         friend ostream& operator<<(ostream& os, const DistStats& val)
         {
-            return os   << indentInc << "{" << endl
+            return os   << stringstream::indentInc << "{" << endl
                         << "N:       "  << val.n << endl
                         << "Mean:    "  << val.mean << endl
                         << "Min:     "  << val.min << endl
                         << "Max:     "  << val.max << endl
                         << "Std Dev: "  << val.stdDev << endl
                         << "Std Err: "  << val.stdErr
-                        << indentDec << endl  << "}";
+                        << stringstream::indentDec << endl  << "}";
         }
     };
 

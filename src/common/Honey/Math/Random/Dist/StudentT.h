@@ -65,7 +65,7 @@ public:
         friend ostream& operator<<(ostream& os, const Stats& val)
         {
             int ci = 100*(1-val.alpha);
-            return os           << indentInc << "{" << endl
+            return os           << stringstream::indentInc << "{" << endl
                                 << "Dist:"              << endl << val.dist << endl
                                 << "Mean CI "           << std::setw(2) << ci
                                 <<           "%:    "   << val.meanCi << endl
@@ -76,7 +76,7 @@ public:
                << (val.tail == 0 ? "Pr > |t|:       " :
                    val.tail == 1 ? "Pr > t:         " :
                                    "Pr < t:         ")  << val.p 
-                                << indentDec << endl  << "}";
+                                << stringstream::indentDec << endl  << "}";
         }
     };
 
@@ -139,11 +139,11 @@ public:
         friend ostream& operator<<(ostream& os, const PooledStats& val)
         {
             int ci = 100*(1-val.alpha);
-            return os           << indentInc << "{" << endl
+            return os           << stringstream::indentInc << "{" << endl
                                 << "Dist 1:"            << endl << val.dist[0] << endl
                                 << "Dist 2:"            << endl << val.dist[1] << endl
                                 << "Pooled Diff (1 - 2):" << endl
-                                << indentInc << "{" << endl
+                                << stringstream::indentInc << "{" << endl
                                 << "Mean:           "   << val.mean << endl
                                 << "Std Dev:        "   << val.stdDev << endl
                                 << "Std Err:        "   << val.stdErr << endl
@@ -156,8 +156,8 @@ public:
                << (val.tail == 0 ? "Pr > |t|:       " :
                    val.tail == 1 ? "Pr > t:         " :
                                    "Pr < t:         ")  << val.p 
-                                << indentDec << endl  << "}"
-                                << indentDec << endl  << "}";
+                                << stringstream::indentDec << endl  << "}"
+                                << stringstream::indentDec << endl  << "}";
         }
     };
 

@@ -334,7 +334,7 @@ String MemPool::printStats() const
     allocTotal += _heap->_chunkSizeTotal;
     usedSize += _heap->_chunkSizeTotal;
 
-    stream  << indentInc << "{" << endl;
+    stream  << stringstream::indentInc << "{" << endl;
 
     stream  << "MemPool Id: " << _id << endl
             << "Total Allocated Bytes: " << allocTotal << endl
@@ -350,7 +350,7 @@ String MemPool::printStats() const
     {
         int blockCount = e->_freeCount + e->_usedCount;
         stream  << "Bucket #" << i++ << endl
-                << indentInc << "{" << endl
+                << stringstream::indentInc << "{" << endl
                 << "Block Size: " << e->_blockSize << endl
                 << "Block Count Expansion: " << blockCount << " / " << e->_blockCountInit
                     << " (" << Real(blockCount)/e->_blockCountInit*100 << "%)" << endl
@@ -360,17 +360,17 @@ String MemPool::printStats() const
                     << " (" << Real(e->_usedCount)/blockCount*100 << "%)" << endl
                 << "Avg Block Fill: " << e->_usedSize << " / " << e->_blockSize*e->_usedCount
                     << " (" << (e->_usedSize == 0 ? Real(0) : Real(e->_usedSize)/(e->_blockSize*e->_usedCount)*100) << "%)"
-                << indentDec << endl << "}" << endl;
+                << stringstream::indentDec << endl << "}" << endl;
     }
 
     stream  << "Heap " << endl
-            << indentInc << "{" << endl
+            << stringstream::indentInc << "{" << endl
             << "Allocated Bytes: " << _heap->_chunkSizeTotal
                 << " (" << Real(_heap->_chunkSizeTotal)/allocTotal*100 << "%)" << endl
             << "Blocks Used: " << _heap->_usedCount
-            << indentDec << endl << "}";
+            << stringstream::indentDec << endl << "}";
 
-    stream << indentDec << endl << "}" << endl;
+    stream << stringstream::indentDec << endl << "}" << endl;
 
     unlock();
 

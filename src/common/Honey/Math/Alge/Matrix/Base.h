@@ -546,7 +546,7 @@ public:
             colLen.push_back(lenMax);
         }
         
-        os << indentInc << "{";
+        os << stringstream::indentInc << "{";
         if (mat.cols() > 0)
         {
             for (auto i : range(mat.rows()))
@@ -560,7 +560,7 @@ public:
                 }
             }
         }
-        return os << indentDec << endl << "}";
+        return os << stringstream::indentDec << endl << "}";
     }
 
 protected:

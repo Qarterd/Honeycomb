@@ -6,10 +6,7 @@
 namespace honey
 {
 
-/// \addtogroup String
-/// @{
-
-/// \name stringstream methods
+/// \defgroup stringstream      string stream methods
 /// @{
 
 /// Base class to hold iostream manipulator state.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
@@ -30,7 +27,7 @@ private:
 };
 template<class Subclass> const int Manip<Subclass>::pword = ios_base::xalloc();
 
-/// \see manipFunc()
+/// Helper to create a manipulator that takes arguments. \see manipFunc()
 template<class Func, class Tuple>
 struct ManipFunc
 {
@@ -56,38 +53,39 @@ inline auto manipFunc(Func&& f, Args&&... args)             { return ManipFunc<F
 /// Shorthand to create ostringstream
 inline ostringstream sout()                                 { return ostringstream(); }
     
-/** \cond */
-namespace priv
+/// string stream methods
+namespace stringstream
 {
-    struct Indent : Manip<Indent>
+    /** \cond */
+    namespace priv
     {
-        int level = 0;
-        int size = 4;
-    };
-}
-extern template class Manip<priv::Indent>;
-/** \endcond */
+        struct Indent : Manip<Indent>
+        {
+            int level = 0;
+            int size = 4;
+        };
+    }
+    /** \endcond */
 
-/// Increase stream indent level by 1
-inline ostream& indentInc(ostream& os)                      { ++priv::Indent::inst(os).level; return os; }
-/// Decrease stream indent level by 1
-inline ostream& indentDec(ostream& os)                      { --priv::Indent::inst(os).level; return os; }
-/// Set number of spaces per indent level
-inline auto indentSize(int size)                            { return manipFunc([=](ostream& os) { priv::Indent::inst(os).size = size; }); }
+    /// Increase stream indent level by 1
+    inline ostream& indentInc(ostream& os)                  { ++priv::Indent::inst(os).level; return os; }
+    /// Decrease stream indent level by 1
+    inline ostream& indentDec(ostream& os)                  { --priv::Indent::inst(os).level; return os; }
+    /// Set number of spaces per indent level
+    inline auto indentSize(int size)                        { return manipFunc([=](ostream& os) { priv::Indent::inst(os).size = size; }); }
+}
 
 /// End line and apply any indentation to the next line
 inline ostream& endl(ostream& os)
 {
     os << std::endl;
-    if (priv::Indent::hasInst(os))
+    if (stringstream::priv::Indent::hasInst(os))
     {
-        auto& indent = priv::Indent::inst(os);
+        auto& indent = stringstream::priv::Indent::inst(os);
         for (int i = 0, end = indent.level * indent.size; i < end; ++i) os << ' ';
     }
     return os;
 }
-
-/// @}
 
 /// @}
 

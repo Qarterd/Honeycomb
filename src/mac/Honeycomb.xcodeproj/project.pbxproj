@@ -57,7 +57,6 @@
 		37FEB5BA1B52477D0095BB69 /* ListenerList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4E01B52477D0095BB69 /* ListenerList.cpp */; };
 		37FEB5C21B52477D0095BB69 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4E91B52477D0095BB69 /* Hash.cpp */; };
 		37FEB5C51B52477D0095BB69 /* Json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4EC1B52477D0095BB69 /* Json.cpp */; };
-		37FEB5C71B52477D0095BB69 /* Stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4EE1B52477D0095BB69 /* Stream.cpp */; };
 		37FEB5C91B52477D0095BB69 /* String.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4F01B52477D0095BB69 /* String.cpp */; };
 		37FEB5D71B52477D0095BB69 /* SharedMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB5031B52477D0095BB69 /* SharedMutex.cpp */; };
 		37FEB5D91B52477D0095BB69 /* Spin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB5051B52477D0095BB69 /* Spin.cpp */; };
@@ -228,7 +227,6 @@
 		37FEB4EB1B52477D0095BB69 /* Id.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Id.h; sourceTree = "<group>"; };
 		37FEB4EC1B52477D0095BB69 /* Json.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Json.cpp; sourceTree = "<group>"; };
 		37FEB4ED1B52477D0095BB69 /* Json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Json.h; sourceTree = "<group>"; };
-		37FEB4EE1B52477D0095BB69 /* Stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Stream.cpp; sourceTree = "<group>"; };
 		37FEB4EF1B52477D0095BB69 /* Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stream.h; sourceTree = "<group>"; };
 		37FEB4F01B52477D0095BB69 /* String.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = String.cpp; sourceTree = "<group>"; };
 		37FEB4F11B52477D0095BB69 /* String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = String.h; sourceTree = "<group>"; };
@@ -620,7 +618,6 @@
 				37FEB4EB1B52477D0095BB69 /* Id.h */,
 				37FEB4EC1B52477D0095BB69 /* Json.cpp */,
 				37FEB4ED1B52477D0095BB69 /* Json.h */,
-				37FEB4EE1B52477D0095BB69 /* Stream.cpp */,
 				37FEB4EF1B52477D0095BB69 /* Stream.h */,
 				37FEB4F01B52477D0095BB69 /* String.cpp */,
 				37FEB4F11B52477D0095BB69 /* String.h */,
@@ -898,7 +895,6 @@
 				37FEB52C1B52477D0095BB69 /* Transform.cpp in Sources */,
 				37FEB5A71B52477D0095BB69 /* BloomFilter.cpp in Sources */,
 				37FEB52A1B52477D0095BB69 /* Quat.cpp in Sources */,
-				37FEB5C71B52477D0095BB69 /* Stream.cpp in Sources */,
 				37FEB5991B52477D0095BB69 /* Simplex.cpp in Sources */,
 				37FEB5871B52477D0095BB69 /* Gamma.cpp in Sources */,
 				37FEB5C91B52477D0095BB69 /* String.cpp in Sources */,
