@@ -6,7 +6,7 @@
 namespace honey
 {
 
-/// \defgroup stringstream      string stream methods
+/// \defgroup stringstream  std::stringstream util
 /// @{
 
 /// Base class to hold iostream manipulator state.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
@@ -53,7 +53,7 @@ inline auto manipFunc(Func&& f, Args&&... args)             { return ManipFunc<F
 /// Shorthand to create ostringstream
 inline ostringstream sout()                                 { return ostringstream(); }
     
-/// string stream methods
+/// std::stringstream util
 namespace stringstream
 {
     /** \cond */
