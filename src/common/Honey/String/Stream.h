@@ -40,10 +40,8 @@ struct ManipFunc
     template<class Stream>
     friend Stream& operator>>(Stream& is, ManipFunc& manip)             { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
     
-    template<size_t... Seq>
-    void apply(ostream& os, mt::idxseq<Seq...>) const                   { f(os, get<Seq>(args)...); }
-    template<size_t... Seq>
-    void apply(istream& is, mt::idxseq<Seq...>) const                   { f(is, get<Seq>(args)...); }
+    template<class Stream, size_t... Seq>
+    void apply(Stream& ios, mt::idxseq<Seq...>) const                   { f(ios, get<Seq>(args)...); }
     
     Func f;
     Tuple args;
