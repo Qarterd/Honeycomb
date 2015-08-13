@@ -116,7 +116,7 @@ uint64 Chacha::next()
     if (_state.resIdx >= _state.coreSize)
         step();
 
-    uint64 res = BitOp::fromPartsLittle(_state.res + _state.resIdx);
+    uint64 res = BitOp::fromParts(_state.res[_state.resIdx], _state.res[_state.resIdx+1]);
     _state.resIdx += 2;
     return res;
 }

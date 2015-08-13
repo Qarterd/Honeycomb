@@ -15,9 +15,8 @@ enum class Endian
 };
 
 /// Bit util common to any endian type. Use through class BitOp.
-class BitOpCommon
+struct BitOpCommon
 {
-public:
     /// Rotate integer bits cyclically to the left
     template<class T>
     static T rotLeft(const T v, const int32 n)
@@ -77,12 +76,7 @@ public:
         return  ((uint32)lo      )|
                 ((uint32)hi << 16);
     }
-
-    /// \name Integer serialization methods
-    /// These methods can be used to serialize integers in a platform-endian-agnostic manner (works on any machine).
-    /// @{
     
-    /// Convert an array of smaller integer parts into a full integer, where the first index holds the least significant part
     template<class T, typename std::enable_if<std::is_same<T, uint16>::value, int>::type=0>
     static T fromPartsLittle(const uint8* p)
     {
@@ -112,13 +106,6 @@ public:
                 ((uint64)p[7] << 56);
     }
 
-    static uint64 fromPartsLittle(const uint32* p)
-    {
-        return  ((uint64)p[0]      )|
-                ((uint64)p[1] << 32);
-    }
-
-    /// Convert an array of smaller integer parts into a full integer, where the first index holds the most significant part
     template<class T, typename std::enable_if<std::is_same<T, uint16>::value, int>::type=0>
     static T fromPartsBig(const uint8* p)
     {
@@ -148,13 +135,6 @@ public:
                 ((uint64)p[7]      );
     }
 
-    static uint64 fromPartsBig(const uint32* p)
-    {
-        return  ((uint64)p[0] << 32)|
-                ((uint64)p[1]      );
-    }
-
-    /// Convert a full integer into an array of smaller integer parts, where the first index holds the least significant part
     static void toPartsLittle(const uint16 v, uint8* p)
     {
         p[0] = (uint8)(v      );
@@ -181,13 +161,6 @@ public:
         p[7] = (uint8)(v >> 56);
     }
 
-    static void toPartsLittle(const uint64 v, uint32* p)
-    {
-        p[0] = (uint32)(v      );
-        p[1] = (uint32)(v >> 32);
-    }
-
-    /// Convert a full integer into an array of smaller integer parts, where the first index holds the most significant part
     static void toPartsBig(const uint16 v, uint8* p)
     {
         p[0] = (uint8)(v >>  8);
@@ -213,23 +186,120 @@ public:
         p[6] = (uint8)(v >>  8);
         p[7] = (uint8)(v      );
     }
-
-    static void toPartsBig(const uint64 v, uint32* p)
-    {
-        p[0] = (uint32)(v >> 32);
-        p[1] = (uint32)(v      );
-    }
-    /// @}
 };
 
+/** \cond */
+namespace endian { namespace priv
+{
+    template<class T, typename std::enable_if<std::is_same<T, float>::value, int>::type=0>
+    inline T fromParts(const uint8* p)
+    {
+        union { float f; uint8 bytes[sizeof(float)]; } val;
+        val.bytes[0] = p[0];
+        val.bytes[1] = p[1];
+        val.bytes[2] = p[2];
+        val.bytes[3] = p[3];
+        return val.f;
+    }
+    
+    template<class T, typename std::enable_if<std::is_same<T, double>::value, int>::type=0>
+    inline T fromParts(const uint8* p)
+    {
+        union { double f; uint8 bytes[sizeof(double)]; } val;
+        val.bytes[0] = p[0];
+        val.bytes[1] = p[1];
+        val.bytes[2] = p[2];
+        val.bytes[3] = p[3];
+        val.bytes[4] = p[4];
+        val.bytes[5] = p[5];
+        val.bytes[6] = p[6];
+        val.bytes[7] = p[7];
+        return val.f;
+    }
+    
+    template<class T, typename std::enable_if<std::is_same<T, float>::value, int>::type=0>
+    inline T fromPartsSwap(const uint8* p)
+    {
+        union { float f; uint8 bytes[sizeof(float)]; } val;
+        val.bytes[0] = p[3];
+        val.bytes[1] = p[2];
+        val.bytes[2] = p[1];
+        val.bytes[3] = p[0];
+        return val.f;
+    }
+    
+    template<class T, typename std::enable_if<std::is_same<T, double>::value, int>::type=0>
+    inline T fromPartsSwap(const uint8* p)
+    {
+        union { double f; uint8 bytes[sizeof(double)]; } val;
+        val.bytes[0] = p[7];
+        val.bytes[1] = p[6];
+        val.bytes[2] = p[5];
+        val.bytes[3] = p[4];
+        val.bytes[4] = p[3];
+        val.bytes[5] = p[2];
+        val.bytes[6] = p[1];
+        val.bytes[7] = p[0];
+        return val.f;
+    }
+    
+    inline void toParts(const float f, uint8* p)
+    {
+        union { float f; uint8 bytes[sizeof(float)]; } val;
+        val.f = f;
+        p[0] = val.bytes[0];
+        p[1] = val.bytes[1];
+        p[2] = val.bytes[2];
+        p[3] = val.bytes[3];
+    }
+    
+    inline void toParts(const double f, uint8* p)
+    {
+        union { double f; uint8 bytes[sizeof(double)]; } val;
+        val.f = f;
+        p[0] = val.bytes[0];
+        p[1] = val.bytes[1];
+        p[2] = val.bytes[2];
+        p[3] = val.bytes[3];
+        p[4] = val.bytes[4];
+        p[5] = val.bytes[5];
+        p[6] = val.bytes[6];
+        p[7] = val.bytes[7];
+    }
+    
+    inline void toPartsSwap(const float f, uint8* p)
+    {
+        union { float f; uint8 bytes[sizeof(float)]; } val;
+        val.f = f;
+        p[0] = val.bytes[3];
+        p[1] = val.bytes[2];
+        p[2] = val.bytes[1];
+        p[3] = val.bytes[0];
+    }
+    
+    inline void toPartsSwap(const double f, uint8* p)
+    {
+        union { double f; uint8 bytes[sizeof(double)]; } val;
+        val.f = f;
+        p[0] = val.bytes[7];
+        p[1] = val.bytes[6];
+        p[2] = val.bytes[5];
+        p[3] = val.bytes[4];
+        p[4] = val.bytes[3];
+        p[5] = val.bytes[2];
+        p[6] = val.bytes[1];
+        p[7] = val.bytes[0];
+    }
+} }
+/** \endcond */
+
 /// Bit util specific to endian type. Use through class BitOp.
-template<int Endian> class BitOpEndian {};
+template<int Endian> struct BitOpEndian {};
 
 /// Specialization for little endian
 template<>
-class BitOpEndian<static_cast<int>(Endian::little)>
+struct BitOpEndian<static_cast<int>(Endian::little)> : BitOpCommon
 {
-public:
     /// Get platform endian type
     static Endian platformEndian()                          { return Endian::little; }
 
@@ -242,33 +312,80 @@ public:
 
     /// Convert from big endian to platform endian
     template<class T>
-    static T bigToPlatform(const T big)                     { return BitOpCommon::swap(big); }
+    static T bigToPlatform(const T big)                     { return swap(big); }
     /// Convert from platform endian to big endian
     template<class T>
-    static T platformToBig(const T platform)                { return BitOpCommon::swap(platform); }
+    static T platformToBig(const T platform)                { return swap(platform); }
+    
+    /// \name Number serialization methods
+    /// These methods can be used to serialize numbers in a platform-endian-agnostic manner (works on any machine).
+    /// @{
+    
+    /// Convert an array of smaller number parts into a full number, where the first index holds the least significant part
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static T fromPartsLittle(const uint8* p)                { return BitOpCommon::fromPartsLittle<T>(p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static T fromPartsLittle(const uint8* p)                { return endian::priv::fromParts<T>(p); }
+    
+    /// Convert an array of smaller number parts into a full number, where the first index holds the most significant part
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static T fromPartsBig(const uint8* p)                   { return BitOpCommon::fromPartsBig<T>(p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static T fromPartsBig(const uint8* p)                   { return endian::priv::fromPartsSwap<T>(p); }
+    
+    /// Convert a full number into an array of smaller number parts, where the first index holds the least significant part
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle(v, p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static void toPartsLittle(const T v, uint8* p)          { endian::priv::toParts(v, p); }
+    
+    /// Convert a full number into an array of smaller number parts, where the first index holds the most significant part
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig(v, p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static void toPartsBig(const T v, uint8* p)             { endian::priv::toPartsSwap(v, p); }
+    /// @}
 };
 
 /// Specialization for big endian
 template<>
-class BitOpEndian<static_cast<int>(Endian::big)>
+struct BitOpEndian<static_cast<int>(Endian::big)> : BitOpCommon
 {
 public:
     static Endian platformEndian()                          { return Endian::big; }
 
     template<class T>
-    static T littleToPlatform(const T little)               { return BitOpCommon::swap(little); }
+    static T littleToPlatform(const T little)               { return swap(little); }
     template<class T>
-    static T platformToLittle(const T platform)             { return BitOpCommon::swap(platform); }
+    static T platformToLittle(const T platform)             { return swap(platform); }
 
     template<class T>
     static T bigToPlatform(const T big)                     { return big; }
     template<class T>
     static T platformToBig(const T platform)                { return platform; }
+    
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static T fromPartsLittle(const uint8* p)                { return BitOpCommon::fromPartsLittle<T>(p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static T fromPartsLittle(const uint8* p)                { return endian::priv::fromPartsSwap<T>(p); }
+    
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static T fromPartsBig(const uint8* p)                   { return BitOpCommon::fromPartsBig<T>(p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static T fromPartsBig(const uint8* p)                   { return endian::priv::fromParts<T>(p); }
+    
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle(v, p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static void toPartsLittle(const T v, uint8* p)          { endian::priv::toPartsSwap(v, p); }
+    
+    template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
+    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig(v, p); }
+    template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
+    static void toPartsBig(const T v, uint8* p)             { endian::priv::toParts(v, p); }
 };
 
-
 /// Provides methods for manipulating bits
-class BitOp : public BitOpCommon, public BitOpEndian<ENDIAN> {};
-
+typedef BitOpEndian<ENDIAN> BitOp;
 
 };
