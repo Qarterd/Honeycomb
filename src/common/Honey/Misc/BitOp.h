@@ -303,19 +303,19 @@ struct BitOpEndian<static_cast<int>(Endian::little)> : BitOpCommon
     /// Get platform endian type
     static Endian platformEndian()                          { return Endian::little; }
 
-    /// Convert from little endian to platform endian
-    template<class T>
-    static T littleToPlatform(const T little)               { return little; }
-    /// Convert from platform endian to little endian
-    template<class T>
-    static T platformToLittle(const T platform)             { return platform; }
+    /// Convert integer from little endian to platform endian
+    template<class Int>
+    static Int littleToPlatform(const Int v)                { return v; }
+    /// Convert integer from platform endian to little endian
+    template<class Int>
+    static Int platformToLittle(const Int v)                { return v; }
 
-    /// Convert from big endian to platform endian
-    template<class T>
-    static T bigToPlatform(const T big)                     { return swap(big); }
-    /// Convert from platform endian to big endian
-    template<class T>
-    static T platformToBig(const T platform)                { return swap(platform); }
+    /// Convert integer from big endian to platform endian
+    template<class Int>
+    static Int bigToPlatform(const Int v)                   { return swap(v); }
+    /// Convert integer from platform endian to big endian
+    template<class Int>
+    static Int platformToBig(const Int v)                   { return swap(v); }
     
     /// \name Number serialization methods
     /// These methods can be used to serialize numbers in a platform-endian-agnostic manner (works on any machine).
@@ -354,15 +354,15 @@ struct BitOpEndian<static_cast<int>(Endian::big)> : BitOpCommon
 public:
     static Endian platformEndian()                          { return Endian::big; }
 
-    template<class T>
-    static T littleToPlatform(const T little)               { return swap(little); }
-    template<class T>
-    static T platformToLittle(const T platform)             { return swap(platform); }
+    template<class Int>
+    static Int littleToPlatform(const Int v)                { return swap(v); }
+    template<class Int>
+    static Int platformToLittle(const Int v)                { return swap(v); }
 
-    template<class T>
-    static T bigToPlatform(const T big)                     { return big; }
-    template<class T>
-    static T platformToBig(const T platform)                { return platform; }
+    template<class Int>
+    static Int bigToPlatform(const Int v)                   { return v; }
+    template<class Int>
+    static Int platformToBig(const Int v)                   { return v; }
     
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
     static T fromPartsLittle(const uint8* p)                { return BitOpCommon::fromPartsLittle<T>(p); }
