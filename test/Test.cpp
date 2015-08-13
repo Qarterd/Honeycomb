@@ -682,7 +682,7 @@ void test()
         debug_print(sout() << "Secure Hash 2: " << hash::secure("some string", hash::secure("key")) << endl);
     
         ByteArray<5> literals(255_b,'2'_b,256_b,'4'_b,5_b);
-        auto time = MonoClock::now();
+        auto time = MonoClock::now(); mt_unused(time);
         auto keys = hash::secureKeys("password", "some string"_b, 1 << 15, 2);
         debug_print(sout() << "Secure Key 1: " << keys[0] << endl);
         debug_print(sout() << "Secure Key 2: " << keys[1] << endl);
@@ -890,7 +890,7 @@ void test()
         unordered_set<Key> set;
         for (auto i : range(0, count, 4)) { set.insert(keys[i]); }
 
-        auto time = MonoClock::now();
+        auto time = MonoClock::now(); mt_unused(time);
         for (int i = 0; i < iter; ++i)
             if (bloom.contains(keys[i%count])) ++dummy;
         debug_print(sout() << "Bloom Time 0: " << Millisec(MonoClock::now()-time) / 1000. << endl);

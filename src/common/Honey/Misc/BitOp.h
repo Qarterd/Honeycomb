@@ -64,231 +64,54 @@ struct BitOpCommon
     static uint8    low(const uint16 v)                     { return (uint8)v; }
     static int8     low(const int16 v)                      { return (int8)v; }
 
-    /// Convert smaller integer parts into a full integer.
-    static uint64 fromParts(const uint32 hi, const uint32 lo)
-    {
-        return  ((uint64)lo      )|
-                ((uint64)hi << 32);
-    }
-
-    static uint32 fromParts(const uint16 hi, const uint16 lo)
-    {
-        return  ((uint32)lo      )|
-                ((uint32)hi << 16);
-    }
+    /// Convert smaller integer parts into a full integer
+    static uint64 fromParts(const uint32 hi, const uint32 lo)   { return (uint64)lo | ((uint64)hi << 32); }
+    static uint32 fromParts(const uint16 hi, const uint16 lo)   { return (uint32)lo | ((uint32)hi << 16); }
     
-    template<class T, typename std::enable_if<std::is_same<T, uint16>::value, int>::type=0>
-    static T fromPartsLittle(const uint8* p)
-    {
-        return  ((uint16)p[0]      )|
-                ((uint16)p[1] <<  8);
-    }
+    template<class UInt>
+    static UInt fromPartsLittle(const uint8* p)             { UInt val = 0; mt::for_<0, sizeof(UInt)>([&](int i) { val |= (UInt)p[i] << i*8; }); return val; }
+    template<class UInt>
+    static UInt fromPartsBig(const uint8* p)                { UInt val = 0; mt::for_<0, sizeof(UInt)>([&](int i) { val |= (UInt)p[i] << (sizeof(UInt)-1-i)*8; }); return val; }
 
-    template<class T, typename std::enable_if<std::is_same<T, uint32>::value, int>::type=0>
-    static T fromPartsLittle(const uint8* p)
-    {
-        return  ((uint32)p[0]      )|
-                ((uint32)p[1] <<  8)|
-                ((uint32)p[2] << 16)|
-                ((uint32)p[3] << 24);
-    }
-
-    template<class T, typename std::enable_if<std::is_same<T, uint64>::value, int>::type=0>
-    static T fromPartsLittle(const uint8* p)
-    {
-        return  ((uint64)p[0]      )|
-                ((uint64)p[1] <<  8)|
-                ((uint64)p[2] << 16)|
-                ((uint64)p[3] << 24)|
-                ((uint64)p[4] << 32)|
-                ((uint64)p[5] << 40)|
-                ((uint64)p[6] << 48)|
-                ((uint64)p[7] << 56);
-    }
-
-    template<class T, typename std::enable_if<std::is_same<T, uint16>::value, int>::type=0>
-    static T fromPartsBig(const uint8* p)
-    {
-        return  ((uint16)p[0] <<  8)|
-                ((uint16)p[1]      );
-    }
-
-    template<class T, typename std::enable_if<std::is_same<T, uint32>::value, int>::type=0>
-    static T fromPartsBig(const uint8* p)
-    {
-        return  ((uint32)p[0] << 24)|
-                ((uint32)p[1] << 16)|
-                ((uint32)p[2] <<  8)|
-                ((uint32)p[3]      );
-    }
-
-    template<class T, typename std::enable_if<std::is_same<T, uint64>::value, int>::type=0>
-    static T fromPartsBig(const uint8* p)
-    {
-        return  ((uint64)p[0] << 56)|
-                ((uint64)p[1] << 48)|
-                ((uint64)p[2] << 40)|
-                ((uint64)p[3] << 32)|
-                ((uint64)p[4] << 24)|
-                ((uint64)p[5] << 16)|
-                ((uint64)p[6] <<  8)|
-                ((uint64)p[7]      );
-    }
-
-    static void toPartsLittle(const uint16 v, uint8* p)
-    {
-        p[0] = (uint8)(v      );
-        p[1] = (uint8)(v >>  8);
-    }
-
-    static void toPartsLittle(const uint32 v, uint8* p)
-    {
-        p[0] = (uint8)(v      );
-        p[1] = (uint8)(v >>  8);
-        p[2] = (uint8)(v >> 16);
-        p[3] = (uint8)(v >> 24);
-    }
-
-    static void toPartsLittle(const uint64 v, uint8* p)
-    {
-        p[0] = (uint8)(v      );
-        p[1] = (uint8)(v >>  8);
-        p[2] = (uint8)(v >> 16);
-        p[3] = (uint8)(v >> 24);
-        p[4] = (uint8)(v >> 32);
-        p[5] = (uint8)(v >> 40);
-        p[6] = (uint8)(v >> 48);
-        p[7] = (uint8)(v >> 56);
-    }
-
-    static void toPartsBig(const uint16 v, uint8* p)
-    {
-        p[0] = (uint8)(v >>  8);
-        p[1] = (uint8)(v      );
-    }
-
-    static void toPartsBig(const uint32 v, uint8* p)
-    {
-        p[0] = (uint8)(v >> 24);
-        p[1] = (uint8)(v >> 16);
-        p[2] = (uint8)(v >>  8);
-        p[3] = (uint8)(v      );
-    }
-
-    static void toPartsBig(const uint64 v, uint8* p)
-    {
-        p[0] = (uint8)(v >> 56);
-        p[1] = (uint8)(v >> 48);
-        p[2] = (uint8)(v >> 40);
-        p[3] = (uint8)(v >> 32);
-        p[4] = (uint8)(v >> 24);
-        p[5] = (uint8)(v >> 16);
-        p[6] = (uint8)(v >>  8);
-        p[7] = (uint8)(v      );
-    }
+    template<class UInt>
+    static void toPartsLittle(const UInt v, uint8* p)       { mt::for_<0, sizeof(UInt)>([&](int i) { p[i] = (uint8)(v >> i*8); }); }
+    template<class UInt>
+    static void toPartsBig(const UInt v, uint8* p)          { mt::for_<0, sizeof(UInt)>([&](int i) { p[i] = (uint8)(v >> (sizeof(UInt)-1-i)*8); }); }
 };
 
 /** \cond */
 namespace endian { namespace priv
 {
-    template<class T, typename std::enable_if<std::is_same<T, float>::value, int>::type=0>
-    inline T fromParts(const uint8* p)
+    template<class Float>
+    inline Float fromParts(const uint8* p)
     {
-        union { float f; uint8 bytes[sizeof(float)]; } val;
-        val.bytes[0] = p[0];
-        val.bytes[1] = p[1];
-        val.bytes[2] = p[2];
-        val.bytes[3] = p[3];
+        union { Float f; uint8 bytes[sizeof(Float)]; } val;
+        mt::for_<0, sizeof(Float)>([&](int i) { val.bytes[i] = p[i]; });
         return val.f;
     }
     
-    template<class T, typename std::enable_if<std::is_same<T, double>::value, int>::type=0>
-    inline T fromParts(const uint8* p)
+    template<class Float>
+    inline Float fromPartsSwap(const uint8* p)
     {
-        union { double f; uint8 bytes[sizeof(double)]; } val;
-        val.bytes[0] = p[0];
-        val.bytes[1] = p[1];
-        val.bytes[2] = p[2];
-        val.bytes[3] = p[3];
-        val.bytes[4] = p[4];
-        val.bytes[5] = p[5];
-        val.bytes[6] = p[6];
-        val.bytes[7] = p[7];
+        union { Float f; uint8 bytes[sizeof(Float)]; } val;
+        mt::for_<0, sizeof(Float)>([&](int i) { val.bytes[i] = p[sizeof(Float)-1-i]; });
         return val.f;
     }
     
-    template<class T, typename std::enable_if<std::is_same<T, float>::value, int>::type=0>
-    inline T fromPartsSwap(const uint8* p)
+    template<class Float>
+    inline void toParts(const Float f, uint8* p)
     {
-        union { float f; uint8 bytes[sizeof(float)]; } val;
-        val.bytes[0] = p[3];
-        val.bytes[1] = p[2];
-        val.bytes[2] = p[1];
-        val.bytes[3] = p[0];
-        return val.f;
-    }
-    
-    template<class T, typename std::enable_if<std::is_same<T, double>::value, int>::type=0>
-    inline T fromPartsSwap(const uint8* p)
-    {
-        union { double f; uint8 bytes[sizeof(double)]; } val;
-        val.bytes[0] = p[7];
-        val.bytes[1] = p[6];
-        val.bytes[2] = p[5];
-        val.bytes[3] = p[4];
-        val.bytes[4] = p[3];
-        val.bytes[5] = p[2];
-        val.bytes[6] = p[1];
-        val.bytes[7] = p[0];
-        return val.f;
-    }
-    
-    inline void toParts(const float f, uint8* p)
-    {
-        union { float f; uint8 bytes[sizeof(float)]; } val;
+        union { Float f; uint8 bytes[sizeof(Float)]; } val;
         val.f = f;
-        p[0] = val.bytes[0];
-        p[1] = val.bytes[1];
-        p[2] = val.bytes[2];
-        p[3] = val.bytes[3];
+        mt::for_<0, sizeof(Float)>([&](int i) { p[i] = val.bytes[i]; });
     }
     
-    inline void toParts(const double f, uint8* p)
+    template<class Float>
+    inline void toPartsSwap(const Float f, uint8* p)
     {
-        union { double f; uint8 bytes[sizeof(double)]; } val;
+        union { Float f; uint8 bytes[sizeof(Float)]; } val;
         val.f = f;
-        p[0] = val.bytes[0];
-        p[1] = val.bytes[1];
-        p[2] = val.bytes[2];
-        p[3] = val.bytes[3];
-        p[4] = val.bytes[4];
-        p[5] = val.bytes[5];
-        p[6] = val.bytes[6];
-        p[7] = val.bytes[7];
-    }
-    
-    inline void toPartsSwap(const float f, uint8* p)
-    {
-        union { float f; uint8 bytes[sizeof(float)]; } val;
-        val.f = f;
-        p[0] = val.bytes[3];
-        p[1] = val.bytes[2];
-        p[2] = val.bytes[1];
-        p[3] = val.bytes[0];
-    }
-    
-    inline void toPartsSwap(const double f, uint8* p)
-    {
-        union { double f; uint8 bytes[sizeof(double)]; } val;
-        val.f = f;
-        p[0] = val.bytes[7];
-        p[1] = val.bytes[6];
-        p[2] = val.bytes[5];
-        p[3] = val.bytes[4];
-        p[4] = val.bytes[3];
-        p[5] = val.bytes[2];
-        p[6] = val.bytes[1];
-        p[7] = val.bytes[0];
+        mt::for_<0, sizeof(Float)>([&](int i) { p[i] = val.bytes[sizeof(Float)-1-i]; });
     }
 } }
 /** \endcond */

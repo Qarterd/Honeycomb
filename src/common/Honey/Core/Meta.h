@@ -127,6 +127,12 @@ auto applyTuple(Func&& f, Tuple&& t)                            { return priv::a
 /// Get size (number of elements) of a std::array
 template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;
 
+/// Unroll a loop calling f(counter, args...) at each iteration
+template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin == end, int>::type=0>
+inline void for_(Func&& f, Args&&... args)                      {}
+template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin != end, int>::type=0>
+inline void for_(Func&& f, Args&&... args)                      { f(begin, forward<Args>(args)...); for_<begin+step, end, step>(forward<Func>(f), forward<Args>(args)...); }
+    
 /// Create a method to check if a class has a member with matching name and type
 /**
   * `Result` stores the test result. `type` stores the member type if it exists, mt::Void otherwise.

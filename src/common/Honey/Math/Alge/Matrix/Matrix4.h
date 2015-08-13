@@ -126,9 +126,7 @@ public:
     /// Initialize with scalar in every element
     Matrix& fromScalar(Real f)
     {
-        #define FUNC(i) m(i) = f;
-        ITERATE(0, 15, FUNC);
-        #undef FUNC
+        mt::for_<0, 16>([&](int i) { m(i) = f; });
         return *this;
     }
 
@@ -464,9 +462,7 @@ struct priv::map_impl<Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>>
     template<class T, class O, class Func>
     static O&& func(T&& m, O&& o, Func&& f)
     {
-        #define FUNC(i) o(i) = f(m(i));
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
+        mt::for_<0, 16>([&](int i) { o(i) = f(m(i)); });
         return forward<O>(o);
     }
 };
@@ -477,9 +473,7 @@ struct priv::map_impl<Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>>
     template<class T, class T2, class O, class Func>
     static O&& func(T&& m, T2&& rhs, O&& o, Func&& f)
     {
-        #define FUNC(i) o(i) = f(m(i), rhs(i));
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
+        mt::for_<0, 16>([&](int i) { o(i) = f(m(i), rhs(i)); });
         return forward<O>(o);
     }
 };
@@ -490,17 +484,6 @@ struct priv::reduce_impl<Matrix<4,4,R,O>, Accum_>
     template<class T, class Accum, class Func>
     static Accum_ func(T&& m, Accum&& initVal, Func&& f)
     {
-        /*
-        return 
-        #define FUNC(i) f(
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
-            initVal
-        #define FUNC(i) , m(i))
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
-            ;
-        */
         return f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(forward<Accum>(initVal),
                 m(0)),  m(1)),  m(2)),  m(3)),
                 m(4)),  m(5)),  m(6)),  m(7)),
@@ -516,17 +499,6 @@ struct priv::reduce_impl<Matrix<4,4,R,O>, Accum_, Matrix<4,4,R,O>>
     template<class T, class T2, class Accum, class Func>
     static Accum_ func(T&& m, T2&& rhs, Accum&& initVal, Func&& f)
     {
-        /*
-        return
-        #define FUNC(i) f(
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
-            initVal
-        #define FUNC(i) , m(i), rhs(i))
-        ITERATE(0, 15, FUNC)
-        #undef FUNC
-            ;
-        */
         return f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(forward<Accum>(initVal),
                 m(0),rhs(0)),   m(1),rhs(1)),   m(2),rhs(2)),   m(3),rhs(3)),
                 m(4),rhs(4)),   m(5),rhs(5)),   m(6),rhs(6)),   m(7),rhs(7)),
