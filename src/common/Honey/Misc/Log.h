@@ -1,7 +1,6 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/String/String.h"
 #include "Honey/Graph/Dep.h"
 #include "Honey/Thread/Lock/Spin.h"
 

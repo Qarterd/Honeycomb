@@ -13,6 +13,8 @@ void print(const String& str)
     std::cout.flush();
 }
 
+void print(const char* str)     { print(String(str)); }
+
 void assertFail(const char* expr, const char* func, const char* file, int line, const String& msg)
 {
     String assert = sout()
@@ -25,6 +27,9 @@ void assertFail(const char* expr, const char* func, const char* file, int line, 
     #endif
     Exception::Raiser() ^ Exception::Source(func, file, line) << AssertionFailure() << assert;
 }
+
+void assertFail(const char* expr, const char* func, const char* file, int line, const char* msg)
+{ assertFail(expr, func, file, line, String(msg)); }
 
 } } }
 /** \endcond */

@@ -10,7 +10,10 @@ class String;
 namespace debug { namespace platform
 {
     void print(const String& str);
+    void print(const char* str);
+    
     void assertFail(const char* expr, const char* func, const char* file, int line, const String& msg);
+    void assertFail(const char* expr, const char* func, const char* file, int line, const char* msg);
 } }
 
 }

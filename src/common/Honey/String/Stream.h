@@ -2,11 +2,12 @@
 #pragma once
 
 #include "Honey/String/String.h"
+#include "Honey/String/Bytes.h"
 
 namespace honey
 {
 
-/// \defgroup stringstream  std::stringstream util
+/// \defgroup iostream  std::ios_base stream util
 /// @{
 
 /// Base class to hold iostream manipulator state.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
@@ -34,8 +35,10 @@ struct ManipFunc
     template<class Func_, class Tuple_>
     ManipFunc(Func_&& f, Tuple_&& args)                                 : f(forward<Func_>(f)), args(forward<Tuple_>(args)) {}
     
-    friend ostream& operator<<(ostream& os, const ManipFunc& manip)     { manip.apply(os, mt::make_idxseq<tuple_size<Tuple>::value>()); return os; }
-    friend istream& operator>>(istream& is, ManipFunc& manip)           { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    template<class Stream>
+    friend Stream& operator<<(Stream& os, const ManipFunc& manip)       { manip.apply(os, mt::make_idxseq<tuple_size<Tuple>::value>()); return os; }
+    template<class Stream>
+    friend Stream& operator>>(Stream& is, ManipFunc& manip)             { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
     
     template<size_t... Seq>
     void apply(ostream& os, mt::idxseq<Seq...>) const                   { f(os, get<Seq>(args)...); }
@@ -49,6 +52,11 @@ struct ManipFunc
 /// Helper to create a manipulator that takes arguments. eg. A manip named 'foo': `auto foo(int val) { return manipFunc([=](ios_base& ios) { FooManip::inst(ios).val = val; }); }`
 template<class Func, class... Args>
 inline auto manipFunc(Func&& f, Args&&... args)             { return ManipFunc<Func, decltype(make_tuple(forward<Args>(args)...))>(forward<Func>(f), make_tuple(forward<Args>(args)...)); }
+
+/// @}
+
+/// \defgroup stringstream  std::stringstream util
+/// @{
 
 /// Shorthand to create ostringstream
 inline ostringstream sout()                                 { return ostringstream(); }

@@ -1,7 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/String/String.h"
+#include "Honey/Core/Core.h"
 #include "Honey/Thread/Lock/platform/Mutex.h"
 
 namespace honey
