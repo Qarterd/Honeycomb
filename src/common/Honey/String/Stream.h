@@ -3,6 +3,7 @@
 
 #include "Honey/String/String.h"
 #include "Honey/String/Bytes.h"
+#include "Honey/Memory/UniquePtr.h"
 
 namespace honey
 {
@@ -94,6 +95,56 @@ inline ostream& endl(ostream& os)
 }
 
 /// @}
+
+/// A stream I/O buffer of bytes, to be passed into ByteStream
+class ByteBuf : public std::basic_stringbuf<byte>
+{
+public:
+    typedef std::basic_stringbuf<byte> Super;
+    
+    explicit ByteBuf(ios_base::openmode mode = 0)
+                                                            : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
+    explicit ByteBuf(const Bytes& bs, ios_base::openmode mode = 0)
+                                                            : ByteBuf(mode) { bytes(bs); }
+    ByteBuf(ByteBuf&& rhs)                                  : Super(move(rhs)), _mode(rhs._mode) {}
+    
+    ByteBuf& operator=(ByteBuf&& rhs)                       { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
+    
+    Bytes bytes() const                                     { return Bytes(pbase(), egptr() > pptr() ? egptr() : pptr()); }
+    void bytes(const Bytes& bs)
+    {
+        seekoff(0, ios_base::beg, ios_base::out);
+        sputn(bs.data(), bs.size());
+        setg(pbase(), pbase(), pptr());
+        if (!appendMode()) seekoff(0, ios_base::beg, ios_base::out);
+    }
+    
+private:
+    std::basic_string<byte> str() const;
+    void str(const std::basic_string<byte>& s);
+    bool appendMode() const                                 { return _mode & ios_base::ate || _mode & ios_base::app; }
+    
+    ios_base::openmode _mode;
+};
+
+/// An I/O stream into which objects may be serialized and subsequently deserialized
+class ByteStream : public std::basic_iostream<byte>
+{
+public:
+    typedef std::basic_iostream<byte> Super;
+    
+    explicit ByteStream(std::basic_streambuf<byte>* sb)     : Super(sb) {}
+    explicit ByteStream(std::basic_streambuf<char>* sb)     : Super(reinterpret_cast<std::basic_streambuf<byte>*>(sb)) {}
+    ByteStream(ByteStream&& rhs)                            : Super(std::move(rhs)) {}
+    
+    ByteStream& operator=(ByteStream&& rhs)                 { Super::operator=(std::move(rhs)); return *this; }
+};
+
+/// ByteStream util
+namespace bytestream
+{
+    
+}
 
 }
 
