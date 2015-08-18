@@ -184,9 +184,8 @@ namespace priv
         template<class Key, class Val>
         void operator()(Key, const Val& val)
         {
-            if (count++ > 0)
-                os << ", ";
-            os << Key::id() << " => " << val;
+            if (count++ > 0) os << ", ";
+            os << Key::id() << ": " << val;
         }
         ostream& os;
         int count;

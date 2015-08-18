@@ -116,22 +116,31 @@ template<size_t N> using make_idxseq                            = std::make_inde
 namespace priv
 {
     template<class Func, class Tuple, size_t... Seq>
-    auto applyTuple(Func&& f, Tuple&& t, mt::idxseq<Seq...>)    { return f(get<Seq>(forward<Tuple>(t))...); }
+    auto applyTuple(Func&& f, Tuple&& t, idxseq<Seq...>)        { return f(get<Seq>(forward<Tuple>(t))...); }
 }
 /** \endcond */
 
 /// Call a function with arguments from an unpacked tuple. ie. `f(get<Indices>(t)...)`
 template<class Func, class Tuple>
-auto applyTuple(Func&& f, Tuple&& t)                            { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), mt::make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
+auto applyTuple(Func&& f, Tuple&& t)                            { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
 
 /// Get size (number of elements) of a std::array
 template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;
 
+/// Create an array of deduced type initialized with values
+template<class T, class... Ts>
+auto make_array(T&& t, Ts&&... ts) -> array<T, sizeof...(Ts)+1> { return {forward<T>(t), forward<Ts>(ts)...}; }
+
+inline void exec() {} //dummy to catch empty parameter pack
+/// Execute a list of functions. Use to expand parameter packs in arbitrary statements: `exec([&]() { accum += get<Seq>(tuple); }...)`.
+template<class Func, class... Funcs>
+void exec(Func&& f, Funcs&&... fs)                              { f(); exec(forward<Funcs>(fs)...); }
+    
 /// Unroll a loop calling f(counter, args...) at each iteration
 template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin == end, int>::type=0>
-inline void for_(Func&& f, Args&&... args)                      {}
+void for_(Func&& f, Args&&... args)                             {}
 template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin != end, int>::type=0>
-inline void for_(Func&& f, Args&&... args)                      { f(begin, forward<Args>(args)...); for_<begin+step, end, step>(forward<Func>(f), forward<Args>(args)...); }
+void for_(Func&& f, Args&&... args)                             { f(begin, forward<Args>(args)...); for_<begin+step, end, step>(forward<Func>(f), forward<Args>(args)...); }
     
 /// Create a method to check if a class has a member with matching name and type
 /**

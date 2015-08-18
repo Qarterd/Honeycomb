@@ -285,14 +285,14 @@ public:
 
     friend ostream& operator<<(ostream& os, const Quat_& val)
     {
-        os << "(";
+        os << "[";
         for (int i = 0; i < dim; ++i)
         {
             if (i != 0)
                 os << ", ";
             os << val[i];
         }
-        return os << ")";
+        return os << "]";
     }
 
 private:

@@ -122,7 +122,7 @@ public:
 private:
     std::basic_string<byte> str() const;
     void str(const std::basic_string<byte>& s);
-    bool appendMode() const                                 { return _mode & ios_base::ate || _mode & ios_base::app; }
+    bool appendMode() const                                 { return _mode & (ios_base::app | ios_base::ate); }
     
     ios_base::openmode _mode;
 };
@@ -146,7 +146,86 @@ namespace bytestream
     
 }
 
+/*
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
+static T operator<<(ByteStream& os, const T val)
+{
+    byte a[sizeof(T)];
+    BitOpCommon::toPartsBig(val, a);
+    os.write(a, );
+}
+  */
+    
 }
 
+/** \cond */
+namespace std
+{
+/** \endcond */
+    /// \ingroup stringstream
+    /// @{
+    
+    /// Pair to string
+    template<class T1, class T2>
+    ostream& operator<<(ostream& os, const pair<T1,T2>& p)  { return os << "[" << p.first << ", " << p.second << "]"; }
+    
+    /** \cond */
+    namespace priv
+    {
+        template<class Tuple, size_t... Seq>
+        void tupleToString(ostream& os, Tuple&& t, honey::mt::idxseq<Seq...>)
+                                                            { os << "["; honey::mt::exec([&]() { os << get<Seq>(forward<Tuple>(t)) << (Seq < sizeof...(Seq)-1 ? ", " : ""); }...); os << "]"; }
+        template<class List>
+        void listToString(ostream& os, const List& list)    { int i = 0; os << "["; for (auto& e: list) os << (i++ > 0 ? ", " : "") << e; os << "]"; }
+    }
+    /** \endcond */
 
+    /// Tuple to string
+    template<class Tuple>
+    typename enable_if<honey::mt::isTuple<Tuple>::value, ostream&>::type
+        operator<<(ostream& os, Tuple&& t)                  { priv::tupleToString(os, forward<Tuple>(t), honey::mt::make_idxseq<tuple_size<typename honey::mt::removeRef<Tuple>::type>::value>()); return os; }
+    
+    /// Array to string
+    template<class T, size_t N>
+    ostream& operator<<(ostream& os, const array<T,N>& a)   { priv::listToString(os, a); return os; }
+    /// Vector to string
+    template<class T, class Alloc>
+    ostream& operator<<(ostream& os, const vector<T,Alloc>& vec)
+                                                            { priv::listToString(os, vec); return os; }
+    /// Set to string
+    template<class T, class Compare, class Alloc>
+    ostream& operator<<(ostream& os, const set<T,Compare,Alloc>& set)
+                                                            { priv::listToString(os, set); return os; }
+    /// Multi-Set to string
+    template<class T, class Compare, class Alloc>
+    ostream& operator<<(ostream& os, const multiset<T,Compare,Alloc>& set)
+                                                            { priv::listToString(os, set); return os; }
+    /// Unordered Set to string
+    template<class Key, class Hash, class KeyEqual, class Alloc>
+    ostream& operator<<(ostream& os, const unordered_set<Key,Hash,KeyEqual,Alloc>& set)
+                                                            { priv::listToString(os, set); return os; }
+    /// Unordered Multi-Set to string
+    template<class Key, class Hash, class KeyEqual, class Alloc>
+    ostream& operator<<(ostream& os, const unordered_multiset<Key,Hash,KeyEqual,Alloc>& set)
+                                                            { priv::listToString(os, set); return os; }
+    /// Map to string
+    template<class Key, class T, class Compare, class Alloc>
+    ostream& operator<<(ostream& os, const map<Key,T,Compare,Alloc>& map)
+                                                            { priv::listToString(os, map); return os; }
+    /// Multi-Map to string
+    template<class Key, class T, class Compare, class Alloc>
+    ostream& operator<<(ostream& os, const multimap<Key,T,Compare,Alloc>& map)
+                                                            { priv::listToString(os, map); return os; }
+    /// Unordered Map to string
+    template<class Key, class T, class Hash, class KeyEqual, class Alloc>
+    ostream& operator<<(ostream& os, const unordered_map<Key,T,Hash,KeyEqual,Alloc>& map)
+                                                            { priv::listToString(os, map); return os; }
+    /// Unordered Multi-Map to string
+    template<class Key, class T, class Hash, class KeyEqual, class Alloc>
+    ostream& operator<<(ostream& os, const unordered_multimap<Key,T,Hash,KeyEqual,Alloc>& map)
+                                                            { priv::listToString(os, map); return os; }
+    /// @}
+/** \cond */
+}
+/** \endcond */
 

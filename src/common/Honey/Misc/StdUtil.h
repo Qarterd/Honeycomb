@@ -32,24 +32,6 @@ auto values(Range&& range) -> Range_<TupleIter<mt_iterOf(range),1>, TupleIter<mt
     return honey::range(TupleIter<mt_iterOf(range),1>(begin(range)), TupleIter<mt_iterOf(range),1>(end(range)));
 }
 
-/** \cond */
-namespace priv
-{
-    template<class T, int i, int size = tuple_size<typename mt::removeRef<T>::type>::value, bool end = i == size>
-    struct tupleToString
-    {
-        static void func(ostream& os, T&& t)
-        {
-            os << get<i>(t) << (i < size-1 ? ", " : "");
-            tupleToString<T, i+1>::func(os, forward<T>(t));
-        }
-    };
-    
-    template<class T, int i, int size>
-    struct tupleToString<T, i, size, true>              { static void func(ostream&, T&&) {} };
-};
-/** \endcond */
-
 /// See \ref StdUtil
 namespace stdutil
 {
@@ -109,11 +91,6 @@ namespace stdutil
     template<class Key, template<class> class Alloc>
     using unordered_multiset = std::unordered_multiset<Key, std::hash<Key>, std::equal_to<Key>, Alloc<Key>>;
 }
-
-/// Create an array of deduced type initialized with values
-template<class T, class... Ts>
-auto make_array(T&& t, Ts&&... ts) -> array<T, sizeof...(Ts)+1>
-                                                        { return {forward<T>(t), forward<Ts>(ts)...}; }
 
 /** \cond */
 namespace priv
@@ -228,20 +205,3 @@ private:
 
 }
 
-/** \cond */
-namespace std
-{
-/** \endcond */
-    /// Tuple to string
-    /** \ingroup StdUtil */
-    template<class Tuple>
-    typename std::enable_if<honey::mt::isTuple<Tuple>::value, ostream&>::type
-        operator<<(ostream& os, Tuple&& t)
-    {
-        os << "(";
-        honey::priv::tupleToString<Tuple, 0>::func(os, forward<Tuple>(t));
-        return os << ")";
-    }
-/** \cond */
-}
-/** \endcond */

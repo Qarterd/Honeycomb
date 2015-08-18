@@ -84,7 +84,7 @@ namespace priv
     template<class Locks, size_t... Seq>
     void lock(Locks&& locks, mt::idxseq<Seq...>)
     {
-        auto switch_ = make_array<function<int ()>>([&]() -> int
+        auto switch_ = mt::make_array<function<int ()>>([&]() -> int
         {
             const int offset = Seq;
             int failed;

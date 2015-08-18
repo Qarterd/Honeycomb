@@ -210,8 +210,8 @@ public:
 
     friend ostream& operator<<(ostream& os, const Transform_& tm)
     {
-        return os << "{ "   << "trans" << tm._trans << ", rot" << tm._rot
-                            << ", scale" << tm._scale << ", skew" << tm._skew << " }";
+        return os << "{ "   << "trans: " << tm._trans << ", rot: " << tm._rot
+                            << ", scale: " << tm._scale << ", skew: " << tm._skew << " }";
     }
 
 protected:

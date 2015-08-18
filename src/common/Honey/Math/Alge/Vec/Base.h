@@ -94,13 +94,13 @@ public:
 
     friend ostream& operator<<(ostream& os, const VecBase& val)
     {
-        if (val.size() > 1) os << "(";
+        if (val.size() > 1) os << "[";
         for (int i = 0; i < val.size(); ++i)
         {
             if (i != 0) os << ", ";
             os << val[i];
         }
-        return val.size() > 1 ? os << ")" : os;
+        return val.size() > 1 ? os << "]" : os;
     }                                    
 };
 

@@ -349,7 +349,7 @@ String MemPool::printStats() const
     for (auto& e : _bucketList)
     {
         int blockCount = e->_freeCount + e->_usedCount;
-        stream  << "Bucket #" << i++ << endl
+        stream  << "Bucket #" << i++ << ":" << endl
                 << stringstream::indentInc << "{" << endl
                 << "Block Size: " << e->_blockSize << endl
                 << "Block Count Expansion: " << blockCount << " / " << e->_blockCountInit
@@ -363,7 +363,7 @@ String MemPool::printStats() const
                 << stringstream::indentDec << endl << "}" << endl;
     }
 
-    stream  << "Heap " << endl
+    stream  << "Heap:" << endl
             << stringstream::indentInc << "{" << endl
             << "Allocated Bytes: " << _heap->_chunkSizeTotal
                 << " (" << Real(_heap->_chunkSizeTotal)/allocTotal*100 << "%)" << endl

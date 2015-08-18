@@ -254,6 +254,13 @@ void test()
     }
     
     {
+        debug_print(sout() << "Tuple: " << tuple<Id,int,String>{"a"_id,2,"c"} << endl);
+        debug_print(sout() << "Vector: " << vector<Id>{"a"_id,"b"_id,"c"_id} << endl);
+        debug_print(sout() << "Set: " << set<Id>{"a"_id,"b"_id,"c"_id} << endl);
+        debug_print(sout() << "Map: " << std::map<Id,int>{{"a"_id,1},{"b"_id,2},{"c"_id,3}} << endl);
+    }
+    
+    {
         int a = 0;
         for (auto i : range(0, 5, 2)) {  ++a; mt_unused(i); }
         for (auto i : range(0.0, 4.0, 1.3)) { ++a; mt_unused(i); }
