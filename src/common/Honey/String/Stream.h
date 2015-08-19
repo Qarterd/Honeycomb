@@ -176,6 +176,53 @@ ByteStream& operator>>(ByteStream& is, T& val)
     return is;
 }
 
+/// ByteStream util
+namespace bytestream
+{
+    /** \cond */
+    namespace priv
+    {
+        template<class Int>
+        struct VarSize
+        {
+            friend ByteStream& operator<<(ByteStream& os, const VarSize& v)
+            {
+                assert(v.val >= 0, "VarSize value must be positive");
+                if (v.val <= 0)                             return os << uint8(0);
+                else if (v.val <= numeral<uint8>().max()-3) return os << uint8(v.val);
+                else if (v.val <= numeral<uint16>().max())  return os << numeral<uint8>().max() << uint16(v.val);
+                else if (v.val <= numeral<uint32>().max())  return os << uint8(numeral<uint8>().max()-1) << uint32(v.val);
+                else                                        return os << uint8(numeral<uint8>().max()-2) << uint64(v.val);
+            }
+            
+            template<class VarSize_>
+            friend typename std::enable_if<std::is_same<VarSize,VarSize_>::value, ByteStream&>::type
+                operator>>(ByteStream& is, const VarSize_& v)
+            {
+                static_assert(mt::isLref<Int>::value && !std::is_const<typename mt::removeRef<Int>::type>::value, "VarSize requires a mutable integer reference for extraction");
+                typedef typename std::remove_const<typename mt::removeRef<Int>::type>::type Int_;
+                
+                uint8 size; is >> size;
+                switch (size)
+                {
+                case numeral<uint8>().max():    { uint16 val; is >> val; v.val = numeric_cast<Int_>(val); break; }
+                case numeral<uint8>().max()-1:  { uint32 val; is >> val; v.val = numeric_cast<Int_>(val); break; }
+                case numeral<uint8>().max()-2:  { uint64 val; is >> val; v.val = numeric_cast<Int_>(val); break; }
+                default:                        v.val = numeric_cast<Int_>(size); break;
+                }
+                return is;
+            }
+            
+            Int val;
+        };
+    }
+    /** \endcond */
+    
+    /// Write or read a size (a positive integer) using a minimal number of bytes
+    template<class Int, typename std::enable_if<std::is_integral<typename mt::removeRef<Int>::type>::value, int>::type=0>
+    inline auto varSize(Int&& val)                              { return priv::VarSize<Int>{forward<Int>(val)}; }
+}
+
 /** \cond */
 namespace priv
 {
@@ -196,12 +243,6 @@ typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
 template<class Tuple>
 typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
     operator>>(ByteStream& is, Tuple& t)                        { priv::tupleFromBytes(is, t, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
-    
-/// ByteStream util
-namespace bytestream
-{
-    
-}
 /// @}
 
 }

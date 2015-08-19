@@ -18,22 +18,13 @@ namespace numeral_priv
         typedef float128    Real;
         typedef Quad_       Real_;
 
-        Info() :
-            min(        -1.7976931348623158e+308),
-            max(        1.7976931348623158e+308),
-            smallest(   2.2250738585072014e-308),
-            epsilon(    2.2204460492503131e-016),
-            one(        1.0),
-            inf(        1.0 / (1.0 - one)),
-            nan(        0.0 / (1.0 - one)) {}
-
-        const float128 min;
-        const float128 max;
-        const float128 smallest;
-        const float128 epsilon;
-        const float128 one;
-        const float128 inf;
-        const float128 nan;
+        constexpr float128 min() const      { return -1.7976931348623158e+308; }
+        constexpr float128 max() const      { return 1.7976931348623158e+308; }
+        constexpr float128 smallest() const { return 2.2250738585072014e-308; }
+        constexpr float128 epsilon() const  { return 2.2204460492503131e-016; }
+        constexpr float128 one() const      { return 1.0; }
+        constexpr float128 inf() const      { return 1.0 / (1.0 - one()); }
+        constexpr float128 nan() const      { return 0.0 / (1.0 - one()); }
     };
 }
 

@@ -263,9 +263,9 @@ void test()
     {
         ByteBuf buf;
         ByteStream bs(&buf);
-        bs << make_tuple(true, 97_b, 'b', -0xFFF, -0xFFFFFFFFFL, 0xFFFFFFFFFUL);
+        bs << make_tuple(true, 97_b, 'b', -0xFFF, -0xFFFFFFFFFL, 0xFFFFFFFFFUL, 1.1f, 2.2);
         debug_print(sout() << "Tuple to bytes: " << buf.bytes() << endl);
-        tuple<bool, byte, char, int, int64, uint64> t;
+        tuple<bool, byte, char, int, int64, uint64, float, double> t;
         bs >> t;
         debug_print(sout() << "Tuple from bytes: " << t << endl);
     }

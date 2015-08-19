@@ -20,10 +20,9 @@ template<class T> class Numeral;
 template<class T>
 class NumeralInt
 {
-protected:
     typedef numeral_priv::Info<T> Info;
     Info _info;
-
+    
 public:
     /// Integer representation of type
     typedef typename Info::Int              Int;
@@ -36,34 +35,50 @@ public:
     static const int sizeBits               = sizeof(T)*8;
 
     /// Minimum possible value for type (negative for signed types)
-    T min() const                           { return _info.min; }
+    constexpr T min() const                 { return _info.min; }
     /// Maximum possible value for type
-    T max() const                           { return _info.max; }
+    constexpr T max() const                 { return _info.max; }
 };
 
 /// Numeric type info for floating point types
 template<class T>
-class NumeralFloat : public NumeralInt<T>
+class NumeralFloat
 {
+    typedef numeral_priv::Info<T> Info;
+    Info _info;
+    
 public:
+    /// Integer representation of type
+    typedef typename Info::Int              Int;
+    /// Real representation of type
+    typedef typename Info::Real             Real;
+    /// Real operations and constants class
+    typedef typename Info::Real_            Real_;
+
+    /// Size of type in bits
+    static const int sizeBits               = sizeof(T)*8;
+
+    /// Minimum possible value for type
+    constexpr T min() const                 { return _info.min(); }
+    /// Maximum possible value for type
+    constexpr T max() const                 { return _info.max(); }
     /// Smallest representable value (close to zero)
-    T smallest() const                      { return this->_info.smallest; }
+    constexpr T smallest() const            { return _info.smallest(); }
     /// Smallest value such that 1.0 + epsilon != 1.0
-    T epsilon() const                       { return this->_info.epsilon; }
+    constexpr T epsilon() const             { return _info.epsilon(); }
     /// Infinity. ie. 1.0 / 0.0
-    T inf() const                           { return this->_info.inf; }
+    constexpr T inf() const                 { return _info.inf(); }
     /// Not a number. ie. 0.0 / 0.0, sqrt(-1)
-    T nan() const                           { return this->_info.nan; }
+    constexpr T nan() const                 { return _info.nan(); }
 };
 
 
 /// Get numeric type info safely from a static context
 template<class T>
-const Numeral<T>& numeral()                 { static Numeral<T> _obj; return _obj; }
-
+constexpr Numeral<T> numeral()              { return Numeral<T>(); }
 /// Get numeric type info of deduced type
 template<class T>
-const Numeral<T>& numeral(const T&)         { return numeral<T>(); }
+constexpr Numeral<T> numeral(const T&)      { return numeral<T>(); }
 
 /// \name Safe conversion between integer types
 /// Asserts that value is within result type integer range.
@@ -166,23 +181,14 @@ namespace numeral_priv
         typedef int32   Int;
         typedef float   Real;
         typedef Float_  Real_;
-        
-        Info() :
-            min(        -3.402823466e+38f),
-            max(        3.402823466e+38f),
-            smallest(   1.175494351e-38f),
-            epsilon(    1.192092896e-07f),
-            one(        1.f),
-            inf(        1.f / (1.f - one)),
-            nan(        0.f / (1.f - one)) {}
 
-        const float min;
-        const float max;
-        const float smallest;
-        const float epsilon;
-        const float one;
-        const float inf;
-        const float nan;
+        constexpr float min() const         { return -3.402823466e+38f; }
+        constexpr float max() const         { return 3.402823466e+38f; }
+        constexpr float smallest() const    { return 1.175494351e-38f; }
+        constexpr float epsilon() const     { return 1.192092896e-07f; }
+        constexpr float one() const         { return 1.f; }
+        constexpr float inf() const         { return 1.f / (1.f - one()); }
+        constexpr float nan() const         { return 0.f / (1.f - one()); }
     };
 
     template<> struct Info<double>
@@ -191,22 +197,13 @@ namespace numeral_priv
         typedef double  Real;
         typedef Double_ Real_;
 
-        Info() :
-            min(        -1.7976931348623158e+308),
-            max(        1.7976931348623158e+308),
-            smallest(   2.2250738585072014e-308),
-            epsilon(    2.2204460492503131e-016),
-            one(        1.0),
-            inf(        1.0 / (1.0 - one)),
-            nan(        0.0 / (1.0 - one)) {}
-
-        const double min;
-        const double max;
-        const double smallest;
-        const double epsilon;
-        const double one;
-        const double inf;
-        const double nan;
+        constexpr double min() const        { return -1.7976931348623158e+308; }
+        constexpr double max() const        { return 1.7976931348623158e+308; }
+        constexpr double smallest() const   { return 2.2250738585072014e-308; }
+        constexpr double epsilon() const    { return 2.2204460492503131e-016; }
+        constexpr double one() const        { return 1.0; }
+        constexpr double inf() const        { return 1.0 / (1.0 - one()); }
+        constexpr double nan() const        { return 0.0 / (1.0 - one()); }
     };
 }
 

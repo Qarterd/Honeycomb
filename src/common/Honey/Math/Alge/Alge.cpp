@@ -6,8 +6,8 @@
 namespace honey
 {
 
-template<class Real> const Real Alge_<Real>::logMin = log(Real_::smallest);
-template<class Real> const Real Alge_<Real>::logMax = log(Real_::max);
+template<class Real> const Real Alge_<Real>::logMin = log(numeral<Real>().smallest());
+template<class Real> const Real Alge_<Real>::logMax = log(numeral<Real>().max());
 
 template<class Real>
 Real Alge_<Real>::log1p(const Real x)
