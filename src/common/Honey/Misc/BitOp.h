@@ -146,25 +146,25 @@ struct BitOpEndian<static_cast<int>(Endian::little)> : BitOpCommon
     
     /// Convert an array of smaller number parts into a full number, where the first index holds the least significant part
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static T fromPartsLittle(const uint8* p)                { return BitOpCommon::fromPartsLittle<T>(p); }
+    static T fromPartsLittle(const uint8* p)                { return (T)BitOpCommon::fromPartsLittle<typename std::make_unsigned<T>::type>(p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static T fromPartsLittle(const uint8* p)                { return endian::priv::fromParts<T>(p); }
     
     /// Convert an array of smaller number parts into a full number, where the first index holds the most significant part
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static T fromPartsBig(const uint8* p)                   { return BitOpCommon::fromPartsBig<T>(p); }
+    static T fromPartsBig(const uint8* p)                   { return (T)BitOpCommon::fromPartsBig<typename std::make_unsigned<T>::type>(p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static T fromPartsBig(const uint8* p)                   { return endian::priv::fromPartsSwap<T>(p); }
     
     /// Convert a full number into an array of smaller number parts, where the first index holds the least significant part
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle(v, p); }
+    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle((typename std::make_unsigned<T>::type)v, p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static void toPartsLittle(const T v, uint8* p)          { endian::priv::toParts(v, p); }
     
     /// Convert a full number into an array of smaller number parts, where the first index holds the most significant part
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig(v, p); }
+    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig((typename std::make_unsigned<T>::type)v, p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static void toPartsBig(const T v, uint8* p)             { endian::priv::toPartsSwap(v, p); }
     /// @}
@@ -188,22 +188,22 @@ public:
     static Int platformToBig(const Int v)                   { return v; }
     
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static T fromPartsLittle(const uint8* p)                { return BitOpCommon::fromPartsLittle<T>(p); }
+    static T fromPartsLittle(const uint8* p)                { return (T)BitOpCommon::fromPartsLittle<typename std::make_unsigned<T>::type>(p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static T fromPartsLittle(const uint8* p)                { return endian::priv::fromPartsSwap<T>(p); }
     
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static T fromPartsBig(const uint8* p)                   { return BitOpCommon::fromPartsBig<T>(p); }
+    static T fromPartsBig(const uint8* p)                   { return (T)BitOpCommon::fromPartsBig<typename std::make_unsigned<T>::type>(p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static T fromPartsBig(const uint8* p)                   { return endian::priv::fromParts<T>(p); }
     
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle(v, p); }
+    static void toPartsLittle(const T v, uint8* p)          { BitOpCommon::toPartsLittle((typename std::make_unsigned<T>::type)v, p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static void toPartsLittle(const T v, uint8* p)          { endian::priv::toPartsSwap(v, p); }
     
     template<class T, typename std::enable_if<std::is_integral<T>::value, int>::type=0>
-    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig(v, p); }
+    static void toPartsBig(const T v, uint8* p)             { BitOpCommon::toPartsBig((typename std::make_unsigned<T>::type)v, p); }
     template<class T, typename std::enable_if<std::is_floating_point<T>::value, int>::type=0>
     static void toPartsBig(const T v, uint8* p)             { endian::priv::toParts(v, p); }
 };

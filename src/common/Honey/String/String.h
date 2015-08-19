@@ -152,12 +152,11 @@ inline bool operator>=(const String& lhs, const String& rhs)                { re
 namespace std
 {
 /** \endcond */
-    /// \name String methods
+    /// \ingroup String
     /// @{
     
-    /// Output UTF-16 string, pointer must not be null. \ingroup String
+    /// Output UTF-16 string, pointer must not be null.
     inline ostream& operator<<(ostream& os, honey::Char* str)               { assert(str); return os << std::string(str, str + std::char_traits<honey::Char>::length(str)); }
-    /// \ingroup String
     inline ostream& operator<<(ostream& os, honey::Char val)                { honey::Char str[] = {val, 0}; return os << str; }
     /// @}
 /** \cond */

@@ -21,7 +21,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 500;
+                int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 5).nextInt())
@@ -81,7 +81,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 500;
+                int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 3).nextInt())
@@ -254,10 +254,20 @@ void test()
     }
     
     {
-        debug_print(sout() << "Tuple: " << tuple<Id,int,String>{"a"_id,2,"c"} << endl);
-        debug_print(sout() << "Vector: " << vector<Id>{"a"_id,"b"_id,"c"_id} << endl);
-        debug_print(sout() << "Set: " << set<Id>{"a"_id,"b"_id,"c"_id} << endl);
-        debug_print(sout() << "Map: " << std::map<Id,int>{{"a"_id,1},{"b"_id,2},{"c"_id,3}} << endl);
+        debug_print(sout() << "Tuple to string: " << tuple<Id,int,String>{"a"_id,2,"c"} << endl);
+        debug_print(sout() << "Vector to string: " << vector<Id>{"a"_id,"b"_id,"c"_id} << endl);
+        debug_print(sout() << "Set to string: " << set<Id>{"a"_id,"b"_id,"c"_id} << endl);
+        debug_print(sout() << "Map to string: " << std::map<Id,int>{{"a"_id,1},{"b"_id,2},{"c"_id,3}} << endl);
+    }
+    
+    {
+        ByteBuf buf;
+        ByteStream bs(&buf);
+        bs << make_tuple(true, 97_b, 'b', -0xFFF, -0xFFFFFFFFFL, 0xFFFFFFFFFUL);
+        debug_print(sout() << "Tuple to bytes: " << buf.bytes() << endl);
+        tuple<bool, byte, char, int, int64, uint64> t;
+        bs >> t;
+        debug_print(sout() << "Tuple from bytes: " << t << endl);
     }
     
     {
@@ -612,7 +622,7 @@ void test()
     bootVar.calc();
     debug_print(sout() << "Boot Var: " << bootVar.lower() << " ; " << bootVar.upper() << endl);
 
-    for (auto i : range(-1, 50))
+    for (auto i : range(-1, 10))
     {
         mt_unused(i);
         f = disc.next();

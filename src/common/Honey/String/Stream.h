@@ -97,10 +97,10 @@ inline ostream& endl(ostream& os)
 /// @}
 
 /// A stream I/O buffer of bytes, to be passed into ByteStream
-class ByteBuf : public std::basic_stringbuf<byte>
+class ByteBuf : public std::stringbuf
 {
 public:
-    typedef std::basic_stringbuf<byte> Super;
+    typedef std::stringbuf Super;
     
     explicit ByteBuf(ios_base::openmode mode = 0)
                                                             : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
@@ -110,11 +110,11 @@ public:
     
     ByteBuf& operator=(ByteBuf&& rhs)                       { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
     
-    Bytes bytes() const                                     { return Bytes(pbase(), egptr() > pptr() ? egptr() : pptr()); }
+    Bytes bytes() const                                     { return Bytes(reinterpret_cast<const byte*>(pbase()), reinterpret_cast<const byte*>(egptr() > pptr() ? egptr() : pptr())); }
     void bytes(const Bytes& bs)
     {
         seekoff(0, ios_base::beg, ios_base::out);
-        sputn(bs.data(), bs.size());
+        sputn(reinterpret_cast<const char*>(bs.data()), bs.size());
         setg(pbase(), pbase(), pptr());
         if (!appendMode()) seekoff(0, ios_base::beg, ios_base::out);
     }
@@ -128,34 +128,82 @@ private:
 };
 
 /// An I/O stream into which objects may be serialized and subsequently deserialized
-class ByteStream : public std::basic_iostream<byte>
+class ByteStream : public std::iostream
 {
 public:
-    typedef std::basic_iostream<byte> Super;
+    typedef std::iostream Super;
     
-    explicit ByteStream(std::basic_streambuf<byte>* sb)     : Super(sb) {}
-    explicit ByteStream(std::basic_streambuf<char>* sb)     : Super(reinterpret_cast<std::basic_streambuf<byte>*>(sb)) {}
+    explicit ByteStream(std::streambuf* sb)                 : Super(sb) {}
     ByteStream(ByteStream&& rhs)                            : Super(std::move(rhs)) {}
     
     ByteStream& operator=(ByteStream&& rhs)                 { Super::operator=(std::move(rhs)); return *this; }
 };
 
+/// \defgroup ByteStream  ByteStream util
+/// @{
+
+/// Bool to bytes
+inline ByteStream& operator<<(ByteStream& os, const bool val)   { os.put(val); return os; }
+/// Byte to bytes
+inline ByteStream& operator<<(ByteStream& os, const byte val)   { os.put(val); return os; }
+/// Char to bytes
+inline ByteStream& operator<<(ByteStream& os, const char val)   { os.put(val); return os; }
+
+/// Multi-byte number to big-endian bytes
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
+ByteStream& operator<<(ByteStream& os, const T val)
+{
+    byte a[sizeof(T)];
+    BitOp::toPartsBig(val, a);
+    os.write(reinterpret_cast<char*>(a), sizeof(T));
+    return os;
+}
+
+/// Bool from bytes
+inline ByteStream& operator>>(ByteStream& is, bool& val)        { val = is.get(); return is; }
+/// Byte from bytes
+inline ByteStream& operator>>(ByteStream& is, byte& val)        { is.get(reinterpret_cast<char&>(val)); return is; }
+/// Char from bytes
+inline ByteStream& operator>>(ByteStream& is, char& val)        { is.get(val); return is; }
+
+/// Multi-byte number from big-endian bytes
+template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
+ByteStream& operator>>(ByteStream& is, T& val)
+{
+    byte a[sizeof(T)];
+    is.read(reinterpret_cast<char*>(a), sizeof(T));
+    val = BitOp::fromPartsBig<T>(a);
+    return is;
+}
+
+/** \cond */
+namespace priv
+{
+    template<class Tuple, size_t... Seq>
+    void tupleToBytes(ByteStream& os, Tuple&& t, mt::idxseq<Seq...>)
+                                                                { mt::exec([&]() { os << get<Seq>(forward<Tuple>(t)); }...); }
+    template<class Tuple, size_t... Seq>
+    void tupleFromBytes(ByteStream& is, Tuple& t, mt::idxseq<Seq...>)
+                                                                { mt::exec([&]() { is >> get<Seq>(t); }...); }
+}
+/** \endcond */
+
+/// Tuple to bytes
+template<class Tuple>
+typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
+    operator<<(ByteStream& os, Tuple&& t)                       { priv::tupleToBytes(os, forward<Tuple>(t), mt::make_idxseq<tuple_size<typename mt::removeRef<Tuple>::type>::value>()); return os; }
+/// Tuple from bytes
+template<class Tuple>
+typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
+    operator>>(ByteStream& is, Tuple& t)                        { priv::tupleFromBytes(is, t, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    
 /// ByteStream util
 namespace bytestream
 {
     
 }
+/// @}
 
-/*
-template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
-static T operator<<(ByteStream& os, const T val)
-{
-    byte a[sizeof(T)];
-    BitOpCommon::toPartsBig(val, a);
-    os.write(a, );
-}
-  */
-    
 }
 
 /** \cond */
