@@ -11,7 +11,7 @@ namespace honey
   * \defgroup Id    String Identifier
   *
   * String ids provide a fast way to compare strings. \n
-  * An Id is composed of a name string and its hashed integral value (using hash::fast_u8()). \n
+  * An Id is composed of a name string and its hashed integral value (using hash::fast()). \n
   * In final mode an Id only holds the hash; name() and operator<<() are not available.
   *
   * \see string literal operator `_id` to create ids at compile-time.
@@ -26,9 +26,9 @@ class Id
     friend class IdLiteral;
 public:
     Id()                                            : _hash(0) {}
-    Id(const String& name)                          : debug_if(_name(name),) _hash(hash::fast_u8(name)) {}
+    Id(const String& name)                          : debug_if(_name(name),) _hash(hash::fast(name)) {}
     /// Construct with precalculated hash
-    Id(const String& name, int hash)                : debug_if(_name(name),) _hash(hash) { assert(_hash == hash::fast_u8(_name)); }
+    Id(const String& name, int hash)                : debug_if(_name(name),) _hash(hash) { assert(_hash == hash::fast(_name)); }
     Id(const IdLiteral& rhs);
     Id(const Id& rhs)                               : debug_if(_name(rhs._name),) _hash(rhs._hash) {}
     Id(Id&& rhs)                                    : debug_if(_name(move(rhs._name)),) _hash(rhs._hash) {}
@@ -84,7 +84,7 @@ class IdLiteral
 public:
     constexpr IdLiteral()                           : debug_if(_name(""),) _hash(0) {}
     constexpr IdLiteral(const char* str, size_t len)
-                                                    : debug_if(_name(str),) _hash(hash::fast_u8(str, (int)len)) {}
+                                                    : debug_if(_name(str),) _hash(hash::fast_(str, (int)len)) {}
     
     constexpr bool operator==(const IdLiteral& rhs) const   { return _hash == rhs._hash; }
     constexpr bool operator!=(const IdLiteral& rhs) const   { return _hash != rhs._hash; }

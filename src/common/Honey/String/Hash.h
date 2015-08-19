@@ -48,12 +48,14 @@ namespace priv { namespace murmur_constexpr
 
 /// Quickly generate a small hash value. Each seed value produces a unique hash from the same data.
 int fast(const byte* data, int len, int seed = 0);
-/// fast() for strings
-inline int fast(const String& str, int seed = 0)                            { return fast(reinterpret_cast<const byte*>(str.data()), str.length()*sizeof(Char), seed); }
 /// fast() for UTF-8 strings
-inline int fast_u8(const std::string& str, int seed = 0)                    { return fast(reinterpret_cast<const byte*>(str.data()), (int)str.length(), seed); }
+inline int fast(const char* str, int seed = 0)                              { return fast(reinterpret_cast<const byte*>(str), (int)strlen(str), seed); }
 /// fast() for UTF-8 strings
-inline constexpr int fast_u8(const char* str, int len, int seed = 0)        { return priv::murmur_constexpr::loop(str, len, len / 4, 0, seed); }
+inline int fast(const std::string& str, int seed = 0)                       { return fast(reinterpret_cast<const byte*>(str.data()), (int)str.length(), seed); }
+/// fast() for strings, converted to UTF-8 before hashing
+inline int fast(const String& str, int seed = 0)                            { return fast(str.u8(), seed); }
+/// fast() for UTF-8 strings
+inline constexpr int fast_(const char* str, int len, int seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 4, 0, seed); }
 
 /// 256-bit secure hash value
 struct sval : ByteArray<32>
@@ -72,8 +74,12 @@ struct sval : ByteArray<32>
   *                 Each key produces a unique hash from the same data.
   */
 sval secure(const byte* data, int len, optional<const sval&> key = optnull);
-/// secure() for strings
-inline sval secure(const String& str, optional<const sval&> key = optnull)  { return secure(reinterpret_cast<const byte*>(str.data()), str.length()*sizeof(Char), key); }
+/// secure() for UTF-8 strings
+inline sval secure(const char* str, optional<const sval&> key = optnull)        { return secure(reinterpret_cast<const byte*>(str), (int)strlen(str), key); }
+/// secure() for UTF-8 strings
+inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(reinterpret_cast<const byte*>(str.data()), (int)str.length(), key); }
+/// secure() for strings, converted to UTF-8 before hashing
+inline sval secure(const String& str, optional<const sval&> key = optnull)      { return secure(str.u8(), key); }
 
 /// Generate secure keys derived from a password
 /**
