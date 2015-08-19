@@ -680,9 +680,9 @@ void test()
 
     crypt.setKey(key);
     crypt.setIv(iv);
-    crypt.encrypt(reinterpret_cast<const byte*>(msg.u8().c_str()), cipher, msg.length());
+    crypt.encrypt(reinterpret_cast<const byte*>(msg.u8().data()), cipher, msg.length());
     crypt.setIv(iv2);
-    crypt.encrypt(reinterpret_cast<const byte*>(msg2.u8().c_str()), cipher+msg.length(), msg2.length());
+    crypt.encrypt(reinterpret_cast<const byte*>(msg2.u8().data()), cipher+msg.length(), msg2.length());
 
     crypt.setKey(key);
     crypt.setIv(iv);
