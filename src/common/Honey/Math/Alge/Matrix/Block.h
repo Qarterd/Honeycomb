@@ -22,9 +22,9 @@ namespace priv
         using typename Super::ElemT;
         typedef typename Traits<Subclass>::MatrixP          MatrixP;
 
-        ElemT* operator[](int row) const                    { this->assertIndex(row,0);   return &parent()(_row + row, _col); }
-        ElemT& operator()(int i) const                      { this->assertIndex(i);       return parent()(_row + i / _cols, _col + i % _cols); }
-        ElemT& operator()(int row, int col) const           { this->assertIndex(row,col); return parent()(_row + row, _col + col); }
+        ElemT* operator[](sdt row) const                    { this->assertIndex(row,0);   return &parent()(_row + row, _col); }
+        ElemT& operator()(sdt i) const                      { this->assertIndex(i);       return parent()(_row + i / _cols, _col + i % _cols); }
+        ElemT& operator()(sdt row, sdt col) const           { this->assertIndex(row,col); return parent()(_row + row, _col + col); }
 
         /// Get as array.  Top-left corner of block sub-section is at index 0 
         ElemT* data() const                                 { return &parent()(row(),col()); }
@@ -32,18 +32,18 @@ namespace priv
         /// Get parent matrix that contains this sub-block
         MatrixP& parent() const                             { return *_m; }
         /// Get row offset
-        int row() const                                     { return _row; }
+        sdt row() const                                     { return _row; }
         /// Get column offset
-        int col() const                                     { return _col; }
+        sdt col() const                                     { return _col; }
         /// Get row size
-        int rows() const                                    { return _rows; }
+        sdt rows() const                                    { return _rows; }
         /// Get column size
-        int cols() const                                    { return _cols; }
+        sdt cols() const                                    { return _cols; }
         /// Get size
-        int size() const                                    { return _size; }
+        sdt size() const                                    { return _size; }
 
     protected:
-        void initBlock(MatrixP& m, int row, int col, int rows, int cols)
+        void initBlock(MatrixP& m, sdt row, sdt col, sdt rows, sdt cols)
         {
             _m = &m;
             _row = row;
@@ -63,11 +63,11 @@ namespace priv
 
     private:
         MatrixP* _m;
-        int _row;
-        int _col;
-        int _rows;
-        int _cols;
-        int _size;
+        sdt _row;
+        sdt _col;
+        sdt _rows;
+        sdt _cols;
+        sdt _size;
     };
 
     /// Copy by row between dense storages
@@ -75,7 +75,7 @@ namespace priv
     void storageRowCopy(const StorageDense<Src>& src, StorageDense<Dst>& dst)
     {
         if (!src.size()) return;
-        for (int i = 0; i < src.rows(); ++i)
+        for (sdt i = 0; i < src.rows(); ++i)
             std::copy_n(&src(i, 0), src.cols(), &dst(i, 0));
     }
 
@@ -92,14 +92,14 @@ namespace priv
     void storageCopy(const typename StorageBlock<Dst>::Real* src, StorageBlock<Dst>& dst) 
     {
         if (!dst.size()) return;
-        for (int i = 0; i < dst.rows(); ++i)
+        for (sdt i = 0; i < dst.rows(); ++i)
             std::copy_n(src + i*dst.cols(), dst.cols(), &dst(i, 0));
     }
     template<class Src>
     void storageCopy(const StorageBlock<Src>& src, typename StorageBlock<Src>::Real* dst)
     {
         if (!src.size()) return;
-        for (int i = 0; i < src.rows(); ++i)
+        for (sdt i = 0; i < src.rows(); ++i)
             std::copy_n(&src(i, 0), src.cols(), dst + i*src.cols());
     }
 
@@ -108,7 +108,7 @@ namespace priv
     void storageRowTransform(const StorageDense<Src>& src, StorageDense<Dst>& dst, const Func& f)
     {
         if (!src.size()) return;
-        for (int i = 0; i < src.rows(); ++i)
+        for (sdt i = 0; i < src.rows(); ++i)
         {
             auto srcRow = &src(i, 0);
             std::transform(srcRow, srcRow + src.cols(), &dst(i, 0), f);
@@ -128,7 +128,7 @@ namespace priv
     void storageFill(StorageBlock<T>& store, typename StorageBlock<T>::Real f)
     {
         if (!store.size()) return;
-        for (int i = 0; i < store.rows(); ++i)
+        for (sdt i = 0; i < store.rows(); ++i)
             std::fill_n(&store(i, 0), store.cols(), f);
     }
     /// Fill block storage with zeros
@@ -136,7 +136,7 @@ namespace priv
     void storageFillZero(StorageBlock<T>& store)
     {
         if (!store.size()) return;
-        for (int i = 0; i < store.rows(); ++i)
+        for (sdt i = 0; i < store.rows(); ++i)
             memset(&store(i, 0), 0, store.cols()*sizeof(typename StorageBlock<T>::Real));
     }
 
@@ -146,7 +146,7 @@ namespace priv
     {
         static_assert((std::is_same<typename StorageDense<T>::Real, typename StorageDense<T2>::Real>::value), "Comparing different element types not supported");
         if (!lhs.size()) return true;
-        for (int i = 0; i < lhs.rows(); ++i)
+        for (sdt i = 0; i < lhs.rows(); ++i)
             if (memcmp(&lhs(i,0), &rhs(i,0), lhs.cols()*sizeof(typename StorageDense<T>::Real)) != 0)
                 return false;
         return true;
@@ -162,7 +162,7 @@ namespace priv
     bool storageEqual(const StorageDense<T>& lhs, const StorageBlock<T2>& rhs)      { return storageRowEqual(lhs, rhs); }
 
 
-    template<class MatrixP_, int Rows, int Cols>
+    template<class MatrixP_, sdt Rows, sdt Cols>
     struct BlockTraits
     {
         typedef Block<MatrixP_,Rows,Cols>       Subclass;
@@ -173,18 +173,18 @@ namespace priv
         /// Our element access is const if matrix is const
         typedef typename std::conditional<std::is_const<MatrixP>::value, const typename MatrixP::ElemT, typename MatrixP::ElemT>::type
                                                 ElemT;
-        static const int rows                   = Rows;
-        static const int cols                   = Cols;
+        static const sdt rows                   = Rows;
+        static const sdt cols                   = Cols;
         static const int options                = MatrixP::options;
         typedef typename MatrixP::Alloc         Alloc;
     };
 
-    template<class MatrixP, int Rows, int Cols>
+    template<class MatrixP, sdt Rows, sdt Cols>
     struct Traits<Block<MatrixP,Rows,Cols>> : BlockTraits<MatrixP,Rows,Cols> {};
 }
 
 /// Matrix block view
-template<class MatrixP, int s_rows, int s_cols>
+template<class MatrixP, sdt s_rows, sdt s_cols>
 class Block : public priv::Traits<Block<MatrixP,s_rows,s_cols>>::Base
 {
     typedef typename priv::Traits<Block<MatrixP,s_rows,s_cols>>::Base Super;
@@ -192,7 +192,7 @@ public:
     typedef Matrix<s_rows,s_cols,typename Super::Real,Super::options,typename Super::Alloc> MatrixEval;
 
     Block() {}
-    Block(MatrixP& m, int row, int col, int rows = -1, int cols = -1)
+    Block(MatrixP& m, sdt row, sdt col, sdt rows = -1, sdt cols = -1)
                                                             { this->initBlock(m, row, col, rows, cols); }
 
     /// Assign to matrix
@@ -210,14 +210,14 @@ public:
 namespace vec { namespace priv
 {
     /// Vector segment view
-    template<class Vec, int Dim>
+    template<class Vec, sdt Dim>
     struct Segment
     {
         typedef matrix::priv::Traits<typename std::remove_const<Vec>::type> Traits;
         typedef matrix::Block<Vec,  Traits::cols == 1 ? Dim : 1,
                                     Traits::cols == 1 ? 1 : Dim> type;
 
-        static type create(Vec& v, int i, int dim = -1)     { return Traits::cols == 1 ? type(v,i,0,dim,1) : type(v,0,i,1,dim); }
+        static type create(Vec& v, sdt i, sdt dim = -1)     { return Traits::cols == 1 ? type(v,i,0,dim,1) : type(v,0,i,1,dim); }
     };
 } }
 

@@ -7,7 +7,7 @@
 namespace honey { namespace random { namespace platform
 {
 
-Bytes deviceEntropy(int count)
+Bytes deviceEntropy(szt count)
 {
     Bytes rand(count);
     //use unbuffered I/O since we are likely reading a small number of bytes

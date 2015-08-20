@@ -181,7 +181,7 @@ public:
     Range_<ChildIterR, ChildIterR> childrenR()                  { return range(_childList.rbegin(), _childList.rend()); }
 
     /// Get number of children
-    int childCount() const                                      { return size(_childList); }
+    szt childCount() const                                      { return _childList.size(); }
 
     /// Check if node has children
     bool hasChildren() const                                    { return childCount() > 0; }
@@ -223,7 +223,7 @@ public:
     Range_<ChildIterR, ChildIterR> sibPrev()                    { auto ret = const_cast<const TreeNode*>(this)->sibPrev(); return reinterpret_cast<Range_<ChildIterR, ChildIterR>&>(ret); }
     
     /// Get number of siblings (count doesn't include this node)
-    int sibCount() const                                        { return hasParent() ? _parent->childCount() - 1 : 0; }
+    szt sibCount() const                                        { return hasParent() ? _parent->childCount() - 1 : 0; }
 
     /// Check if node has a next sibling
     bool sibHasNext() const                                     { return hasParent() ? next(_itSib) != _parent->_childList.end() : false; }
@@ -280,7 +280,7 @@ public:
     public:
         typedef std::bidirectional_iterator_tag     iterator_category;
         typedef TreeNode                            value_type;
-        typedef ptrdiff_t                           difference_type;
+        typedef sdt                                 difference_type;
         typedef TreeNode*                           pointer;
         typedef TreeNode&                           reference;
         
@@ -360,13 +360,13 @@ public:
         void skipChildren()                                     { _skipChildren = true; }
 
         /// Get the number of nodes between the current position and the beginning of the iteration
-        int count() const                                       { return _count; }
+        szt count() const                                       { return _count; }
 
     private:
         TreeNode*   _root;
         TreeNode*   _node;
         bool        _skipChildren;
-        int         _count;
+        szt         _count;
     };
 
     typedef PreOrdIter_<TreeNode> PreOrdIter;

@@ -160,7 +160,7 @@ namespace priv
         Bind(Bind&&) = default;
         
         R operator()()                      { return func(mt::make_idxseq<sizeof...(Args)>()); }
-        template<size_t... Seq>
+        template<szt... Seq>
         R func(mt::idxseq<Seq...>)          { return f(forward<Args>(get<Seq>(args))...); }
         
         Func f;
@@ -175,7 +175,7 @@ namespace priv
         Bind(Bind&&) = default;
         
         void operator()()                   { func(mt::make_idxseq<sizeof...(Args)>()); }
-        template<size_t... Seq>
+        template<szt... Seq>
         void func(mt::idxseq<Seq...>)       { f(forward<Args>(get<Seq>(args))...); }
         
         Func f;
@@ -283,14 +283,14 @@ namespace future
 /** \cond */
 namespace priv
 {
-    template<class Func, class Futures, size_t... Seq>
+    template<class Func, class Futures, szt... Seq>
     void when_init(Func& func, Futures& fs, mt::idxseq<Seq...>)
                                                             { mt_unpackEval(get<Seq>(fs).__state().addOnReady(func)); }
     
     template<class Result>
     struct whenAll_onReady
     {        
-        template<class Futures, size_t... Seq>
+        template<class Futures, szt... Seq>
         static void func(Promise<Result>& promise, Futures& fs, mt::idxseq<Seq...>)
                                                             { promise.setValue(make_tuple(get<Seq>(fs).__state().result()...)); }
         template<class Range>
@@ -301,7 +301,7 @@ namespace priv
     template<>
     struct whenAll_onReady<void>
     {        
-        template<class Futures, size_t... Seq>
+        template<class Futures, szt... Seq>
         static void func(Promise<void>& promise, Futures&, mt::idxseq<Seq...>)
                                                             { promise.setValue(); }
         template<class Range>
@@ -309,7 +309,7 @@ namespace priv
                                                             { promise.setValue(); }
     };
     
-    template<class Futures, size_t... Seq>
+    template<class Futures, szt... Seq>
     int whenAny_valIndex(StateBase& src, Futures& fs, mt::idxseq<Seq...>)
                                                             { return mt::valIndex(&src, &get<Seq>(fs).__state()...); }
     template<class Range>
@@ -318,7 +318,7 @@ namespace priv
     template<class Result_>
     struct whenAny_onReady
     {
-        template<class Futures, size_t... Seq, class Result = tuple<int, Result_>>
+        template<class Futures, szt... Seq, class Result = tuple<int, Result_>>
         static void func(Promise<Result>& promise, Futures& fs, mt::idxseq<Seq...>, int i)
                                                             { promise.setValue(make_tuple(i, mt::valAt(i, get<Seq>(fs)...).__state().result())); }
         template<class Range, class Result = tuple<typename mt::iterOf<Range>::type, Result_>>
@@ -329,7 +329,7 @@ namespace priv
     template<>
     struct whenAny_onReady<void>
     {        
-        template<class Futures, size_t... Seq>
+        template<class Futures, szt... Seq>
         static void func(Promise<int>& promise, Futures&, mt::idxseq<Seq...>, int i)
                                                             { promise.setValue(i); }
         template<class Range, class Result = typename mt::iterOf<Range>::type>
@@ -373,9 +373,9 @@ Future<Result> whenAll(Futures&&... fs)
         
         Promise<Result> promise;
         tuple<Futures...> fs;
-        int count;
-        int ready;
-        int max;
+        szt count;
+        szt ready;
+        szt max;
         SpinLock lock;
     };
 
@@ -416,9 +416,9 @@ Future<Result> whenAll(Range&& range)
         
         Promise<Result> promise;
         Range range;
-        int count;
-        int ready;
-        int max;
+        szt count;
+        szt ready;
+        szt max;
         SpinLock lock;
     };
 
@@ -462,8 +462,8 @@ Future<Result> whenAny(Futures&&... fs)
         
         Promise<Result> promise;
         tuple<Futures...> fs;
-        int count;
-        int max;
+        szt count;
+        szt max;
         SpinLock lock;
     };
 
@@ -504,8 +504,8 @@ Future<Result> whenAny(Range&& range)
         
         Promise<Result> promise;
         Range range;
-        int count;
-        int max;
+        szt count;
+        szt max;
         SpinLock lock;
     };
 

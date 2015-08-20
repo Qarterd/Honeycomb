@@ -72,7 +72,7 @@ struct MtPair
 
 /// Construct a templated key generator that creates keys from static ints
 #define mtkeygen(Name)                                                          \
-    template<int Index> struct Name                                             \
+    template<szt Index> struct Name                                             \
     {                                                                           \
         static mt_global(const Id, id, (sout() << #Name << "<" << Index << ">"));   \
         template<class Val> MtPair<Name, Val> operator=(Val&& val)              \
@@ -188,7 +188,7 @@ namespace priv
             os << Key::id() << ": " << val;
         }
         ostream& os;
-        int count;
+        szt count;
     };
 }
 /** \endcond */
@@ -209,7 +209,7 @@ private:
     static const bool isTail = std::is_same<List, mt::Void>::value;
 
     /// Private functions for map elem
-    template<bool isTail, int _=0>
+    template<bool isTail, szt _=0>
     struct priv
     {
         /// We don't have this key, recurse towards tail
@@ -226,11 +226,11 @@ private:
         };
 
         /// Recurse to tail
-        template<int Count> struct sizeR                            : List::Super::template sizeR<Count+1> {};
+        template<szt Count> struct sizeR                            : List::Super::template sizeR<Count+1> {};
     };
 
     /// Private functions for tail
-    template<int _>
+    template<szt _>
     struct priv<true,_>
     {
         // Fallback for any key
@@ -243,7 +243,7 @@ private:
         };
 
         /// End recursion
-        template<int Count> struct sizeR                            : mt::Value<int, Count> {};
+        template<szt Count> struct sizeR                            : mt::Value<szt, Count> {};
     };
 
     /// Find map list element with key at compile-time.  Also returns prev/next elements in list at key.
@@ -251,7 +251,7 @@ private:
     struct findElem                                                 : priv<isTail>::template findElem<Key, Prev> {};
 
     /// Recursive size counter, size is at tail
-    template<int Count>
+    template<szt Count>
     struct sizeR                                                    : priv<isTail>::template sizeR<Count> {};
     
 public:
@@ -342,7 +342,7 @@ public:
     /// Get size of map at compile-time
     struct size_                                                    : sizeR<0> {};
     /// Get size of map
-    int size() const                                                { return size_::value; };
+    szt size() const                                                { return size_::value; };
 
     /// Check if empty at compile-time
     struct empty_                                                   : mt::Value<bool, isTail> {};

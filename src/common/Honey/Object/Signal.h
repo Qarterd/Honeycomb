@@ -45,7 +45,7 @@ namespace priv
 {
     template<class Signal, class Seq = mt::make_idxseq<Signal::arity>>
     struct SlotSignal;
-    template<class Signal, size_t... Seq>
+    template<class Signal, szt... Seq>
     struct SlotSignal<Signal,mt::idxseq<Seq...>> : SlotBase
     {
         SlotSignal(const Id& id)                : SlotBase(id, Signal::id()) {}
@@ -54,7 +54,7 @@ namespace priv
 
     template<class Signal, class F, class Seq = mt::make_idxseq<Signal::arity>>
     struct Slot;
-    template<class Signal, class F, size_t... Seq>
+    template<class Signal, class F, szt... Seq>
     struct Slot<Signal,F,mt::idxseq<Seq...>> : public SlotSignal<Signal>
     {
         typedef SlotSignal<Signal> Super;

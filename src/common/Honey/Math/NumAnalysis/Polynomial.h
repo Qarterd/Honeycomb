@@ -30,7 +30,7 @@ public:
     template<class T>
     static Real eval(const VecBase<T>& c, Real x)
     {
-        int degree = c.size()-1;
+        int degree = size(c)-1;
         Real res = degree >= 0 ? c[degree] : 0;
         for (auto i : range(degree-1, -1, -1))
         {
@@ -51,7 +51,7 @@ public:
     static tuple<T, int> compress(const VecBase<T>& c, Real epsilon = Real_::epsilon)
     {
         T poly = c;
-        int degree = poly.size()-1;
+        int degree = size(poly)-1;
 
         for (auto i : range(degree, -1, -1))
             if (Alge::isNearZero(poly[i], epsilon)) --degree;
@@ -72,7 +72,7 @@ public:
     static auto derivative(const VecBase<T>& c) ->
         honey::Vec<(T::s_size == matrix::dynamic ? matrix::dynamic : T::s_size - 1), Real>
     {
-        int degree = c.size()-1;
+        int degree = size(c)-1;
         honey::Vec<(T::s_size == matrix::dynamic ? matrix::dynamic : T::s_size - 1), Real> poly;
         poly.resize(degree);
 

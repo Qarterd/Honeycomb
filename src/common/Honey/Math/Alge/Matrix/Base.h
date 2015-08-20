@@ -56,7 +56,7 @@ public:
     {
         assert(a, "Array null");
         if (!rowMajor) return subc().fromColMajor(a);
-        for (int i = 0, end = size(); i < end; ++i) m(i) = (Real)a[i];
+        for (sdt i = 0, end = size(); i < end; ++i) m(i) = (Real)a[i];
         return subc();
     }
 
@@ -77,8 +77,8 @@ public:
     MatrixS& fromIdentity()
     {
         fromZero();
-        int n = Alge::min(rows(), cols());
-        for (int i = 0; i < n; ++i) m(i,i) = 1;
+        sdt n = Alge::min(rows(), cols());
+        for (sdt i = 0; i < n; ++i) m(i,i) = 1;
         return subc();
     }
 
@@ -167,10 +167,10 @@ public:
         assert(cols() == rhs.rows(), "Concatenation invalid with rhs dimensions");
 
         res.resize(rows(), rhs.cols()).fromZero();
-        const int rows = this->rows(), cols = this->cols(), cols2 = rhs.cols(); 
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols2; ++j)
-                for (int k = 0; k < cols; ++k)
+        const sdt rows = this->rows(), cols = this->cols(), cols2 = rhs.cols(); 
+        for (sdt i = 0; i < rows; ++i)
+            for (sdt j = 0; j < cols2; ++j)
+                for (sdt k = 0; k < cols; ++k)
                     res(i,j) += m(i,k) * rhs(k,j);
         return forward<Res>(res);
     }
@@ -249,34 +249,34 @@ public:
       *     m4x4.block(...).fromZero();             //Zero out block
       *     m2x2 = m8x8.block(...).block(...);      //Blocks are fully recursive
       */
-    template<int Rows, int Cols>
+    template<sdt Rows, sdt Cols>
     matrix::Block<MatrixS,Rows,Cols>
-        block(int row, int col, int rows = -1, int cols = -1)           { return matrix::Block<MatrixS,Rows,Cols>(subc(), row, col, rows, cols); }
+        block(sdt row, sdt col, sdt rows = -1, sdt cols = -1)           { return matrix::Block<MatrixS,Rows,Cols>(subc(), row, col, rows, cols); }
 
-    template<int Rows, int Cols>
+    template<sdt Rows, sdt Cols>
     matrix::Block<const MatrixS,Rows,Cols>
-        block(int row, int col, int rows = -1, int cols = -1) const     { return matrix::Block<const MatrixS,Rows,Cols>(subc(), row, col, rows, cols); }
+        block(sdt row, sdt col, sdt rows = -1, sdt cols = -1) const     { return matrix::Block<const MatrixS,Rows,Cols>(subc(), row, col, rows, cols); }
 
     /// Get dynamic block at offset (row,col) with size (rows, cols)
     matrix::Block<MatrixS>
-        block(int row, int col, int rows, int cols)                     { return matrix::Block<MatrixS>(subc(), row, col, rows, cols); }
+        block(sdt row, sdt col, sdt rows, sdt cols)                     { return matrix::Block<MatrixS>(subc(), row, col, rows, cols); }
 
     matrix::Block<const MatrixS>
-        block(int row, int col, int rows, int cols) const               { return matrix::Block<const MatrixS>(subc(), row, col, rows, cols); }
+        block(sdt row, sdt col, sdt rows, sdt cols) const               { return matrix::Block<const MatrixS>(subc(), row, col, rows, cols); }
 
     /// Get row as a row vector
-    matrix::Block<MatrixS,1,s_cols>        row(int row)                 { return block<1,s_cols>(row, 0, 1, cols()); }
-    matrix::Block<const MatrixS,1,s_cols>  row(int row) const           { return block<1,s_cols>(row, 0, 1, cols()); }
+    matrix::Block<MatrixS,1,s_cols>        row(sdt row)                 { return block<1,s_cols>(row, 0, 1, cols()); }
+    matrix::Block<const MatrixS,1,s_cols>  row(sdt row) const           { return block<1,s_cols>(row, 0, 1, cols()); }
 
     /// Get column as a column vector
-    matrix::Block<MatrixS,s_rows,1>        col(int col)                 { return block<s_rows,1>(0, col, rows(), 1); }
-    matrix::Block<const MatrixS,s_rows,1>  col(int col) const           { return block<s_rows,1>(0, col, rows(), 1); }
+    matrix::Block<MatrixS,s_rows,1>        col(sdt col)                 { return block<s_rows,1>(0, col, rows(), 1); }
+    matrix::Block<const MatrixS,s_rows,1>  col(sdt col) const           { return block<s_rows,1>(0, col, rows(), 1); }
 
     /// Sets number of rows/columns and reallocates only if the size has changed (rows*cols). All previous data is lost on reallocation. Returns self.
     /**
       * Resize with -1 in rows or cols to request no change to that dimension
       */
-    MatrixS& resize(int rows, int cols)                                 { Storage::resize(rows, cols); return subc(); }
+    MatrixS& resize(sdt rows, sdt cols)                                 { Storage::resize(rows, cols); return subc(); }
 
     /// Get an iterator over the elements in row-major order
     matrix::Iter<MatrixS> begin()                                       { return matrix::Iter<MatrixS>(subc(), 0); }
@@ -287,12 +287,12 @@ public:
     matrix::Iter<const MatrixS> end() const                             { return matrix::Iter<const MatrixS>(subc(), size()); }
 
     /// Get an iterator to the element at index
-    matrix::Iter<MatrixS> iter(int i)                                   { assertSize(i); return begin() + i; }
-    matrix::Iter<const MatrixS> iter(int i) const                       { assertSize(i); return begin() + i; }
+    matrix::Iter<MatrixS> iter(sdt i)                                   { assertSize(i); return begin() + i; }
+    matrix::Iter<const MatrixS> iter(sdt i) const                       { assertSize(i); return begin() + i; }
 
     /// Get an iterator to the element at (row, col)
-    matrix::Iter<MatrixS> iter(int row, int col)                        { assertSize(row,col); return begin() + (row*cols()+col); }
-    matrix::Iter<const MatrixS> iter(int row, int col) const            { assertSize(row,col); return begin() + (row*cols()+col); }
+    matrix::Iter<MatrixS> iter(sdt row, sdt col)                        { assertSize(row,col); return begin() + (row*cols()+col); }
+    matrix::Iter<const MatrixS> iter(sdt row, sdt col) const            { assertSize(row,col); return begin() + (row*cols()+col); }
 
     /// Copy matrix into array. If the array is in row-major format set rowMajor to true, otherwise set to false for column-major.
     template<class Num>
@@ -300,7 +300,7 @@ public:
     {
         assert(a, "Array null");
         if (!rowMajor) return subc().toColMajor(a);
-        for (int i = 0, end = size(); i < end; ++i) a[i] = (Num)m(i);
+        for (sdt i = 0, end = size(); i < end; ++i) a[i] = (Num)m(i);
         return a;
     }
     Real* toArray(Real* a, bool rowMajor = true) const
@@ -316,9 +316,9 @@ public:
     Res&& transpose(Res&& res) const
     {
         res.resize(cols(), rows());
-        const int rows = this->rows(), cols = this->cols();
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
+        const sdt rows = this->rows(), cols = this->cols();
+        for (sdt i = 0; i < rows; ++i)
+            for (sdt j = 0; j < cols; ++j)
                 res(j,i) = m(i,j);
         return forward<Res>(res);
     }
@@ -332,9 +332,9 @@ public:
         static_assert(s_size == matrix::dynamic || s_rows == s_cols, "This matrix must be square");
         assert(rows() == cols(), "This matrix must be square");
 
-        const int rows = this->rows();
-        for (int i = 0; i < rows-1; ++i)
-            for (int j = i+1; j < rows; ++j)
+        const sdt rows = this->rows();
+        for (sdt i = 0; i < rows-1; ++i)
+            for (sdt j = i+1; j < rows; ++j)
                 std::swap(m(i*rows + j), m(i + rows*j));
     }
 
@@ -347,10 +347,10 @@ public:
         assert(rows() == rhs.rows(), "Concatenation invalid with rhs dimensions");
 
         res.resize(cols(), rhs.cols()).fromZero();
-        const int rows = this->rows(), cols = this->cols(), cols2 = rhs.cols();
-        for (int i = 0; i < cols; ++i)
-            for (int j = 0; j < cols2; ++j)
-                for (int k = 0; k < rows; ++k)
+        const sdt rows = this->rows(), cols = this->cols(), cols2 = rhs.cols();
+        for (sdt i = 0; i < cols; ++i)
+            for (sdt j = 0; j < cols2; ++j)
+                for (sdt k = 0; k < rows; ++k)
                     res(i,j) += m(k,i) * rhs(k,j);
         return forward<Res>(res);
     }
@@ -368,10 +368,10 @@ public:
         assert(cols() == rhs.cols(), "Concatenation invalid with rhs dimensions");
 
         res.resize(rows(), rhs.rows()).fromZero();
-        const int rows = this->rows(), cols = this->cols(), rows2 = rhs.rows();
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < rows2; ++j)
-                for (int k = 0; k < cols; ++k)
+        const sdt rows = this->rows(), cols = this->cols(), rows2 = rhs.rows();
+        for (sdt i = 0; i < rows; ++i)
+            for (sdt j = 0; j < rows2; ++j)
+                for (sdt k = 0; k < cols; ++k)
                     res(i,j) += m(i,k) * rhs(j,k);
         return forward<Res>(res);
     }
@@ -389,10 +389,10 @@ public:
         assert(rows() == rhs.cols(), "Concatenation invalid with rhs dimensions");
 
         res.resize(cols(), rhs.rows()).fromZero();
-        const int rows = this->rows(), cols = this->cols(), rows2 = rhs.rows();
-        for (int i = 0; i < cols; ++i)
-            for (int j = 0; j < rows2; ++j)
-                for (int k = 0; k < rows; ++k)
+        const sdt rows = this->rows(), cols = this->cols(), rows2 = rhs.rows();
+        for (sdt i = 0; i < cols; ++i)
+            for (sdt j = 0; j < rows2; ++j)
+                for (sdt k = 0; k < rows; ++k)
                     res(i,j) += m(k,i) * rhs(j,k);
         return forward<Res>(res);
     }
@@ -403,7 +403,7 @@ public:
 
     /// Returns a matrix without the selected row and column
     
-    auto minor(int row, int col) const ->
+    auto minor(sdt row, sdt col) const ->
         Matrix< (s_rows > 0) ? s_rows-1 : s_rows,
                 (s_cols > 0) ? s_cols-1 : s_cols, Real>
     {
@@ -411,7 +411,7 @@ public:
         auto res = Matrix<  (s_rows > 0) ? s_rows-1 : s_rows,
                             (s_cols > 0) ? s_cols-1 : s_cols, Real>
                             ().resize(rows()-1, cols()-1);
-        const int rows = this->rows()-row-1, cols = this->cols()-col-1;
+        const sdt rows = this->rows()-row-1, cols = this->cols()-col-1;
         res.block(0,0,row,col) = block(0,0,row,col);                    //UL
         res.block(0,col,row,cols) = block(0,col+1,row,cols);            //UR
         res.block(row,0,rows,col) = block(row+1,0,rows,col);            //LL
@@ -500,7 +500,7 @@ public:
             case 3: { MatrixS tmp(*this); res = determinant3(tmp); } break;
             default:
                 {
-                    for (int j = 0; j < cols(); j++)
+                    for (sdt j = 0; j < cols(); j++)
                     {
                         auto minor_ = minor(0, j);
                         res += (1 - j%2 - j%2) * m(0,j) * minor_.determinant();
@@ -533,13 +533,13 @@ public:
     {
         //Get longest number for each column
         vector<int> colLen;
-        int oslen = (int)os.tellp();
+        auto oslen = os.tellp();
         for (auto j : range(mat.cols()))
         {
             int lenMax = 0;
             for (auto i : range(mat.rows()))
             {
-                int len = (int)(os << mat(i,j)).tellp() - oslen;
+                int len = (int)((os << mat(i,j)).tellp() - oslen);
                 os.seekp(oslen);
                 lenMax = Alge::max(lenMax, len);
             }
@@ -566,18 +566,18 @@ public:
 protected:
 
     /// Access matrix element at index. Wrapper for convenience only, more readable than (*this)(i)
-    const Real& m(int i) const                                          { return (*this)(i); }
-    Real& m(int i)                                                      { return (*this)(i); }
+    const Real& m(sdt i) const                                          { return (*this)(i); }
+    Real& m(sdt i)                                                      { return (*this)(i); }
     /// Access matrix element with (row, column)
-    const Real& m(int row, int col) const                               { return (*this)(row, col); }
-    Real& m(int row, int col)                                           { return (*this)(row, col); }
+    const Real& m(sdt row, sdt col) const                               { return (*this)(row, col); }
+    Real& m(sdt row, sdt col)                                           { return (*this)(row, col); }
 
     template<class Num>
     MatrixS& fromColMajor(const Num* a)
     {
-        const int rows = this->rows(), cols = this->cols();
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
+        const sdt rows = this->rows(), cols = this->cols();
+        for (sdt i = 0; i < rows; ++i)
+            for (sdt j = 0; j < cols; ++j)
                 m(i*cols+j) = (Real)a[j*rows+i];
         return subc();
     }
@@ -585,9 +585,9 @@ protected:
     template<class Num>
     Num* toColMajor(Num* a) const
     {
-        const int rows = this->rows(), cols = this->cols();
-        for (int i = 0; i < rows; ++i)
-            for (int j = 0; j < cols; ++j)
+        const sdt rows = this->rows(), cols = this->cols();
+        for (sdt i = 0; i < rows; ++i)
+            for (sdt j = 0; j < cols; ++j)
                 a[j*rows+i] = (Num)m(i*cols+j);
         return a;
     }

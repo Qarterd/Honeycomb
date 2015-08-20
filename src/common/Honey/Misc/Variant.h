@@ -11,10 +11,10 @@ struct VariantError : Exception                             { EXCEPTION(VariantE
 /** \cond */
 namespace priv
 {
-    template<class Subclass, int id, class... Types> class variant;
+    template<class Subclass, szt id, class... Types> class variant;
 
     /// Base class of honey::variant
-    template<class Subclass, int id, class Type, class... Types>
+    template<class Subclass, szt id, class Type, class... Types>
     class variant<Subclass, id, Type, Types...> : public variant<Subclass, id+1, Types...>
     {
         typedef variant<Subclass, id+1, Types...> Super;
@@ -54,9 +54,9 @@ namespace priv
         template<class T, typename mt::disable_if<std::is_assignable<Type&, T>::value && std::is_constructible<Type, T>::value, int>::type=0>
         void assign_convert(T&& val)                        { Super::assign_convert(forward<T>(val)); }
         
-        template<int id_, int=0>
+        template<szt id_, szt=0>
         struct Type_                                        : Super::template Type_<id_> {};
-        template<int _> struct Type_<id, _>                 { typedef Type type; };
+        template<szt _> struct Type_<id, _>                 { typedef Type type; };
         
         template<class R, class Func, class... Args, typename std::enable_if<mt::isCallable<Func, Type&, Args...>::value, int>::type=0>
         R visit(Func&& f, Args&&... args)                   { if (_id() == id) return f(_val(), forward<Args>(args)...); else return Super::template visit<R>(forward<Func>(f), forward<Args>(args)...); }
@@ -79,8 +79,8 @@ namespace priv
         void visit(Func&& f, Args&&... args) const          { Super::visit(forward<Func>(f), forward<Args>(args)...); }
         
     private:
-        int& _id()                                          { return this->subc()._id; }
-        const int& _id() const                              { return this->subc()._id; }
+        szt& _id()                                          { return this->subc()._id; }
+        const szt& _id() const                              { return this->subc()._id; }
         void* _storage()                                    { return &this->subc()._storage; }
         const void* _storage() const                        { return &this->subc()._storage; }
         Type& _val()                                        { assert(_id() == id, "Value not initialized"); return *reinterpret_cast<Type*>(_storage()); }
@@ -93,7 +93,7 @@ namespace priv
     };
 
     /// Specialization for bounded reference types
-    template<class Subclass, int id, class Type, class... Types>
+    template<class Subclass, szt id, class Type, class... Types>
     class variant<Subclass, id, Type&, Types...> : public variant<Subclass, id+1, Types...>
     {
         typedef variant<Subclass, id+1, Types...> Super;
@@ -143,9 +143,9 @@ namespace priv
         template<class T, typename mt::disable_if<std::is_assignable<Type&, T>::value, int>::type=0>
         void assign_convert(T&& val)                        { Super::assign_convert(forward<T>(val)); }
         
-        template<int id_, int=0>
+        template<szt id_, szt=0>
         struct Type_                                        : Super::template Type_<id_> {};
-        template<int _> struct Type_<id, _>                 { typedef Type& type; };
+        template<szt _> struct Type_<id, _>                 { typedef Type& type; };
         
         template<class R, class Func, class... Args, typename std::enable_if<mt::isCallable<Func, Type&, Args...>::value, int>::type=0>
         R visit(Func&& f, Args&&... args)                   { if (_id() == id) return f(_val(), forward<Args>(args)...); else return Super::template visit<R>(forward<Func>(f), forward<Args>(args)...); }
@@ -168,8 +168,8 @@ namespace priv
         void visit(Func&& f, Args&&... args) const          { Super::visit(forward<Func>(f), forward<Args>(args)...); }
         
     private:
-        int& _id()                                          { return this->subc()._id; }
-        const int& _id() const                              { return this->subc()._id; }
+        szt& _id()                                          { return this->subc()._id; }
+        const szt& _id() const                              { return this->subc()._id; }
         Type*& _ptr()                                       { assert(_id() == id, "Reference not bound"); return reinterpret_cast<Type*&>(this->subc()._storage); }
         Type* const& _ptr() const                           { assert(_id() == id, "Reference not bound"); return reinterpret_cast<Type* const&>(this->subc()._storage); }
         Type& _val()                                        { assert(_ptr(), "Reference not bound"); return *_ptr(); }
@@ -180,7 +180,7 @@ namespace priv
     };
     
     /// Tail of base class
-    template<class Subclass, int id>
+    template<class Subclass, szt id>
     class variant<Subclass, id>
     {
     protected:
@@ -201,8 +201,8 @@ namespace priv
         template<class T> void assign(T&& val)              { subc().assign_convert(forward<T>(val)); }
         template<class T> void assign_convert(T&&)          { static_assert(!mt::True<T>::value, "No bounded types assignable to value"); }
         
-        struct size_                                        : mt::Value<int, id> {};
-        template<int id_> struct Type_                      { static_assert(!mt::True_int<id_>::value, "Invalid type id"); };
+        struct size_                                        : mt::Value<szt, id> {};
+        template<szt id_> struct Type_                      { static_assert(!mt::True_int<id_>::value, "Invalid type id"); };
         
         template<class R, class Func, class... Args>
         R visit(Func&&, Args&&...)                          { throw_ VariantError() << "Visitor failed to accept active bounded type"; throw; }
@@ -229,7 +229,7 @@ namespace priv
 template<class... Types>
 class variant : public priv::variant<variant<Types...>, 0, Types...>
 {
-    template<class, int, class...> friend class priv::variant;
+    template<class, szt, class...> friend class priv::variant;
     typedef priv::variant<variant, 0, Types...> Super;
     
 public:
@@ -272,12 +272,12 @@ public:
     /// Get number of bounded types at compile-time
     struct size_                                            : Super::size_ {};
     /// Get number of bounded types
-    int size() const                                        { return size_::value; };
+    szt size() const                                        { return size_::value; };
     /// Get bounded type for id
-    template<int id>
+    template<szt id>
     struct Type                                             : Super::template Type_<id> {};
     /// Get active bounded type id, range [0, size)
-    int type() const                                        { return _id; }
+    szt type() const                                        { return _id; }
     
     /// Get variant value as type.  Throws VariantError if the active bounded type is not convertible to the requested type.
     template<class T>
@@ -313,7 +313,7 @@ private:
     
     struct toString { template<class T> void operator()(T&& val, ostream& os) { os << val; } };
     
-    int _id;
+    szt _id;
     Storage _storage;
 };
 

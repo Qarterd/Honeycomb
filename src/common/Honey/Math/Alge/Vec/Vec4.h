@@ -14,8 +14,8 @@ struct matrix::priv::Traits<Vec<4,Real,Options>> : vec::priv::Traits<4,Real,Opti
 
 namespace vec { namespace priv
 {
-    template<class Real, int align>
-    struct StorageFieldsMixin<Real, 4, align>
+    template<class Real, szt Align>
+    struct StorageFieldsMixin<Real, 4, Align>
     {
         Real x;
         Real y;

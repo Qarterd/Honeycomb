@@ -39,7 +39,7 @@ public:
     Eigen& calc(const MatrixBase<T>& a)
     {
         assert(a.rows() == a.cols(), "Matrix must be square and symmetric");
-        int n = a.rows();
+        sdt n = a.rows();
         _w.resize(n); _indR.resize(n); _indC.resize(n);
         _v.resize(n, n);
         _a = a;
@@ -53,7 +53,7 @@ public:
     Eigen& calcValues(const MatrixBase<T>& a)
     {
         assert(a.rows() == a.cols(), "Matrix must be square and symmetric");
-        int n = a.rows();
+        sdt n = a.rows();
         _w.resize(n); _indR.resize(n); _indC.resize(n);
         _a = a;
         jacobi(_a, _w, optnull, _indR, _indC);
@@ -79,14 +79,14 @@ private:
     void init()                                                 { _vt.setEval([&](Matrix& val) { _v.transpose(val); }); }
 
     /// This algorithm is adapted from the OpenCV lib
-    static void jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<int>& indR, vector<int>& indC);
+    static void jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<sdt>& indR, vector<sdt>& indC);
 
     Vec             _w;
     Matrix          _v;
     lazy<Matrix>    _vt;
     Matrix          _a;
-    vector<int>     _indR;
-    vector<int>     _indC;
+    vector<sdt>    _indR;
+    vector<sdt>    _indC;
     BackSub<Real>   _backSub;
 };
 

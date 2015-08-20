@@ -143,9 +143,9 @@ public:
     bool isRegClone(const TreeNode& clone) const        { auto node = getOrigNode(clone); return node ? isRegNode(*node) : false; }
 
     /// Get total number of clones being handled by this tree
-    int cloneCount() const                              { return _cloneMap.size(); }
+    szt cloneCount() const                              { return _cloneMap.size(); }
     /// Get total number of registered nodes
-    int regNodeCount() const                            { return _regMap.size() + _phantomMap.size(); }
+    szt regNodeCount() const                            { return _regMap.size() + _phantomMap.size(); }
 
 private:
 

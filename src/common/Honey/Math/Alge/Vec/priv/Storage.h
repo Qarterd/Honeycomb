@@ -6,7 +6,7 @@
 namespace honey { namespace vec { namespace priv
 {
 
-template<class Real, int Dim, int Align> struct StorageFieldsMixin;
+template<class Real, sdt Dim, szt Align> struct StorageFieldsMixin;
 
 /// Automatic (stack-compatible) vector storage that allows direct access to dimension fields
 template<class Subclass>
@@ -23,18 +23,18 @@ public:
     using typename Super::Real;
     
     /// Access vector element at index
-    const Real& operator[](int i) const                 { this->assertIndex(i); return data()[i]; }
-    Real& operator[](int i)                             { this->assertIndex(i); return data()[i]; }
+    const Real& operator[](sdt i) const                 { this->assertIndex(i); return data()[i]; }
+    Real& operator[](sdt i)                             { this->assertIndex(i); return data()[i]; }
     /// Access vector element at index
-    const Real& operator()(int i) const                 { return (*this)[i]; }
-    Real& operator()(int i)                             { return (*this)[i]; }
+    const Real& operator()(sdt i) const                 { return (*this)[i]; }
+    Real& operator()(sdt i)                             { return (*this)[i]; }
     /// Access vector element with (row, column)
-    const Real& operator()(int row, int col) const      { this->assertIndex(row,col); return data()[row|col]; }
-    Real& operator()(int row, int col)                  { this->assertIndex(row,col); return data()[row|col]; }
+    const Real& operator()(sdt row, sdt col) const      { this->assertIndex(row,col); return data()[row|col]; }
+    Real& operator()(sdt row, sdt col)                  { this->assertIndex(row,col); return data()[row|col]; }
 
-    int rows() const                                    { return s_rows; }
-    int cols() const                                    { return s_cols; }
-    int size() const                                    { return s_size; }
+    sdt rows() const                                    { return s_rows; }
+    sdt cols() const                                    { return s_cols; }
+    sdt size() const                                    { return s_size; }
 
     Real* data()                                        { return &this->x; }
     const Real* data() const                            { return &this->x; }
@@ -49,13 +49,13 @@ struct Storage : matrix::priv::Storage<Subclass>
     using typename Super::Real;
     
     /// Access vector element at index
-    const Real& operator[](int i) const                 { this->assertIndex(i); return data()[i]; }
-    Real& operator[](int i)                             { this->assertIndex(i); return data()[i]; }
+    const Real& operator[](sdt i) const                 { this->assertIndex(i); return data()[i]; }
+    Real& operator[](sdt i)                             { this->assertIndex(i); return data()[i]; }
 
     using Super::operator();
     /// Access vector element with (row, column)
-    const Real& operator()(int row, int col) const      { this->assertIndex(row,col); return data()[row|col]; }
-    Real& operator()(int row, int col)                  { this->assertIndex(row,col); return data()[row|col]; }
+    const Real& operator()(sdt row, sdt col) const      { this->assertIndex(row,col); return data()[row|col]; }
+    Real& operator()(sdt row, sdt col)                  { this->assertIndex(row,col); return data()[row|col]; }
 };
 
 } } }

@@ -43,7 +43,7 @@ void Task::bindDirty()
 
 void Task::log(const String& file, int line, const String& msg) const
 {
-    int pos = (int)file.find_last_of(String("\\/"));
+    szt pos = file.find_last_of(String("\\/"));
     String filename = pos != String::npos ? file.substr(pos+1) : file;
     debug_print(sout()  << "[Task: " << getId() << ":" << Thread::current().threadId() << ", "
                         << filename << ":" << line << "] " << msg << endl);

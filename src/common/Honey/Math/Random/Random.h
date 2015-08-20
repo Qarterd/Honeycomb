@@ -13,7 +13,7 @@ namespace honey
 namespace random
 {
     /// Retrieve count bytes of entropy from the host device
-    inline Bytes deviceEntropy(int count)                                   { return platform::deviceEntropy(count); }
+    inline Bytes deviceEntropy(szt count)                                   { return platform::deviceEntropy(count); }
 }
 
 /// Random-related methods
@@ -51,31 +51,31 @@ public:
 
     /// Randomly choose count items from the list with replacement, so an item can be sampled more than once.  Result is stored in sample.
     template<class T>
-    void sample(const vector<T>& list, int count, vector<T>& sample) const
+    void sample(const vector<T>& list, szt count, vector<T>& sample) const
     {
         if (list.size() == 0) { sample.clear(); return; }
         sample.resize(count);
-        for (int i = 0; i < count; ++i)
-            sample[i] = list[Discrete(getGen(), 0, list.size()-1).next()];
+        for (szt i = 0; i < count; ++i)
+            sample[i] = list[Discrete_d(getGen(), 0, list.size()-1).next()];
     }
 
     /// Randomly choose count items from a list without replacement, so an item can't be chosen more than once.  Results stored in `chosen`, and `unchosen` (unchosen indices).
     template<class T>
-    void choose(const vector<T>& list, int count, vector<T>& chosen, vector<int>& unchosen) const
+    void choose(const vector<T>& list, szt count, vector<T>& chosen, vector<szt>& unchosen) const
     {
-        int chosenSize = Alge::min(count, size(list));
-        if (chosenSize <= 0) { chosen.clear(); unchosen.clear(); return; }
+        szt chosenSize = Alge::min(count, list.size());
+        if (chosenSize == 0) { chosen.clear(); unchosen.clear(); return; }
 
         //Build unchosen index list
         unchosen.resize(list.size());
-        for (int i = 0; i < size(unchosen); ++i) unchosen[i] = i;
+        for (szt i = 0; i < unchosen.size(); ++i) unchosen[i] = i;
 
         //Build chosen list
         chosen.resize(chosenSize);
-        for (int i = 0; i < chosenSize; ++i)
+        for (szt i = 0; i < chosenSize; ++i)
         {
             //Get random unchosen index and remove it
-            int index = Discrete(getGen(), 0, size(unchosen) - 1).next();
+            szt index = Discrete_d(getGen(), 0, unchosen.size() - 1).next();
             chosen[i] = list[unchosen[index]];
             unchosen.erase(unchosen.begin() + index);
         }
@@ -86,8 +86,8 @@ public:
     void shuffle(vector<T>& list) const
     {
         //Standard swap shuffle algorithm
-        for (int i = size(list) - 1; i > 0; --i)
-            std::swap(list[i], list[Discrete(getGen(), 0, i).next()]);
+        for (szt i = list.size() - 1; i > 0; --i)
+            std::swap(list[i], list[Discrete_d(getGen(), 0, i).next()]);
     }
 
     /// Generate a random unit direction
@@ -105,7 +105,7 @@ public:
     {
         auto res = reduce(samples, make_tuple(Real(0), Real_::inf, -Real_::inf),
             [](tuple<Real,Real,Real> a, Real e) { return make_tuple(get<0>(a) + e, Alge::min(get<1>(a), e), Alge::max(get<2>(a), e)); });
-        int n = end(samples) - begin(samples);
+        szt n = end(samples) - begin(samples);
         get<0>(res) = n > 0 ? get<0>(res) / n : 0;
         return res;
     }
@@ -115,7 +115,7 @@ public:
     static Real variance(const Range& samples, Real mean)
     {
         Real sumDev = reduce(samples, Real(0), [&](Real a, Real e) { return a + Alge::sqr(e - mean); });
-        int n = end(samples) - begin(samples);
+        szt n = end(samples) - begin(samples);
         return n > 1 ? sumDev / (n-1) : 0;
     }
 
@@ -127,7 +127,7 @@ public:
 
     struct DistStats
     {
-        int     n;          ///< Sample size
+        szt     n;          ///< Sample size
         Real    mean;       ///< Sample mean
         Real    min;        ///< Minimum sample value
         Real    max;        ///< Maximum sample value

@@ -24,8 +24,8 @@ public:
     template<class T>
     static bool isFullRank(const MatrixBase<T>& a)
     {
-        int n = Alge::min(a.rows(),a.cols());
-        for (int i : range(n))
+        sdt n = Alge::min(a.rows(),a.cols());
+        for (sdt i : range(n))
             if (a(i,i) == 0) return false;
         return true;
     }
@@ -36,15 +36,15 @@ public:
     {
         assert(b.rows() == r.rows());
         assert(isFullRank(r));
-        int n = Alge::min(r.rows(),r.cols());
-        int nx = b.cols();
+        sdt n = Alge::min(r.rows(),r.cols());
+        sdt nx = b.cols();
         x = b;
-        for (int k = n-1; k >= 0; --k)
+        for (sdt k = n-1; k >= 0; --k)
         {
-            for (int j = 0; j < nx; ++j)
+            for (sdt j = 0; j < nx; ++j)
                 x(k,j) /= r(k,k);
-            for (int i = 0; i < k; ++i)
-                for (int j = 0; j < nx; ++j)
+            for (sdt i = 0; i < k; ++i)
+                for (sdt j = 0; j < nx; ++j)
                     x(i,j) -= x(k,j)*r(i,k);
         }
     }
@@ -74,15 +74,15 @@ public:
     {
         assert(b.rows() == l.rows());
         assert(isFullRank(l));
-        int n = Alge::min(l.rows(),l.cols());
-        int nx = b.cols();
+        sdt n = Alge::min(l.rows(),l.cols());
+        sdt nx = b.cols();
         x = b;
-        for (int k = 0; k < n; ++k)
+        for (sdt k = 0; k < n; ++k)
         {
-            for (int j = 0; j < nx; ++j)
+            for (sdt j = 0; j < nx; ++j)
                 x(k,j) /= l(k,k);
-            for (int i = k+1; i < n; ++i)
-                for (int j = 0; j < nx; ++j)
+            for (sdt i = k+1; i < n; ++i)
+                for (sdt j = 0; j < nx; ++j)
                     x(i,j) -= x(k,j)*l(i,k);
         }
     }
@@ -91,13 +91,13 @@ private:
 
     /* y[0:m,0:n] += diag(a[0:1,0:m]) * x[0:m,0:n] */
     template<typename T1, typename T2, typename T3>
-    static void matrAXPY(int m, int n, const T1& x, int dx, const T2& a, int ai, int inca, T3& y, int dy)
+    static void matrAXPY(sdt m, sdt n, const T1& x, sdt dx, const T2& a, sdt ai, sdt inca, T3& y, sdt dy)
     {
         typedef typename T2::Real R2;
         typedef typename T3::Real R3;
         
-        int i, j;
-        int xi = 0, yi = 0;
+        sdt i, j;
+        sdt xi = 0, yi = 0;
         for( i = 0; i < m; i++, xi += dx, yi += dy )
         {
             R2 s = a(ai+i*inca);
@@ -127,13 +127,13 @@ private:
     {
         Double threshold = 0;
         Double eps = Double_::epsilon*2;
-        int m = u.rows(), n = vt.cols();
-        int udelta0 = 1, udelta1 = u.cols();
-        int vdelta0 = vt.cols(), vdelta1 = 1;
-        int ui = 0, vi = 0;
-        int ldb = b ? b->cols() : 0, ldx = x.cols();
-        int i, j, nm = Alge::min(m, n);
-        int nb = b ? b->cols() : m;
+        sdt m = u.rows(), n = vt.cols();
+        sdt udelta0 = 1, udelta1 = u.cols();
+        sdt vdelta0 = vt.cols(), vdelta1 = 1;
+        sdt ui = 0, vi = 0;
+        sdt ldb = b ? b->cols() : 0, ldx = x.cols();
+        sdt i, j, nm = Alge::min(m, n);
+        sdt nb = b ? b->cols() : m;
 
         x.fromZero();
     

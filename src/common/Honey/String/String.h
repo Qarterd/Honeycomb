@@ -39,29 +39,25 @@ public:
     /// Convert from UTF-8 stringstream
     String(const ostream& os)                                               : String(static_cast<const ostringstream&>(os).str()) {}
     /// Convert from UTF-8 string, pointer must not be null
-    String(const char* str, int len = npos)                                 { assign(str, 0, len); }
+    String(const char* str, szt len = npos)                                 { assign(str, 0, len); }
     /// Convert from UTF-8 char repeated `n` times
-    String(int n, char c)                                                   { assign(n, c); }
+    String(szt n, char c)                                                   { assign(n, c); }
     
     /// Forwards to assign()
     template<class T>
     String& operator=(T&& rhs)                                              { return assign(forward<T>(rhs)); }
     String& operator+=(const String& rhs)                                   { return append(rhs); }
-    String& operator+=(Char rhs)                                            { return append(1, rhs); }
-    String& operator+=(char rhs)                                            { return append(1, rhs); }
+    String& operator+=(Char rhs)                                            { return append(szt(1), rhs); }
+    String& operator+=(char rhs)                                            { return append(szt(1), rhs); }
     
-    int size() const                                                        { return (int)Super::size(); }
-    int length() const                                                      { return (int)Super::length(); }
-    int max_size() const                                                    { return (int)Super::max_size(); }
-    int capacity() const                                                    { return (int)Super::capacity(); }
     String& clear()                                                         { Super::clear(); return *this; }
 
     /// @{
     /// Forwards to insert() at back
     template<class T>
-    String& append(T&& str, int subpos = 0, int sublen = npos)              { return insert(length(), forward<T>(str), subpos, sublen); }
-    String& append(int n, Char c)                                           { return insert(length(), n, c); }
-    String& append(int n, char c)                                           { return insert(length(), n, c); }
+    String& append(T&& str, szt subpos = 0, szt sublen = npos)              { return insert(length(), forward<T>(str), subpos, sublen); }
+    String& append(szt n, Char c)                                           { return insert(length(), n, c); }
+    String& append(szt n, char c)                                           { return insert(length(), n, c); }
     template<class InputIterator>
     String& append(InputIterator first, InputIterator last)                 { insert(begin() + length(), first, last); return *this; }
     /// @}
@@ -69,47 +65,47 @@ public:
     /// @{
     /// Clears and forwards to append()
     template<class T>
-    String& assign(T&& str, int subpos = 0, int sublen = npos)              { clear(); return append(forward<T>(str), subpos, sublen); }
-    String& assign(int n, Char c)                                           { clear(); return append(n, c); }
-    String& assign(int n, char c)                                           { clear(); return append(n, c); }
+    String& assign(T&& str, szt subpos = 0, szt sublen = npos)              { clear(); return append(forward<T>(str), subpos, sublen); }
+    String& assign(szt n, Char c)                                           { clear(); return append(n, c); }
+    String& assign(szt n, char c)                                           { clear(); return append(n, c); }
     template<class InputIterator>
     String& assign(InputIterator first, InputIterator last)                 { clear(); return append<InputIterator>(first, last); }
     /// @}
     
-    String& insert(int pos, const String& str, int subpos = 0, int sublen = npos);
-    String& insert(int pos, const Char* str, int subpos = 0, int sublen = npos);
-    String& insert(int pos, int n, Char c)                                  { Super::insert(pos, n, c); return *this; }
-    String& insert(int pos, const char* str, int subpos = 0, int sublen = npos);
-    String& insert(int pos, int n, char c)                                  { return insert(pos, n, static_cast<Char>(c)); }
+    String& insert(szt pos, const String& str, szt subpos = 0, szt sublen = npos);
+    String& insert(szt pos, const Char* str, szt subpos = 0, szt sublen = npos);
+    String& insert(szt pos, szt n, Char c)                                  { Super::insert(pos, n, c); return *this; }
+    String& insert(szt pos, const char* str, szt subpos = 0, szt sublen = npos);
+    String& insert(szt pos, szt n, char c)                                  { return insert(pos, n, static_cast<Char>(c)); }
     iterator insert(const_iterator p, Char c)                               { return Super::insert(p, c); }
-    iterator insert(const_iterator p, int n, Char c)                        { return Super::insert(p, n, c); }
+    iterator insert(const_iterator p, szt n, Char c)                        { return Super::insert(p, n, c); }
     template<class InputIterator>
     iterator insert(const_iterator p, InputIterator first, InputIterator last)  { return Super::insert(p, first, last); }
 
-    String& erase(int pos = 0, int len = npos)                              { Super::erase(pos, len); return *this; }
+    String& erase(szt pos = 0, szt len = npos)                              { Super::erase(pos, len); return *this; }
     iterator erase(const_iterator position)                                 { return Super::erase(position); }
     iterator erase(const_iterator first, const_iterator last)               { return Super::erase(first, last); }
 
-    String& replace(int pos, int len, const String& str, int subpos = 0, int sublen = npos);
+    String& replace(szt pos, szt len, const String& str, szt subpos = 0, szt sublen = npos);
     String& replace(const_iterator i1, const_iterator i2, const String& str)                        { Super::replace(i1, i2, str); return *this; }
     template<class InputIterator>
     String& replace(const_iterator i1, const_iterator i2, InputIterator first, InputIterator last)  { Super::replace(i1, i2, first, last); return *this; }
 
-    int copy(Char* s, int len, int pos = 0) const                           { return (int)Super::copy(s, len, pos); }
-    int copy(char* s, int len, int pos = 0) const                           { std::string str(begin() + pos, begin() + pos + len); return (int)str.copy(s, str.length()); }
+    szt copy(Char* s, szt len, szt pos = 0) const                           { return Super::copy(s, len, pos); }
+    szt copy(char* s, szt len, szt pos = 0) const                           { std::string str(begin() + pos, begin() + pos + len); return str.copy(s, str.length()); }
 
-    String substr(int pos = 0, int len = npos) const                        { return Super::substr(pos, len); }
+    String substr(szt pos = 0, szt len = npos) const                        { return Super::substr(pos, len); }
 
     /// Case-insensitive compare
     int icompare(const String& str) const                                   { return icompare(0, npos, str); }
-    int icompare(   int pos, int len,
-                    const String& str, int subpos = 0, int sublen = npos) const;
+    int icompare(   szt pos, szt len,
+                    const String& str, szt subpos = 0, szt sublen = npos) const;
 
     /// Split a string into a list of separate substrings delimited by delim
-    List split(const String& delim = String(1, ' '), int pos = 0, int count = npos) const;
+    List split(const String& delim = String(1, ' '), szt pos = 0, szt count = npos) const;
 
     /// Join list into one string, separated by delim
-    static String join(const List& strings, const String& delim = String(1, ' '), int start = npos, int end = npos);
+    static String join(const List& strings, const String& delim = String(1, ' '), szt start = npos, szt end = npos);
 
     /// Convert string to lower case
     String toLower() const;
@@ -120,8 +116,6 @@ public:
     
     /// Same as u8()
     operator std::string() const                                            { return u8(); }
-   
-    static const int npos                                                   = (int)Super::npos;
  
     friend ostream& operator<<(ostream& os, const String& str)              { return os << str.u8(); }
     friend istream& operator>>(istream& is, String& str)                    { std::string str_; is >> str_; str = str_; return is; }

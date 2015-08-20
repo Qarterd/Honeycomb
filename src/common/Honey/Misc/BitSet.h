@@ -11,7 +11,7 @@ namespace honey
 /** \cond */
 namespace bitset { namespace priv
 {
-    extern const int countTable[];
+    extern const szt countTable[];
 } }
 /** \endcond */
 
@@ -24,7 +24,7 @@ public:
     static_assert(std::is_unsigned<Block>::value, "block type must be unsigned");
 
     /// Construct array with `size` number of bits, each initialized to `val`
-    BitSet_(int size = 0, bool val = false, const Alloc& a = Alloc()) :
+    BitSet_(szt size = 0, bool val = false, const Alloc& a = Alloc()) :
         _alloc(a),
         _size(0),
         _blockCount(0),
@@ -35,19 +35,19 @@ public:
 
     /// Construct from bytes in big-endian bit order (the first index will contain the MSB)
     BitSet_(const Bytes& bs, const Alloc& a = Alloc()) :
-        BitSet_(honey::size(bs)*8, false, a)
+        BitSet_(bs.size()*8, false, a)
     {
-        int i = 0;
+        szt i = 0;
         for (auto b: bs) for (auto j: range(8)) set(i++, (b >> (7-j)) & 1);
     }
     
     /// Resize array to contain `size` number of bits, with new bits initialized to `val`
-    void resize(int size, bool val = false)
+    void resize(szt size, bool val = false)
     {
         assert(size >= 0);
         if (size == _size) return;
         //Allocate new blocks
-        int blockCount = size / bitsPerBlock + (size % bitsPerBlock != 0);
+        szt blockCount = size / bitsPerBlock + (size % bitsPerBlock != 0);
         Block* blocks = nullptr;
         if (size)
         {
@@ -56,7 +56,7 @@ public:
             if (_blockCount) std::copy(_blocks.get(), _blocks.get() + (blockCount < _blockCount ? blockCount : _blockCount), blocks);
         }
         //Init new bits if new array is larger
-        int blockDif = blockCount - _blockCount;
+        sdt blockDif = blockCount - _blockCount;
         if (blockDif >= 0)
         {
             //Init all new blocks
@@ -74,74 +74,74 @@ public:
     }
 
     /// Set bit to true
-    void set(int index)                         { assert(index < size()); _blocks[blockIndex(index)] |= bitMask(index); }
+    void set(szt index)                         { assert(index < size()); _blocks[blockIndex(index)] |= bitMask(index); }
     /// Set bit to value
-    void set(int index, bool val)               { val ? set(index) : reset(index); }
+    void set(szt index, bool val)               { val ? set(index) : reset(index); }
     /// Set all bits to true
     void set()                                  { if (!_blockCount) return; std::fill_n(_blocks.get(), _blockCount, ~Block(0)); trim(); }
     /// Set bit to false
-    void reset(int index)                       { assert(index < size()); _blocks[blockIndex(index)] &= ~bitMask(index); }
+    void reset(szt index)                       { assert(index < size()); _blocks[blockIndex(index)] &= ~bitMask(index); }
     /// Set all bits false
     void reset()                                { if (!_blockCount) return; std::fill_n(_blocks.get(), _blockCount, 0); }
     /// Flip value of bit
-    void flip(int index)                        { assert(index < size()); _blocks[blockIndex(index)] ^= bitMask(index); }
+    void flip(szt index)                        { assert(index < size()); _blocks[blockIndex(index)] ^= bitMask(index); }
     /// Flip values of all bits
-    void flip()                                 { for (int i = 0; i < _blockCount; ++i) _blocks[i] = ~_blocks[i]; trim(); }
+    void flip()                                 { for (szt i = 0; i < _blockCount; ++i) _blocks[i] = ~_blocks[i]; trim(); }
     /// Get bit value
-    bool test(int index) const                  { assert(index < size()); return _blocks[blockIndex(index)] & bitMask(index); }
+    bool test(szt index) const                  { assert(index < size()); return _blocks[blockIndex(index)] & bitMask(index); }
     
     /// Test if all bits are true
     bool all() const
     {
         if (!_blockCount) return false;
-        for (int i = 0; i < _blockCount-1; ++i) if (~_blocks[i]) return false;
+        for (szt i = 0; i < _blockCount-1; ++i) if (~_blocks[i]) return false;
         return _blocks[_blockCount-1] == ~unusedBitsMask();
     }
     
     /// Test if any bits are true
-    bool any() const                            { for (int i = 0; i < _blockCount; ++i) { if (_blocks[i]) return true; } return false; }
+    bool any() const                            { for (szt i = 0; i < _blockCount; ++i) { if (_blocks[i]) return true; } return false; }
     /// Test if no bits are true
     bool none() const                           { return !any(); }
 
     /// Count number of true values in bit array
-    int count() const
+    szt count() const
     {
-        int count = 0;
-        for (int i = 0; i < _blockCount; ++i)
+        szt count = 0;
+        for (szt i = 0; i < _blockCount; ++i)
         {
             Block block = _blocks[i];
-            for (int j = 0; j < sizeof(Block); ++j)
+            for (szt j = 0; j < sizeof(Block); ++j)
                 count += bitset::priv::countTable[(block >> (j<<3)) & 0xFF];
         }
         return count;
     }
 
     /// Number of bits in the bit array
-    int size() const                            { return _size; }
+    szt size() const                            { return _size; }
     /// Number of blocks that the bit array has been split up into
-    int blockCount() const                      { return _blockCount; }
+    szt blockCount() const                      { return _blockCount; }
     
-    static const int bitsPerBlock               = sizeof(Block)*8;
+    static const szt bitsPerBlock               = sizeof(Block)*8;
 
     /// Get access to raw blocks that hold the bits. Bit index 0 is the LSB of block 0.
     const Block* blocks() const                 { return _blocks; }
     Block* blocks()                             { return _blocks; }
     
 private:
-    static const int bitToBlockShift            = mt::log2Floor<bitsPerBlock>::value;
-    static const int bitOffsetMask              = bitsPerBlock-1;
+    static const szt bitToBlockShift            = mt::log2Floor<bitsPerBlock>::value;
+    static const szt bitOffsetMask              = bitsPerBlock-1;
 
-    static int blockIndex(int index)            { return index >> bitToBlockShift; }
-    static Block bitMask(int index)             { return Block(1) << (index & bitOffsetMask); }
+    static szt blockIndex(szt index)            { return index >> bitToBlockShift; }
+    static Block bitMask(szt index)             { return Block(1) << (index & bitOffsetMask); }
 
     /// Get mask for unused bits in last block
-    Block unusedBitsMask() const                { int bits = _size % bitsPerBlock; return bits ? ~((Block(1) << bits) - 1) : 0; }
+    Block unusedBitsMask() const                { szt bits = _size % bitsPerBlock; return bits ? ~((Block(1) << bits) - 1) : 0; }
     /// It is convenient to always have the unused bits in last block be 0
     void trim()                                 { if (!_blockCount) return; _blocks[_blockCount-1] &= ~unusedBitsMask(); }
 
     Alloc _alloc;
-    int _size;
-    int _blockCount;
+    szt _size;
+    szt _blockCount;
     UniquePtr<Block, finalize<Block,Alloc>> _blocks;
 };
 

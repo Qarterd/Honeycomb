@@ -69,7 +69,7 @@ public:
     /// Initialize with scalar in every element
     explicit Matrix(Real scalar)                                        { fromScalar(scalar); }
     /// Initialize from array with dimensions (rows x cols). If the array is in row-major format set rowMajor to true, otherwise set to false for column-major.
-    Matrix(const Real* a, int rows, int cols, bool rowMajor = true)     { this->resize(rows, cols); this->fromArray(a, rowMajor); }
+    Matrix(const Real* a, sdt rows, sdt cols, bool rowMajor = true)     { this->resize(rows, cols); this->fromArray(a, rowMajor); }
     /// Construct from quaternion
     Matrix(const Quat& q)                                               { q.toMatrix(*this); }
     /// Initialize from transform
@@ -126,7 +126,7 @@ public:
     /// Initialize with scalar in every element
     Matrix& fromScalar(Real f)
     {
-        mt::for_<0, 16>([&](int i) { m(i) = f; });
+        mt::for_<0, 16>([&](sdt i) { m(i) = f; });
         return *this;
     }
 
@@ -462,7 +462,7 @@ struct priv::map_impl<Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>>
     template<class T, class O, class Func>
     static O&& func(T&& m, O&& o, Func&& f)
     {
-        mt::for_<0, 16>([&](int i) { o(i) = f(m(i)); });
+        mt::for_<0, 16>([&](sdt i) { o(i) = f(m(i)); });
         return forward<O>(o);
     }
 };
@@ -473,7 +473,7 @@ struct priv::map_impl<Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>, Matrix<4,4,R,Opt>>
     template<class T, class T2, class O, class Func>
     static O&& func(T&& m, T2&& rhs, O&& o, Func&& f)
     {
-        mt::for_<0, 16>([&](int i) { o(i) = f(m(i), rhs(i)); });
+        mt::for_<0, 16>([&](sdt i) { o(i) = f(m(i), rhs(i)); });
         return forward<O>(o);
     }
 };

@@ -19,7 +19,7 @@ class Deque : mt::NoCopy
 public:
     typedef typename Alloc_::template rebind<Data>::other Alloc;
 
-    Deque(int size = 0, const Data& initVal = Data(), const Alloc& alloc = Alloc()) :
+    Deque(szt size = 0, const Data& initVal = Data(), const Alloc& alloc = Alloc()) :
         _alloc(alloc),
         _data(nullptr, finalize<Data, Alloc>()),
         _capacity(0),
@@ -32,14 +32,14 @@ public:
 
     ~Deque()                                                { clear(); }
 
-    void resize(int size, const Data& initVal = Data())
+    void resize(szt size, const Data& initVal = Data())
     {
         SpinLock::Scoped _(_headLock);
         SpinLock::Scoped __(_tailLock);
         setCapacity(size);
         //Init new data
-        int dif = _capacity - _size;
-        for (int i = 0; i < dif; ++i) _alloc.construct(_data + ringIndex(_head+_size+i), initVal);
+        sdt dif = _capacity - _size;
+        for (sdt i = 0; i < dif; ++i) _alloc.construct(_data + ringIndex(_head+_size+i), initVal);
         _size = size;
         _tail = _head;
     }
@@ -103,21 +103,21 @@ public:
     void clear()                                            { while (popBack()); }
 
     /// Number of elements in list
-    int size() const                                        { return _size; }
+    szt size() const                                        { return _size; }
 
     /// Check if deque does not contain any elements
     bool empty() const                                      { return size() == 0; }
 
 private:
-    int ringIndex(int index) const                          { return index % _capacity; }
-    int ringInc(int index) const                            { return index >= _capacity - 1 ? 0 : index + 1; }
-    int ringDec(int index) const                            { return index <= 0 ? _capacity - 1 : index - 1; }
+    szt ringIndex(szt index) const                          { return index % _capacity; }
+    szt ringInc(szt index) const                            { return index >= _capacity - 1 ? 0 : index + 1; }
+    szt ringDec(szt index) const                            { return index == 0 ? _capacity - 1 : index - 1; }
 
-    void setCapacity(int capacity)
+    void setCapacity(szt capacity)
     {
         if (capacity == _capacity) return;
         //Get size (active element count) of new array, may be smaller than old
-        int size = capacity < _size ? capacity : _size.load();
+        szt size = capacity < _size ? capacity : _size.load();
         //Alloc new array
         Data* data = nullptr;
         if (capacity > 0)
@@ -126,7 +126,7 @@ private:
             //Copy active elements to new array (new head is at 0)
             if (_size > 0)
             {
-                int copyTail = ringIndex(_head + size);
+                szt copyTail = ringIndex(_head + size);
                 if (copyTail > _head)
                     //Contiguous region
                     std::copy(_data.get() + _head, _data + copyTail, data);
@@ -139,8 +139,8 @@ private:
             }
         }
         //Destroy any active elements that don't fit into new array
-        int dif = _size - size;
-        for (int i = 0; i < dif; ++i) _alloc.destroy(_data + ringIndex(_head+size+i));
+        sdt dif = _size - size;
+        for (sdt i = 0; i < dif; ++i) _alloc.destroy(_data + ringIndex(_head+size+i));
         //Set new array
         _data = data;
         _capacity = capacity;
@@ -153,10 +153,10 @@ private:
 
     Alloc               _alloc;
     UniquePtr<Data, finalize<Data,Alloc>> _data;
-    int                 _capacity;
-    atomic::Var<int>    _size;
-    int                 _head;
-    int                 _tail;
+    szt                 _capacity;
+    atomic::Var<szt>    _size;
+    szt                 _head;
+    szt                 _tail;
     SpinLock            _headLock;
     SpinLock            _tailLock;
 };

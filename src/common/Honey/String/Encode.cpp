@@ -51,7 +51,7 @@ bool reg(const Id& id,  const function<ostream& (ostream& os, const Bytes& val)>
 }
 
 static auto __hex = reg("hex"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << hex_encode(val.data(), size(val)); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << hex_encode(val.data(), val.size()); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -68,7 +68,7 @@ static auto __hex = reg("hex"_id,
         return is;
     });
     
-String hex_encode(const byte* data, int len)
+String hex_encode(const byte* data, szt len)
 {
     String ret;
     ret.reserve(len*2);
@@ -95,7 +95,7 @@ Bytes hex_decode(const String& string)
 }
 
 static auto __dec = reg("dec"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << dec_encode(val.data(), size(val)); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << dec_encode(val.data(), val.size()); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -112,22 +112,22 @@ static auto __dec = reg("dec"_id,
         return is;
     });
     
-String dec_encode(const byte* data, int len)
+String dec_encode(const byte* data, szt len)
 {
     const byte* cur = data, *end = data + len;
     
     //skip and count leading zeroes
-    int zeroes;
+    szt zeroes;
     for (zeroes = 0; cur != end && *cur == 0; ++cur, ++zeroes);
     
     //convert big-endian base256 integer to base10 integer
     Bytes b10((end - cur) * 241 / 100 + 1); //length * log(256) / log(10), rounded up
-    int high, j;
-    for (high = size(b10); cur != end; ++cur, high = j+1)
+    sdt high, j;
+    for (high = b10.size(); cur != end; ++cur, high = j+1)
     {
         //b10 = b10 * 256 + ch
         int carry;
-        for (carry = *cur, j = size(b10)-1; j >= high || carry; --j)
+        for (carry = *cur, j = b10.size()-1; j >= high || carry; --j)
         {
             assert(j >= 0);
             carry += 256 * b10[j];
@@ -152,17 +152,17 @@ Bytes dec_decode(const String& string)
     auto cur = string.begin(), end = string.end();
     
     //skip and count leading '0's
-    int zeroes;
+    szt zeroes;
     for (zeroes = 0; cur != end && *cur == toDec(0); ++cur, ++zeroes);
     
     //convert big-endian base10 integer to base256 integer
     Bytes b256((end - cur) * 416 / 1000 + 1); //length * log(10) / log(256), rounded up
-    int high, j;
-    for (high = size(b256); cur != end && isDec(*cur); ++cur, high = j+1)
+    sdt high, j;
+    for (high = b256.size(); cur != end && isDec(*cur); ++cur, high = j+1)
     {
         //b256 = b256 * 10 + ch
         int carry;
-        for (carry = fromDec(*cur), j = size(b256)-1; j >= high || carry; --j)
+        for (carry = fromDec(*cur), j = b256.size()-1; j >= high || carry; --j)
         {
             assert(j >= 0);
             carry += 10 * b256[j];
@@ -202,7 +202,7 @@ static auto __u8 = reg("u8"_id,
     });
     
 static auto __base64 = reg("base64"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << base64_encode(val.data(), size(val)); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << base64_encode(val.data(), val.size()); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -219,11 +219,11 @@ static auto __base64 = reg("base64"_id,
         return is;
     });
     
-String base64_encode(const byte* data, int len)
+String base64_encode(const byte* data, szt len)
 {
     String ret;
     ret.reserve((len*4)/3 + 4); //round to full block
-    int i = 0;
+    szt i = 0;
     byte chars_3[3], chars_4[4];
     
     for (auto b: range(len))
@@ -258,7 +258,7 @@ String base64_encode(const byte* data, int len)
 
 Bytes base64_decode(const String& string)
 {
-    int i = 0;
+    szt i = 0;
     byte chars_3[3], chars_4[4];
     Bytes ret;
     ret.reserve((3*string.length())/4);

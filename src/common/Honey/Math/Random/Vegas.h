@@ -26,7 +26,7 @@ namespace honey
   * Algorithm from: "VEGAS: An Adaptive Multi-dimensional Integration Program", G.P. Lepage, 1980. \n
   * Code adapted from C implementation by Richard Kreckel.  
   */
-template<int Dim = 1, int DimRes = 1, class Real__ = Real, int BinCount = 100>
+template<sdt Dim = 1, sdt DimRes = 1, class Real__ = Real, sdt BinCount = 100>
 class Vegas
 {
 public:
@@ -39,8 +39,8 @@ private:
     typedef Uniform_<Real>                  Uniform;
 
 public:
-    static const int dim                    = Dim;
-    static const int dimRes                 = DimRes;
+    static const sdt dim                    = Dim;
+    static const sdt dimRes                 = DimRes;
     typedef Vec<dimRes,Real>                VecRes;
     typedef Vec<dim,Real>                   Vec;
     typedef function<VecRes (const Vec&)>   Func;
@@ -56,7 +56,7 @@ public:
       * \param iterCount    Tunable param, number of iterations, functor will be called roughly sampleCount times per iteration.
       * \param alpha        Tunable param, represents stiffness of the grid rebinning algorithm. Range is usually [1,2], no rebinning will occur at 0.
       */
-    Vegas(const Func& func, RandomGen& gen, const Vec& lower, const Vec& upper, int sampleCount = 1000, Real warmUp = 0.1, int iterCount = 5, Real alpha = 1.5) :
+    Vegas(const Func& func, RandomGen& gen, const Vec& lower, const Vec& upper, sdt sampleCount = 1000, Real warmUp = 0.1, sdt iterCount = 5, Real alpha = 1.5) :
 
         func(func), gen(gen), lower(lower), upper(upper), sampleCount(sampleCount), warmUp(Alge::max(warmUp,0)), iterCount(iterCount), alpha(alpha),
         tgral(0), chi2a(0), sd(0), _progress(0), sampleTotal(0) {}
@@ -80,18 +80,18 @@ public:
     const VecRes& stdDev() const                                                    { return sd; }
 
 private:
-    void init(int init, int sampleCount);
-    void rebin(Real rc, int nd, Real r[], Real xin[], Real xi[]);
-    void integrate_priv(int samplesMax);
+    void init(sdt init, sdt sampleCount);
+    void rebin(Real rc, sdt nd, Real r[], Real xin[], Real xi[]);
+    void integrate_priv(sdt samplesMax);
 
     // Input
     Func func;
     RandomGen& gen;
     Vec lower;
     Vec upper;
-    int sampleCount;
+    sdt sampleCount;
     Real warmUp;
-    int iterCount;
+    sdt iterCount;
     Real alpha;
 
     // Output
@@ -101,19 +101,19 @@ private:
 
     // Progress
     Real _progress;
-    int sampleTotal;
-    int iterCur;
-    int npgCur;
+    sdt sampleTotal;
+    sdt iterCur;
+    sdt npgCur;
 
     // Init 0 and 1
-    int ndo;
-    int ittot;                  // iter count across init > 1
-    int mds;                    // sampling mode
+    sdt ndo;
+    sdt ittot;                  // iter count across init > 1
+    sdt mds;                    // sampling mode
 
     // Init 2
-    int nd;                     // slices in grid (c.f. BinCount)
-    int ng;  
-    int npg;                    // number of calls within bin
+    sdt nd;                     // slices in grid (c.f. BinCount)
+    sdt ng;  
+    sdt npg;                    // number of calls within bin
     Real calls;                 // real total number of calls to fxn
     Real dv2g;
     Real dxg;
@@ -138,8 +138,8 @@ private:
     Real xi[dim][BinCount];
     Real xin[BinCount];         // aux. variable for rebinning
 
-    int ia[dim];
-    int kg[dim];
+    sdt ia[dim];
+    sdt kg[dim];
 
     // accumulator over bins / hypercubes...
     struct binAccu
@@ -155,16 +155,16 @@ private:
         Real f2;                // f squared
         Real fb;                // sum for f within bi
         Real f2b;               // sum for f2 within bin
-        int npg;                // number of calls within bin f != 0
+        sdt npg;                // number of calls within bin f != 0
     };               
     pointAccu Ax[dimRes];       // ...one for each integrand
 };
 
-template<int Dim, int DimRes, class Real, int BinCount>
+template<sdt Dim, sdt DimRes, class Real, sdt BinCount>
 const typename Vegas<Dim,DimRes,Real,BinCount>::VecRes&
     Vegas<Dim,DimRes,Real,BinCount>::integrate(Real progressDelta)
 {
-    int sampleWarmUp = warmUp*sampleCount;
+    sdt sampleWarmUp = warmUp*sampleCount;
     if (_progress == 0)
     {
         //First run, init with warm up or main
@@ -175,7 +175,7 @@ const typename Vegas<Dim,DimRes,Real,BinCount>::VecRes&
     }
     
     _progress = Alge::min(_progress + progressDelta, 1);
-    int sampleAcc = _progress*(sampleWarmUp+sampleCount) - sampleTotal;
+    sdt sampleAcc = _progress*(sampleWarmUp+sampleCount) - sampleTotal;
     sampleTotal += sampleAcc;
 
     if (sampleTotal - sampleAcc < sampleWarmUp)
@@ -199,8 +199,8 @@ const typename Vegas<Dim,DimRes,Real,BinCount>::VecRes&
     return result();
 }
 
-template<int Dim, int DimRes, class Real, int BinCount>
-void Vegas<Dim,DimRes,Real,BinCount>::init(int init, int sampleCount)
+template<sdt Dim, sdt DimRes, class Real, sdt BinCount>
+void Vegas<Dim,DimRes,Real,BinCount>::init(sdt init, sdt sampleCount)
 {
     iterCur = 0;
     npgCur = -2;
@@ -209,12 +209,12 @@ void Vegas<Dim,DimRes,Real,BinCount>::init(int init, int sampleCount)
     {
         mds = 1;        //1 == use stratified sampling
         ndo = 1;
-        for (int j=0; j<dim; ++j) xi[j][0] = 1;
+        for (sdt j=0; j<dim; ++j) xi[j][0] = 1;
     }
 
     if (init <= 1)      //inherit the previous grid
     {
-        for (int j=0; j<dimRes; ++j)
+        for (sdt j=0; j<dimRes; ++j)
         {
             Ai[j].sInt = 0;
             Ai[j].sWgt = 0;
@@ -245,35 +245,35 @@ void Vegas<Dim,DimRes,Real,BinCount>::init(int init, int sampleCount)
             iterCur = iterCount;
             return;
         }
-        int k = 1;
-        for (int i=0; i<dim; ++i) k *= ng;
+        sdt k = 1;
+        for (sdt i=0; i<dim; ++i) k *= ng;
         npg = sampleCount/k > 2 ? sampleCount/k : 2;
         calls = npg * k;
         dxg = 1/Real(ng);
         dv2g = 1;
-        for (int i=0; i<dim; ++i) dv2g *= dxg;
+        for (sdt i=0; i<dim; ++i) dv2g *= dxg;
         dv2g = calls*calls*dv2g*dv2g/npg/npg/(npg-1.0);
         xnd = nd;
         dxg *= xnd;
         xJac = 1/Real(calls);
-        for (int j=0; j<dim; ++j)
+        for (sdt j=0; j<dim; ++j)
         {
             dx[j] = upper[j]-lower[j];
             xJac *= dx[j];
         }
         if (nd != ndo)
         {
-            for (int i=0; i<(nd>ndo?nd:ndo); ++i) r[i] = 1;
-            for (int j=0; j<dim; ++j) rebin(ndo/xnd,nd,r,xin,xi[j]);
+            for (sdt i=0; i<(nd>ndo?nd:ndo); ++i) r[i] = 1;
+            for (sdt j=0; j<dim; ++j) rebin(ndo/xnd,nd,r,xin,xi[j]);
             ndo = nd;
         }
     }
 }
 
-template<int Dim, int DimRes, class Real, int BinCount>
-void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
+template<sdt Dim, sdt DimRes, class Real, sdt BinCount>
+void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(sdt samplesMax)
 {
-    int samples = 0;
+    sdt samples = 0;
     samplesMax *= iterCount;
 
     for (; iterCur < iterCount; ++iterCur, ++ittot)
@@ -282,11 +282,11 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
         {
             //Init loop
             npgCur = -1;
-            for (int j=0; j<dimRes; ++j) Ab[j].ti = Ab[j].tsi = 0;
-            for (int j=0; j<dim; ++j)
+            for (sdt j=0; j<dimRes; ++j) Ab[j].ti = Ab[j].tsi = 0;
+            for (sdt j=0; j<dim; ++j)
             {
                 kg[j] = 1;
-                for (int i=0; i<nd; ++i) d[i][j] = di[i][j] = 0;
+                for (sdt i=0; i<nd; ++i) d[i][j] = di[i][j] = 0;
             }
         }
         for (;;)
@@ -295,14 +295,14 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
             {
                 //Init loop
                 npgCur = 0;
-                for (int j=0; j<dimRes; ++j)
+                for (sdt j=0; j<dimRes; ++j)
                 {
                     Ax[j].fb = 0;
                     Ax[j].f2b = 0;
                     Ax[j].npg = 0;
                 }
             }
-            for (int k=npgCur; k<npg; ++k, ++samples)
+            for (sdt k=npgCur; k<npg; ++k, ++samples)
             {
                 if (samplesMax >= 0 && samples >= samplesMax)
                 {
@@ -312,7 +312,7 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
 
                 Real wgt = xJac;
                 Vec x;
-                for (int j=0; j<dim; ++j)
+                for (sdt j=0; j<dim; ++j)
                 {
                     Real xrand = Uniform::nextStd(gen);
                     Real xn = (kg[j]-xrand)*dxg+1;
@@ -333,7 +333,7 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
                     wgt *= xo*xnd;
                 }
                 VecRes f = func(const_cast<const Vec&>(x));   // call integrand at point x
-                for (int j=0; j<dimRes; ++j)
+                for (sdt j=0; j<dimRes; ++j)
                 {
                     if (f[j] != 0) ++Ax[j].npg;
                     f[j] *= wgt;
@@ -341,7 +341,7 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
                     Ax[j].fb += f[j];
                     Ax[j].f2b += Ax[j].f2;
                 }
-                for (int j=0; j<dim; ++j)
+                for (sdt j=0; j<dim; ++j)
                 {
                     di[ia[j]-1][j] += f[0];
                     if (mds >= 0) d[ia[j]-1][j] += Ax[0].f2;
@@ -349,7 +349,7 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
             } // end of loop within hypercube
             npgCur = -1;
 
-            for (int j=0; j<dimRes; ++j)
+            for (sdt j=0; j<dimRes; ++j)
             {
                 Ax[j].f2b = Alge::sqrt(Ax[j].f2b*Ax[j].npg);
                 Ax[j].f2b = (Ax[j].f2b-Ax[j].fb)*(Ax[j].f2b+Ax[j].fb);
@@ -359,9 +359,9 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
             }
             if (mds < 0)
             {
-                for (int j=0; j<dim; ++j) d[ia[j]-1][j] += Ax[0].f2b;
+                for (sdt j=0; j<dim; ++j) d[ia[j]-1][j] += Ax[0].f2b;
             }
-            int k;
+            sdt k;
             for (k=dim-1; k>=0; --k)
             {
                 kg[k] %= ng;
@@ -371,7 +371,7 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
         }  // end of loop over hypercubes
         npgCur = -2;
 
-        for (int j=0; j<dimRes; ++j)
+        for (sdt j=0; j<dimRes; ++j)
         {
             Ab[j].tsi *= dv2g;
             Ai[j].Wgt = 1/Ab[j].tsi;
@@ -386,13 +386,13 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
         }
 
         Real dt[dim];
-        for (int j=0; j<dim; ++j)
+        for (sdt j=0; j<dim; ++j)
         {
             Real xo = d[0][j];
             Real xn = d[1][j];
             d[0][j] = (xo+xn)/2;
             dt[j] = d[0][j];
-            for (int i=1; i<nd-1; ++i)
+            for (sdt i=1; i<nd-1; ++i)
             {
                 Real rc = xo+xn;
                 xo = xn;
@@ -403,10 +403,10 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
             d[nd-1][j] = (xo+xn)/2;
             dt[j] += d[nd-1][j];
         }
-        for (int j=0; j<dim; ++j)
+        for (sdt j=0; j<dim; ++j)
         {
             Real rc = 0;
-            for (int i=0; i<nd; ++i)
+            for (sdt i=0; i<nd; ++i)
             {
                 if (d[i][j] < Real_::smallest) d[i][j] = Real_::smallest;
                 r[i] =  Alge::pow((1.0-d[i][j]/dt[j])/
@@ -418,11 +418,11 @@ void Vegas<Dim,DimRes,Real,BinCount>::integrate_priv(int samplesMax)
     }
 }
 
-template<int Dim, int DimRes, class Real, int BinCount>
-void Vegas<Dim, DimRes, Real, BinCount>::rebin(Real rc, int nd, Real r[], Real xin[], Real xi[])
+template<sdt Dim, sdt DimRes, class Real, sdt BinCount>
+void Vegas<Dim, DimRes, Real, BinCount>::rebin(Real rc, sdt nd, Real r[], Real xin[], Real xi[])
 {
-    int i;
-    int k = 0;
+    sdt i;
+    sdt k = 0;
     Real dr = 0;
     Real xn = 0;
     Real xo = 0;

@@ -20,7 +20,7 @@ namespace lockfree
   * \tparam Backoff     Backoff algorithm to reduce contention
   * \tparam iterMax     Max number of iterator instances per thread
   */
-template<class Data_, class Alloc_ = typename DefaultAllocator<Data_>::type, class Backoff = Backoff, int iterMax = 2>
+template<class Data_, class Alloc_ = typename DefaultAllocator<Data_>::type, class Backoff = Backoff, int8 iterMax = 2>
 class List : MemConfig, mt::NoCopy
 {
     template<class> friend class Mem;
@@ -216,7 +216,7 @@ public:
     public:
         typedef std::bidirectional_iterator_tag     iterator_category;
         typedef Data                                value_type;
-        typedef ptrdiff_t                           difference_type;
+        typedef sdt                                 difference_type;
         typedef Data*                               pointer;
         typedef Data&                               reference;
         
@@ -332,7 +332,7 @@ public:
 
         typedef std::bidirectional_iterator_tag     iterator_category;
         typedef Data                                value_type;
-        typedef ptrdiff_t                           difference_type;
+        typedef sdt                                 difference_type;
         typedef Data*                               pointer;
         typedef Data&                               reference;
 
@@ -463,7 +463,7 @@ public:
     void clear()                                            { for (Iter it = begin(); it != end();) erase(it); }
 
     /// Number of elements in list
-    int size() const                                        { int size = _size; return size > 0 ? size : 0; } //Size can be less than 0 temporarily because of concurrency
+    szt size() const                                        { sdt size = _size; return size > 0 ? size : 0; } //Size can be less than 0 temporarily because of concurrency
 
 private:
     /// Override from MemConfig
@@ -471,7 +471,7 @@ private:
     /// Override from MemConfig
     static const int linkDelMax = linkMax;
     /// Override from MemConfig
-    static const int tlrefMax = 5 + iterMax;
+    static const int8 tlrefMax = 5 + iterMax;
 
     /// Override from MemConfig
     Alloc& getAlloc()                                       { return _alloc; }
@@ -630,7 +630,7 @@ private:
     Mem<List>               _mem;
     Link                    _head;
     Link                    _tail;
-    atomic::Var<int>        _size;
+    atomic::Var<sdt>        _size;
     Backoff                 _backoff;
     Backoff                 _backoffCp; ///< Backoff for correctPrev
 };

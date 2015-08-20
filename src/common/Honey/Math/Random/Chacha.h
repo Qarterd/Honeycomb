@@ -62,7 +62,7 @@ public:
     /// Generator State
     struct State
     {
-        static const int coreSize = 16;
+        static const szt coreSize = 16;
 
         State()                                     : resIdx(coreSize) {}
 
@@ -91,9 +91,9 @@ public:
     void setIv(const Iv& iv);
 
     /// Encrypt a mesage of length len.  Result is stored in cipher.
-    void encrypt(const byte* msg, byte* cipher, int len);
+    void encrypt(const byte* msg, byte* cipher, szt len);
     /// Decrypt a cipher of length len.  Result is stored in msg.
-    void decrypt(const byte* cipher, byte* msg, int len);
+    void decrypt(const byte* cipher, byte* msg, szt len);
 
     /// Set the state of the generator
     void setState(const State& state)               { _state = state; }

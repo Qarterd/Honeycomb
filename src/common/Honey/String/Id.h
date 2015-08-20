@@ -83,8 +83,7 @@ class IdLiteral
     friend class Id;
 public:
     constexpr IdLiteral()                           : debug_if(_name(""),) _hash(0) {}
-    constexpr IdLiteral(const char* str, size_t len)
-                                                    : debug_if(_name(str),) _hash(hash::fast_(str, (int)len)) {}
+    constexpr IdLiteral(const char* str, szt len)   : debug_if(_name(str),) _hash(hash::fast_(str, len)) {}
     
     constexpr bool operator==(const IdLiteral& rhs) const   { return _hash == rhs._hash; }
     constexpr bool operator!=(const IdLiteral& rhs) const   { return _hash != rhs._hash; }
@@ -124,7 +123,7 @@ private:
 /**
   * This operator can be used in a case expression of a switch block (ex. case "foo"_id: ).
   */ 
-constexpr IdLiteral operator"" _id(const char* str, size_t len)     { return IdLiteral(str, len); }
+constexpr IdLiteral operator"" _id(const char* str, szt len)     { return IdLiteral(str, len); }
 /// @}
 
 inline Id::Id(const IdLiteral& rhs)                         : debug_if(_name(rhs._name),) _hash(rhs._hash) {}

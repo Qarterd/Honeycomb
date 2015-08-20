@@ -45,7 +45,7 @@ public:
     template<class T>
     Qrd& calc(const MatrixBase<T>& a, Mode mode = Mode::reduced)
     {
-        int m = a.rows(), n = a.cols();
+        sdt m = a.rows(), n = a.cols();
         assert(m >= n);
         _h = a;
         _q.resize(m, mode == Mode::full ? m : n);
@@ -61,7 +61,7 @@ public:
     template<class B, class X>
     void solve(const MatrixBase<B>& b, MatrixBase<X>& x)
     {
-        int m = _q.rows(), n = _r.rows();
+        sdt m = _q.rows(), n = _r.rows();
         bool full = m == _q.cols();
         if (full)   _q.block(0,0,m,n).transposeMul(b, _y);
         else        _q.transposeMul(b, _y);

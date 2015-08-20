@@ -41,7 +41,7 @@ struct ManipFunc
     template<class Stream>
     friend Stream& operator>>(Stream& is, ManipFunc& manip)             { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
     
-    template<class Stream, size_t... Seq>
+    template<class Stream, szt... Seq>
     void apply(Stream& ios, mt::idxseq<Seq...>) const                   { f(ios, get<Seq>(args)...); }
     
     Func f;
@@ -96,6 +96,9 @@ inline ostream& endl(ostream& os)
 
 /// @}
 
+/// \defgroup ByteStream  ByteStream util
+/// @{
+
 /// A stream I/O buffer of bytes, to be passed into ByteStream
 class ByteBuf : public std::stringbuf
 {
@@ -139,16 +142,12 @@ public:
     ByteStream& operator=(ByteStream&& rhs)                 { Super::operator=(std::move(rhs)); return *this; }
 };
 
-/// \defgroup ByteStream  ByteStream util
-/// @{
-
 /// Bool to bytes
 inline ByteStream& operator<<(ByteStream& os, const bool val)   { os.put(val); return os; }
 /// Byte to bytes
 inline ByteStream& operator<<(ByteStream& os, const byte val)   { os.put(val); return os; }
-/// Char to bytes
+/// UTF-8 char to bytes
 inline ByteStream& operator<<(ByteStream& os, const char val)   { os.put(val); return os; }
-
 /// Multi-byte number to big-endian bytes
 template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
 ByteStream& operator<<(ByteStream& os, const T val)
@@ -158,14 +157,15 @@ ByteStream& operator<<(ByteStream& os, const T val)
     os.write(reinterpret_cast<char*>(a), sizeof(T));
     return os;
 }
-
+/// Char to bytes
+inline ByteStream& operator<<(ByteStream& os, Char val)         { return os << uint16(val); }
+    
 /// Bool from bytes
 inline ByteStream& operator>>(ByteStream& is, bool& val)        { val = is.get(); return is; }
 /// Byte from bytes
 inline ByteStream& operator>>(ByteStream& is, byte& val)        { is.get(reinterpret_cast<char&>(val)); return is; }
-/// Char from bytes
+/// UTF-8 char from bytes
 inline ByteStream& operator>>(ByteStream& is, char& val)        { is.get(val); return is; }
-
 /// Multi-byte number from big-endian bytes
 template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
 ByteStream& operator>>(ByteStream& is, T& val)
@@ -175,6 +175,8 @@ ByteStream& operator>>(ByteStream& is, T& val)
     val = BitOp::fromPartsBig<T>(a);
     return is;
 }
+/// Char from bytes
+inline ByteStream& operator>>(ByteStream& is, Char& val)        { uint16 c; is >> c; val = Char(c); return is; }
 
 /// ByteStream util
 namespace bytestream
@@ -223,26 +225,92 @@ namespace bytestream
     inline auto varSize(Int&& val)                              { return priv::VarSize<Int>{forward<Int>(val)}; }
 }
 
+/// Pair to bytes
+template<class T1, class T2>
+ByteStream& operator<<(ByteStream& os, const pair<T1,T2>& p)    { return os << p.first << p.second; }
 /** \cond */
 namespace priv
 {
-    template<class Tuple, size_t... Seq>
+    template<class Tuple, szt... Seq>
     void tupleToBytes(ByteStream& os, Tuple&& t, mt::idxseq<Seq...>)
                                                                 { mt::exec([&]() { os << get<Seq>(forward<Tuple>(t)); }...); }
-    template<class Tuple, size_t... Seq>
-    void tupleFromBytes(ByteStream& is, Tuple& t, mt::idxseq<Seq...>)
-                                                                { mt::exec([&]() { is >> get<Seq>(t); }...); }
+    template<class List>
+    void listToBytes(ByteStream& os, const List& list)          { os << bytestream::varSize(list.size()); for (auto& e: list) os << e; }
 }
 /** \endcond */
-
 /// Tuple to bytes
 template<class Tuple>
 typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
-    operator<<(ByteStream& os, Tuple&& t)                       { priv::tupleToBytes(os, forward<Tuple>(t), mt::make_idxseq<tuple_size<typename mt::removeRef<Tuple>::type>::value>()); return os; }
+    operator<<(ByteStream& os, Tuple&& t)               { priv::tupleToBytes(os, forward<Tuple>(t), mt::make_idxseq<tuple_size<typename mt::removeRef<Tuple>::type>::value>()); return os; }
+/// Array to bytes
+template<class T, szt N>
+ByteStream& operator<<(ByteStream& os, const array<T,N>& a)
+                                                        { priv::listToBytes(os, a); return os; }
+/// Vector to bytes
+template<class T, class Alloc>
+ByteStream& operator<<(ByteStream& os, const vector<T,Alloc>& vec)
+                                                        { priv::listToBytes(os, vec); return os; }
+/// UTF-8 string to bytes
+inline ByteStream& operator<<(ByteStream& os, const char* str)
+                                                        { auto len = strlen(str); os << bytestream::varSize(len); os.write(str, len); return os; }
+/// UTF-8 string to bytes
+inline ByteStream& operator<<(ByteStream& os, const std::string& str)
+                                                        { os << bytestream::varSize(str.length()); os.write(str.data(), str.length()); return os; }
+/// String to bytes
+inline ByteStream& operator<<(ByteStream& os, const String& str)
+                                                        { priv::listToBytes(os, str); return os; }
+/// Bytes to bytes
+inline ByteStream& operator<<(ByteStream& os, const Bytes& bs)
+                                                        { os << bytestream::varSize(bs.size()); os.write(reinterpret_cast<const char*>(bs.data()), bs.size()); return os; }
+/// Set to bytes
+template<class T, class Compare, class Alloc>
+ByteStream& operator<<(ByteStream& os, const set<T,Compare,Alloc>& set)
+                                                        { priv::listToBytes(os, set); return os; }
+/// Multi-Set to bytes
+template<class T, class Compare, class Alloc>
+ByteStream& operator<<(ByteStream& os, const multiset<T,Compare,Alloc>& set)
+                                                        { priv::listToBytes(os, set); return os; }
+/// Unordered Set to bytes
+template<class Key, class Hash, class KeyEqual, class Alloc>
+ByteStream& operator<<(ByteStream& os, const unordered_set<Key,Hash,KeyEqual,Alloc>& set)
+                                                        { priv::listToBytes(os, set); return os; }
+/// Unordered Multi-Set to bytes
+template<class Key, class Hash, class KeyEqual, class Alloc>
+ByteStream& operator<<(ByteStream& os, const unordered_multiset<Key,Hash,KeyEqual,Alloc>& set)
+                                                        { priv::listToBytes(os, set); return os; }
+/// Map to bytes
+template<class Key, class T, class Compare, class Alloc>
+ByteStream& operator<<(ByteStream& os, const std::map<Key,T,Compare,Alloc>& map)
+                                                        { priv::listToBytes(os, map); return os; }
+/// Multi-Map to bytes
+template<class Key, class T, class Compare, class Alloc>
+ByteStream& operator<<(ByteStream& os, const multimap<Key,T,Compare,Alloc>& map)
+                                                        { priv::listToBytes(os, map); return os; }
+/// Unordered Map to bytes
+template<class Key, class T, class Hash, class KeyEqual, class Alloc>
+ByteStream& operator<<(ByteStream& os, const unordered_map<Key,T,Hash,KeyEqual,Alloc>& map)
+                                                        { priv::listToBytes(os, map); return os; }
+/// Unordered Multi-Map to bytes
+template<class Key, class T, class Hash, class KeyEqual, class Alloc>
+ByteStream& operator<<(ByteStream& os, const unordered_multimap<Key,T,Hash,KeyEqual,Alloc>& map)
+                                                        { priv::listToBytes(os, map); return os; }
+
+/// Pair from bytes
+template<class T1, class T2>
+ByteStream& operator>>(ByteStream& is, pair<T1,T2>& p)  { return is >> p.first >> p.second; }
+/** \cond */
+namespace priv
+{
+    template<class Tuple, szt... Seq>
+    void tupleFromBytes(ByteStream& is, Tuple& t, mt::idxseq<Seq...>)
+                                                        { mt::exec([&]() { is >> get<Seq>(t); }...); }
+}
+/** \endcond */
 /// Tuple from bytes
 template<class Tuple>
 typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
-    operator>>(ByteStream& is, Tuple& t)                        { priv::tupleFromBytes(is, t, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    operator>>(ByteStream& is, Tuple& t)                { priv::tupleFromBytes(is, t, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+
 /// @}
 
 }
@@ -257,7 +325,6 @@ namespace std
     /// Pair to string
     template<class T1, class T2>
     ostream& operator<<(ostream& os, const pair<T1,T2>& p)  { return os << "[" << p.first << ", " << p.second << "]"; }
-    
     /** \cond */
     namespace priv
     {
@@ -265,15 +332,13 @@ namespace std
         void tupleToString(ostream& os, Tuple&& t, honey::mt::idxseq<Seq...>)
                                                             { os << "["; honey::mt::exec([&]() { os << get<Seq>(forward<Tuple>(t)) << (Seq < sizeof...(Seq)-1 ? ", " : ""); }...); os << "]"; }
         template<class List>
-        void listToString(ostream& os, const List& list)    { int i = 0; os << "["; for (auto& e: list) os << (i++ > 0 ? ", " : "") << e; os << "]"; }
+        void listToString(ostream& os, const List& list)    { size_t i = 0; os << "["; for (auto& e: list) os << (i++ > 0 ? ", " : "") << e; os << "]"; }
     }
     /** \endcond */
-
     /// Tuple to string
     template<class Tuple>
     typename enable_if<honey::mt::isTuple<Tuple>::value, ostream&>::type
         operator<<(ostream& os, Tuple&& t)                  { priv::tupleToString(os, forward<Tuple>(t), honey::mt::make_idxseq<tuple_size<typename honey::mt::removeRef<Tuple>::type>::value>()); return os; }
-    
     /// Array to string
     template<class T, size_t N>
     ostream& operator<<(ostream& os, const array<T,N>& a)   { priv::listToString(os, a); return os; }

@@ -104,14 +104,14 @@ public:
     Value_& operator=(Value_&& rhs)                 { Variant::operator=(move(static_cast<Variant&>(rhs))); return *this; }
     
     /// Get value at index in array
-    Value_& operator[](int i)
+    Value_& operator[](szt i)
     {
         assert(type() == ValueType::Array);
         auto& arr = get_<Array>();
-        assert(i >= 0 && i < honey::size(arr));
+        assert(i < arr.size());
         return arr[i];
     }
-    const Value_& operator[](int i) const           { return const_cast<Value_&>(*this)[i]; }
+    const Value_& operator[](szt i) const           { return const_cast<Value_&>(*this)[i]; }
     
     /// Get value with name in object.  Adds null value if it doesn't exist.
     Value_& operator[](const String& name)
@@ -172,11 +172,11 @@ public:
     
     /// Create Value from `val` and insert value into array at index
     template<class T>
-    void insert(int i, T&& val)
+    void insert(szt i, T&& val)
     {
         assert(type() == ValueType::Array);
         auto& arr = get_<Array>();
-        assert(i >= 0 && i <= honey::size(arr));
+        assert(i <= arr.size());
         arr.insert(arr.begin() + i, Value_(forward<T>(val)));
     }
     
@@ -193,11 +193,11 @@ public:
     }
     
     /// Erase value at index in array
-    void erase(int i)
+    void erase(szt i)
     {
         assert(type() == ValueType::Array);
         auto& arr = get_<Array>();
-        assert(i >= 0 && i < honey::size(arr));
+        assert(i < arr.size());
         arr.erase(arr.begin() + i);
     }
     
@@ -227,12 +227,12 @@ public:
     bool empty() const                              { return !size(); }
     
     /// Get number of values in array/object
-    int size() const
+    szt size() const
     {
         assert(type() == ValueType::Array || type() == ValueType::Object);
-        return this->template visit<int>(overload(
-            [](const Array& arr) { return honey::size(arr); },
-            [](const Object& obj) { return honey::size(obj); }
+        return this->template visit<szt>(overload(
+            [](const Array& arr) { return arr.size(); },
+            [](const Object& obj) { return obj.size(); }
         ));
     }
     

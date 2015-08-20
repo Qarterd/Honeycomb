@@ -27,7 +27,7 @@ class DiscreteGen_ : public RandomDist<Real>
     struct Elem
     {
         Double bisector;
-        int indexTwo;
+        szt indexTwo;
     };
     typedef vector<Elem> Table;
 
@@ -44,13 +44,10 @@ public:
     virtual Real mean() const               { return _mean; }
     virtual Real variance() const           { return _variance; }
 
-    int variateMin() const                  { return 0; }
-    int variateMax() const                  { return pdfSize()-1; }
+    szt variateMin() const                  { return 0; }
+    szt variateMax() const                  { return _pdf.size() > 0 ? _pdf.size()-1 : 0; }
 
 private:
-
-    int pdfSize() const                     { return size(_pdf); }
-
     Listd _pdf;
     Listd _cdf;
     Double _mean;

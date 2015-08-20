@@ -149,14 +149,14 @@ void Chacha::setIv(const Iv& iv)
     _state.core[9] = 0;
 }
 
-void Chacha::encrypt(const byte* m, byte* c, int len)
+void Chacha::encrypt(const byte* m, byte* c, szt len)
 {
     uint32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
     uint32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
     byte* ctarget = 0;
     byte tmp[64];
 
-    if (len <= 0) return;
+    if (len == 0) return;
 
     j0 = _state.core[0];
     j1 = _state.core[1];
@@ -179,7 +179,7 @@ void Chacha::encrypt(const byte* m, byte* c, int len)
     {
         if (len < 64)
         {
-            for (int i = 0; i < len; ++i)
+            for (szt i = 0; i < len; ++i)
                 tmp[i] = m[i];
             m = tmp;
             ctarget = c;
@@ -274,7 +274,7 @@ void Chacha::encrypt(const byte* m, byte* c, int len)
         if (len <= 64)
         {
             if (len < 64)
-                for (int i = 0; i < len; ++i)
+                for (szt i = 0; i < len; ++i)
                     ctarget[i] = c[i];
             _state.core[8] = j8;
             _state.core[9] = j9;
@@ -289,7 +289,7 @@ void Chacha::encrypt(const byte* m, byte* c, int len)
     _state.resIdx = _state.coreSize;
 }
 
-void Chacha::decrypt(const byte* cipher, byte* msg, int len)
+void Chacha::decrypt(const byte* cipher, byte* msg, szt len)
 {
     encrypt(cipher, msg, len);
 }

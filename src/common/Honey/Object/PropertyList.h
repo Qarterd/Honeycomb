@@ -21,7 +21,7 @@ public:
     Property(const String& name)                                    : PropertyBase(name), List(1) {}
     Property(const String& name, const List& list)                  : PropertyBase(name), List(list) {}
     Property(const String& name, List&& list)                       : PropertyBase(name), List(move(list)) {}
-    Property(const String& name, int size, const T& val = T())      : PropertyBase(name), List(size, val) {}
+    Property(const String& name, szt size, const T& val = T())      : PropertyBase(name), List(size, val) {}
     template<class Iter>
     Property(const String& name, Iter&& first, Iter&& last)         : PropertyBase(name), List(forward<Iter>(first), forward<Iter>(last)) {}
     Property(const Property& rhs)                                   : PropertyBase(rhs._name), List(rhs) {}

@@ -6,15 +6,15 @@ namespace honey
 {
 
 template<class Real>
-void Eigen<Real>::jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<int>& indR, vector<int>& indC)
+void Eigen<Real>::jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<sdt>& indR, vector<sdt>& indC)
 {
     const Real eps = Real_::epsilon;
-    int i, j, k, m;
-    int n = A.rows();
+    sdt i, j, k, m;
+    sdt n = A.rows();
 
     if (V) V->fromIdentity();
     
-    int iters, maxIters = n*n*30;
+    sdt iters, maxIters = n*n*30;
     Real mv = (Real)0;
     
     for( k = 0; k < n; k++ )
@@ -51,7 +51,7 @@ void Eigen<Real>::jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<int>& in
             if( mv < val )
                 mv = val, k = i;
         }
-        int l = indR[k];
+        sdt l = indR[k];
         for( i = 1; i < n; i++ )
         {
             Real val = Alge::abs(A(indC[i],i));
@@ -96,7 +96,7 @@ void Eigen<Real>::jacobi(Matrix& A, Vec& W, optional<Matrix&> V, vector<int>& in
         
         for( j = 0; j < 2; j++ )
         {
-            int idx = j == 0 ? k : l;
+            sdt idx = j == 0 ? k : l;
             if( idx < n - 1 )
             {
                 for( m = idx+1, mv = Alge::abs(A(idx,m)), i = idx+2; i < n; i++ )

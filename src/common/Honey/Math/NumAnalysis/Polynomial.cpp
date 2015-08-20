@@ -219,7 +219,7 @@ auto Polynomial<Real>::roots(const Vec& c, Real epsilon, int iterMax) -> tuple<V
 template<class Real>
 auto Polynomial<Real>::rootsInRange(const Vec& c, Real min, Real max, Real epsilon, int iterMax) -> tuple<Vec, int>
 {
-    int degree = c.size()-1;
+    int degree = size(c)-1;
     auto root = Vec(degree).fromZero();
     int count = 0;
 

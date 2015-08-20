@@ -23,7 +23,7 @@ namespace honey
   * 
   * Algorithm from "Better Bootstrap Confidence Intervals", Efron, 1987.
   */
-template<class SampleT, int Dim = 1, class Real__ = Real>
+template<class SampleT, sdt Dim = 1, class Real__ = Real>
 class Bootstrap
 {
 public:
@@ -37,7 +37,7 @@ private:
     typedef Gaussian_<Real>                     Gaussian;
 
 public:
-    static const int dim                        = Dim;
+    static const sdt dim                        = Dim;
     typedef Vec<dim,Real>                       Vec;
     typedef vector<const SampleT*>              SampleList;
     typedef function<Vec (const SampleList&)>   Func;
@@ -56,7 +56,7 @@ public:
       *                         The higher the better, but above 100 is excessive.
       *                         The total functor call count is: bootSampleCount + samples.size()
       */
-    Bootstrap(const Func& func, RandomGen& gen, const vector<SampleT>& samples, Real alpha = 0.05, int bootSampleCount = 50) :
+    Bootstrap(const Func& func, RandomGen& gen, const vector<SampleT>& samples, Real alpha = 0.05, szt bootSampleCount = 50) :
         func(func), gen(gen), samples(samples), alpha(alpha), bootSampleCount(bootSampleCount),
         _lower(0), _upper(0), _progress(0), sampleTotal(0), idx(0),
         bootRes(nullptr), jackRes(nullptr), jackMean(0)
@@ -112,7 +112,7 @@ private:
     RandomGen& gen;
     const vector<SampleT>& samples;
     Real alpha;
-    int bootSampleCount;
+    szt bootSampleCount;
 
     //Output
     Vec _lower;
@@ -120,8 +120,8 @@ private:
 
     //Progress
     Real _progress;
-    int sampleTotal;
-    int idx;
+    sdt sampleTotal;
+    sdt idx;
 
     //Calc locals
     UniquePtr<Vec[]> bootRes;
@@ -131,20 +131,20 @@ private:
     Vec jackMean;
 };
 
-template<class SampleT, int Dim, class Real>
+template<class SampleT, sdt Dim, class Real>
 void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
 {
     if (_progress == 1)
         return;
 
     _progress = Alge::min(_progress + progressDelta, 1);
-    int sampleAcc = _progress*(bootSampleCount + samples.size()) - sampleTotal;
+    sdt sampleAcc = _progress*(bootSampleCount + samples.size()) - sampleTotal;
     sampleTotal += sampleAcc;
 
     if (samples.size() == 0)
         return;
 
-    int sampleCount = 0;
+    sdt sampleCount = 0;
 
     if (sampleTotal - sampleAcc < bootSampleCount)
     {
@@ -154,14 +154,14 @@ void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
             if (sampleCount >= sampleAcc)
                 return;
             //Build bootstrap samples
-            for (int i = 0; i < size(samples); ++i)
-                bootSamples[i] = &samples[Discrete(gen, 0, size(samples)-1).next()];
+            for (szt i = 0; i < samples.size(); ++i)
+                bootSamples[i] = &samples[Discrete_d(gen, 0, samples.size()-1).next()];
             //Add bootstrap result
             bootRes[idx] = func(const_cast<const SampleList&>(bootSamples));
         }
 
         //Get function result with original sample data
-        for (int i = 0; i < size(samples); ++i)
+        for (szt i = 0; i < samples.size(); ++i)
             bootSamples[i] = &samples[i];
         origRes = func(const_cast<const SampleList&>(bootSamples));
 
@@ -170,7 +170,7 @@ void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
 
     //Get function result with jackknife samples (every sample is omitted once)
     //and calc the jackknife estimator (mean), which is used to estimate bias/variance
-    for (; idx < size(samples); ++idx, ++sampleCount)
+    for (; idx < samples.size(); ++idx, ++sampleCount)
     {
         if (sampleCount >= sampleAcc)
             return;
@@ -182,16 +182,16 @@ void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
         //Re-insert sample
         bootSamples.insert(bootSamples.begin() + idx, &samples[idx]);
     }
-    jackMean /= size(samples);
+    jackMean /= Real(samples.size());
 
     vector<Real> ecdf(bootSampleCount);
 
-    for (int i = 0; i < Vec::s_size; ++i)
+    for (sdt i = 0; i < Vec::s_size; ++i)
     {
         //Bias, also build empirical cdf (sorted boot results)
         Real sumLess = 0;
         Real sumEq = 0;
-        for (int j = 0; j < bootSampleCount; ++j)
+        for (szt j = 0; j < bootSampleCount; ++j)
         {
             Real val = bootRes[j][i];
             if (val < origRes[i])
@@ -206,7 +206,7 @@ void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
         //Acceleration
         Real sumDevSqr = 0;
         Real sumDevCube = 0;
-        for (int j = 0; j < size(samples); ++j)
+        for (szt j = 0; j < samples.size(); ++j)
         {
             Real dev = jackMean[i] - jackRes[j][i];
             Real sqr = Alge::sqr(dev);

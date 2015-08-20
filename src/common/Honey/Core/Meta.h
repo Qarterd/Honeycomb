@@ -30,7 +30,7 @@ template<class T, T val> struct Value                           { static const T
 /// Always returns true.  Can be used to force a clause to be type dependent.
 template<class...> struct True                                  : std::true_type {};
 /// Variant of True for integers
-template<int...> struct True_int                                : std::true_type {};
+template<int64...> struct True_int                              : std::true_type {};
 /// Check if type is std::true_type
 template<class T> using isTrue                                  = Value<bool, std::is_same<T, std::true_type>::value>;
 /// Special void type, use where void is intended but implicit members are required (default ctor, copyable, etc.)
@@ -108,14 +108,14 @@ template<int I, class... Ts> using typeAt                       = typename priv:
 template<class Match, class... Ts> using typeIndex              = priv::typeIndex<0, Match, Ts...>;
 
 /// Shorthand for std::index_sequence
-template<size_t... Ints> using idxseq                           = std::index_sequence<Ints...>;
+template<szt... Ints> using idxseq                              = std::index_sequence<Ints...>;
 /// Shorthand for std::make_index_sequence
-template<size_t N> using make_idxseq                            = std::make_index_sequence<N>;
+template<szt N> using make_idxseq                               = std::make_index_sequence<N>;
 
 /** \cond */
 namespace priv
 {
-    template<class Func, class Tuple, size_t... Seq>
+    template<class Func, class Tuple, szt... Seq>
     auto applyTuple(Func&& f, Tuple&& t, idxseq<Seq...>)        { return f(get<Seq>(forward<Tuple>(t))...); }
 }
 /** \endcond */
@@ -125,7 +125,7 @@ template<class Func, class Tuple>
 auto applyTuple(Func&& f, Tuple&& t)                            { return priv::applyTuple(forward<Func>(f), forward<Tuple>(t), make_idxseq<tuple_size<typename removeRef<Tuple>::type>::value>()); }
 
 /// Get size (number of elements) of a std::array
-template<class Array> using arraySize                           = Value<size_t, sizeof(Array) / sizeof(typename Array::value_type)>;
+template<class Array> using arraySize                           = Value<szt, sizeof(Array) / sizeof(typename Array::value_type)>;
 
 /// Create an array of deduced type initialized with values
 template<class T, class... Ts>
@@ -137,9 +137,9 @@ template<class Func, class... Funcs>
 void exec(Func&& f, Funcs&&... fs)                              { f(); exec(forward<Funcs>(fs)...); }
     
 /// Unroll a loop calling f(counter, args...) at each iteration
-template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin == end, int>::type=0>
+template<int64 begin, int64 end, int64 step = 1, class Func, class... Args, typename std::enable_if<begin == end, int>::type=0>
 void for_(Func&& f, Args&&... args)                             {}
-template<int begin, int end, int step = 1, class Func, class... Args, typename std::enable_if<begin != end, int>::type=0>
+template<int64 begin, int64 end, int64 step = 1, class Func, class... Args, typename std::enable_if<begin != end, int>::type=0>
 void for_(Func&& f, Args&&... args)                             { f(begin, forward<Args>(args)...); for_<begin+step, end, step>(forward<Func>(f), forward<Args>(args)...); }
     
 /// Create a method to check if a class has a member with matching name and type
@@ -303,7 +303,7 @@ template<int64 val> using abs                                   = Value<int64, (
 template<int64 val> using sign                                  = Value<int64, (val < 0) ? -1 : 1>;
 
 /// Calc the floor of the base 2 log of x
-template<int64 x> struct log2Floor                              : Value<int, log2Floor<x/2>::value+1> {};
+template<uint64 x> struct log2Floor                             : Value<int, log2Floor<x/2>::value+1> {};
 template<> struct log2Floor<0>                                  : Value<int, -1> {};
 
 /// Calc the greatest common divisor of a and b
@@ -332,8 +332,8 @@ template<class T> struct funcTraits                             : priv::functorT
         typedef R Sig(Args...);                                                             \
         typedef void Base;                                                                  \
         typedef R Return;                                                                   \
-        static const int arity = sizeof...(Args);                                           \
-        template<int I> using param = typeAt<I, Args...>;                                   \
+        static const szt arity = sizeof...(Args);                                           \
+        template<szt I> using param = typeAt<I, Args...>;                                   \
     };                                                                                      \
 
 #define M_TRAITS(Const)                                                                     \
@@ -343,12 +343,12 @@ template<class T> struct funcTraits                             : priv::functorT
         typedef R (Base_::*Sig) (Args...) Const;                                            \
         typedef Base_ Base;                                                                 \
         typedef R Return;                                                                   \
-        static const int arity = sizeof...(Args)+1;                                         \
+        static const szt arity = sizeof...(Args)+1;                                         \
     private:                                                                                \
-        template<int I, int _=0> struct param_  { typedef typeAt<I-1, Args...> type; };     \
-        template<int _> struct param_<0, _>     { typedef Const Base* type; };              \
+        template<szt I, szt _=0> struct param_  { typedef typeAt<I-1, Args...> type; };     \
+        template<szt _> struct param_<0, _>     { typedef Const Base* type; };              \
     public:                                                                                 \
-        template<int I> using param = typename param_<I>::type;                             \
+        template<szt I> using param = typename param_<I>::type;                             \
     };                                                                                      \
                                                                                             \
     namespace priv                                                                          \
@@ -359,8 +359,8 @@ template<class T> struct funcTraits                             : priv::functorT
         typedef R Sig(Args...);                                                             \
         typedef void Base;                                                                  \
         typedef R Return;                                                                   \
-        static const int arity = sizeof...(Args);                                           \
-        template<int I> using param = mt::typeAt<I, Args...>;                               \
+        static const szt arity = sizeof...(Args);                                           \
+        template<szt I> using param = mt::typeAt<I, Args...>;                               \
     };                                                                                      \
     }                                                                                       \
 

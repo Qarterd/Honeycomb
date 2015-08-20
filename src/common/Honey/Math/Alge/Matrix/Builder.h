@@ -56,7 +56,7 @@ public:
     operator Matrix&() const                        { return eval(); }
 
 private:
-    void preAppend(int rows, int cols)
+    void preAppend(sdt rows, sdt cols)
     {
         mt_unused(cols);
         if (col == m.cols())
@@ -76,9 +76,9 @@ private:
     }
 
     Matrix& m;
-    int row;
-    int col;
-    int height;
+    sdt row;
+    sdt col;
+    sdt height;
 };
 
 } }

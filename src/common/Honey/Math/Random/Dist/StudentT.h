@@ -56,7 +56,7 @@ public:
         DistStats dist;         ///< Sample distribution stats
         Vec2    meanCi;         ///< Lower and upper 100*(1-alpha)% confidence interval of the mean
         Vec2    stdDevCi;       ///< Lower and upper 100*(1-alpha)% confidence interval of the standard deviation
-        int     df;             ///< Degrees of freedom
+        szt     df;             ///< Degrees of freedom
         Real    alpha;          ///< Test significance level
         int     tail;           ///< Whether test is two-tailed or lower/upper tailed
         Real    t;              ///< T-test statistic
@@ -99,7 +99,7 @@ public:
     {
         assert(tail >= -1 && tail <= 1);
         DistStats d = Random::stats(samples);
-        int df = d.n - 1;
+        sdt df = d.n - 1;
         StudentT_ student(df);
         Real t = (d.mean - mu) / d.stdErr;
         Real p = student.cdfComp(tail == 0 ? Alge::abs(t) : tail == 1 ? t : -t);
@@ -130,7 +130,7 @@ public:
         Real    stdErr;         ///< Pooled standard error
         Vec2    meanCi;         ///< Lower and upper 100*(1-alpha)% confidence interval of the pooled mean
         Vec2    stdDevCi;       ///< Lower and upper 100*(1-alpha)% confidence interval of the pooled standard deviation
-        int     df;             ///< Degrees of freedom
+        szt     df;             ///< Degrees of freedom
         Real    alpha;          ///< Test significance level
         int     tail;           ///< Whether test is two-tailed or lower/upper tailed
         Real    t;              ///< T-test statistic
@@ -186,7 +186,7 @@ public:
         DistStats d1 = Random::stats(samples1);
         DistStats d2 = Random::stats(samples2);
 
-        int df = d1.n + d2.n - 2;
+        sdt df = d1.n + d2.n - 2;
         StudentT_ student(df);
         Real mean = d1.mean - d2.mean;
         Real stdDev = Alge::sqrt(((d1.n-1)*Alge::sqr(d1.stdDev) + (d2.n-1)*Alge::sqr(d2.stdDev)) / df);

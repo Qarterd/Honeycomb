@@ -301,7 +301,7 @@ public:
     public:
         typedef std::forward_iterator_tag   iterator_category;
         typedef Vertex_                     value_type;
-        typedef ptrdiff_t                   difference_type;
+        typedef sdt                         difference_type;
         typedef Vertex_*                    pointer;
         typedef Vertex_&                    reference;
         
@@ -423,7 +423,7 @@ public:
         typedef typename mt::removePtr<typename NodeList::value_type>::type     DepNode;
         typedef std::forward_iterator_tag       iterator_category;
         typedef DepNode                         value_type;
-        typedef ptrdiff_t                       difference_type;
+        typedef sdt                             difference_type;
         typedef DepNode*                        pointer;
         typedef DepNode&                        reference;
 

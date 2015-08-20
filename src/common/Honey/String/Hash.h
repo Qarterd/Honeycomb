@@ -25,11 +25,11 @@ namespace priv { namespace murmur_constexpr
     constexpr uint32 c2                              = 0x1b873593;
     
     template<int Endian>
-    constexpr uint32 block(const char* data, int i)                 { return data[i*4] | data[i*4+1] << 8 | data[i*4+2] << 16 | data[i*4+3] << 24; }
+    constexpr uint32 block(const char* data, szt i)                 { return data[i*4] | data[i*4+1] << 8 | data[i*4+2] << 16 | data[i*4+3] << 24; }
     template<>
-    constexpr uint32 block<ENDIAN_BIG>(const char* data, int i)     { return data[i*4] << 24 | data[i*4+1] << 16 | data[i*4+2] << 8 | data[i*4+3]; }
+    constexpr uint32 block<ENDIAN_BIG>(const char* data, szt i)     { return data[i*4] << 24 | data[i*4+1] << 16 | data[i*4+2] << 8 | data[i*4+3]; }
     
-    constexpr uint32 tail(const char* data, int len, int nblocks, uint32 h1)
+    constexpr uint32 tail(const char* data, szt len, szt nblocks, uint32 h1)
     {
         return rotLeft((
                 ((len&3) >= 3 ? data[nblocks*4+2] << 16 : 0) |
@@ -38,24 +38,24 @@ namespace priv { namespace murmur_constexpr
                 *c1, 15)*c2 ^ h1;
     }
 
-    constexpr uint32 loop(const char* data, int len, int nblocks, int i, uint32 h1)
+    constexpr uint32 loop(const char* data, szt len, szt nblocks, szt i, uint32 h1)
     {
         return i < nblocks ?    loop(data, len, nblocks, i+1, rotLeft(rotLeft(block<ENDIAN>(data, i)*c1, 15)*c2 ^ h1, 13)*5 + 0xe6546b64) :
-                                fMix(tail(data, len, nblocks, h1) ^ len);
+                                fMix(tail(data, len, nblocks, h1) ^ (uint32)len);
     }
 } }
 /** \endcond */
 
 /// Quickly generate a small hash value. Each seed value produces a unique hash from the same data.
-int fast(const byte* data, int len, int seed = 0);
+int fast(const byte* data, szt len, int seed = 0);
 /// fast() for UTF-8 strings
-inline int fast(const char* str, int seed = 0)                              { return fast(reinterpret_cast<const byte*>(str), (int)strlen(str), seed); }
+inline int fast(const char* str, int seed = 0)                              { return fast(reinterpret_cast<const byte*>(str), strlen(str), seed); }
 /// fast() for UTF-8 strings
-inline int fast(const std::string& str, int seed = 0)                       { return fast(reinterpret_cast<const byte*>(str.data()), (int)str.length(), seed); }
+inline int fast(const std::string& str, int seed = 0)                       { return fast(reinterpret_cast<const byte*>(str.data()), str.length(), seed); }
 /// fast() for strings, converted to UTF-8 before hashing
 inline int fast(const String& str, int seed = 0)                            { return fast(str.u8(), seed); }
 /// fast() for UTF-8 strings
-inline constexpr int fast_(const char* str, int len, int seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 4, 0, seed); }
+inline constexpr int fast_(const char* str, szt len, int seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 4, 0, seed); }
 
 /// 256-bit secure hash value
 struct sval : ByteArray<32>
@@ -73,11 +73,11 @@ struct sval : ByteArray<32>
   * \param  key     Generate a keyed HMAC that can be used to verify message authenticity.
   *                 Each key produces a unique hash from the same data.
   */
-sval secure(const byte* data, int len, optional<const sval&> key = optnull);
+sval secure(const byte* data, szt len, optional<const sval&> key = optnull);
 /// secure() for UTF-8 strings
-inline sval secure(const char* str, optional<const sval&> key = optnull)        { return secure(reinterpret_cast<const byte*>(str), (int)strlen(str), key); }
+inline sval secure(const char* str, optional<const sval&> key = optnull)        { return secure(reinterpret_cast<const byte*>(str), strlen(str), key); }
 /// secure() for UTF-8 strings
-inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(reinterpret_cast<const byte*>(str.data()), (int)str.length(), key); }
+inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(reinterpret_cast<const byte*>(str.data()), str.length(), key); }
 /// secure() for strings, converted to UTF-8 before hashing
 inline sval secure(const String& str, optional<const sval&> key = optnull)      { return secure(str.u8(), key); }
 

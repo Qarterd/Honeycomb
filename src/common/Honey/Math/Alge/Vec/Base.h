@@ -30,7 +30,7 @@ public:
     using Super::resize;
     
     /// Initialize with unit axis (all zeros except for a one at index `i`)
-    VecS& fromAxis(int i)                                           { this->assertIndex(i); fromZero(); m(i) = 1; return subc(); }
+    VecS& fromAxis(sdt i)                                          { this->assertIndex(i); fromZero(); m(i) = 1; return subc(); }
 
     /// Assign to row or column vector of any dimension. Asserts that if this vector has a fixed dimension then it matches rhs.
     template<class T>
@@ -49,26 +49,26 @@ public:
     }
 
     /// Get segment at offset `i` with dimension `dim`.  If dimension is fixed then `dim` may be left unspecified.  Segments are the vector analog of matrix blocks.
-    template<int Dim>
+    template<sdt Dim>
     typename vec::priv::Segment<VecS,Dim>::type
-        segment(int i, int dim = -1)                                { return vec::priv::Segment<VecS,Dim>::create(subc(), i, dim); }
+        segment(sdt i, sdt dim = -1)                                { return vec::priv::Segment<VecS,Dim>::create(subc(), i, dim); }
 
-    template<int Dim>
+    template<sdt Dim>
     typename vec::priv::Segment<const VecS,Dim>::type
-        segment(int i, int dim = -1) const                          { return vec::priv::Segment<const VecS,Dim>::create(subc(), i, dim); }
+        segment(sdt i, sdt dim = -1) const                          { return vec::priv::Segment<const VecS,Dim>::create(subc(), i, dim); }
 
     /// Get dynamic segment at offset `i` with dimension `dim`
     typename vec::priv::Segment<VecS>::type
-        segment(int i, int dim)                                     { return vec::priv::Segment<VecS>::create(subc(), i, dim); }
+        segment(sdt i, sdt dim)                                     { return vec::priv::Segment<VecS>::create(subc(), i, dim); }
 
     typename vec::priv::Segment<const VecS>::type
-        segment(int i, int dim) const                               { return vec::priv::Segment<const VecS>::create(subc(), i, dim); }
+        segment(sdt i, sdt dim) const                               { return vec::priv::Segment<const VecS>::create(subc(), i, dim); }
 
     /// Sets number of dimensions and reallocates only if different. All previous data is lost on reallocation. Returns self.
     /**
       * Asserts that if this vector has a fixed dimension then it matches `dim`.
       */
-    VecS& resize(int dim)                                           { return s_cols == 1 ? resize(dim, 1) : resize(1, dim); }
+    VecS& resize(sdt dim)                                           { return s_cols == 1 ? resize(dim, 1) : resize(1, dim); }
 
     /// Get the square of the length
     Real lengthSqr() const                                          { return reduce(subc(), Real(0), [](Real a, Real e) { return a + Alge::sqr(e); }); }
@@ -95,7 +95,7 @@ public:
     friend ostream& operator<<(ostream& os, const VecBase& val)
     {
         if (val.size() > 1) os << "[";
-        for (int i = 0; i < val.size(); ++i)
+        for (sdt i = 0; i < val.size(); ++i)
         {
             if (i != 0) os << ", ";
             os << val[i];
@@ -108,7 +108,7 @@ public:
 namespace matrix { namespace priv
 {
     /// Column vector block traits
-    template<class Vec, int Cols>
+    template<class Vec, sdt Cols>
     struct Traits<Block<Vec,1,Cols>> : BlockTraits<Vec,1,Cols>
     {
         typedef BlockTraits<Vec,1,Cols> Super;
@@ -117,7 +117,7 @@ namespace matrix { namespace priv
     };
 
     /// Row vector block traits
-    template<class Vec, int Rows>
+    template<class Vec, sdt Rows>
     struct Traits<Block<Vec,Rows,1>> : BlockTraits<Vec,Rows,1>
     {
         typedef BlockTraits<Vec,Rows,1> Super;

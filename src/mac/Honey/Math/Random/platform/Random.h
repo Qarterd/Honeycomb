@@ -7,7 +7,7 @@
 namespace honey { namespace random { namespace platform
 {
 
-Bytes deviceEntropy(int count);
+Bytes deviceEntropy(szt count);
 
 } } }
 /** \endcond */

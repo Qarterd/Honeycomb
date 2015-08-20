@@ -12,28 +12,28 @@ struct StorageDense
     typedef typename Traits<Subclass>::Real             Real;
     //Elem type must be tracked because array const-ness must propagate down through descendant blocks and iters
     typedef typename Traits<Subclass>::ElemT            ElemT;
-    static const int s_rows                             = Traits<Subclass>::rows;
-    static const int s_cols                             = Traits<Subclass>::cols;
-    static const int s_size                             = s_rows != dynamic && s_cols != dynamic ? s_rows*s_cols : dynamic;
+    static const sdt s_rows                             = Traits<Subclass>::rows;
+    static const sdt s_cols                             = Traits<Subclass>::cols;
+    static const sdt s_size                             = s_rows != dynamic && s_cols != dynamic ? s_rows*s_cols : dynamic;
     static const int options                            = Traits<Subclass>::options;
     typedef typename Traits<Subclass>::Alloc            Alloc;
 
     static_assert((s_rows == dynamic || s_rows >= 0) && (s_cols == dynamic || s_cols >= 0), "Matrix size must be zero or greater");
 
-    const ElemT& operator()(int row, int col) const     { return subc()(row, col); }
-    ElemT& operator()(int row, int col)                 { return subc()(row, col); }
+    const ElemT& operator()(sdt row, sdt col) const     { return subc()(row, col); }
+    ElemT& operator()(sdt row, sdt col)                 { return subc()(row, col); }
 
     /// Default resize, just asserts that fixed dimensions match args
-    void resize(int rows, int cols)
+    void resize(sdt rows, sdt cols)
     {
         mt_unused(rows); mt_unused(cols);
-        assert(rows == -1 || s_rows == dynamic || rows == s_rows, sout() << "Can't change fixed row count from " << (int)s_rows << " to " << rows);
-        assert(cols == -1 || s_cols == dynamic || cols == s_cols, sout() << "Can't change fixed col count from " << (int)s_cols << " to " << cols);
+        assert(rows == -1 || s_rows == dynamic || rows == s_rows, sout() << "Can't change fixed row count from " << (sdt)s_rows << " to " << rows);
+        assert(cols == -1 || s_cols == dynamic || cols == s_cols, sout() << "Can't change fixed col count from " << (sdt)s_cols << " to " << cols);
     }
 
-    int rows() const                                    { return subc().rows(); }
-    int cols() const                                    { return subc().cols(); }
-    int size() const                                    { return subc().size(); }
+    sdt rows() const                                    { return subc().rows(); }
+    sdt cols() const                                    { return subc().cols(); }
+    sdt size() const                                    { return subc().size(); }
 
     const ElemT* data() const                           { return subc().data(); }
     ElemT* data()                                       { return subc().data(); }
@@ -47,10 +47,10 @@ struct StorageDense
     Subclass& subc()                                    { return static_cast<Subclass&>(*this); }
 
 protected:
-    void assertIndex(int i) const                       { mt_unused(i);                     assert(i >= 0 && i < size()); }
-    void assertIndex(int row, int col) const            { mt_unused(row); mt_unused(col);   assert(row >= 0 && row < rows() && col >= 0 && col < cols()); }
-    void assertSize(int size) const                     { mt_unused(size);                  assert(size >= 0 && size <= this->size()); }
-    void assertSize(int rows, int cols) const           { mt_unused(rows); mt_unused(cols); assert(rows >= 0 && rows <= this->rows() && cols >= 0 && cols <= this->cols()); }
+    void assertIndex(sdt i) const                       { mt_unused(i);                     assert(i >= 0 && i < size()); }
+    void assertIndex(sdt row, sdt col) const            { mt_unused(row); mt_unused(col);   assert(row >= 0 && row < rows() && col >= 0 && col < cols()); }
+    void assertSize(sdt size) const                     { mt_unused(size);                  assert(size >= 0 && size <= this->size()); }
+    void assertSize(sdt rows, sdt cols) const           { mt_unused(rows); mt_unused(cols); assert(rows >= 0 && rows <= this->rows() && cols >= 0 && cols <= this->cols()); }
 };
 
 /// Copy between dense storages
@@ -89,13 +89,13 @@ bool storageEqual(const StorageDense<T>& lhs, const StorageDense<T2>& rhs)
 }
 
     
-template<class Real, int Size, int Align>
+template<class Real, sdt Size, szt Align>
 struct StorageAutoArray
 {
     Real a[Size > 0 ? Size : 1];
 };
 
-template<class Real, int Size>
+template<class Real, sdt Size>
 struct StorageAutoArray<Real, Size, 16>
 {
     ALIGN(16) Real a[Size > 0 ? Size : 1];
@@ -110,18 +110,18 @@ public:
     using typename Super::Real;
     
     /// Access matrix element with [row][column]
-    const Real* operator[](int row) const               { this->assertIndex(row,0); return &data()[row*cols()]; }
-    Real* operator[](int row)                           { this->assertIndex(row,0); return &data()[row*cols()]; }
+    const Real* operator[](sdt row) const               { this->assertIndex(row,0); return &data()[row*cols()]; }
+    Real* operator[](sdt row)                           { this->assertIndex(row,0); return &data()[row*cols()]; }
     /// Access matrix element at index
-    const Real& operator()(int i) const                 { this->assertIndex(i); return data()[i]; }
-    Real& operator()(int i)                             { this->assertIndex(i); return data()[i]; }
+    const Real& operator()(sdt i) const                 { this->assertIndex(i); return data()[i]; }
+    Real& operator()(sdt i)                             { this->assertIndex(i); return data()[i]; }
     /// Access matrix element with (row, column)
-    const Real& operator()(int row, int col) const      { this->assertIndex(row,col); return data()[row*cols() + col]; }
-    Real& operator()(int row, int col)                  { this->assertIndex(row,col); return data()[row*cols() + col]; }
+    const Real& operator()(sdt row, sdt col) const      { this->assertIndex(row,col); return data()[row*cols() + col]; }
+    Real& operator()(sdt row, sdt col)                  { this->assertIndex(row,col); return data()[row*cols() + col]; }
 
-    int rows() const                                    { return Super::s_rows; }
-    int cols() const                                    { return Super::s_cols; }
-    int size() const                                    { return Super::s_size; }
+    sdt rows() const                                    { return Super::s_rows; }
+    sdt cols() const                                    { return Super::s_cols; }
+    sdt size() const                                    { return Super::s_size; }
 
     /// Get as array
     const Real* data() const                            { return _a.a; }
@@ -161,8 +161,8 @@ public:
 
     StorageDynamic& operator=(StorageDynamic&& rhs)
     {
-        assert(s_rows == dynamic || rhs._rows == s_rows, sout() << "Can't change fixed row count from " << (int)s_rows << " to " << rhs._rows);
-        assert(s_cols == dynamic || rhs._cols == s_cols, sout() << "Can't change fixed col count from " << (int)s_cols << " to " << rhs._cols);
+        assert(s_rows == dynamic || rhs._rows == s_rows, sout() << "Can't change fixed row count from " << (sdt)s_rows << " to " << rhs._rows);
+        assert(s_cols == dynamic || rhs._cols == s_cols, sout() << "Can't change fixed col count from " << (sdt)s_cols << " to " << rhs._cols);
         freeAligned(_a, _alloc);
         _a = rhs._a;
         _rows = rhs._rows;
@@ -174,23 +174,23 @@ public:
     }
 
     /// Access matrix element with [row][column]
-    const Real* operator[](int row) const               { this->assertIndex(row,0); return &data()[row*cols()]; }
-    Real* operator[](int row)                           { this->assertIndex(row,0); return &data()[row*cols()]; }
+    const Real* operator[](sdt row) const               { this->assertIndex(row,0); return &data()[row*cols()]; }
+    Real* operator[](sdt row)                           { this->assertIndex(row,0); return &data()[row*cols()]; }
     /// Access matrix element at index
-    const Real& operator()(int i) const                 { this->assertIndex(i); return data()[i]; }
-    Real& operator()(int i)                             { this->assertIndex(i); return data()[i]; }
+    const Real& operator()(sdt i) const                 { this->assertIndex(i); return data()[i]; }
+    Real& operator()(sdt i)                             { this->assertIndex(i); return data()[i]; }
     /// Access matrix element with (row, column)
-    const Real& operator()(int row, int col) const      { this->assertIndex(row,col); return data()[row*cols() + col]; }
-    Real& operator()(int row, int col)                  { this->assertIndex(row,col); return data()[row*cols() + col]; }
+    const Real& operator()(sdt row, sdt col) const      { this->assertIndex(row,col); return data()[row*cols() + col]; }
+    Real& operator()(sdt row, sdt col)                  { this->assertIndex(row,col); return data()[row*cols() + col]; }
 
-    void resize(int rows, int cols)
+    void resize(sdt rows, sdt cols)
     {
         if (rows == -1) rows = _rows;
         if (cols == -1) cols = _cols;
         assert(rows >= 0 && cols >= 0, "Matrix size must be zero or greater");
-        assert(s_rows == dynamic || rows == s_rows, sout() << "Can't change fixed row count from " << (int)s_rows << " to " << rows);
-        assert(s_cols == dynamic || cols == s_cols, sout() << "Can't change fixed col count from " << (int)s_cols << " to " << cols);
-        int size = rows*cols;
+        assert(s_rows == dynamic || rows == s_rows, sout() << "Can't change fixed row count from " << (sdt)s_rows << " to " << rows);
+        assert(s_cols == dynamic || cols == s_cols, sout() << "Can't change fixed col count from " << (sdt)s_cols << " to " << cols);
+        sdt size = rows*cols;
         _rows = rows;
         _cols = cols;
         if (size == _size) return;
@@ -200,9 +200,9 @@ public:
         _a = allocAligned<Real>(_size, Option::getAlign<Super::options>::value, _alloc);
     }
 
-    int rows() const                                    { return _rows; }
-    int cols() const                                    { return _cols; }
-    int size() const                                    { return _size; }
+    sdt rows() const                                    { return _rows; }
+    sdt cols() const                                    { return _cols; }
+    sdt size() const                                    { return _size; }
 
     /// Get as array
     Real* data()                                        { return _a; }
@@ -222,9 +222,9 @@ private:
     }
 
     Real* _a;
-    int _rows;
-    int _cols;
-    int _size;
+    sdt _rows;
+    sdt _cols;
+    sdt _size;
     Alloc _alloc;
 };
 

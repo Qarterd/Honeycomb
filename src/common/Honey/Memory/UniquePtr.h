@@ -92,7 +92,7 @@ UniquePtr<T> make_unique(Args&&... args)                            { return all
 /// Create a unique ptr to an array of `size` number of elements
 /** \relates UniquePtr */
 template<class T, class... Args, typename std::enable_if<std::is_array<T>::value, int>::type=0>
-UniquePtr<T> make_unique(int size)                                  { return UniquePtr<T>(new typename UniquePtr<T>::Elem[size]()); }
+UniquePtr<T> make_unique(szt size)                                  { return UniquePtr<T>(new typename UniquePtr<T>::Elem[size]()); }
 /// Create a unique ptr to an array with deduced size
 /** \relates UniquePtr */
 template<class T, class... Args, typename std::enable_if<std::is_array<T>::value, int>::type=0>

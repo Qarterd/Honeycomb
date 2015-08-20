@@ -14,7 +14,7 @@ namespace honey
   */
 /// @{
 
-/// Safely get the size of a std container as a signed integer. The size() member method returns size_t which results in a conversion warning.
+/// Safely get the size of a std container as a signed integer
 template<class StdContainer>
 int size(const StdContainer& cont)                      { return numeric_cast<int>(cont.size()); }
 
@@ -95,7 +95,7 @@ namespace stdutil
 /** \cond */
 namespace priv
 {
-    template<int Arity> struct bind_fill;
+    template<szt Arity> struct bind_fill;
 
     #define PARAMT(It)          , class T##It
     #define PARAM(It)           , T##It&& a##It

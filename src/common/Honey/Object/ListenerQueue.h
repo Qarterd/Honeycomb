@@ -37,7 +37,7 @@ namespace priv
 
     template<class Signal, class F, class Seq = mt::make_idxseq<Signal::arity>>
     class SlotQueue;
-    template<class Signal, class F, size_t... Seq>
+    template<class Signal, class F, szt... Seq>
     class SlotQueue<Signal,F,mt::idxseq<Seq...>> : public priv::SlotSignal<Signal>, public SlotQueueBase
     {
         typedef priv::SlotSignal<Signal> Super;

@@ -13,7 +13,7 @@ struct MemNode
 {
     MemNode()                               : ref(0), trace(false), del(false), recycleNext(nullptr) {}
 
-    int                     id;             ///< Unique id, used for index into "in-use mark" list in scan()
+    szt                     id;             ///< Unique id, used for index into "in-use mark" list in scan()
     int16                   threadId;       ///< Thread that created this node, used to return node to original free list
 
     atomic::Var<int>        ref;            ///< Reference count by all threads
@@ -53,7 +53,7 @@ struct MemConfig
     /// Number of links per node that may transiently point to a deleted node
     static const int linkDelMax = linkMax;
     /// Number of thread-local node references
-    static const int tlrefMax = 6;
+    static const int8 tlrefMax = 6;
 
     typedef std::allocator<Node> Alloc;
     /// Get node allocator
@@ -99,7 +99,7 @@ private:
             recycleBins(new Recycle[mem._threadMax])
         {
             tlrefs.fill(nullptr);
-            for (int i = 0; i < size(tlrefs); ++i)
+            for (szt i = 0; i < tlrefs.size(); ++i)
                 tlrefFreeList.push_back(i);
 
             for (int i = 0; i < mem._threshClean; ++i)
@@ -126,10 +126,10 @@ private:
         int                         id;
 
         vector<Node*>               nodeFreeList;
-        int                         nodeCount;
+        szt                         nodeCount;
 
         array<atomic::Var<Node*>, Config::tlrefMax> tlrefs;
-        vector<int>                 tlrefFreeList;
+        vector<int8>                tlrefFreeList;
 
         struct DelNode
         {
@@ -144,7 +144,7 @@ private:
         vector<DelNode*>            delNodeFreeList;
         vector<bool>                delTlrefs;
         DelNode*                    delHead;
-        int                         delCount;
+        szt                         delCount;
 
         /// Lock-free list of recycled free nodes
         /**
@@ -197,9 +197,9 @@ public:
             //If no recycled nodes were found, allocate more nodes 
             if (td.nodeFreeList.size() == 0)
             {
-                int nextCount = td.nodeCount*2 + 1;
-                int newCount = nextCount - td.nodeCount;
-                for (int i = 0; i < newCount; ++i)
+                szt nextCount = td.nodeCount*2 + 1;
+                szt newCount = nextCount - td.nodeCount;
+                for (szt i = 0; i < newCount; ++i)
                 {
                     td.nodeFreeList.push_back(new (_config.getAlloc().allocate(1)) Node);
                     td.nodeFreeList.back()->id = _nodeId++;
@@ -228,7 +228,7 @@ public:
         auto& delNode = *td.delNodeFreeList.back();
         td.delNodeFreeList.pop_back();
         //Init del node tlref lookup
-        if (node.id >= size(td.delTlrefs))
+        if (node.id >= td.delTlrefs.size())
             td.delTlrefs.resize(node.id*2+1);
         td.delTlrefs[node.id] = false;
 
@@ -251,7 +251,7 @@ public:
         ThreadData& td = threadData();
         //Get free tlref index
         assert(td.tlrefFreeList.size() > 0, "Not enough thread-local node references");
-        int index = td.tlrefFreeList.back();
+        int8 index = td.tlrefFreeList.back();
 
         Node* node = nullptr;
         while(true)
@@ -289,7 +289,7 @@ public:
         ThreadData& td = threadData();
         //Get free tlref index
         assert(td.tlrefFreeList.size() > 0, "Not enough thread-local node references");
-        int index = td.tlrefFreeList.back();
+        int8 index = td.tlrefFreeList.back();
         td.tlrefFreeList.pop_back();
         //Set up tlref
         tlref.index = index;
@@ -411,17 +411,17 @@ private:
         for (int ti = 0; ti < _threadDataCount; ++ti)
         {
             ThreadData* tdata = _threadDataList[ti];
-            for (int i = 0; i < size(tdata->tlrefs); ++i)
+            for (szt i = 0; i < tdata->tlrefs.size(); ++i)
             {
                 Node* node = tdata->tlrefs[i];
-                if (node && node->id < size(td.delTlrefs))
+                if (node && node->id < td.delTlrefs.size())
                     td.delTlrefs[node->id] = true;
             }
         }
 
         //Reclaim nodes and build new list of del nodes that could not be reclaimed
         typename ThreadData::DelNode* newDelHead = nullptr;
-        int newDelCount = 0;
+        szt newDelCount = 0;
 
         while (td.delHead)
         {
@@ -458,11 +458,11 @@ private:
     void recycleFree(ThreadData& td)
     {
         // Only recycle if private free list is too large
-        if (size(td.nodeFreeList) <= td.nodeCount*2) return;
+        if (td.nodeFreeList.size() <= td.nodeCount*2) return;
         // Return a chunk of nodes (up to _threshClean amount). Returning in chunks reduces number of recycle scans.
-        int newSize = td.nodeCount*2 - _threshClean;
+        sdt newSize = td.nodeCount*2 - _threshClean;
         if (newSize < td.nodeCount) newSize = td.nodeCount;
-        while (size(td.nodeFreeList) > newSize)
+        while (td.nodeFreeList.size() > newSize)
         {
             Node& node = *td.nodeFreeList.back();
             td.nodeFreeList.pop_back();
@@ -478,8 +478,8 @@ private:
     void recycleScan(ThreadData& td)
     {
         // Take only up to _threshClean recycled nodes so loop doesn't take too long
-        int newSize = td.nodeCount < _threshClean ? td.nodeCount : _threshClean;
-        for (int ti = 0; ti < _threadDataCount && size(td.nodeFreeList) < newSize; ++ti)
+        sdt newSize = td.nodeCount < _threshClean ? td.nodeCount : _threshClean;
+        for (int ti = 0; ti < _threadDataCount && td.nodeFreeList.size() < newSize; ++ti)
         {
             auto& rec = td.recycleBins[ti];
             Node* node = rec.head;
@@ -491,7 +491,7 @@ private:
                 td.nodeFreeList.push_back(node);
                 node = next;
                 next = static_cast<Node*>(node->recycleNext.load());
-            } while (next && size(td.nodeFreeList) < newSize);
+            } while (next && td.nodeFreeList.size() < newSize);
             rec.head = node;                //Update head to next unconsumed node
         }
     }
@@ -504,7 +504,7 @@ private:
     atomic::Var<int>                _threadDataCount;
     thread::Local<ThreadDataPtr>    _threadData;
     SpinLock                        _threadDataLock;
-    atomic::Var<int>                _nodeId;
+    atomic::Var<szt>                _nodeId;
 };
 
 

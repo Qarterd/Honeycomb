@@ -15,12 +15,12 @@ public:
 
     typedef std::random_access_iterator_tag                         iterator_category;
     typedef ElemT                                                   value_type;
-    typedef int                                                     difference_type;
+    typedef sdt                                                     difference_type;
     typedef ElemT*                                                  pointer;
     typedef ElemT&                                                  reference;
 
     Iter()                                                          : _m(nullptr) {}
-    Iter(Matrix& m, int i)                                          : _m(&m), _i(i) {}
+    Iter(Matrix& m, sdt i)                                          : _m(&m), _i(i) {}
 
     Iter& operator++()                                              { ++_i; return *this; }
     Iter& operator--()                                              { --_i; return *this; }
@@ -44,7 +44,7 @@ public:
 
 private:
     Matrix* _m;
-    int _i;
+    sdt _i;
 };
 
 } }

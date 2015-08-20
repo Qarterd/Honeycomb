@@ -175,8 +175,8 @@ public:
     T* operator++(int) volatile                                 { return reinterpret_cast<T*>(Op::add(_val, sizeof(T))); }
     T* operator--() volatile                                    { return reinterpret_cast<T*>(Op::add(_val, -sizeof(T))) - 1; }
     T* operator--(int) volatile                                 { return reinterpret_cast<T*>(Op::add(_val, -sizeof(T))); }
-    T* operator+=(ptrdiff_t rhs) volatile                       { return add(rhs); }
-    T* operator-=(ptrdiff_t rhs) volatile                       { return sub(rhs); }
+    T* operator+=(sdt rhs) volatile                             { return add(rhs); }
+    T* operator-=(sdt rhs) volatile                             { return sub(rhs); }
 
     T* operator->() const volatile                              { return load(); }
     T& operator*() const volatile                               { return *load(); }
@@ -184,8 +184,8 @@ public:
 
     void store(T* val, Order o = Order::seqCst) volatile        { Op::store(_val, reinterpret_cast<VarType>(val), o); }
     T* load(Order o = Order::seqCst) const volatile             { return reinterpret_cast<T*>(Op::load(_val, o)); }
-    T* add(ptrdiff_t rhs, Order o = Order::seqCst) volatile     { return reinterpret_cast<T*>(Op::add(_val, rhs*sizeof(T), o)) + rhs; }
-    T* sub(ptrdiff_t rhs, Order o = Order::seqCst) volatile     { return reinterpret_cast<T*>(Op::add(_val, -rhs*sizeof(T), o)) - rhs; }
+    T* add(sdt rhs, Order o = Order::seqCst) volatile           { return reinterpret_cast<T*>(Op::add(_val, rhs*sizeof(T), o)) + rhs; }
+    T* sub(sdt rhs, Order o = Order::seqCst) volatile           { return reinterpret_cast<T*>(Op::add(_val, -rhs*sizeof(T), o)) - rhs; }
 
     bool cas(T* newVal, T* cmp, Order o = Order::seqCst) volatile   { return Op::cas(_val, reinterpret_cast<VarType>(newVal), reinterpret_cast<VarType>(cmp), o); }
 

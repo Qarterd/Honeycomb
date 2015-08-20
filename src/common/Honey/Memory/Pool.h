@@ -35,28 +35,28 @@ public:
     {
         friend class MemPool;
     public:
-        Factory()                                           : param(mtmap(align() = (int)alignof(double))) {}
+        Factory()                                           : param(mtmap(align() = alignof(double))) {}
 
         /// Create pool using factory config
         MemPool& create()                                   { return *new MemPool(*this); }
 
         /// Set alignment byte boundary for all blocks.  alignment must be a power of two.
-        void setBlockAlign(int bytes)                       { param[align()] = bytes; }
+        void setBlockAlign(szt bytes)                       { param[align()] = bytes; }
 
         /// Add a bucket of blocks available to the pool for allocation
         /**
           * \param blockSize_   size in bytes of each block.
           * \param blockCount_  initial number of blocks (bucket automatically expands).
           */
-        void addBucket(int blockSize_, int blockCount_)     { bucketList.push_back(mtmap(blockSize() = blockSize_, blockCount() = blockCount_)); }
+        void addBucket(szt blockSize_, szt blockCount_)     { bucketList.push_back(mtmap(blockSize() = blockSize_, blockCount() = blockCount_)); }
 
     private:
         mtkey(align);
-        MtMap<int, align> param;
+        MtMap<szt, align> param;
 
         mtkey(blockSize);
         mtkey(blockCount);
-        vector<MtMap<int, blockSize, int, blockCount>> bucketList;
+        vector<MtMap<szt, blockSize, szt, blockCount>> bucketList;
     };
     friend class Factory;
 
@@ -68,7 +68,7 @@ public:
     }
 
     /// Allocate a `size` bytes block of memory at byte boundary `align`.  alignment must be a power of two.
-    void* alloc(int size, int align = 1, const char* srcFile = nullptr, int srcLine = 0);
+    void* alloc(szt size, szt align = 1, const char* srcFile = nullptr, int srcLine = 0);
 
     /// Free a memory block allocated from the pool
     void free(void* ptr_);
@@ -81,11 +81,11 @@ public:
     }
 
     /// Calc total bytes allocated by pool
-    int allocBytes() const;
+    szt allocBytes() const;
     /// Calc total bytes used in pool
-    int usedBytes() const;
+    szt usedBytes() const;
     /// Calc total bytes free in pool
-    int freeBytes() const                                   { return allocBytes() - usedBytes(); }
+    szt freeBytes() const                                   { return allocBytes() - usedBytes(); }
 
     #ifdef DEBUG
         /// Ensure that all used/free blocks are valid (check signatures)
@@ -109,10 +109,10 @@ private:
     /// Bucket block header, 8 bytes.  Block header types are determined by examining the 4 bytes prior to the block data.
     struct BlockHeader
     {
-        /// Info only available in debug, 24 bytes
+        /// Info only available in debug
         struct DebugInfo
         {
-            int                 size;
+            szt                 size;
             int                 srcLine;
             const char*         srcFile;
             BlockHeader*        prev;
@@ -150,7 +150,7 @@ private:
     class Bucket
     {
     public:
-        Bucket(MemPool& pool, int blockSize, int blockCount) :
+        Bucket(MemPool& pool, szt blockSize, szt blockCount) :
             _pool(pool),
             _bucketIndex(-1),
             _blockSize(blockSize),
@@ -173,10 +173,10 @@ private:
         }
 
         /// Initialize blocks in memory chunk
-        void initChunk(uint8* chunk, int chunkSize, int blockCount);
+        void initChunk(uint8* chunk, szt chunkSize, szt blockCount);
 
         /// Alloc a block with alignment byte boundary `align`
-        void* alloc(int size, int align, const char* srcFile, int srcLine);
+        void* alloc(szt size, szt align, const char* srcFile, int srcLine);
 
         /// Increase number of blocks in bucket by allocating a new chunk
         void expand();
@@ -187,25 +187,25 @@ private:
         /// Free entire bucket
         void free()                                         { for (auto header = _usedHead; header; header = _usedHead) free(header); }
 
-        int blockStride() const                             { return (int)(intptr_t)alignCeil((void*)(_blockSize + sizeof(BlockHeader)), _pool._blockAlign); }
-        int blockOffsetMax() const                          { return _pool._blockAlign-1; }
+        szt blockStride() const                             { return (szt)(intptr_t)alignCeil((void*)(_blockSize + sizeof(BlockHeader)), _pool._blockAlign); }
+        szt blockOffsetMax() const                          { return _pool._blockAlign-1; }
 
         MemPool&            _pool;
-        int                 _bucketIndex;
-        const int           _blockSize;         ///< Data size of each block
-        const int           _blockCountInit;    ///< Initial number of blocks
+        szt                 _bucketIndex;
+        const szt           _blockSize;         ///< Data size of each block
+        const szt           _blockCountInit;    ///< Initial number of blocks
         vector<uint8*>      _chunkList;         ///< System heap chunks
-        atomic::Var<int>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        atomic::Var<szt>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         BlockHeader*        _freeHead;          ///< Head of free blocks list
         BlockHeader*        _freeTail;          ///< Tail of free blocks list
-        atomic::Var<int>    _freeCount;         ///< Number of free blocks
+        atomic::Var<szt>    _freeCount;         ///< Number of free blocks
         BlockHeader*        _usedHead;          ///< Head of used blocks list
-        atomic::Var<int>    _usedCount;         ///< Number of used blocks
-        int                 _usedSize;          ///< Total number of bytes allocated in used blocks
+        atomic::Var<szt>    _usedCount;         ///< Number of used blocks
+        szt                 _usedSize;          ///< Total number of bytes allocated in used blocks
         SpinLock            _lock;
         SpinLock            _tailLock;
     };
-    typedef std::map<int, Bucket*> BucketMap;
+    typedef std::map<szt, Bucket*> BucketMap;
 
     /// Allocator that wraps blocks allocated from the system heap
     class Heap
@@ -218,7 +218,7 @@ private:
 
             BlockHeader* next_()                            { return static_cast<BlockHeader*>(Super::next); }
 
-            int     size;
+            szt     size;
             Heap*   heap;
         };
 
@@ -235,7 +235,7 @@ private:
         ~Heap()                                             { free(); }
 
         /// Alloc an `size` bytes block with alignment byte boundary `align`
-        void* alloc(int size, int align, const char* srcFile, int srcLine);
+        void* alloc(szt size, szt align, const char* srcFile, int srcLine);
 
         /// Free a block
         void free(BlockHeader* header);
@@ -244,9 +244,9 @@ private:
         void free()                                         { for (auto header = _usedHead; header; header = _usedHead) free(header); }
 
         MemPool&            _pool;
-        atomic::Var<int>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        atomic::Var<szt>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         BlockHeader*        _usedHead;          ///< Head of used blocks list
-        atomic::Var<int>    _usedCount;         ///< Number of used blocks
+        atomic::Var<szt>    _usedCount;         ///< Number of used blocks
         SpinLock            _lock;
     };
 
@@ -265,8 +265,8 @@ private:
     }
     
     Id                      _id;
-    const int               _blockAlign;        ///< alignment of all blocks
-    int                     _blockSizeMax;      ///< Maximum block size
+    const szt               _blockAlign;        ///< alignment of all blocks
+    szt                     _blockSizeMax;      ///< Maximum block size
     vector<Bucket*>         _bucketList;
     BucketMap               _bucketMap;         ///< Buckets ordered by size
     uint8*                  _bucketChunk;       ///< Initial contiguous chunk of memory for all buckets, allocated from system heap
@@ -287,9 +287,9 @@ public:
     using typename Super::pointer;
     using typename Super::size_type;
     
-    pointer allocate(size_type n, const void* = 0)                  { return static_cast<pointer>(this->subc().pool().alloc(int(sizeof(T)*n))); }
+    pointer allocate(size_type n, const void* = 0)                  { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n)); }
     pointer allocate(size_type n, const char* srcFile, int srcLine, const void* = 0)
-                                                                    { return static_cast<pointer>(this->subc().pool().alloc(int(sizeof(T)*n), 1, srcFile, srcLine)); }
+                                                                    { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n, 1, srcFile, srcLine)); }
     void deallocate(pointer p, size_type)                           { this->subc().pool().free(p); }
 };
 

@@ -9,10 +9,10 @@ namespace honey
 template<class Real>
 void Svd<Real>::jacobi(Matrix& At, Vec& w, Vec_d& wd, optional<Matrix&> Vt, RandomGen& rand)
 {
-    int m = At.cols(), n = w.rows(), n1 = At.rows();
+    sdt m = At.cols(), n = w.rows(), n1 = At.rows();
     Double eps = Double_::epsilon*10;
-    int i, j, k, iter, max_iter = std::max(m, 30);
-    int acols = At.cols(), vcols = Vt ? Vt->cols() : 0;
+    sdt i, j, k, iter, max_iter = std::max(m, sdt(30));
+    sdt acols = At.cols(), vcols = Vt ? Vt->cols() : 0;
     Real c, s;
     Double sd;
 
@@ -35,7 +35,7 @@ void Svd<Real>::jacobi(Matrix& At, Vec& w, Vec_d& wd, optional<Matrix&> Vt, Rand
         for( i = 0; i < n-1; i++ )
             for( j = i+1; j < n; j++ )
             {
-                int Ai = i*acols, Aj = j*acols;
+                sdt Ai = i*acols, Aj = j*acols;
                 Double a = wd[i], p = 0, b = wd[j];
                 
                 for( k = 0; k < m; k++ )
@@ -89,7 +89,7 @@ void Svd<Real>::jacobi(Matrix& At, Vec& w, Vec_d& wd, optional<Matrix&> Vt, Rand
                 
                 if( Vt )
                 {
-                    int Vi = i*vcols, Vj = j*vcols;
+                    sdt Vi = i*vcols, Vj = j*vcols;
                     
                     for( k = 0; k < n; k++ )
                     {

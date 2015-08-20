@@ -40,7 +40,7 @@ inline Char toHex(byte b)                   { return priv::hex_chars[b]; }
 /// Convert hexadecimal character to byte
 inline byte fromHex(Char c)                 { return priv::hex_chars_rev[c - '0']; }
 /// Convert bytes to string using hexadecimal encoding (high-nibble-first)
-String hex_encode(const byte* data, int len);
+String hex_encode(const byte* data, szt len);
 /// Convert string to bytes using hexadecimal decoding (high-nibble-first)
 Bytes hex_decode(const String& string);
 /// Use hexadecimal encoding (high-nibble-first) when writing bytes to a string stream
@@ -55,7 +55,7 @@ inline Char toDec(byte b)                   { return '0' + b; }
 /// Convert decimal character to byte
 inline byte fromDec(Char c)                 { return c - '0'; }
 /// Convert bytes to string using decimal encoding (big-endian integer)
-String dec_encode(const byte* data, int len);
+String dec_encode(const byte* data, szt len);
 /// Convert string to bytes using decimal decoding (big-endian integer)
 Bytes dec_decode(const String& string);
 /// Use decimal encoding (big-endian integer) when writing bytes to a string stream
@@ -75,7 +75,7 @@ inline Char toBase64(byte b)                { return priv::base64_chars[b]; }
 /// Convert base64 character to byte
 inline byte fromBase64(Char c)              { return priv::base64_chars_rev[c - '+']; }
 /// Convert bytes to string using base64 encoding
-String base64_encode(const byte* data, int len);
+String base64_encode(const byte* data, szt len);
 /// Convert string to bytes using base64 decoding
 Bytes base64_decode(const String& string);
 /// Use base64 encoding when writing bytes to a string stream

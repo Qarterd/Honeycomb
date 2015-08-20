@@ -10,8 +10,8 @@ namespace honey
 {
 
 template<class Subclass> class MatrixBase;
-template<int Rows, int Cols, class Real = Real, int Options = 0, class Alloc = std::allocator<int8>> class Matrix;
-template<int Dim, class Real = Real, int Options = 0, class Alloc = std::allocator<int8>> class Vec;
+template<sdt Rows, sdt Cols, class Real = Real, int Options = 0, class Alloc = std::allocator<int8>> class Matrix;
+template<sdt Dim, class Real = Real, int Options = 0, class Alloc = std::allocator<int8>> class Vec;
 
 /// Matrix util
 namespace matrix
@@ -22,7 +22,7 @@ namespace matrix
         template<class Subclass> struct Traits;
     }
 
-    static const int dynamic = -1;
+    static const sdt dynamic = -1;
 
     /// Matrix type options
     struct Option
@@ -35,11 +35,11 @@ namespace matrix
         };
 
         /// Alignment must be a power of 2
-        template<int Align> struct setAlign             : mt::Value<int, (mt::log2Floor<Align>::value & align_mask) << align_shift> {};
-        template<int Options> struct getAlign           : mt::Value<int, 1 << ((Options >> align_shift) & align_mask)> {};
+        template<szt Align> struct setAlign             : mt::Value<int, (mt::log2Floor<Align>::value & align_mask) << align_shift> {};
+        template<int Options> struct getAlign           : mt::Value<szt, 1 << ((Options >> align_shift) & align_mask)> {};
     };
 
-    template<class Matrix, int Rows = dynamic, int Cols = dynamic> class Block;
+    template<class Matrix, sdt Rows = dynamic, sdt Cols = dynamic> class Block;
 }
 
 /// Vec util
@@ -48,7 +48,7 @@ namespace vec
     /// Vec implementation details
     namespace priv
     {
-        template<class Vec, int Dim = matrix::dynamic> struct Segment;
+        template<class Vec, sdt Dim = matrix::dynamic> struct Segment;
     }
 }
 

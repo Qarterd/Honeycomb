@@ -48,7 +48,7 @@ public:
     template<class T>
     Svd& calc(const MatrixBase<T>& a, Mode mode = Mode::reduced)
     {
-        int m = a.rows(), n = a.cols();
+        sdt m = a.rows(), n = a.cols();
         _w.resize(Alge::min(m, n));
         _wd.resize(_w.size());
 
@@ -77,7 +77,7 @@ public:
     template<class T>
     Svd& calcValues(const MatrixBase<T>& a)
     {
-        int m = a.rows(), n = a.cols();
+        sdt m = a.rows(), n = a.cols();
         _w.resize(Alge::min(m, n));
         _wd.resize(_w.size());
 

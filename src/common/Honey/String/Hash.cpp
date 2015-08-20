@@ -12,9 +12,9 @@ namespace honey { namespace hash
 namespace priv { namespace murmur
 {
     template<int Endian>
-    uint32 block(const uint32* p, size_t i)                 { return p[i]; }
+    uint32 block(const uint32* p, szt i)                    { return p[i]; }
     template<>
-    uint32 block<ENDIAN_BIG>(const uint32* p, size_t i)     { return BitOp::swap(p[i]); }
+    uint32 block<ENDIAN_BIG>(const uint32* p, szt i)        { return BitOp::swap(p[i]); }
 
     uint32 fMix(uint32 h)
     {
@@ -26,10 +26,10 @@ namespace priv { namespace murmur
         return h;
     }
 
-    uint32 hash(const void* key, size_t len, uint32 seed)
+    uint32 hash(const void* key, szt len, uint32 seed)
     {
-        const uint8 * data = (const uint8*)key;
-        const int nblocks = (int)len / 4;
+        const uint8* data = (const uint8*)key;
+        const szt nblocks = len / 4;
 
         uint32 h1 = seed;
 
@@ -39,9 +39,9 @@ namespace priv { namespace murmur
         //----------
         // body
 
-        const uint32 * blocks = (const uint32 *)(data + nblocks*4);
+        const uint32* blocks = (const uint32*)data;
 
-        for(int i = -nblocks; i; i++)
+        for(szt i = 0; i < nblocks; ++i)
         {
             uint32 k1 = block<ENDIAN>(blocks,i);
 
@@ -57,7 +57,7 @@ namespace priv { namespace murmur
         //----------
         // tail
 
-        const uint8 * tail = (const uint8*)(data + nblocks*4);
+        const uint8* tail = (const uint8*)(data + nblocks*4);
 
         uint32 k1 = 0;
 
@@ -72,7 +72,7 @@ namespace priv { namespace murmur
         //----------
         // finalization
 
-        h1 ^= len;
+        h1 ^= (uint32)len;
 
         h1 = fMix(h1);
 
@@ -81,12 +81,12 @@ namespace priv { namespace murmur
 } }
 /** \endcond */
 
-int fast(const byte* data, int len, int seed)
+int fast(const byte* data, szt len, int seed)
 {
     return priv::murmur::hash(data, len, seed);
 }
 
-sval secure(const byte* data, int len, optional<const sval&> key)
+sval secure(const byte* data, szt len, optional<const sval&> key)
 {
     sval res;
     if (key)
@@ -121,7 +121,7 @@ sval secure(const byte* data, int len, optional<const sval&> key)
 vector<sval> secureKeys(const String& password, const Bytes& salt, int iterCount, int keyCount)
 {
     vector<sval> res(keyCount);
-    Bytes salt_k(salt.size() + sizeof(int));
+    Bytes salt_k(salt.size() + sizeof(uint32));
     std::copy(salt.begin(), salt.end(), salt_k.begin());
     auto passkey = secure(password);
     for (auto k: range(keyCount))
@@ -133,7 +133,7 @@ vector<sval> secureKeys(const String& password, const Bytes& salt, int iterCount
             if (!iter)
             {
                 BitOp::toPartsBig(static_cast<uint32>(k)+1, salt_k.data()+salt.size());
-                u = secure(salt_k.data(), size(salt_k), passkey);
+                u = secure(salt_k.data(), salt_k.size(), passkey);
                 key = u;
                 continue;
             }

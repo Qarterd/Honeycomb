@@ -81,7 +81,7 @@ namespace priv
         return failed;
     }
 
-    template<class Locks, size_t... Seq>
+    template<class Locks, szt... Seq>
     void lock(Locks&& locks, mt::idxseq<Seq...>)
     {
         auto switch_ = mt::make_array<function<int ()>>([&]() -> int

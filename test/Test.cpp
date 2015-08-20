@@ -41,14 +41,14 @@ void test()
                     case 4:
                         {
                             auto it = list.begin();
-                            for (int j = 0, end = Discrete(rand, 0, list.size()).nextInt(); j < end; ++j) ++it;
+                            for (int j = 0, end = Discrete(rand, 0, size(list)).nextInt(); j < end; ++j) ++it;
                             list.insert(it, i);
                             break;
                         }
                     case 5:
                         {
                             auto it = list.begin();
-                            for (int j = 0, end = Discrete(rand, 0, list.size()).nextInt(); j < end; ++j) ++it;
+                            for (int j = 0, end = Discrete(rand, 0, size(list)).nextInt(); j < end; ++j) ++it;
                             if (it != list.end()) list.erase(it, data);
                             break;
                         }
@@ -636,7 +636,7 @@ void test()
     list.push_back(3);
     list.push_back(4);
     vector<Real> sample;
-    vector<int> unchosen;
+    vector<szt> unchosen;
     Random(gen).choose(list, 3, sample, unchosen);
     Random(gen).shuffle(sample);
 
@@ -660,16 +660,16 @@ void test()
     for (auto it = begin(permute); it != end(permute); ++it)
     {
         debug_print("Perm: ");
-        for (auto i : range((int)it->size())) { debug_print(sout() << *it->at(i) << " ");  mt_unused(i); }
+        for (auto i : range(it->size())) { debug_print(sout() << *it->at(i) << " ");  mt_unused(i); }
         debug_print(sout() << " ; Cnt: " << it.count() << "\n");
     }
 
     Chacha crypt;
     Chacha::Key key;
     Chacha::Iv iv, iv2;
-    for (auto i : range(0, size(key), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), key.data() + i);
-    for (auto i : range(0, size(iv), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv.data() + i);
-    for (auto i : range(0, size(iv2), (int)sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv2.data() + i);
+    for (auto i : range(0, key.size(), sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), key.data() + i);
+    for (auto i : range(0, iv.size(), sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv.data() + i);
+    for (auto i : range(0, iv2.size(), sizeof(uint32))) BitOp::toPartsBig(Discrete_<uint32>::nextStd(gen), iv2.data() + i);
     
     String msg = "Test msg la la la la ";
     for (auto i : range(50)) { msg += sout() << i << " "; }

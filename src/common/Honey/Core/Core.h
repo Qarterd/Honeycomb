@@ -86,6 +86,11 @@ using std::unordered_multiset;
 using std::unordered_set;
 using std::vector;
 
+/// Size type, shorthand for size_t
+typedef size_t szt;
+/// Size difference type, shorthand for ptrdiff_t
+typedef ptrdiff_t sdt;
+
 /// Options for platform endian
 #define ENDIAN_LITTLE   0
 #define ENDIAN_BIG      1

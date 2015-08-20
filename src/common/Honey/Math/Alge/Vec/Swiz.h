@@ -7,9 +7,9 @@ namespace honey
 {
 
 /// Vector for const swizzle operators
-template<int Dim, class Real, int Options> class VecSwizCon;
+template<sdt Dim, class Real, int Options> class VecSwizCon;
 
-template<int Dim, class Real, int Options>
+template<sdt Dim, class Real, int Options>
 struct matrix::priv::Traits<VecSwizCon<Dim,Real,Options>> : Traits<Vec<Dim,Real,Options>> {};
 
 template<class SwizT>
@@ -35,14 +35,14 @@ private:
 };
 
 /** \cond */
-template<class T_, int D, class R, int Opt>
+template<class T_, sdt D, class R, int Opt>
 struct priv::map_impl<T_, VecSwizCon<D,R,Opt>>
 {
     template<class T, class O, class Func>
     static O&& func(T&&, O&&, Func&&)                               { static_assert(!mt::True<T>::value, "Can't map with const swizzle output"); }
 };
 
-template<class T_, int D, class R, int Opt, class T2_>
+template<class T_, sdt D, class R, int Opt, class T2_>
 struct priv::map_impl<T_, VecSwizCon<D,R,Opt>, T2_>
 {
     template<class T, class T2, class O, class Func>
@@ -51,9 +51,9 @@ struct priv::map_impl<T_, VecSwizCon<D,R,Opt>, T2_>
 /** \endcond */
 
 /// Vector reference holder for mutable swizzle operators
-template<int Dim, class Real, int Options> class VecSwizRef;
+template<sdt Dim, class Real, int Options> class VecSwizRef;
 
-template<int Dim, class Real, int Options>
+template<sdt Dim, class Real, int Options>
 struct matrix::priv::Traits<VecSwizRef<Dim,Real,Options>> : Traits<Vec<Dim,Real,Options>> {};
 
 template<class SwizT>
@@ -94,14 +94,14 @@ public:
 };
 
 /** \cond */
-template<class T_, int D, class R, int Opt>
+template<class T_, sdt D, class R, int Opt>
 struct priv::map_impl<T_, VecSwizRef<D,R,Opt>>
 {
     template<class T, class O, class Func>
     static O&& func(T&& v, O&& o, Func&& f)                         { map(forward<T>(v), forward<typename O::Super>(o), forward<Func>(f)); o.swiz().commit(); return forward<O>(o); }
 };
 
-template<class T_, int D, class R, int Opt, class T2_>
+template<class T_, sdt D, class R, int Opt, class T2_>
 struct priv::map_impl<T_, VecSwizRef<D,R,Opt>, T2_>
 {
     template<class T, class T2, class O, class Func>

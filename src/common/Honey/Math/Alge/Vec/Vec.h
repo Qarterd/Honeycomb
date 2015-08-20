@@ -10,25 +10,25 @@ namespace honey
 namespace vec { namespace priv
 {
     /// N-dimensional vector traits
-    template<int Dim, class Real_, int Options, class Alloc_>
+    template<sdt Dim, class Real_, int Options, class Alloc_>
     struct Traits
     {
         typedef priv::Storage<Vec<Dim,Real_,Options,Alloc_>> Storage;
         typedef Real_               Real;
         typedef Real                ElemT;
-        static const int dim        = Dim;
-        static const int rows       = Options & matrix::Option::vecRow ? 1 : dim;
-        static const int cols       = Options & matrix::Option::vecRow ? dim : 1;
+        static const sdt dim        = Dim;
+        static const sdt rows       = Options & matrix::Option::vecRow ? 1 : dim;
+        static const sdt cols       = Options & matrix::Option::vecRow ? dim : 1;
         static const int options    = Options;
         typedef Alloc_              Alloc;
     };
 } }
 
-template<int Dim, class Real, int Options, class Alloc>
+template<sdt Dim, class Real, int Options, class Alloc>
 struct matrix::priv::Traits<Vec<Dim,Real,Options,Alloc>> : vec::priv::Traits<Dim,Real,Options,Alloc> {};
 
 /// N-dimensional vector
-template<int Dim, class Real, int Options, class Alloc>
+template<sdt Dim, class Real, int Options, class Alloc>
 class Vec : public VecBase<Vec<Dim,Real,Options,Alloc>>
 {
     typedef VecBase<Vec<Dim,Real,Options,Alloc>> Super;
@@ -44,7 +44,7 @@ public:
     /// Construct uniform vector
     explicit Vec(Real scalar)                                       { this->fromScalar(scalar); }
     /// Initialize from array with dimension `dim`
-    Vec(const Real* a, int dim)                                     { this->resize(dim); this->fromArray(a); }
+    Vec(const Real* a, sdt dim)                                     { this->resize(dim); this->fromArray(a); }
     /// Construct with allocator, for a dynamic vector. Allocator element type must be int8.
     Vec(const Alloc& alloc)                                         { this->setAllocator(alloc); }
     /// Construct from row or column vector of any dimension. Asserts that if this vector has a fixed dimension then it matches rhs.
@@ -78,7 +78,7 @@ public:                                                                         
     explicit Matrix(Int dim, typename std::enable_if<std::is_integral<Int>::value && s_size == matrix::dynamic>::type*_=0)  \
                                                                     : Super(dim) {}                                     \
     explicit Matrix(Real scalar)                                    : Super(scalar) {}                                  \
-    Matrix(const Real* a, int dim)                                  : Super(a,dim) {}                                   \
+    Matrix(const Real* a, sdt dim)                                  : Super(a,dim) {}                                   \
     Matrix(const Alloc& alloc)                                      : Super(alloc) {}                                   \
     template<class T>                                                                                                   \
     Matrix(const MatrixBase<T>& rhs)                                : Super(rhs) {}                                     \
@@ -86,7 +86,7 @@ public:                                                                         
     Matrix& operator=(const MatrixBase<T>& rhs)                     { Super::operator=(rhs); return *this; }            \
 
 /// Matrix column vector 
-template<int Dim, class Real, int Options, class Alloc_>
+template<sdt Dim, class Real, int Options, class Alloc_>
 class Matrix<Dim,1,Real,Options,Alloc_> : public Vec<Dim,Real,Options,Alloc_>
 {
     typedef Vec<Dim,Real,Options,Alloc_> Super;
@@ -94,7 +94,7 @@ class Matrix<Dim,1,Real,Options,Alloc_> : public Vec<Dim,Real,Options,Alloc_>
 };
 
 /// Matrix row vector
-template<int Dim, class Real, int Options, class Alloc_>
+template<sdt Dim, class Real, int Options, class Alloc_>
 class Matrix<1,Dim,Real,Options,Alloc_> : public Vec<Dim,Real, Options | matrix::Option::vecRow, Alloc_>
 {
     typedef Vec<Dim,Real, Options | matrix::Option::vecRow, Alloc_> Super;

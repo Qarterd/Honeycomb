@@ -72,17 +72,17 @@ struct Parser
         return parser.add(Value(doubleVal)).second;
     }
 
-    static int String_(void* ctx, const uint8* str, size_t len)
+    static int String_(void* ctx, const uint8* str, szt len)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
-        return parser.add(Value(String(reinterpret_cast<const char*>(str), (int)len))).second;
+        return parser.add(Value(String(reinterpret_cast<const char*>(str), len))).second;
     }
 
-    static int ObjectKey(void* ctx, const uint8* str, size_t len)
+    static int ObjectKey(void* ctx, const uint8* str, szt len)
     {
         Parser& parser = *static_cast<Parser*>(ctx);
         if (parser.stack.empty()) return parser.err("stack empty");
-        parser.key = String(reinterpret_cast<const char*>(str), (int)len);
+        parser.key = String(reinterpret_cast<const char*>(str), len);
         return true;
     }
 
@@ -181,13 +181,13 @@ istream& operator>>(istream& is, Value_<Config>& val)
     
     char buf[1024];
     yajl_status stat = yajl_status_ok;
-    int readBytes = 0;
+    szt readBytes = 0;
     while (stat == yajl_status_ok && !parser.stack.empty() && is.read(buf, sizeof(buf)).gcount())
     {
-        readBytes = (int)is.gcount();
+        readBytes = is.gcount();
         stat = yajl_parse(hand, reinterpret_cast<uint8*>(buf), readBytes);
     }
-    int extra = int(readBytes - yajl_get_bytes_consumed(hand));
+    sdt extra = readBytes - yajl_get_bytes_consumed(hand);
     stat = yajl_complete_parse(hand);
     
     //handle errors
@@ -207,7 +207,7 @@ istream& operator>>(istream& is, Value_<Config>& val)
     }
     
     //rewind stream to end of json array/object
-    if (extra)
+    if (extra > 0)
     {
         if (is.eof()) { is.clear(); is.seekg(-extra, ios_base::end); }
         else is.seekg(-extra, ios_base::cur);
@@ -316,7 +316,7 @@ struct Writer
     void write(const String& str)
     {
         auto u8 = str.u8();
-        stat = yajl_gen_string(hand, reinterpret_cast<const uint8*>(u8.c_str()), u8.length());
+        stat = yajl_gen_string(hand, reinterpret_cast<const uint8*>(u8.data()), u8.length());
         verifyStatus();
     }
     
@@ -339,10 +339,10 @@ ostream& operator<<(ostream& os, const Value_<Config>& val)
     Writer<Config> writer(hand);
     writer.write(val);
     
-    const uint8* buf; size_t len;
+    const uint8* buf; szt len;
     yajl_gen_get_buf(hand, &buf, &len);
     assert(buf);
-    return os << String(reinterpret_cast<const char*>(buf), (int)len);
+    return os << String(reinterpret_cast<const char*>(buf), len);
 }
 
 template ostream& operator<<(ostream& os, const Value_<Config<true>>& val);

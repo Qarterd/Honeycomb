@@ -16,7 +16,7 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
     _pdf.resize(pdf.size()); 
     
     Double total = 0;
-    for (int i = 0; i < pdfSize(); ++i)
+    for (szt i = 0; i < _pdf.size(); ++i)
     {
         _pdf[i] = pdf[i];
         //Calc mean
@@ -27,7 +27,7 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
 
     assert(total > 0);
     _mean /= total;
-    _cdf.resize(pdfSize());
+    _cdf.resize(_pdf.size());
 
     /**
       * Build a lookup table of size N = PdfSize so that variate generation is constant time O(1).
@@ -46,13 +46,13 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
       * In the end, the normalized weights will fill up the table slots *exactly*, giving a perfect weighted lookup table.
       */
 
-    Double p = 1. / pdfSize();
+    Double p = 1. / _pdf.size();
 
-    vector<int> p_under;
-    vector<int> p_over;
-    _table.resize(pdfSize());
+    vector<szt> p_under;
+    vector<szt> p_over;
+    _table.resize(_pdf.size());
 
-    for (int i = 0; i < pdfSize(); ++i)
+    for (szt i = 0; i < _pdf.size(); ++i)
     {
         //Normalize PDF
         _pdf[i] /= total;
@@ -75,7 +75,7 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
     //Loop through weights < P
     while (!p_under.empty())
     {
-        int under = p_under.back();
+        szt under = p_under.back();
         p_under.pop_back();
 
         if (p_over.empty())
@@ -89,7 +89,7 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
         }
 
         //Bisect and fill up to P with large weight
-        int over = p_over.back();
+        szt over = p_over.back();
         _table[under].bisector = weights[under];
         _table[under].indexTwo = over;
         weights[over] -= p - weights[under];
@@ -114,21 +114,21 @@ DiscreteGen_<Real>::DiscreteGen_(RandomGen& gen, List pdf) :
     {
         //The algorithm guarantees that our weight must be P.
         //This should be the only weight left and we fill this index exactly.
-        int over = p_over.back();
+        szt over = p_over.back();
         p_over.pop_back();
         _table[over].bisector = 1;
         _table[over].indexTwo = over;
     }
 
-    _cdf[pdfSize()-1] = 1;
+    _cdf[_pdf.size()-1] = 1;
 
 }
 
 template<class Real>
 Real DiscreteGen_<Real>::next() const
 {
-    Double rand = Uniform::nextStd(getGen())*pdfSize();
-    int index = rand;
+    Double rand = Uniform::nextStd(getGen())*_pdf.size();
+    szt index = rand;
     return rand - index < _table[index].bisector ? index : _table[index].indexTwo;
 }
 

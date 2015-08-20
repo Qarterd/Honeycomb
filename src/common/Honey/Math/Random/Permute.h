@@ -48,22 +48,22 @@ public:
             const vector<T>& list;
             Func func;
             vector<const T*> perm;
-            int64 count;
-            int64 countMax;
+            sdt count;
+            sdt countMax;
 
-            vector<int> a;
-            vector<int> l;
-            vector<int> u;
-            int p;
-            int q;
-            int k;
-            int n;
+            vector<sdt> a;
+            vector<sdt> l;
+            vector<sdt> u;
+            sdt p;
+            sdt q;
+            sdt k;
+            sdt n;
         };
 
     public:
         typedef std::forward_iterator_tag               iterator_category;
         typedef const vector<const T*>                  value_type;
-        typedef ptrdiff_t                               difference_type;
+        typedef sdt                                     difference_type;
         typedef const vector<const T*>*                 pointer;
         typedef const vector<const T*>&                 reference;
         
@@ -81,9 +81,9 @@ public:
         vector<const T*>* operator->() const            { return &_ps->perm; }
 
         /// Get current permutation number. Every perm has a unique associated number: the first perm is 1, the last perm is countMax()
-        int64 count() const                             { return _ps->count; }
+        sdt count() const                               { return _ps->count; }
         /// Get total number of permutations for this list
-        int64 countMax() const                          { return _ps->countMax; }
+        sdt countMax() const                            { return _ps->countMax; }
         
     private:
         bool isEnd() const                              { return !_ps; }
@@ -106,14 +106,14 @@ Permute_<Real>::Iter<T>::Iter(SharedPtr<State> state) :
     if (isEnd() || _ps->list.size() == 0)
         return;
 
-    _ps->n = size(_ps->list);
+    _ps->n = _ps->list.size();
     _ps->countMax = GammaFunc_<Double>::factorial(_ps->n);
     _ps->count = 0;
     _ps->a.resize(_ps->n+1, -1);
     _ps->l.resize(_ps->n+1, -1);
     _ps->u.resize(_ps->n+1, -1);
 
-    for (int i = 0; i < _ps->n; ++i)
+    for (sdt i = 0; i < _ps->n; ++i)
         _ps->l[i] = i+1;
     _ps->l[_ps->n] = 0;
     _ps->k = 1;
@@ -147,7 +147,7 @@ typename Permute_<Real>::template Iter<T>& Permute_<Real>::Iter<T>::operator++()
         {
             //Build permutation up to level k
             _ps->perm.resize(_ps->k);
-            for (int i = 1; i <= _ps->k; ++i)
+            for (sdt i = 1; i <= _ps->k; ++i)
                 _ps->perm[i-1] = &_ps->list[_ps->a[i]-1];
             //Call functor for cull test
             func = _ps->func(const_cast<const vector<const T*>&>(_ps->perm));
@@ -173,7 +173,7 @@ typename Permute_<Real>::template Iter<T>& Permute_<Real>::Iter<T>::operator++()
             if (!_ps->func)
             {
                 _ps->perm.resize(_ps->k);
-                for (int i = 1; i <= _ps->k; ++i)
+                for (sdt i = 1; i <= _ps->k; ++i)
                     _ps->perm[i-1] = &_ps->list[_ps->a[i]-1];
             }
         }

@@ -28,7 +28,7 @@ namespace honey
 
 /// Allocate memory for `count` number of T objects.  Objects are not constructed.
 template<class T>
-T* alloc(size_t count = 1)                      { return static_cast<T*>(operator new(sizeof(T)*count)); }
+T* alloc(szt count = 1)                         { return static_cast<T*>(operator new(sizeof(T)*count)); }
 /// Deallocate memory and set pointer to null. Object is not destroyed.
 template<class T>
 void free(T*& p)                                { if (!p) return; operator delete(p); p = nullptr; }
@@ -37,25 +37,24 @@ void free(T* const& p)                          { if (!p) return; operator delet
 
 /// Align a pointer to the previous byte boundary `bytes`. Does nothing if p is already on boundary.  Alignment must be a power of two.
 template<class T>
-T* alignFloor(T* p, int bytes)                  { return reinterpret_cast<T*>(intptr_t(p) & ~(bytes-1)); }
+T* alignFloor(T* p, szt bytes)                  { return reinterpret_cast<T*>(intptr_t(p) & ~(bytes-1)); }
 /// Align a pointer to the next byte boundary `bytes`. Does nothing if p is already on boundary.  Alignment must be a power of two.
 template<class T>
-T* alignCeil(T* p, int bytes)                   { return alignFloor(reinterpret_cast<T*>(intptr_t(p) + bytes-1), bytes); }
+T* alignCeil(T* p, szt bytes)                   { return alignFloor(reinterpret_cast<T*>(intptr_t(p) + bytes-1), bytes); }
 
 /// Allocate memory with alignment.  Alignment must be a power of two.  Allocator element type must be int8.
 template<class T, class Alloc>
-T* allocAligned(size_t count, int align_, Alloc&& a)
+T* allocAligned(szt count, szt align_, Alloc&& a)
 {
-    static const int diffSize = sizeof(std::ptrdiff_t);
-    int8* base = a.allocate(diffSize + align_-1 + sizeof(T)*count);
+    int8* base = a.allocate(sizeof(sdt) + align_-1 + sizeof(T)*count);
     if (!base) return nullptr;
-    int8* p = alignCeil(base+diffSize, align_);
-    *reinterpret_cast<std::ptrdiff_t*>(p-diffSize) = p - base;
+    int8* p = alignCeil(base+sizeof(sdt), align_);
+    *reinterpret_cast<sdt*>(p-sizeof(sdt)) = p - base;
     return reinterpret_cast<T*>(p);
 }
 /// Allocate memory with alignment using default allocator
 template<class T>
-T* allocAligned(size_t count, int align)        { return allocAligned<T>(count, align, std::allocator<int8>()); }
+T* allocAligned(szt count, szt align)           { return allocAligned<T>(count, align, std::allocator<int8>()); }
 
 /// Deallocate aligned memory.  Allocator element type must be int8.
 template<class T, class Alloc>
@@ -63,7 +62,7 @@ void freeAligned(T* p, Alloc&& a)
 {
     if (!p) return;
     int8* p_ = reinterpret_cast<int8*>(p);
-    int8* base = p_ - *reinterpret_cast<std::ptrdiff_t*>(p_ - sizeof(std::ptrdiff_t));
+    int8* base = p_ - *reinterpret_cast<sdt*>(p_ - sizeof(sdt));
     a.deallocate(base, 1);
 }
 /// Deallocate aligned memory using default allocator
@@ -106,8 +105,8 @@ public:
     typedef T&          reference;
     typedef const T*    const_pointer;
     typedef const T&    const_reference;
-    typedef size_t      size_type;
-    typedef ptrdiff_t   difference_type;
+    typedef szt         size_type;
+    typedef sdt         difference_type;
 
     pointer address(reference x) const                      { return &x; }
     const_pointer address(const_reference x) const          { return &x; }
@@ -132,13 +131,13 @@ class AllocatorObject
 public:
     template<class T> using Allocator = Alloc<T>;
 
-    void* operator new(size_t size)                                         { return _alloc.allocate(size); }
-    void* operator new(size_t, void* ptr)                                   { return ptr; }
-    void* operator new(size_t size, const char* srcFile, int srcLine)       { return _alloc.allocate(size, srcFile, srcLine); }
+    void* operator new(szt size)                                            { return _alloc.allocate(size); }
+    void* operator new(szt, void* ptr)                                      { return ptr; }
+    void* operator new(szt size, const char* srcFile, int srcLine)          { return _alloc.allocate(size, srcFile, srcLine); }
     
-    void* operator new[](size_t size)                                       { return _alloc.allocate(size); }
-    void* operator new[](size_t, void* ptr)                                 { return ptr; }
-    void* operator new[](size_t size, const char* srcFile, int srcLine)     { return _alloc.allocate(size, srcFile, srcLine); }
+    void* operator new[](szt size)                                          { return _alloc.allocate(size); }
+    void* operator new[](szt, void* ptr)                                    { return ptr; }
+    void* operator new[](szt size, const char* srcFile, int srcLine)        { return _alloc.allocate(size, srcFile, srcLine); }
     
     void operator delete(void* p)                                           { _alloc.deallocate(static_cast<int8*>(p), 1); }
     void operator delete[](void* p)                                         { _alloc.deallocate(static_cast<int8*>(p), 1); }

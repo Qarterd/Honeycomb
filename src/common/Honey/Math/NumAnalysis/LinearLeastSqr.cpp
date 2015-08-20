@@ -41,7 +41,7 @@ void LinearLeastSqr<Real>::calc(const Matrix& x, const Vec& y, const Vec& w, con
     assert(c.cols() == x.cols());
     assert(c.rows() == d.rows());
 
-    int k = c.rows(), n = c.cols();
+    sdt k = c.rows(), n = c.cols();
     assert(k < n, "Too many constraints");
     /*
       * C^T = Q*|R|

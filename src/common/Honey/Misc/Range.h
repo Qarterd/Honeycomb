@@ -421,7 +421,7 @@ ITERATE(0, RANGE_ARG_MAX, FUNC)
 
 /// Count number of elements in range
 template<class Range>
-int countOf(Range&& range)                                          { return reduce(range, 0, [](int a, auto&) { return ++a; }); }
+szt countOf(Range&& range)                                          { return reduce(range, szt(0), [](szt a, auto&) { return ++a; }); }
 
 /// Delete all elements in range
 template<class Range>
@@ -471,13 +471,12 @@ private:
 };
 
 /// Create a range that increments through the integral range [begin,end)
-template<class Int>
-typename std::enable_if<std::is_integral<Int>::value, Range_<IntIter<Int>, IntIter<Int>>>::type
-    range(Int begin, Int end)
+template<class Int, class Int2, class Int_ = typename std::common_type<Int,Int2>::type>
+typename std::enable_if<std::is_integral<Int_>::value, Range_<IntIter<Int_>, IntIter<Int_>>>::type
+    range(Int begin, Int2 end)
 {
     // Make sure begin comes before end
-    if (end < begin) end = begin;
-    return range(IntIter<Int>(begin), IntIter<Int>(end));
+    return range(IntIter<Int_>(begin), IntIter<Int_>(end < begin ? begin : end));
 }
 
 /// Create a range that increments through the integral range [0,end)
@@ -526,20 +525,15 @@ private:
 };
 
 /// Create a range that steps through the integral range [begin,end)
-template<class Int>
-typename std::enable_if<std::is_integral<Int>::value, Range_<IntStepIter<Int>, IntStepIter<Int>>>::type
-    range(Int begin, Int end, Int step)
+template<class Int, class Int2, class Int3, class Int_ = typename std::common_type<Int,Int2,Int3>::type>
+typename std::enable_if<std::is_integral<Int_>::value, Range_<IntStepIter<Int_>, IntStepIter<Int_>>>::type
+    range(Int begin, Int2 end, Int3 step)
 {
     assert(step != 0);
     // Make sure begin comes before end
-    if (step > 0)
-    {
-        if (end < begin) end = begin;
-    }
-    else
-        if (end > begin) end = begin;
-    int dif = end - begin;
-    return range(IntStepIter<Int>(begin, step), IntStepIter<Int>(begin + (dif/step + (dif%step!=0))*step, step));
+    Int_ end_ = step > 0 ? (end < begin ? begin : end) : (end > begin ? begin : end);
+    Int_ dif = end_ - begin;
+    return range(IntStepIter<Int_>(begin, step), IntStepIter<Int_>(begin + (dif/step + (dif%step!=0))*step, step));
 }
 
 
@@ -547,15 +541,16 @@ typename std::enable_if<std::is_integral<Int>::value, Range_<IntStepIter<Int>, I
 template<class T>
 class RealIter
 {
+    typedef typename Numeral<T>::Int Int;
 public:
     typedef std::random_access_iterator_tag                         iterator_category;
     typedef T                                                       value_type;
-    typedef int                                                     difference_type;
+    typedef Int                                                     difference_type;
     typedef T*                                                      pointer;
     typedef T                                                       reference;
 
     RealIter() = default;
-    RealIter(T begin, T step, int i)                                : _begin(begin), _step(step), _i(i) {}
+    RealIter(T begin, T step, Int i)                                : _begin(begin), _step(step), _i(i) {}
 
     RealIter& operator++()                                          { ++_i; return *this; }
     RealIter& operator--()                                          { --_i; return *this; }
@@ -580,32 +575,27 @@ public:
 private:
     T _begin;
     T _step;
-    int _i;
+    Int _i;
 };
 
 /// Create a range that steps through the real number range [begin,end)
-template<class Real>
-typename std::enable_if<std::is_floating_point<Real>::value, Range_<RealIter<Real>, RealIter<Real>>>::type
-    range(Real begin, Real end, Real step = 1)
+template<class Real, class Real2, class Real3, class Real_ = typename std::common_type<Real,Real2,Real3>::type>
+typename std::enable_if<std::is_floating_point<Real_>::value, Range_<RealIter<Real_>, RealIter<Real_>>>::type
+    range(Real begin, Real2 end, Real3 step = 1)
 {
     assert(step != 0);
     // Make sure begin comes before end
-    if (step > 0)
-    {
-        if (end < begin) end = begin;
-    }
-    else
-        if (end > begin) end = begin;
-    typedef typename Numeral<Real>::Real_ Real_;
-    return range(RealIter<Real>(begin, step, 0), RealIter<Real>(begin, step, Real_::ceil((end-begin)/step)));
+    Real_ end_ = step > 0 ? (end < begin ? begin : end) : (end > begin ? begin : end);
+    typedef typename Numeral<Real_>::Real_ Real__;
+    return range(RealIter<Real_>(begin, step, 0), RealIter<Real_>(begin, step, Real__::ceil((end_-begin)/step)));
 }
 
 
 /// Wrapper around an iterator with tuple value type. When dereferenced returns `I`'th element.
-template<class Iter, int I, class IterCategory = typename Iter::iterator_category>
+template<class Iter, szt I, class IterCategory = typename Iter::iterator_category>
 class TupleIter;
 
-template<class Iter, int I>
+template<class Iter, szt I>
 class TupleIter<Iter, I, std::forward_iterator_tag>
 {
 public:
@@ -632,7 +622,7 @@ protected:
     Iter _i;
 };
 
-template<class Iter, int I>
+template<class Iter, szt I>
 class TupleIter<Iter, I, std::bidirectional_iterator_tag> : public TupleIter<Iter, I, std::forward_iterator_tag>
 {
     typedef TupleIter<Iter, I, std::forward_iterator_tag> Super;
