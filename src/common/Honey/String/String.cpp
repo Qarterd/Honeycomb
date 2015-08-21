@@ -43,10 +43,10 @@ String& String::replace(szt pos, szt len, const String& str, szt subpos, szt sub
     return *this;
 }
 
-template<class Char, class Char2, class Comp>
-static int compare_(    const Char* str, szt n, szt pos, szt len,
-                        const Char2* str2, szt n2, szt pos2, szt len2,
-                        Comp&& comp)
+template<class Char, class Comp>
+static int compare_(const Char* str, szt n, szt pos, szt len,
+                    const Char* str2, szt n2, szt pos2, szt len2,
+                    Comp&& comp)
 {
     if (len == String::npos) len = n - pos;
     if (len2 == String::npos) len2 = n2 - pos2;
@@ -62,34 +62,9 @@ static int compare_(    const Char* str, szt n, szt pos, szt len,
     return len != len2 ? (len < len2 ? -1 : 1) : 0;
 }
 
-int String::compare(szt pos, szt len, const std::string& str, szt subpos, szt sublen) const
-{
-    return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return a < b; });
-}
-
-int String::compare(szt pos, szt len, const char* str, szt subpos, szt sublen) const
-{
-    return compare_(data(), length(), pos, len, str, strlen(str), subpos, sublen, [](Char a, Char b) { return a < b; });
-}
-
 int String::icompare(szt pos, szt len, const String& str, szt subpos, szt sublen) const
 {
     return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
-}
-
-int String::icompare(szt pos, szt len, const Char* str, szt subpos, szt sublen) const
-{
-    return compare_(data(), length(), pos, len, str, std::char_traits<Char>::length(str), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
-}
-
-int String::icompare(szt pos, szt len, const std::string& str, szt subpos, szt sublen) const
-{
-    return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
-}
-
-int String::icompare(szt pos, szt len, const char* str, szt subpos, szt sublen) const
-{
-    return compare_(data(), length(), pos, len, str, strlen(str), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
 }
 
 String String::toLower() const

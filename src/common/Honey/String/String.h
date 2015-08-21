@@ -102,22 +102,10 @@ public:
     szt copy(char* s, szt len, szt pos = 0) const                           { std::string str(begin() + pos, begin() + pos + len); return str.copy(s, str.length()); }
 
     String substr(szt pos = 0, szt len = npos) const                        { return Super::substr(pos, len); }
-
-    using Super::compare;
-    int compare(const std::string& str) const                               { return compare(0, npos, str); }
-    int compare(const char* str) const                                      { return compare(0, npos, str); }
-    int compare(size_t pos, size_t len, const std::string& str, szt subpos = 0, szt sublen = npos) const;
-    int compare(size_t pos, size_t len, const char* str, szt subpos = 0, szt sublen = npos) const;
     
     /// Case-insensitive compare
     int icompare(const String& str) const                                   { return icompare(0, npos, str); }
-    int icompare(const Char* str) const                                     { return icompare(0, npos, str); }
-    int icompare(const std::string& str) const                              { return icompare(0, npos, str); }
-    int icompare(const char* str) const                                     { return icompare(0, npos, str); }
     int icompare(szt pos, szt len, const String& str, szt subpos = 0, szt sublen = npos) const;
-    int icompare(szt pos, szt len, const Char* str, szt subpos = 0, szt sublen = npos) const;
-    int icompare(szt pos, szt len, const std::string& str, szt subpos = 0, szt sublen = npos) const;
-    int icompare(szt pos, szt len, const char* str, szt subpos = 0, szt sublen = npos) const;
     
     /// Split a string into a list of separate substrings delimited by delim
     List split(const String& delim = String(1, ' '), szt pos = 0, szt count = npos) const;
@@ -142,26 +130,26 @@ public:
 /// \name String methods
 /// @{
 inline String operator+(const String& lhs, const String& rhs)               { return String(lhs).append(rhs); }
-template<class Char> String operator+(const String& lhs, const Char* rhs)   { return String(lhs).append(rhs); }
-template<class Char> String operator+(const Char* lhs, const String& rhs)   { return String(lhs).append(rhs); }
+inline String operator+(const String& lhs, const Char* rhs)                 { return String(lhs).append(rhs); }
+inline String operator+(const Char* lhs, const String& rhs)                 { return String(lhs).append(rhs); }
 inline bool operator==(const String& lhs, const String& rhs)                { return !lhs.compare(rhs); }
-template<class Char> bool operator==(const String& lhs, const Char* rhs)    { return !lhs.compare(rhs); }
-template<class Char> bool operator==(const Char* lhs, const String& rhs)    { return !rhs.compare(lhs); }
+inline bool operator==(const String& lhs, const Char* rhs)                  { return !lhs.compare(rhs); }
+inline bool operator==(const Char* lhs, const String& rhs)                  { return !rhs.compare(lhs); }
 inline bool operator!=(const String& lhs, const String& rhs)                { return lhs.compare(rhs); }
-template<class Char> bool operator!=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs); }
-template<class Char> bool operator!=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs); }
+inline bool operator!=(const String& lhs, const Char* rhs)                  { return lhs.compare(rhs); }
+inline bool operator!=(const Char* lhs, const String& rhs)                  { return rhs.compare(lhs); }
 inline bool operator< (const String& lhs, const String& rhs)                { return lhs.compare(rhs) < 0; }
-template<class Char> bool operator< (const String& lhs, const Char* rhs)    { return lhs.compare(rhs) < 0; }
-template<class Char> bool operator< (const Char* lhs, const String& rhs)    { return rhs.compare(lhs) > 0; }
+inline bool operator< (const String& lhs, const Char* rhs)                  { return lhs.compare(rhs) < 0; }
+inline bool operator< (const Char* lhs, const String& rhs)                  { return rhs.compare(lhs) > 0; }
 inline bool operator> (const String& lhs, const String& rhs)                { return lhs.compare(rhs) > 0; }
-template<class Char> bool operator> (const String& lhs, const Char* rhs)    { return lhs.compare(rhs) > 0; }
-template<class Char> bool operator> (const Char* lhs, const String& rhs)    { return rhs.compare(lhs) < 0; }
+inline bool operator> (const String& lhs, const Char* rhs)                  { return lhs.compare(rhs) > 0; }
+inline bool operator> (const Char* lhs, const String& rhs)                  { return rhs.compare(lhs) < 0; }
 inline bool operator<=(const String& lhs, const String& rhs)                { return lhs.compare(rhs) <= 0; }
-template<class Char> bool operator<=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs) <= 0; }
-template<class Char> bool operator<=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs) >= 0; }
+inline bool operator<=(const String& lhs, const Char* rhs)                  { return lhs.compare(rhs) <= 0; }
+inline bool operator<=(const Char* lhs, const String& rhs)                  { return rhs.compare(lhs) >= 0; }
 inline bool operator>=(const String& lhs, const String& rhs)                { return lhs.compare(rhs) >= 0; }
-template<class Char> bool operator>=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs) >= 0; }
-template<class Char> bool operator>=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs) <= 0; }
+inline bool operator>=(const String& lhs, const Char* rhs)                  { return lhs.compare(rhs) >= 0; }
+inline bool operator>=(const Char* lhs, const String& rhs)                  { return rhs.compare(lhs) <= 0; }
 
 /// Ensures that str points to a valid C-style string.  If str is null then the result is an empty C-string (ie. "").
 inline const Char* c_str(const Char* str)                                   { return str ? str : u""; }
