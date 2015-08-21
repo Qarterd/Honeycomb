@@ -46,16 +46,20 @@ public:
     /// Forwards to assign()
     template<class T>
     String& operator=(T&& rhs)                                              { return assign(forward<T>(rhs)); }
-    String& operator+=(const String& rhs)                                   { return append(rhs); }
-    String& operator+=(Char rhs)                                            { return append(szt(1), rhs); }
-    String& operator+=(char rhs)                                            { return append(szt(1), rhs); }
+    /// Forwards to append()
+    template<class T>
+    String& operator+=(T&& rhs)                                             { return append(forward<T>(rhs)); }
+    String& operator+=(Char rhs)                                            { return append(1, rhs); }
+    String& operator+=(char rhs)                                            { return append(1, rhs); }
     
     String& clear()                                                         { Super::clear(); return *this; }
 
     /// @{
     /// Forwards to insert() at back
-    template<class T>
-    String& append(T&& str, szt subpos = 0, szt sublen = npos)              { return insert(length(), forward<T>(str), subpos, sublen); }
+    String& append(const String& str, szt subpos = 0, szt sublen = npos)    { return insert(length(), str, subpos, sublen); }
+    String& append(const std::string& str, szt subpos = 0, szt sublen = npos)   { return insert(length(), str, subpos, sublen); }
+    String& append(const Char* str, szt subpos = 0, szt sublen = npos)      { return insert(length(), str, subpos, sublen); }
+    String& append(const char* str, szt subpos = 0, szt sublen = npos)      { return insert(length(), str, subpos, sublen); }
     String& append(szt n, Char c)                                           { return insert(length(), n, c); }
     String& append(szt n, char c)                                           { return insert(length(), n, c); }
     template<class InputIterator>
@@ -64,8 +68,10 @@ public:
 
     /// @{
     /// Clears and forwards to append()
-    template<class T>
-    String& assign(T&& str, szt subpos = 0, szt sublen = npos)              { clear(); return append(forward<T>(str), subpos, sublen); }
+    String& assign(const String& str, szt subpos = 0, szt sublen = npos)    { clear(); return append(str, subpos, sublen); }
+    String& assign(const std::string& str, szt subpos = 0, szt sublen = npos)   { clear(); return append(str, subpos, sublen); }
+    String& assign(const Char* str, szt subpos = 0, szt sublen = npos)      { clear(); return append(str, subpos, sublen); }
+    String& assign(const char* str, szt subpos = 0, szt sublen = npos)      { clear(); return append(str, subpos, sublen); }
     String& assign(szt n, Char c)                                           { clear(); return append(n, c); }
     String& assign(szt n, char c)                                           { clear(); return append(n, c); }
     template<class InputIterator>
@@ -73,9 +79,10 @@ public:
     /// @}
     
     String& insert(szt pos, const String& str, szt subpos = 0, szt sublen = npos);
+    String& insert(szt pos, const std::string& str, szt subpos = 0, szt sublen = npos);
     String& insert(szt pos, const Char* str, szt subpos = 0, szt sublen = npos);
-    String& insert(szt pos, szt n, Char c)                                  { Super::insert(pos, n, c); return *this; }
     String& insert(szt pos, const char* str, szt subpos = 0, szt sublen = npos);
+    String& insert(szt pos, szt n, Char c)                                  { Super::insert(pos, n, c); return *this; }
     String& insert(szt pos, szt n, char c)                                  { return insert(pos, n, static_cast<Char>(c)); }
     iterator insert(const_iterator p, Char c)                               { return Super::insert(p, c); }
     iterator insert(const_iterator p, szt n, Char c)                        { return Super::insert(p, n, c); }
@@ -96,11 +103,22 @@ public:
 
     String substr(szt pos = 0, szt len = npos) const                        { return Super::substr(pos, len); }
 
+    using Super::compare;
+    int compare(const std::string& str) const                               { return compare(0, npos, str); }
+    int compare(const char* str) const                                      { return compare(0, npos, str); }
+    int compare(size_t pos, size_t len, const std::string& str, szt subpos = 0, szt sublen = npos) const;
+    int compare(size_t pos, size_t len, const char* str, szt subpos = 0, szt sublen = npos) const;
+    
     /// Case-insensitive compare
     int icompare(const String& str) const                                   { return icompare(0, npos, str); }
-    int icompare(   szt pos, szt len,
-                    const String& str, szt subpos = 0, szt sublen = npos) const;
-
+    int icompare(const Char* str) const                                     { return icompare(0, npos, str); }
+    int icompare(const std::string& str) const                              { return icompare(0, npos, str); }
+    int icompare(const char* str) const                                     { return icompare(0, npos, str); }
+    int icompare(szt pos, szt len, const String& str, szt subpos = 0, szt sublen = npos) const;
+    int icompare(szt pos, szt len, const Char* str, szt subpos = 0, szt sublen = npos) const;
+    int icompare(szt pos, szt len, const std::string& str, szt subpos = 0, szt sublen = npos) const;
+    int icompare(szt pos, szt len, const char* str, szt subpos = 0, szt sublen = npos) const;
+    
     /// Split a string into a list of separate substrings delimited by delim
     List split(const String& delim = String(1, ' '), szt pos = 0, szt count = npos) const;
 
@@ -123,19 +141,31 @@ public:
 
 /// \name String methods
 /// @{
+inline String operator+(const String& lhs, const String& rhs)               { return String(lhs).append(rhs); }
+template<class Char> String operator+(const String& lhs, const Char* rhs)   { return String(lhs).append(rhs); }
+template<class Char> String operator+(const Char* lhs, const String& rhs)   { return String(lhs).append(rhs); }
+inline bool operator==(const String& lhs, const String& rhs)                { return !lhs.compare(rhs); }
+template<class Char> bool operator==(const String& lhs, const Char* rhs)    { return !lhs.compare(rhs); }
+template<class Char> bool operator==(const Char* lhs, const String& rhs)    { return !rhs.compare(lhs); }
+inline bool operator!=(const String& lhs, const String& rhs)                { return lhs.compare(rhs); }
+template<class Char> bool operator!=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs); }
+template<class Char> bool operator!=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs); }
+inline bool operator< (const String& lhs, const String& rhs)                { return lhs.compare(rhs) < 0; }
+template<class Char> bool operator< (const String& lhs, const Char* rhs)    { return lhs.compare(rhs) < 0; }
+template<class Char> bool operator< (const Char* lhs, const String& rhs)    { return rhs.compare(lhs) > 0; }
+inline bool operator> (const String& lhs, const String& rhs)                { return lhs.compare(rhs) > 0; }
+template<class Char> bool operator> (const String& lhs, const Char* rhs)    { return lhs.compare(rhs) > 0; }
+template<class Char> bool operator> (const Char* lhs, const String& rhs)    { return rhs.compare(lhs) < 0; }
+inline bool operator<=(const String& lhs, const String& rhs)                { return lhs.compare(rhs) <= 0; }
+template<class Char> bool operator<=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs) <= 0; }
+template<class Char> bool operator<=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs) >= 0; }
+inline bool operator>=(const String& lhs, const String& rhs)                { return lhs.compare(rhs) >= 0; }
+template<class Char> bool operator>=(const String& lhs, const Char* rhs)    { return lhs.compare(rhs) >= 0; }
+template<class Char> bool operator>=(const Char* lhs, const String& rhs)    { return rhs.compare(lhs) <= 0; }
 
 /// Ensures that str points to a valid C-style string.  If str is null then the result is an empty C-string (ie. "").
 inline const Char* c_str(const Char* str)                                   { return str ? str : u""; }
 inline const char* c_str(const char* str)                                   { return str ? str : ""; }
-
-/// Concatenate strings
-inline String operator+(const String& lhs, const String& rhs)               { return std::operator+(lhs, rhs); }
-inline bool operator==(const String& lhs, const String& rhs)                { return std::operator==(lhs, rhs); }
-inline bool operator!=(const String& lhs, const String& rhs)                { return std::operator!=(lhs, rhs); }
-inline bool operator< (const String& lhs, const String& rhs)                { return std::operator<(lhs, rhs); }
-inline bool operator> (const String& lhs, const String& rhs)                { return std::operator>(lhs, rhs); }
-inline bool operator<=(const String& lhs, const String& rhs)                { return std::operator<=(lhs, rhs); }
-inline bool operator>=(const String& lhs, const String& rhs)                { return std::operator>=(lhs, rhs); }
 /// @}
 
 /// @}

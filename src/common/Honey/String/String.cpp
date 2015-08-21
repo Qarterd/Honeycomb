@@ -13,6 +13,13 @@ String& String::insert(szt pos, const String& str, szt subpos, szt sublen)
     return *this;
 }
 
+String& String::insert(szt pos, const std::string& str, szt subpos, szt sublen)
+{
+    if (sublen == npos) sublen = str.length() - subpos;
+    Super::insert(begin() + pos, str.data() + subpos, str.data() + subpos + sublen);
+    return *this;
+}
+
 String& String::insert(szt pos, const Char* str, szt subpos, szt sublen)
 {
     assert(str);
@@ -36,26 +43,53 @@ String& String::replace(szt pos, szt len, const String& str, szt subpos, szt sub
     return *this;
 }
 
-int String::icompare(   szt pos, szt len,
-                        const String& str, szt subpos, szt sublen) const
+template<class Char, class Char2, class Comp>
+static int compare_(    const Char* str, szt n, szt pos, szt len,
+                        const Char2* str2, szt n2, szt pos2, szt len2,
+                        Comp&& comp)
 {
-    if (len == npos) len = length() - pos;
-    if (sublen == npos) sublen = str.length() - subpos;
-
-    if (pos + len > length()) len = length() - pos;
-    if (subpos + sublen > str.length()) sublen = str.length() - subpos;
-
-    szt length = (len < sublen) ? len : sublen;
-
+    if (len == String::npos) len = n - pos;
+    if (len2 == String::npos) len2 = n2 - pos2;
+    if (pos + len > n) len = n - pos;
+    if (pos2 + len2 > n2) len2 = n2 - pos2;
+    
+    szt length = len < len2 ? len : len2;
     for (szt i = 0; i < length; ++i)
     {
-        Char val = std::tolower((*this)[pos+i]);
-        Char val2 = std::tolower(str[subpos+i]);
-        if (val != val2) return val < val2 ? -1 : 1;
+        if (comp(str[pos+i], str2[pos2+i])) return -1;
+        if (comp(str2[pos2+i], str[pos+i])) return 1;
     }
+    return len != len2 ? (len < len2 ? -1 : 1) : 0;
+}
 
-    if (len != sublen) return len < sublen ? -1 : 1;
-    return 0;
+int String::compare(szt pos, szt len, const std::string& str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return a < b; });
+}
+
+int String::compare(szt pos, szt len, const char* str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str, strlen(str), subpos, sublen, [](Char a, Char b) { return a < b; });
+}
+
+int String::icompare(szt pos, szt len, const String& str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
+}
+
+int String::icompare(szt pos, szt len, const Char* str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str, std::char_traits<Char>::length(str), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
+}
+
+int String::icompare(szt pos, szt len, const std::string& str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str.data(), str.length(), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
+}
+
+int String::icompare(szt pos, szt len, const char* str, szt subpos, szt sublen) const
+{
+    return compare_(data(), length(), pos, len, str, strlen(str), subpos, sublen, [](Char a, Char b) { return std::tolower(a) < std::tolower(b); });
 }
 
 String String::toLower() const
