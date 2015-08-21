@@ -130,8 +130,12 @@ public:
 /// \name String methods
 /// @{
 inline String operator+(const String& lhs, const String& rhs)               { return String(lhs).append(rhs); }
+inline String operator+(const String& lhs, const std::string& rhs)          { return String(lhs).append(rhs); }
 inline String operator+(const String& lhs, const Char* rhs)                 { return String(lhs).append(rhs); }
+inline String operator+(const String& lhs, const char* rhs)                 { return String(lhs).append(rhs); }
+inline String operator+(const std::string& lhs, const String& rhs)          { return String(lhs).append(rhs); }
 inline String operator+(const Char* lhs, const String& rhs)                 { return String(lhs).append(rhs); }
+inline String operator+(const char* lhs, const String& rhs)                 { return String(lhs).append(rhs); }
 inline bool operator==(const String& lhs, const String& rhs)                { return !lhs.compare(rhs); }
 inline bool operator==(const String& lhs, const Char* rhs)                  { return !lhs.compare(rhs); }
 inline bool operator==(const Char* lhs, const String& rhs)                  { return !rhs.compare(lhs); }
