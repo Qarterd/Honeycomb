@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/String/Stream.h"
+#include "Honey/String/ByteStream.h"
 #include "Honey/String/Hash.h"
 
 namespace honey
@@ -62,20 +63,19 @@ public:
     operator int() const                            { return _hash; }
 
     #ifndef FINAL
-        friend ostream& operator<<(ostream& os, const Id& val)  { return os << (val.hash() ? val.name() : "idnull"); }
+        friend ostream& operator<<(ostream& os, const Id& val)      { return val._hash ? (val._name.length() ? os << val._name : os << val._hash) : os << "idnull"; }
     #else
-        friend ostream& operator<<(ostream& os, const Id& val)  { return os << val.hash(); }
+        friend ostream& operator<<(ostream& os, const Id& val)      { return val._hash ? os << val._hash : os << "idnull"; }
     #endif
+    friend ByteStream& operator<<(ByteStream& os, const Id& val)    { return os << val._hash; }
+    friend ByteStream& operator>>(ByteStream& is, Id& val)          { return is >> val._hash; }
     
-private:
+protected:
     #ifndef FINAL
         String _name;
     #endif
     int _hash;
 };
-
-/// Null id
-#define idnull IdLiteral()
 
 /// Id created from a string literal at compile-time. \see string literal operator `_id`
 class IdLiteral
@@ -107,10 +107,11 @@ public:
     constexpr operator int() const                  { return _hash; }
     
     #ifndef FINAL
-        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return os << (val.hash() ? val.name() : "idnull"); }
+        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return val._hash ? os << val._name : os << "idnull"; }
     #else
-        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return os << val.hash(); }
+        friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return val._hash ? os << val._hash : os << "idnull"; }
     #endif
+    friend ByteStream& operator<<(ByteStream& os, const IdLiteral& val) { return os << val._hash; }
     
 private:
     #ifndef FINAL
@@ -119,13 +120,16 @@ private:
     int _hash;
 };
 
+/// Null id
+#define idnull IdLiteral()
+
 /// Create an id from a string literal at compile-time.
 /**
   * This operator can be used in a case expression of a switch block (ex. case "foo"_id: ).
   */ 
 constexpr IdLiteral operator"" _id(const char* str, szt len)     { return IdLiteral(str, len); }
-/// @}
 
+/** \cond */
 inline Id::Id(const IdLiteral& rhs)                         : debug_if(_name(rhs._name),) _hash(rhs._hash) {}
 inline Id& Id::operator=(const IdLiteral& rhs)              { debug_if(_name = rhs._name;) _hash = rhs._hash; return *this; }
 inline bool Id::operator==(const IdLiteral& rhs) const      { return _hash == rhs._hash; }
@@ -134,9 +138,9 @@ inline bool Id::operator<=(const IdLiteral& rhs) const      { return _hash <= rh
 inline bool Id::operator>=(const IdLiteral& rhs) const      { return _hash >= rhs._hash; }
 inline bool Id::operator< (const IdLiteral& rhs) const      { return _hash < rhs._hash; }
 inline bool Id::operator> (const IdLiteral& rhs) const      { return _hash > rhs._hash; }
+/** \endcond */
 
 /// Holds both a name string and its hashed value, and unlike Id the name is never compiled out.
-/** \ingroup Id */
 class NameId : public Id
 {
 public:
@@ -150,12 +154,15 @@ public:
     
     const String& name() const                      { return _name; }
     
-    friend ostream& operator<<(ostream& os, const NameId& val)  { return os << val.name(); }
+    friend ostream& operator<<(ostream& os, const NameId& val)          { return os << val._name; }
+    friend ByteStream& operator<<(ByteStream& os, const NameId& val)    { return os << static_cast<const Id&>(val) << val._name; }
+    friend ByteStream& operator>>(ByteStream& is, NameId& val)          { is >> static_cast<Id&>(val) >> val._name; debug_if(val.Id::_name = val._name); assert(val._hash == hash::fast(val._name)); return is; }
     
 private:
     String _name;
 };
-    
+/// @}
+
 }
 
 /** \cond */

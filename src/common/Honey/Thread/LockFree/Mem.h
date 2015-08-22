@@ -3,7 +3,6 @@
 
 #include "Honey/Thread/Thread.h"
 #include "Honey/Thread/Atomic.h"
-#include "Honey/Misc/StdUtil.h"
 
 namespace honey { namespace lockfree
 {

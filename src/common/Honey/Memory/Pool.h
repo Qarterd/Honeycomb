@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Honey/Misc/MtMap.h"
-#include "Honey/Misc/StdUtil.h"
 #include "Honey/Thread/Lock/Spin.h"
 
 namespace honey

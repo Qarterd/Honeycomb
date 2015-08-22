@@ -2,8 +2,6 @@
 #pragma once
 
 #include "Honey/String/Stream.h"
-#include "Honey/Memory/SharedPtr.h"
-#include "Honey/Memory/UniquePtr.h"
 
 namespace honey
 {

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Honey/Thread/Condition/Condition.h"
-#include "Honey/Memory/UniquePtr.h"
 
 namespace honey
 {

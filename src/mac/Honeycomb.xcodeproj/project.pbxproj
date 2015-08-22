@@ -72,6 +72,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		373EA45B1B886C46006A2624 /* ByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteStream.h; sourceTree = "<group>"; };
 		376C06241B6699A8007439A4 /* Bytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytes.h; sourceTree = "<group>"; };
 		376C06251B669B16007439A4 /* Bytes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bytes.cpp; sourceTree = "<group>"; };
 		376C06271B6754C6007439A4 /* Encode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Encode.h; sourceTree = "<group>"; };
@@ -613,6 +614,7 @@
 				376C06281B6754CC007439A4 /* Encode.cpp */,
 				376C06241B6699A8007439A4 /* Bytes.h */,
 				376C06251B669B16007439A4 /* Bytes.cpp */,
+				373EA45B1B886C46006A2624 /* ByteStream.h */,
 				37FEB4E91B52477D0095BB69 /* Hash.cpp */,
 				37FEB4EA1B52477D0095BB69 /* Hash.h */,
 				37FEB4EB1B52477D0095BB69 /* Id.h */,

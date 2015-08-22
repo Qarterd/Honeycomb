@@ -254,13 +254,6 @@ void test()
     }
     
     {
-        debug_print(sout() << "Tuple to string: " << tuple<Id,int,String>{"a"_id,2,"c"} << endl);
-        debug_print(sout() << "Vector to string: " << vector<Id>{"a"_id,"b"_id,"c"_id} << endl);
-        debug_print(sout() << "Set to string: " << set<Id>{"a"_id,"b"_id,"c"_id} << endl);
-        debug_print(sout() << "Map to string: " << std::map<Id,int>{{"a"_id,1},{"b"_id,2},{"c"_id,3}} << endl);
-    }
-    
-    {
         ByteBuf buf;
         ByteStream bs(&buf);
         bs << make_tuple(true, 97_b, 'b', -0xFFF, -0xFFFFFFFFFL, 0xFFFFFFFFFUL, 1.1f, 2.2);
@@ -268,6 +261,22 @@ void test()
         tuple<bool, byte, char, int, int64, uint64, float, double> t;
         bs >> t;
         debug_print(sout() << "Tuple from bytes: " << t << endl);
+        
+        bs << vector<int>{1,2,3,4,5};
+        vector<int> vec;
+        bs >> vec;
+        debug_print(sout() << "Vector from bytes: " << vec << endl);
+        
+        bs << set<NameId>{"a","b","c"};
+        set<NameId> set_;
+        bs >> set_;
+        debug_print(sout() << "Set from bytes: " << set_ << endl);
+        
+        bs << std::map<NameId,int>{{"a",1},{"b",2},{"c",3}};
+        std::map<NameId,int> map;
+        bs >> map;
+        debug_print(sout() << "Map from bytes: " << map << endl);
+        
     }
     
     {

@@ -2,7 +2,6 @@
 #pragma once
 
 #include "Honey/String/Id.h"
-#include "Honey/Misc/StdUtil.h"
 #include "Honey/Memory/SmallAllocator.h"
 
 namespace honey

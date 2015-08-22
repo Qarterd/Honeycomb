@@ -2,8 +2,8 @@
 #pragma once
 
 #include "Honey/Math/Numeral.h"
-#include "Honey/Misc/Enum.h"
 #include "Honey/Misc/Range.h"
+#include "Honey/Memory/UniquePtr.h"
 
 namespace honey
 {
@@ -200,6 +200,47 @@ public:
 private:
     UniquePtr<T, finalize<T, Alloc>> _ptr;
 };
+
+/// Base class to hold iostream manipulator state.  Inherit from this class and call `Subclass::inst(ios)` to attach an instance of Subclass to an iostream.
+template<class Subclass>
+class Manip
+{
+public:
+    static bool hasInst(ios_base& ios)                                  { return ios.pword(pword); }
+    static Subclass& inst(ios_base& ios)
+    {
+        if (!hasInst(ios)) { ios.pword(pword) = new Subclass(); ios.register_callback(&Manip::delete_, 0); }
+        return *static_cast<Subclass*>(ios.pword(pword));
+    }
+    
+private:
+    static void delete_(ios_base::event ev, ios_base& ios, int)         { if (ev != ios_base::erase_event) return;honey::delete_(&inst(ios)); }
+    static const int pword;
+};
+template<class Subclass> const int Manip<Subclass>::pword = ios_base::xalloc();
+
+/// Helper to create a manipulator that takes arguments. \see manipFunc()
+template<class Func, class Tuple>
+struct ManipFunc
+{
+    template<class Func_, class Tuple_>
+    ManipFunc(Func_&& f, Tuple_&& args)                                 : f(forward<Func_>(f)), args(forward<Tuple_>(args)) {}
+    
+    template<class Stream>
+    friend Stream& operator<<(Stream& os, const ManipFunc& manip)       { manip.apply(os, mt::make_idxseq<tuple_size<Tuple>::value>()); return os; }
+    template<class Stream>
+    friend Stream& operator>>(Stream& is, ManipFunc& manip)             { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    
+    template<class Stream, szt... Seq>
+    void apply(Stream& ios, mt::idxseq<Seq...>) const                   { f(ios, get<Seq>(args)...); }
+    
+    Func f;
+    Tuple args;
+};
+
+/// Helper to create a manipulator that takes arguments. eg. A manip named 'foo': `auto foo(int val) { return manipFunc([=](ios_base& ios) { FooManip::inst(ios).val = val; }); }`
+template<class Func, class... Args>
+inline auto manipFunc(Func&& f, Args&&... args)             { return ManipFunc<Func, decltype(make_tuple(forward<Args>(args)...))>(forward<Func>(f), make_tuple(forward<Args>(args)...)); }
 
 /// @}
 

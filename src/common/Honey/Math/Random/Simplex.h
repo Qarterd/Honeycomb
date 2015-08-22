@@ -7,7 +7,6 @@
 namespace honey
 {
 
-/** \cond */
 /// Methods common to all simplex noise dimensions
 template<class Subclass, int Dim, class Real>
 class SimplexNoiseCommon
@@ -23,7 +22,6 @@ protected:
     int _size;
     vector<int> _perm;
 };
-/** \endcond */
 
 /// Generate smooth noise over space. Implementation of Perlin's "Simplex Noise" generator.
 /**

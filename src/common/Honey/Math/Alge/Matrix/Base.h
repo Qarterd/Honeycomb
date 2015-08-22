@@ -1,7 +1,6 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Misc/StdUtil.h"
 #include "Honey/Misc/Optional.h"
 #include "Honey/Math/Alge/Matrix/Builder.h"
 #include "Honey/Math/Alge/Matrix/Iter.h"

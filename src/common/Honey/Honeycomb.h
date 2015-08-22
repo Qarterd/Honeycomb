@@ -85,6 +85,7 @@
 #include "Honey/Object/PropertyObject.h"
 #include "Honey/Object/Signal.h"
 #include "Honey/String/Bytes.h"
+#include "Honey/String/ByteStream.h"
 #include "Honey/String/Encode.h"
 #include "Honey/String/Hash.h"
 #include "Honey/String/Id.h"
