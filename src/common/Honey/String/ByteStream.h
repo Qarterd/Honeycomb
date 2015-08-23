@@ -50,14 +50,42 @@ class ByteStream : public std::iostream
 public:
     typedef std::iostream Super;
     
-    explicit ByteStream(std::streambuf* sb)                 : Super(sb) {}
-    ByteStream(ByteStream&& rhs)                            : Super(std::move(rhs)) {}
+    explicit ByteStream(std::streambuf* sb)                     : Super(sb) {}
+    ByteStream(ByteStream&& rhs)                                : Super(std::move(rhs)) {}
     
-    ByteStream& operator=(ByteStream&& rhs)                 { Super::operator=(std::move(rhs)); return *this; }
+    ByteStream& operator=(ByteStream&& rhs)                     { Super::operator=(std::move(rhs)); return *this; }
+    
+    using Super::get;
+    ByteStream& get(byte& c)                                    { Super::get(reinterpret_cast<char&>(c)); return *this; }
+    ByteStream& get(byte* s, std::streamsize n)                 { Super::get(reinterpret_cast<char*>(s), n); return *this; }
+    ByteStream& get(byte* s, std::streamsize n, byte delim)     { Super::get(reinterpret_cast<char*>(s), n, delim); return *this; }
+    ByteStream& get(std::streambuf& sb)                         { Super::get(sb); return *this; }
+    ByteStream& get(std::streambuf& sb, byte delim)             { Super::get(sb, delim); return *this; }
+    using Super::getline;
+    ByteStream& getline(byte* s, std::streamsize n)             { Super::getline(reinterpret_cast<char*>(s), n); return *this; }
+    ByteStream& getline(byte* s, std::streamsize n, byte delim) { Super::getline(reinterpret_cast<char*>(s), n, delim); return *this; }
+    ByteStream& ignore(std::streamsize count = 1, int_type delim = traits_type::eof()) { Super::ignore(count, delim); return *this; }
+    using Super::read;
+    ByteStream& read(byte* s, std::streamsize n)                { Super::read(reinterpret_cast<char*>(s), n); return *this; }
+    using Super::readsome;
+    std::streamsize readsome(byte* s, std::streamsize n)        { return Super::readsome(reinterpret_cast<char*>(s), n); }
+    using Super::putback;
+    ByteStream& putback(byte c)                                 { Super::putback(c); return *this; }
+    ByteStream& unget()                                         { Super::unget(); return *this; }
+    ByteStream& seekg(pos_type pos)                             { Super::seekg(pos); return *this; }
+    ByteStream& seekg(off_type off, ios_base::seekdir dir)      { Super::seekg(off, dir); return *this; }
+    
+    using Super::put;
+    ByteStream& put(byte c)                                     { Super::put(c); return *this; }
+    using Super::write;
+    ByteStream& write(const byte* s, std::streamsize n)         { Super::write(reinterpret_cast<const char*>(s), n); return *this; }
+    ByteStream& seekp(pos_type pos)                             { Super::seekp(pos); return *this; }
+    ByteStream& seekp(off_type off, ios_base::seekdir dir)      { Super::seekp(off, dir); return *this; }
+    ByteStream& flush()                                         { Super::flush(); return *this; }
 };
 
 /// Bool to bytes
-inline ByteStream& operator<<(ByteStream& os, const bool val)   { os.put(val); return os; }
+inline ByteStream& operator<<(ByteStream& os, const bool val)   { os.put(byte(val)); return os; }
 /// Byte to bytes
 inline ByteStream& operator<<(ByteStream& os, const byte val)   { os.put(val); return os; }
 /// UTF-8 char to bytes
@@ -68,7 +96,7 @@ ByteStream& operator<<(ByteStream& os, const T val)
 {
     byte a[sizeof(T)];
     BitOp::toPartsBig(val, a);
-    os.write(reinterpret_cast<char*>(a), sizeof(T));
+    os.write(a, sizeof(T));
     return os;
 }
 /// Char to bytes
@@ -77,7 +105,7 @@ inline ByteStream& operator<<(ByteStream& os, Char val)         { return os << u
 /// Bool from bytes
 inline ByteStream& operator>>(ByteStream& is, bool& val)        { val = is.get(); return is; }
 /// Byte from bytes
-inline ByteStream& operator>>(ByteStream& is, byte& val)        { is.get(reinterpret_cast<char&>(val)); return is; }
+inline ByteStream& operator>>(ByteStream& is, byte& val)        { is.get(val); return is; }
 /// UTF-8 char from bytes
 inline ByteStream& operator>>(ByteStream& is, char& val)        { is.get(val); return is; }
 /// Multi-byte number from big-endian bytes
@@ -85,7 +113,7 @@ template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_
 ByteStream& operator>>(ByteStream& is, T& val)
 {
     byte a[sizeof(T)];
-    is.read(reinterpret_cast<char*>(a), sizeof(T));
+    is.read(a, sizeof(T));
     val = BitOp::fromPartsBig<T>(a);
     return is;
 }
@@ -160,22 +188,31 @@ typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
 template<class T, szt N>
 ByteStream& operator<<(ByteStream& os, const array<T,N>& a)
                                                         { for (auto& e: a) os << e; return os; }
+/// C-array to bytes. C-arrays of chars are interpreted as C-strings, so for proper char arrays use std::array instead.
+template<class T, szt N, typename std::enable_if<!std::is_same<T,char>::value && !std::is_same<T,Char>::value,int>::type=0>
+ByteStream& operator<<(ByteStream& os, const T (&a)[N]) { for (auto& e: a) os << e; return os; }
 /// Vector to bytes
 template<class T, class Alloc>
 ByteStream& operator<<(ByteStream& os, const vector<T,Alloc>& vec)
                                                         { priv::listToBytes(os, vec); return os; }
-/// UTF-8 string to bytes
-inline ByteStream& operator<<(ByteStream& os, const char* str)
-                                                        { auto len = strlen(str); os << bytestream::varSize(len); os.write(str, len); return os; }
-/// UTF-8 string to bytes
-inline ByteStream& operator<<(ByteStream& os, const std::string& str)
-                                                        { os << bytestream::varSize(str.length()); os.write(str.data(), str.length()); return os; }
 /// String to bytes
 inline ByteStream& operator<<(ByteStream& os, const String& str)
                                                         { priv::listToBytes(os, str); return os; }
+/// C-string to bytes
+inline ByteStream& operator<<(ByteStream& os, const Char* str)
+                                                        { auto len = std::char_traits<Char>::length(str); os << bytestream::varSize(len); for (auto& e: range(str,str+len)) os << e; return os; }
+/// UTF-8 string to bytes
+inline ByteStream& operator<<(ByteStream& os, const std::string& str)
+                                                        { os << bytestream::varSize(str.length()); os.write(str.data(), str.length()); return os; }
+/// UTF-8 C-string to bytes
+inline ByteStream& operator<<(ByteStream& os, const char* str)
+                                                        { auto len = strlen(str); os << bytestream::varSize(len); os.write(str, len); return os; }
 /// Bytes to bytes
 inline ByteStream& operator<<(ByteStream& os, const Bytes& bs)
-                                                        { os << bytestream::varSize(bs.size()); os.write(reinterpret_cast<const char*>(bs.data()), bs.size()); return os; }
+                                                        { os << bytestream::varSize(bs.size()); os.write(bs.data(), bs.size()); return os; }
+/// Byte C-string to bytes, unimplemented, use ByteStream::write(bs, n) instead
+template<class T, typename std::enable_if<std::is_same<T,const byte*>::value || std::is_same<T,byte*>::value,int>::type=0>
+ByteStream& operator<<(ByteStream& os, T bs)            { static_assert(!mt::True<T>::value, "Unimplemented, use ByteStream::write(bs, n) instead"); return os; }
 /// Set to bytes
 template<class T, class Compare, class Alloc>
 ByteStream& operator<<(ByteStream& os, const set<T,Compare,Alloc>& set)
@@ -230,21 +267,32 @@ typename std::enable_if<mt::isTuple<Tuple>::value, ByteStream&>::type
     operator>>(ByteStream& is, Tuple& t)                { priv::tupleFromBytes(is, t, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
 /// Array from bytes
 template<class T, szt N>
-ByteStream& operator>>(ByteStream& is, array<T,N>& a)
-                                                        { for (auto& e: a) is >> e; return is; }
+ByteStream& operator>>(ByteStream& is, array<T,N>& a)   { for (auto& e: a) is >> e; return is; }
+/// C-array from bytes. C-arrays of chars are interpreted as C-strings, so for proper char arrays use std::array instead.
+template<class T, szt N, typename std::enable_if<!std::is_same<T,char>::value && !std::is_same<T,Char>::value,int>::type=0>
+ByteStream& operator>>(ByteStream& is, T (&a)[N])       { for (auto& e: a) is >> e; return is; }
 /// Vector from bytes
 template<class T, class Alloc>
 ByteStream& operator>>(ByteStream& is, vector<T,Alloc>& vec)
                                                         { szt size; is >> bytestream::varSize(size); vec.resize(size); for (auto& e: vec) is >> e; return is; }
-/// UTF-8 string from bytes
-inline ByteStream& operator>>(ByteStream& is, std::string& str)
-                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.read(str.length() ? &str[0] : nullptr, str.length()); return is; }
 /// String from bytes
 inline ByteStream& operator>>(ByteStream& is, String& str)
                                                         { szt size; is >> bytestream::varSize(size); str.resize(size); for (auto& e: str) is >> e; return is; }
+/// C-string from bytes. Pointer must point to allocated memory that is large enough to hold string including null character.
+inline ByteStream& operator>>(ByteStream& is, Char* str)
+                                                        { szt size; is >> bytestream::varSize(size); for (auto& e: range(str, str+size)) is >> e; str[size] = 0; return is; }
+/// UTF-8 string from bytes
+inline ByteStream& operator>>(ByteStream& is, std::string& str)
+                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.read(str.length() ? &str[0] : nullptr, str.length()); return is; }
+/// UTF-8 C-string from bytes. Pointer must point to allocated memory that is large enough to hold string including null character.
+inline ByteStream& operator>>(ByteStream& is, char* str)
+                                                        { szt size; is >> bytestream::varSize(size); is.read(str, size); str[size] = 0; return is; }
 /// Bytes from bytes
 inline ByteStream& operator>>(ByteStream& is, Bytes& bs)
-                                                        { szt size; is >> bytestream::varSize(size); bs.resize(size); is.read(reinterpret_cast<char*>(bs.data()), bs.size()); return is; }
+                                                        { szt size; is >> bytestream::varSize(size); bs.resize(size); is.read(bs.data(), bs.size()); return is; }
+/// Byte C-string from bytes, unimplemented, use ByteStream::read(bs, n) instead
+template<class T, typename std::enable_if<std::is_same<T,byte*>::value,int>::type=0>
+ByteStream& operator>>(ByteStream& is, T bs)            { static_assert(!mt::True<T>::value, "Unimplemented, use ByteStream::read(bs, n) instead"); return is; }
 /// Set from bytes
 template<class T, class Compare, class Alloc>
 ByteStream& operator>>(ByteStream& is, set<T,Compare,Alloc>& set)

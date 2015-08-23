@@ -185,7 +185,7 @@ class SharedPtr : priv::SharedControlPtr<SharedPtr<T>, T>
     
     static const bool isIntrusive                                   = mt::is_base_of<priv::SharedObj_tag, T>::value;
     
-    template<class T_, bool _=std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
+    template<class T_, bool = std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
     template<class T_> struct Ref_<T_, true>                        { typedef T_ type;  static type deref(T_* p) {} };
     
 public:

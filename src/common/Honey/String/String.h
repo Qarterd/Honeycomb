@@ -155,7 +155,7 @@ inline bool operator>=(const String& lhs, const String& rhs)                { re
 inline bool operator>=(const String& lhs, const Char* rhs)                  { return lhs.compare(rhs) >= 0; }
 inline bool operator>=(const Char* lhs, const String& rhs)                  { return rhs.compare(lhs) <= 0; }
 
-/// Ensures that str points to a valid C-style string.  If str is null then the result is an empty C-string (ie. "").
+/// Ensures that str points to a valid C-string.  If str is null then the result is an empty C-string (ie. "").
 inline const Char* c_str(const Char* str)                                   { return str ? str : u""; }
 inline const char* c_str(const char* str)                                   { return str ? str : ""; }
 /// @}
@@ -171,9 +171,9 @@ namespace std
     /// \ingroup String
     /// @{
     
-    /// Output UTF-16 string, pointer must not be null.
-    inline ostream& operator<<(ostream& os, honey::Char* str)               { assert(str); return os << std::string(str, str + std::char_traits<honey::Char>::length(str)); }
-    inline ostream& operator<<(ostream& os, honey::Char val)                { honey::Char str[] = {val, 0}; return os << str; }
+    /// Output UTF-16 C-string, pointer must not be null.
+    inline ostream& operator<<(ostream& os, const honey::Char* str)         { assert(str); return os << std::string(str, str + std::char_traits<honey::Char>::length(str)); }
+    inline ostream& operator<<(ostream& os, const honey::Char val)          { honey::Char str[] = {val, 0}; return os << str; }
     /// @}
 /** \cond */
 }

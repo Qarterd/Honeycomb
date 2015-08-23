@@ -18,7 +18,7 @@ class UniquePtr : mt::NoCopy
     
     template<class T_> struct Elem_                                 { typedef T_ type; };
     template<class T_> struct Elem_<T_[]>                           { typedef T_ type; };
-    template<class T_, bool _=std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
+    template<class T_, bool = std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
     template<class T_> struct Ref_<T_, true>                        { typedef T_ type;  static type deref(T_* p) {} };
     
 public:

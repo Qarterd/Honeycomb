@@ -79,6 +79,12 @@ namespace std
     /// Array to string
     template<class T, size_t N>
     ostream& operator<<(ostream& os, const array<T,N>& a)   { priv::listToString(os, a); return os; }
+    /// C-array to string
+    template<class T, size_t N, typename std::enable_if<
+                                    !std::is_same<T,char>::value && //stdlib handles char/uint8
+                                    !std::is_same<T,honey::uint8>::value &&
+                                    !std::is_same<T,honey::Char>::value,int>::type=0> //String handles Char
+    ostream& operator<<(ostream& os, const T (&a)[N])       { priv::listToString(os, a); return os; }
     /// Vector to string
     template<class T, class Alloc>
     ostream& operator<<(ostream& os, const vector<T,Alloc>& vec)
