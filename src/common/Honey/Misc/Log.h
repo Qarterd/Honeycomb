@@ -69,7 +69,7 @@ class Log
 {
 public:
     typedef DepGraph<const log::Level> LevelGraph;
-    typedef std::map<Id, log::Sink::Ptr> SinkMap;
+    typedef unordered_map<Id, log::Sink::Ptr> SinkMap;
     
     /// Builds a record
     struct RecordStream : ostringstream
@@ -113,7 +113,7 @@ public:
     RecordStream operator<<(const log::Level& level)    { return RecordStream(*this, level); }
     
 private:
-    typedef std::map<Id, std::set<Id>> FilterMap;
+    typedef unordered_map<Id, std::set<Id>> FilterMap;
 
     void push(const String& record);
     

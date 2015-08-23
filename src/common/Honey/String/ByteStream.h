@@ -4,6 +4,7 @@
 #include "Honey/String/String.h"
 #include "Honey/String/Bytes.h"
 #include "Honey/Misc/StdUtil.h"
+#include "Honey/String/Id.h"
 #include "Honey/Memory/SharedPtr.h"
 
 namespace honey
@@ -135,7 +136,7 @@ namespace bytestream
     
     /// Write or read a size (a positive integer) using a minimal number of bytes
     template<class Int, typename std::enable_if<std::is_integral<typename mt::removeRef<Int>::type>::value, int>::type=0>
-    inline auto varSize(Int&& val)                              { return priv::VarSize<Int>{forward<Int>(val)}; }
+    auto varSize(Int&& val)                                     { return priv::VarSize<Int>{forward<Int>(val)}; }
 }
 
 /// Pair to bytes
@@ -237,7 +238,7 @@ ByteStream& operator>>(ByteStream& is, vector<T,Alloc>& vec)
                                                         { szt size; is >> bytestream::varSize(size); vec.resize(size); for (auto& e: vec) is >> e; return is; }
 /// UTF-8 string from bytes
 inline ByteStream& operator>>(ByteStream& is, std::string& str)
-                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.read(&str[0], str.length()); return is; }
+                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.read(str.length() ? &str[0] : nullptr, str.length()); return is; }
 /// String from bytes
 inline ByteStream& operator>>(ByteStream& is, String& str)
                                                         { szt size; is >> bytestream::varSize(size); str.resize(size); for (auto& e: str) is >> e; return is; }
@@ -277,6 +278,99 @@ template<class Key, class T, class Hash, class KeyEqual, class Alloc>
 ByteStream& operator>>(ByteStream& is, unordered_multimap<Key,T,Hash,KeyEqual,Alloc>& map)
                                                         { priv::mapFromBytes(is, map); return is; }
 
+/// Id to bytes
+inline ByteStream& operator<<(ByteStream& os, const Id& val)        { return os << val._hash; }
+/// Id from bytes
+inline ByteStream& operator>>(ByteStream& is, Id& val)              { return is >> val._hash; }
+/// Literal id to bytes
+inline ByteStream& operator<<(ByteStream& os, const IdLiteral& val) { return os << val._hash; }
+/// Named id to bytes
+inline ByteStream& operator<<(ByteStream& os, const NameId& val)    { return os << static_cast<const Id&>(val) << val._name; }
+/// Named id from bytes
+inline ByteStream& operator>>(ByteStream& is, NameId& val)          { is >> static_cast<Id&>(val) >> val._name; debug_if(val.Id::_name = val._name); assert(val._hash == hash::fast(val._name)); return is; }
+    
+namespace bytestream
+{
+    /** \cond */
+    namespace priv
+    {
+        struct Manip : honey::Manip<Manip>
+        {
+            ~Manip()
+            {
+                assert(allocs.empty(), "ByteStream allocator stack not empty");
+                assert(sharedTables.empty(), "ByteStream shared table stack not empty");
+            }
+            
+            template<class T>
+            T* alloc(szt size) const            { return allocs.size() ? static_cast<T*>(allocs.back()(size)) : std::allocator<T>().allocate(size); }
+            
+            Id curSharedTable() const           { return sharedTables.size() ? sharedTables.back() : idnull; }
+            
+            szt sharedToIndex(void* p)
+            {
+                if (!p) return 0;
+                auto& table = sharedTablesOut[curSharedTable()];
+                auto res = table.insert(make_pair(p, table.size()));
+                return res.second ? 1 : res.first->second + 2;
+            }
+            
+            template<class T>
+            SharedPtr<T> indexToShared(szt i)
+            {
+                if (!i) return nullptr;
+                auto& table = sharedTablesIn[curSharedTable()];
+                if (i == 1)
+                {
+                    table.push_back(SharedPtr<T>(new (alloc<T>(1)) T));
+                    return static_pointer_cast<T>(table.back());
+                }
+                assert(i-2 < table.size());
+                return static_pointer_cast<T>(table[i-2]);
+            }
+            
+            void reset()
+            {
+                allocs.clear();
+                sharedTables.clear();
+                sharedTablesOut.clear();
+                sharedTablesIn.clear();
+            }
+            
+            vector<function<void* (szt)>> allocs;
+            vector<Id> sharedTables;
+            unordered_map<Id, unordered_map<void*, szt>> sharedTablesOut;
+            unordered_map<Id, vector<SharedPtr<void>>> sharedTablesIn;
+        };
+    }
+    /** \endcond */
+    
+    /// Push an allocator onto the input bytestream for subsequent unique/shared pointer object allocations
+    inline auto pushAlloc(const function<void* (szt)>& alloc)   { return manipFunc([=](ByteStream& is) { priv::Manip::inst(is).allocs.push_back(alloc); }); }
+    /// Pop an allocator from the input bytestream
+    inline auto popAlloc()                                      { return manipFunc([=](ByteStream& is) { assert(priv::Manip::inst(is).allocs.size()); priv::Manip::inst(is).allocs.pop_back(); }); }
+    /// Push a shared table id onto the bytestream for subsequent shared pointer serialization
+    inline auto pushSharedTable(const Id& id)                   { return manipFunc([=](ByteStream& ios) { priv::Manip::inst(ios).sharedTables.push_back(id); }); }
+    /// Pop a shared table id from the bytestream
+    inline auto popSharedTable()                                { return manipFunc([=](ByteStream& ios) { assert(priv::Manip::inst(ios).sharedTables.size()); priv::Manip::inst(ios).sharedTables.pop_back(); }); }
+    /// Reset bytestream manipulator state
+    inline auto reset()                                         { return manipFunc([=](ByteStream& ios) { priv::Manip::inst(ios).reset(); }); }
+    
+}
+/// UniquePtr to bytes, outputs object pointed to (and exists flag), or a null flag if no object
+template<class T, class Fin>
+ByteStream& operator<<(ByteStream& os, const UniquePtr<T,Fin>& p)
+                                                                { return p ? os << true << *p : os << false; }
+/// UniquePtr from bytes, object is allocated if necessary using current bytestream allocator
+template<class T, class Fin>
+ByteStream& operator>>(ByteStream& is, UniquePtr<T,Fin>& p)     { bool exists; is >> exists; p = exists ? new (bytestream::priv::Manip::inst(is).alloc<T>(1)) T : nullptr; return exists ? is >> *p : is; }
+/// SharedPtr to bytes, outputs object pointed to (and exists flag), or index into current shared table if already output (index=flag-2), or a null flag if no object
+template<class T>
+ByteStream& operator<<(ByteStream& os, const SharedPtr<T>& p)   { szt i = bytestream::priv::Manip::inst(os).sharedToIndex(p); return i == 1 ? os << bytestream::varSize(i) << *p : os << bytestream::varSize(i); }
+/// SharedPtr from bytes, object is allocated if necessary using current bytestream allocator
+template<class T>
+ByteStream& operator>>(ByteStream& is, SharedPtr<T>& p)         { szt i; is >> bytestream::varSize(i); p = bytestream::priv::Manip::inst(is).indexToShared<T>(i); return i == 1 ? is >> *p : is; }
+    
 /// @}
 
 }

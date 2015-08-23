@@ -1,8 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/String/Stream.h"
-#include "Honey/String/ByteStream.h"
+#include "Honey/String/String.h"
 #include "Honey/String/Hash.h"
 
 namespace honey
@@ -20,6 +19,7 @@ namespace honey
 /// @{
 
 class IdLiteral;
+class ByteStream;
 
 /// Holds a name string and its hashed value for fast comparison ops. See \ref Id
 class Id
@@ -67,8 +67,8 @@ public:
     #else
         friend ostream& operator<<(ostream& os, const Id& val)      { return val._hash ? os << val._hash : os << "idnull"; }
     #endif
-    friend ByteStream& operator<<(ByteStream& os, const Id& val)    { return os << val._hash; }
-    friend ByteStream& operator>>(ByteStream& is, Id& val)          { return is >> val._hash; }
+    friend ByteStream& operator<<(ByteStream& os, const Id& val);
+    friend ByteStream& operator>>(ByteStream& is, Id& val);
     
 protected:
     #ifndef FINAL
@@ -111,7 +111,7 @@ public:
     #else
         friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return val._hash ? os << val._hash : os << "idnull"; }
     #endif
-    friend ByteStream& operator<<(ByteStream& os, const IdLiteral& val) { return os << val._hash; }
+    friend ByteStream& operator<<(ByteStream& os, const IdLiteral& val);
     
 private:
     #ifndef FINAL
@@ -155,8 +155,8 @@ public:
     const String& name() const                      { return _name; }
     
     friend ostream& operator<<(ostream& os, const NameId& val)          { return os << val._name; }
-    friend ByteStream& operator<<(ByteStream& os, const NameId& val)    { return os << static_cast<const Id&>(val) << val._name; }
-    friend ByteStream& operator>>(ByteStream& is, NameId& val)          { is >> static_cast<Id&>(val) >> val._name; debug_if(val.Id::_name = val._name); assert(val._hash == hash::fast(val._name)); return is; }
+    friend ByteStream& operator<<(ByteStream& os, const NameId& val);
+    friend ByteStream& operator>>(ByteStream& is, NameId& val);
     
 private:
     String _name;

@@ -214,7 +214,7 @@ public:
     }
     
 private:
-    static void delete_(ios_base::event ev, ios_base& ios, int)         { if (ev != ios_base::erase_event) return;honey::delete_(&inst(ios)); }
+    static void delete_(ios_base::event ev, ios_base& ios, int)         { if (ev == ios_base::erase_event) honey::delete_(&inst(ios)); }
     static const int pword;
 };
 template<class Subclass> const int Manip<Subclass>::pword = ios_base::xalloc();
@@ -229,7 +229,7 @@ struct ManipFunc
     template<class Stream>
     friend Stream& operator<<(Stream& os, const ManipFunc& manip)       { manip.apply(os, mt::make_idxseq<tuple_size<Tuple>::value>()); return os; }
     template<class Stream>
-    friend Stream& operator>>(Stream& is, ManipFunc& manip)             { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
+    friend Stream& operator>>(Stream& is, const ManipFunc& manip)       { manip.apply(is, mt::make_idxseq<tuple_size<Tuple>::value>()); return is; }
     
     template<class Stream, szt... Seq>
     void apply(Stream& ios, mt::idxseq<Seq...>) const                   { f(ios, get<Seq>(args)...); }

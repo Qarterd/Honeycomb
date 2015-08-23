@@ -267,6 +267,11 @@ void test()
         bs >> vec;
         debug_print(sout() << "Vector from bytes: " << vec << endl);
         
+        bs << String("some string");
+        String str;
+        bs >> str;
+        debug_print(sout() << "String from bytes: " << str << endl);
+        
         bs << set<NameId>{"a","b","c"};
         set<NameId> set_;
         bs >> set_;
@@ -277,6 +282,17 @@ void test()
         bs >> map;
         debug_print(sout() << "Map from bytes: " << map << endl);
         
+        bs << UniquePtr<int>(new int(5));
+        UniquePtr<int> uptr;
+        bs >> uptr;
+        debug_print(sout() << "UniquePtr from bytes: " << uptr << endl);
+        
+        std::array<SharedPtr<int>, 5> sptrs{new int(5), new int(9), nullptr, nullptr, nullptr};
+        sptrs[2] = sptrs[0]; sptrs[3] = sptrs[1]; sptrs[4] = sptrs[3];
+        bs << sptrs;
+        std::array<SharedPtr<int>, 5> sptrs_{};
+        bs >> sptrs_;
+        debug_print(sout() << "SharedPtr from bytes: " << sptrs_ << endl);
     }
     
     {

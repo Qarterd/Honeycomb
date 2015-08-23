@@ -15,9 +15,10 @@ namespace priv
 {
     mtkey(encode);
     mtkey(decode);
-    mt_global((std::map<Id, MtMap<  function<ostream& (ostream& os, const Bytes& val)>, encode,
-                                    function<istream& (istream& os, Bytes& val)>, decode>>),
-                                    exts,);
+    mt_global((unordered_map<Id,
+        MtMap<  function<ostream& (ostream& os, const Bytes& val)>, encode,
+                function<istream& (istream& os, Bytes& val)>, decode>>),
+        exts,);
     
     struct Manip : honey::Manip<Manip> { Id encoding = "hex"_id; };
  

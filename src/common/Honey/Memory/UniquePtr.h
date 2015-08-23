@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Core/Core.h"
+#include "Honey/Misc/Debug.h"
 
 namespace honey
 {
@@ -10,15 +11,19 @@ namespace honey
 /// @{
 
 /// Pointer to a unique, non-shared, object.  Finalizer is run upon destruction (deletes object by default) if pointer is not null.
-template<class T_, class Fin = finalize<T_>>
+template<class T, class Fin = finalize<T>>
 class UniquePtr : mt::NoCopy
 {
     template<class, class> friend class UniquePtr;
-    template<class T> struct Elem_                                  { typedef T type; };
-    template<class T> struct Elem_<T[]>                             { typedef T type; };
+    
+    template<class T_> struct Elem_                                 { typedef T_ type; };
+    template<class T_> struct Elem_<T_[]>                           { typedef T_ type; };
+    template<class T_, bool _=std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
+    template<class T_> struct Ref_<T_, true>                        { typedef T_ type;  static type deref(T_* p) {} };
     
 public:
-    typedef typename Elem_<T_>::type Elem;
+    typedef typename Elem_<T>::type Elem;
+    typedef typename Ref_<Elem>::type Ref;
     typedef Elem* Ptr;
     
     UniquePtr()                                                     : _ptr(nullptr) {}
@@ -34,13 +39,9 @@ public:
     UniquePtr& operator=(Ptr rhs)                                   { set(rhs); return *this; }
 
     /// Moves pointer and finalizer out of rhs
-    UniquePtr& operator=(UniquePtr&& rhs)                           { return operator=<T_,Fin>(move(rhs)); }
+    UniquePtr& operator=(UniquePtr&& rhs)                           { return operator=<T,Fin>(move(rhs)); }
     template<class U, class F>
     UniquePtr& operator=(UniquePtr<U,F>&& rhs)                      { set(rhs.release()); _fin = forward<F>(rhs._fin); return *this; }
-
-    Ptr operator->() const                                          { return _ptr; }
-    Elem& operator*() const                                         { return *_ptr; }
-    operator Ptr() const                                            { return _ptr; }
 
     template<class U, class F>
     bool operator==(const UniquePtr<U,F>& rhs) const                { return get() == rhs.get(); }
@@ -55,6 +56,10 @@ public:
     template<class U, class F>
     bool operator>=(const UniquePtr<U,F>& rhs) const                { return !operator<(rhs); }
     
+    Ptr operator->() const                                          { assert(_ptr); return _ptr; }
+    Ref operator*() const                                           { assert(_ptr); return Ref_<Elem>::deref(_ptr); }
+    operator Ptr() const                                            { return _ptr; }
+
     /// Get the raw pointer to the object
     Ptr get() const                                                 { return _ptr; }
 

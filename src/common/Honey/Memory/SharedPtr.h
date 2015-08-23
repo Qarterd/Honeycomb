@@ -17,39 +17,32 @@ namespace priv
     struct SharedObj_tag {};
     
     /// Control block for shared pointer.  Holds strong/weak reference counts.
-    template<class Subclass>
-    class SharedControlBase
+    class SharedControl
     {
     public:
-        SharedControlBase()                             : _count(0), _weakCount(1) {}
+        SharedControl()                                 : _count(0), _weakCount(1) {}
 
         /// Increase reference count by 1
         void ref()                                      { ++_count; }
         /// Increase reference count by 1 if count is not 0 (ie. if object is alive then lock it).  Returns true on success.
         bool refLock()                                  { int old; do { old = _count; if (old <= 0) return false; } while (!_count.cas(old+1,old)); return true; }
         /// Decrease reference count by 1. Finalizes when count is 0.
-        void unref()                                    { if (--_count > 0) return; subc().finalize(); }
+        void unref()                                    { if (--_count > 0) return; finalize(); }
         /// Get reference count
         int count() const                               { return _count; }
     
         /// Increase weak reference count by 1
         void refWeak()                                  { ++_weakCount; }
         /// Decrease weak reference count by 1.  Destroys when count is 0.
-        void unrefWeak()                                { if (--_weakCount > 0) return; subc().destroy(); }
+        void unrefWeak()                                { if (--_weakCount > 0) return; destroy(); }
         /// Get weak reference count
         int weakCount() const                           { return _weakCount; }
         
-    private:
-        Subclass& subc()                                { return static_cast<Subclass&>(*this); }
+        virtual void finalize() = 0;
+        virtual void destroy() = 0;
         
         atomic::Var<int> _count;
         atomic::Var<int> _weakCount;
-    };
-    
-    struct SharedControl : SharedControlBase<SharedControl>
-    {
-        virtual void finalize() = 0;
-        virtual void destroy() = 0;
     };
     
     /// Control block for non-intrusive pointers.  Holds pointer and calls finalizer.  Alloc is used to deallocate the control block.
@@ -70,12 +63,11 @@ namespace priv
     template<class Subclass, class T, bool isIntrusive = mt::is_base_of<SharedObj_tag, T>::value>
     struct SharedControlPtr
     {
-        typedef SharedControl Control;
         SharedControlPtr()                              : __control(nullptr) {}
-        Control* _control() const                       { return __control; }
-        void _control(Control* ptr)                     { __control = ptr; }
+        SharedControl* _control() const                 { return __control; }
+        void _control(SharedControl* ptr)               { __control = ptr; }
         
-        Control* __control;
+        SharedControl* __control;
     };
     
     template<class T, class Alloc_> struct SharedControl_obj;
@@ -122,14 +114,14 @@ private:
       * This object must be destroyed separately from its control to implement weak references.
       * Although this object gets destroyed, its memory is held until its control has also been destroyed.
       */
-    struct Control : priv::SharedControlBase<Control>
+    struct Control : priv::SharedControl
     {
         template<class Alloc>
         Control(Subclass& obj, Alloc&& a)               : _obj(&obj), _dealloc([=](Subclass* p) mutable { a.deallocate(p,1); }) {}
 
-        void finalize()                                 { _obj->finalize(); }
+        virtual void finalize()                         { _obj->finalize(); }
         
-        void destroy()
+        virtual void destroy()
         {
             auto p = _obj;
             auto dealloc = move(_dealloc);
@@ -157,9 +149,8 @@ namespace priv
     template<class Subclass, class T>
     struct SharedControlPtr<Subclass, T, true>
     {
-        typedef typename T::SharedObj::Control Control;
-        Control* _control() const                       { return subc()._ptr ? &subc()._ptr->SharedObj::_control() : nullptr; }
-        void _control(Control*) {}
+        SharedControl* _control() const                 { return subc()._ptr ? &subc()._ptr->SharedObj::_control() : nullptr; }
+        void _control(SharedControl*) {}
     private:
         const Subclass& subc() const                    { return static_cast<const Subclass&>(*this); }
     };
@@ -172,7 +163,7 @@ namespace priv
 
 template<class T, class Fin> class UniquePtr;
 template<class T> class WeakPtr;
-
+    
 /// Combined intrusive/non-intrusive smart pointer.  Can reference and share any object automatically.
 /**
   * Non-intrusive pointers use the finalizer and internal control block allocator supplied as arguments. \n
@@ -193,10 +184,13 @@ class SharedPtr : priv::SharedControlPtr<SharedPtr<T>, T>
     template<class T_, class U> friend SharedPtr<T_> const_pointer_cast(const SharedPtr<U>&);
     
     static const bool isIntrusive                                   = mt::is_base_of<priv::SharedObj_tag, T>::value;
-    typedef typename ControlPtr::Control Control;
+    
+    template<class T_, bool _=std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
+    template<class T_> struct Ref_<T_, true>                        { typedef T_ type;  static type deref(T_* p) {} };
     
 public:
     typedef T Elem;
+    typedef typename Ref_<Elem>::type Ref;
     
     SharedPtr()                                                     : _ptr(nullptr) {}
     SharedPtr(nullptr_t)                                            : _ptr(nullptr) {}
@@ -263,9 +257,9 @@ public:
     friend bool operator==(nullptr_t, const SharedPtr& rhs)         { return !rhs.get(); }
     friend bool operator!=(nullptr_t, const SharedPtr& rhs)         { return rhs.get(); }
 
-    T* operator->() const                                           { assert(get()); return get(); }
-    T& operator*() const                                            { assert(get()); return *get(); }
-    operator T*() const                                             { return get(); }
+    T* operator->() const                                           { assert(_ptr); return _ptr; }
+    Ref operator*() const                                           { assert(_ptr); return Ref_<Elem>::deref(_ptr); }
+    operator T*() const                                             { return _ptr; }
 
     /// Get the raw pointer to the object
     T* get() const                                                  { return _ptr; }
@@ -294,23 +288,23 @@ private:
     template<class U> void set(SharedPtr<U>&& rhs)                  { moveControl(rhs._ptr, rhs._control()); rhs._ptr = nullptr; rhs._control(nullptr); }
     
     template<class U>
-    void setControl(U* ptr, Control* control)
+    void setControl(U* ptr, priv::SharedControl* control)
     {
         if (ptr) control->ref();
-        T* oldPtr = _ptr; Control* oldControl = this->_control();
+        T* oldPtr = _ptr; priv::SharedControl* oldControl = this->_control();
         _ptr = ptr; this->_control(control);
         if (oldPtr) oldControl->unref();
     }
     
     template<class U>
-    void moveControl(U* ptr, Control* control)
+    void moveControl(U* ptr, priv::SharedControl* control)
     {
         if (_ptr && this->_control() != control)
             this->_control()->unref();
         _ptr = ptr; this->_control(control);
     }
     
-    Control& getControl() const                                     { assert(this->_control()); return *this->_control(); }
+    priv::SharedControl& getControl() const                         { assert(this->_control()); return *this->_control(); }
 
     T* _ptr;
 };
@@ -389,8 +383,6 @@ class WeakPtr : priv::SharedControlPtr<WeakPtr<T>, T>
     friend ControlPtr;
     template<class> friend class WeakPtr;
     template<class> friend class SharedPtr;
-    
-    typedef typename ControlPtr::Control Control;
 
 public:
     WeakPtr()                                                       : _ptr(nullptr) {}
@@ -424,15 +416,15 @@ public:
 
 private:
     template<class U>
-    void setControl(U* ptr, Control* control)
+    void setControl(U* ptr, priv::SharedControl* control)
     {
         if (ptr) control->refWeak();
-        T* oldPtr = _ptr; Control* oldControl = this->_control();
+        T* oldPtr = _ptr; priv::SharedControl* oldControl = this->_control();
         _ptr = ptr; this->_control(control);
         if (oldPtr) oldControl->unrefWeak();     
     }
     
-    Control& getControl() const                                     { assert(this->_control()); return *this->_control(); }
+    priv::SharedControl& getControl() const                         { assert(this->_control()); return *this->_control(); }
 
     T* _ptr;
 };
