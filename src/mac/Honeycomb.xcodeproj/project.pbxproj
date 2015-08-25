@@ -50,7 +50,6 @@
 		37FEB5971B52477D0095BB69 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4BA1B52477D0095BB69 /* Random.cpp */; };
 		37FEB5991B52477D0095BB69 /* Simplex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4BC1B52477D0095BB69 /* Simplex.cpp */; };
 		37FEB59F1B52477D0095BB69 /* Pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4C31B52477D0095BB69 /* Pool.cpp */; };
-		37FEB5A51B52477D0095BB69 /* BitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4CA1B52477D0095BB69 /* BitSet.cpp */; };
 		37FEB5A71B52477D0095BB69 /* BloomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4CC1B52477D0095BB69 /* BloomFilter.cpp */; };
 		37FEB5B51B52477D0095BB69 /* ComObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4DB1B52477D0095BB69 /* ComObject.cpp */; };
 		37FEB5B71B52477D0095BB69 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4DD1B52477D0095BB69 /* Component.cpp */; };
@@ -194,7 +193,6 @@
 		37FEB4C61B52477D0095BB69 /* SmallAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallAllocator.h; sourceTree = "<group>"; };
 		37FEB4C71B52477D0095BB69 /* UniquePtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniquePtr.h; sourceTree = "<group>"; };
 		37FEB4C91B52477D0095BB69 /* BitOp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitOp.h; sourceTree = "<group>"; };
-		37FEB4CA1B52477D0095BB69 /* BitSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitSet.cpp; sourceTree = "<group>"; };
 		37FEB4CB1B52477D0095BB69 /* BitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitSet.h; sourceTree = "<group>"; };
 		37FEB4CC1B52477D0095BB69 /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
 		37FEB4CD1B52477D0095BB69 /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
@@ -561,7 +559,6 @@
 			children = (
 				37FEB65A1B524B290095BB69 /* platform */,
 				37FEB4C91B52477D0095BB69 /* BitOp.h */,
-				37FEB4CA1B52477D0095BB69 /* BitSet.cpp */,
 				37FEB4CB1B52477D0095BB69 /* BitSet.h */,
 				37FEB4CC1B52477D0095BB69 /* BloomFilter.cpp */,
 				37FEB4CD1B52477D0095BB69 /* BloomFilter.h */,
@@ -910,7 +907,6 @@
 				37FEB56D1B52477D0095BB69 /* Polynomial.cpp in Sources */,
 				37FEB5D71B52477D0095BB69 /* SharedMutex.cpp in Sources */,
 				37FEB52E1B52477D0095BB69 /* Trig.cpp in Sources */,
-				37FEB5A51B52477D0095BB69 /* BitSet.cpp in Sources */,
 				37FEB5671B52477D0095BB69 /* LinearLeastSqr.cpp in Sources */,
 				37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */,
 				37FEB5971B52477D0095BB69 /* Random.cpp in Sources */,

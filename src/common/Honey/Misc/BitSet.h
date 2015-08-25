@@ -8,13 +8,6 @@
 namespace honey
 {
 
-/** \cond */
-namespace bitset { namespace priv
-{
-    extern const szt countTable[];
-} }
-/** \endcond */
-
 /// A compact array of bits. Dynamic version of std::bitset.
 template<class Block = uint64, class Alloc_ = std::allocator<Block>>
 class BitSet_
@@ -104,17 +97,7 @@ public:
     bool none() const                           { return !any(); }
 
     /// Count number of true values in bit array
-    szt count() const
-    {
-        szt count = 0;
-        for (szt i = 0; i < _blockCount; ++i)
-        {
-            Block block = _blocks[i];
-            for (szt j = 0; j < sizeof(Block); ++j)
-                count += bitset::priv::countTable[(block >> (j<<3)) & 0xFF];
-        }
-        return count;
-    }
+    szt count() const                           { szt count = 0; for (szt i = 0; i < _blockCount; ++i) count += BitOp::popCount(_blocks[i]); return count; }
 
     /// Number of bits in the bit array
     szt size() const                            { return _size; }

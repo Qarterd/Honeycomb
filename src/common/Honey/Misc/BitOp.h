@@ -19,7 +19,7 @@ struct BitOpCommon
 {
     /// Rotate integer bits cyclically to the left
     template<class T>
-    static T rotLeft(const T v, const int32 n)
+    static T rotLeft(const T v, const int n)
     {
         typedef typename std::make_unsigned<T>::type Unsigned;
         return (T)(((Unsigned)v << n) | ((Unsigned)v >> (Numeral<T>::sizeBits-n)));
@@ -27,7 +27,7 @@ struct BitOpCommon
 
     /// Rotate integer bits cyclically to the right
     template<class T>
-    static T rotRight(const T v, const int32 n)             { return rotLeft(v, Numeral<T>::sizeBits-n); }
+    static T rotRight(const T v, const int n)               { return rotLeft(v, Numeral<T>::sizeBits-n); }
 
     /// Reverse order of bytes in an unsigned integer
     static uint8 swap(const uint8 v)                        { return v; }
@@ -49,24 +49,18 @@ struct BitOpCommon
     }
 
     /// Retrieve high bytes from integer
-    static uint32   high(const uint64 v)                    { return v >> 32; }
-    static int32    high(const int64 v)                     { return (int32)high((uint64)v); }
-    static uint16   high(const uint32 v)                    { return v >> 16; }
-    static int16    high(const int32 v)                     { return (int16)high((uint32)v); }
     static uint8    high(const uint16 v)                    { return v >> 8; }
-    static int8     high(const int16 v)                     { return (int8)high((uint16)v); }
+    static uint16   high(const uint32 v)                    { return v >> 16; }
+    static uint32   high(const uint64 v)                    { return v >> 32; }
 
     /// Retrieve low bytes from integer
-    static uint32   low(const uint64 v)                     { return (uint32)v; }
-    static int32    low(const int64 v)                      { return (int32)v; }
-    static uint16   low(const uint32 v)                     { return (uint16)v; }
-    static int16    low(const int32 v)                      { return (int16)v; }
     static uint8    low(const uint16 v)                     { return (uint8)v; }
-    static int8     low(const int16 v)                      { return (int8)v; }
+    static uint16   low(const uint32 v)                     { return (uint16)v; }
+    static uint32   low(const uint64 v)                     { return (uint32)v; }
 
     /// Convert smaller integer parts into a full integer
-    static uint64 fromParts(const uint32 hi, const uint32 lo)   { return (uint64)lo | ((uint64)hi << 32); }
     static uint32 fromParts(const uint16 hi, const uint16 lo)   { return (uint32)lo | ((uint32)hi << 16); }
+    static uint64 fromParts(const uint32 hi, const uint32 lo)   { return (uint64)lo | ((uint64)hi << 32); }
     
     template<class UInt>
     static UInt fromPartsLittle(const uint8* p)             { UInt val = 0; mt::for_<0, sizeof(UInt)>([&](int i) { val |= (UInt)p[i] << i*8; }); return val; }
@@ -77,6 +71,45 @@ struct BitOpCommon
     static void toPartsLittle(const UInt v, uint8* p)       { mt::for_<0, sizeof(UInt)>([&](int i) { p[i] = (uint8)(v >> i*8); }); }
     template<class UInt>
     static void toPartsBig(const UInt v, uint8* p)          { mt::for_<0, sizeof(UInt)>([&](int i) { p[i] = (uint8)(v >> (sizeof(UInt)-1-i)*8); }); }
+
+    /// Get number of non-zero bits in unsigned integer
+    static inline int popCount(uint32 x)
+    {
+        x -= (x >> 1) & 0x55555555;
+        x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
+        x = (x + (x >> 4)) & 0x0f0f0f0f;
+        x += x >> 8;
+        x += x >> 16;
+        return x & 0x0000003f;
+    }
+
+    static inline int popCount(uint64 x)
+    {
+        x -= (x >> 1) & 0x5555555555555555;             //put count of each 2 bits into those 2 bits
+        x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333); //put count of each 4 bits into those 4 bits
+        x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0f;        //put count of each 8 bits into those 8 bits
+        x += x >>  8;  //put count of each 16 bits into their lowest 8 bits
+        x += x >> 16;  //put count of each 32 bits into their lowest 8 bits
+        x += x >> 32;  //put count of each 64 bits into their lowest 8 bits
+        return x & 0x7f;
+    }
+    
+    /// Check if unsigned integer is a power of two
+    template<class UInt>
+    static bool isPow2(UInt x)                              { return !((x-1) & x); }
+    /// Calculate nearest power of two <= unsigned integer
+    template<class UInt>
+    static UInt pow2Floor(UInt x)                           { return isPow2(x) ? x : pow2Ceil(x) >> 1; }
+    /// Calculate nearest power of two >= unsigned integer
+    static inline uint32 pow2Ceil(uint32 x)                 { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; return ++x; }
+    static inline uint64 pow2Ceil(uint64 x)                 { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; x|=x>>32; return ++x; }
+
+    /// Calculate base 2 log of unsigned integer, rounded down to nearest integer
+    static inline int log2Floor(uint32 x)                   { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1); }
+    static inline int log2Floor(uint64 x)                   { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1); }
+    /// Calculate base 2 log of unsigned integer, rounded up to nearest integer
+    static inline int log2Ceil(uint32 x)                    { int32 y=(x&(x-1)); y|=-y; y>>=(32-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1)-y; }
+    static inline int log2Ceil(uint64 x)                    { int64 y=(x&(x-1)); y|=-y; y>>=(64-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1)-int(y); }
 };
 
 /** \cond */

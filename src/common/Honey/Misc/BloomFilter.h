@@ -91,7 +91,7 @@ public:
         tie(bitCount, _hashCount) = bloom_filter::calcParams(elemCount, errorProb);
         assert(_hashCount <= bloom_filter::priv::seedCount, "Not enough seeds, either try a higher error prob or add more seeds");
         // Round up to nearest power of two so that hash can be converted to index without a modulo
-        _bits.resize(Alge_d::pow2Ceil(bitCount));
+        _bits.resize(BitOp::pow2Ceil(bitCount));
         _bitIndexMask = _bits.size()-1;
     }
 

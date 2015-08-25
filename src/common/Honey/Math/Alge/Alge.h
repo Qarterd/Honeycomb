@@ -114,18 +114,6 @@ public:
     template<class Num, class Num2, class Num3>
     static bool isInRange(Num val, Num2 min, Num3 max)                      { return val >= min && val <= max; }
 
-    /// Check if x is a power of two
-    static bool isPow2(UInt x)                                              { return !((x-1) & x); }
-    /// Calculate nearest power of two >= x
-    static UInt pow2Ceil(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
-    /// Calculate nearest power of two <= x
-    static UInt pow2Floor(UInt x)                                           { return isPow2(x) ? x : pow2Ceil(x) >> 1; }
-
-    /// Calculate floor of the base 2 log of x
-    static UInt log2Floor(UInt x)                                           { mt_unused(x); error_("Unimplemented"); return 0; }
-    /// Calculate ceil of the base 2 log of x
-    static UInt log2Ceil(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
-
     /// Get the hypotenuse of a right angle triangle with side lengths `a` and `b`.  This method is more numerically stable than the direct approach: sqrt(a*a + b*b)
     static Real hypot(Real a, Real b);
 
@@ -140,39 +128,7 @@ public:
       * \retval y
       */ 
     static tuple<bool,Real,Real> solve(Real a, Real b, Real c, Real d, Real u, Real v);
-
-private:
-    /// Get number of 1 bits in integer
-    static int onesCount(UInt x)                                            { mt_unused(x); error_("Unimplemented"); return 0; }
 };  
-
-template<> inline uint32 Alge_<Float>::pow2Ceil(uint32 x)                   { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; return ++x; }
-template<> inline uint64 Alge_<Double>::pow2Ceil(uint64 x)                  { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; x|=x>>32; return ++x; }
-
-template<> inline int Alge_<Float>::onesCount(uint32 x)
-{
-    x -= (x >> 1) & 0x55555555;
-    x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
-    x = (x + (x >> 4)) & 0x0f0f0f0f;
-    x += x >> 8;
-    x += x >> 16;
-    return x & 0x0000003f;
-}
-template<> inline int Alge_<Double>::onesCount(uint64 x)
-{
-    x -= (x >> 1) & 0x5555555555555555;             //put count of each 2 bits into those 2 bits
-    x = (x & 0x3333333333333333) + ((x >> 2) & 0x3333333333333333); //put count of each 4 bits into those 4 bits
-    x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0f;        //put count of each 8 bits into those 8 bits
-    x += x >>  8;  //put count of each 16 bits into their lowest 8 bits
-    x += x >> 16;  //put count of each 32 bits into their lowest 8 bits
-    x += x >> 32;  //put count of each 64 bits into their lowest 8 bits
-    return x & 0x7f;
-}
-
-template<> inline uint32 Alge_<Float>::log2Floor(uint32 x)                  { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return onesCount(x>>1); }
-template<> inline uint64 Alge_<Double>::log2Floor(uint64 x)                 { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return onesCount(x>>1); }
-template<> inline uint32 Alge_<Float>::log2Ceil(uint32 x)                   { int32 y=(x&(x-1)); y|=-y; y>>=(32-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return onesCount(x>>1)-y; }
-template<> inline uint64 Alge_<Double>::log2Ceil(uint64 x)                  { int64 y=(x&(x-1)); y|=-y; y>>=(64-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return onesCount(x>>1)-y; }
 
 typedef Alge_<Real>         Alge;
 typedef Alge_<Float>        Alge_f;
