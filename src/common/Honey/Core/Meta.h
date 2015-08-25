@@ -302,11 +302,11 @@ template<int64 val> using abs                                   = Value<int64, (
 /// Get the sign of a number
 template<int64 val> using sign                                  = Value<int64, (val < 0) ? -1 : 1>;
 
-/// Calc the floor of the base 2 log of x
+/// Calc log base 2 of unsigned integer, rounded down to nearest integer
 template<uint64 x> struct log2Floor                             : Value<int, log2Floor<x/2>::value+1> {};
 template<> struct log2Floor<0>                                  : Value<int, -1> {};
 
-/// Calc the greatest common divisor of a and b
+/// Calc greatest common divisor of a and b
 template<int64 a, int64 b> struct gcd                           : gcd<b, a % b> {};
 template<int64 a> struct gcd<a, 0>                              : Value<int64, abs<a>::value> {};
 template<int64 b> struct gcd<0, b>                              : Value<int64, abs<b>::value> {};

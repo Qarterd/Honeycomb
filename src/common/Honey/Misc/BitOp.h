@@ -97,17 +97,17 @@ struct BitOpCommon
     /// Check if unsigned integer is a power of two
     template<class UInt>
     static bool isPow2(UInt x)                              { return !((x-1) & x); }
-    /// Calculate nearest power of two <= unsigned integer
+    /// Calc nearest power of two <= unsigned integer
     template<class UInt>
     static UInt pow2Floor(UInt x)                           { return isPow2(x) ? x : pow2Ceil(x) >> 1; }
-    /// Calculate nearest power of two >= unsigned integer
+    /// Calc nearest power of two >= unsigned integer
     static inline uint32 pow2Ceil(uint32 x)                 { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; return ++x; }
     static inline uint64 pow2Ceil(uint64 x)                 { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; x|=x>>32; return ++x; }
 
-    /// Calculate base 2 log of unsigned integer, rounded down to nearest integer
+    /// Calc log base 2 of unsigned integer, rounded down to nearest integer
     static inline int log2Floor(uint32 x)                   { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1); }
     static inline int log2Floor(uint64 x)                   { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1); }
-    /// Calculate base 2 log of unsigned integer, rounded up to nearest integer
+    /// Calc log base 2 of unsigned integer, rounded up to nearest integer
     static inline int log2Ceil(uint32 x)                    { int32 y=(x&(x-1)); y|=-y; y>>=(32-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1)-y; }
     static inline int log2Ceil(uint64 x)                    { int64 y=(x&(x-1)); y|=-y; y>>=(64-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1)-int(y); }
 };
