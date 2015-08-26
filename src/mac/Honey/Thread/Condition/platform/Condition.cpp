@@ -14,15 +14,12 @@ Condition::~Condition()         { pthread_cond_destroy(&_handle); }
 void Condition::signal()        { pthread_cond_signal(&_handle); }
 void Condition::broadcast()     { pthread_cond_broadcast(&_handle); }
 
-bool Condition::wait(UniqueLock<honey::Mutex>& external, honey::MonoClock::TimePoint time)
+bool Condition::wait(UniqueLock<honey::Mutex>& lock, honey::MonoClock::TimePoint time)
 {
-    honey::thread::priv::InterruptWait _(reinterpret_cast<honey::Condition&>(*this), external.mutex());
-
     timespec time_;
-    //platform bug, should allow numeral<decltype(time_.tv_sec)>().max()
     time_.tv_sec = Alge::min(Seconds(time.time()).count(), numeral<int>().max());
     time_.tv_nsec = time.time() % Seconds(1);
-    return !pthread_cond_timedwait(&_handle, &external.mutex().handle(), &time_);
+    return !pthread_cond_timedwait(&_handle, &lock.mutex().handle(), &time_);
 }
 
 } }

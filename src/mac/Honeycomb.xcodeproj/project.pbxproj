@@ -13,6 +13,7 @@
 		37AB04BA1B64572100A95E28 /* libBLAKE2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB04B91B64572100A95E28 /* libBLAKE2.a */; };
 		37AB0D941B61232B0087FBDC /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AB0D931B61232B0087FBDC /* Random.cpp */; };
 		37AD1DC31B57ACAA000F8AF4 /* libyajl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD1DC21B57ACAA000F8AF4 /* libyajl.a */; };
+		37B0B9531B8DDE89000051FD /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B9521B8DDE89000051FD /* Util.cpp */; };
 		37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */; };
 		37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB43A1B52477D0095BB69 /* Alge.cpp */; };
 		37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4421B52477D0095BB69 /* Matrix4.cpp */; };
@@ -82,6 +83,7 @@
 		37AB0D921B61217C0087FBDC /* Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
 		37AB0D931B61232B0087FBDC /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		37AD1DC21B57ACAA000F8AF4 /* libyajl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyajl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		37B0B9521B8DDE89000051FD /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
 		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -673,6 +675,7 @@
 				37FEB4FD1B52477D0095BB69 /* Promise.h */,
 				37FEB4FE1B52477D0095BB69 /* SharedFuture.h */,
 				37FEB4FF1B52477D0095BB69 /* Util.h */,
+				37B0B9521B8DDE89000051FD /* Util.cpp */,
 			);
 			path = Future;
 			sourceTree = "<group>";
@@ -901,6 +904,7 @@
 				37FEB5651B52477D0095BB69 /* Interp.cpp in Sources */,
 				37FEB5831B52477D0095BB69 /* DiscreteGen.cpp in Sources */,
 				376C062E1B6B562C007439A4 /* Util.cpp in Sources */,
+				37B0B9531B8DDE89000051FD /* Util.cpp in Sources */,
 				37FEB5381B52477D0095BB69 /* Double.cpp in Sources */,
 				37FEB5611B52477D0095BB69 /* BisectN.cpp in Sources */,
 				37AB0D941B61232B0087FBDC /* Random.cpp in Sources */,

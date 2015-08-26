@@ -133,7 +133,9 @@ public:
 
     /// Check if mutex is locked by this instance
     bool owns() const                                           { return _owns; }
-
+    /// Same as owns()
+    explicit operator bool() const                              { return owns(); }
+    
     /// Get the referenced mutex
     Lockable& mutex()
     {

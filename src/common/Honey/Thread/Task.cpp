@@ -1,16 +1,17 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 
 #include "Honey/Thread/Task.h"
+#include "Honey/Misc/Log.h"
 
 namespace honey
 {
 
 #ifndef FINAL
-    #define Task_log_(task, msg)    if ((task).logEnabled()) (task).log(__FILE__, __LINE__, (msg));
+    #define Task_trace(task, msg)   if ((task).traceEnabled()) (task).trace(__FILE__, __LINE__, (msg));
 #else
-    #define Task_log_(...) {}
+    #define Task_trace(...) {}
 #endif
-
+    
 Task::Task(const Id& id) :
     _state(State::idle),
     _depNode(this, id),
@@ -24,7 +25,9 @@ Task::Task(const Id& id) :
     _depDownWaitInit(0),
     _depDownWait(0),
     _vertex(nullptr),
-    _onStack(false) {}
+    _onStack(false),
+    _thread(nullptr),
+    _priority(Thread::priorityNormal()) {}
 
 Task& Task::current()
 {
@@ -32,21 +35,13 @@ Task& Task::current()
     assert(task, "No active task in current thread, this method can only be called from a task functor");
     return *task;
 }
-
+    
 void Task::bindDirty()
 {
     //If we are part of the root's binding, inform root that its subgraph is now dirty 
     auto root = _root.lock();
     if (root && _sched == root->_sched && _bindId == root->_bindId)
         root->_bindDirty = true;
-}
-
-void Task::log(const String& file, int line, const String& msg) const
-{
-    szt pos = file.find_last_of(String("\\/"));
-    String filename = pos != String::npos ? file.substr(pos+1) : file;
-    debug_print(sout()  << "[Task: " << getId() << ":" << Thread::current().threadId() << ", "
-                        << filename << ":" << line << "] " << msg << endl);
 }
 
 void Task::operator()()
@@ -64,15 +59,27 @@ void Task::operator()()
         if (_depUpWait > 0)
         {
             _state = State::depUpWait;
-            Task_log_(*this, sout() << "Waiting for upstream. Wait task count: " << _depUpWait);
+            Task_trace(*this, sout() << "Waiting for upstream. Wait task count: " << _depUpWait);
             return;
         }
         assert(!_depUpWait, "Task state corrupt");
         _state = State::exec;
-        Task_log_(*this, "Executing");
+        _thread = &Thread::current();
+        if (_priority != Thread::priorityNormal()) _thread->setPriority(_priority);
     }
     
-    exec();
+    Task_trace(*this, "Executing");
+    try { exec(); } catch (Exception& e) { Log_debug << info() << "Unexpected task execution error: " << e; }
+    Task_trace(*this, "Completed");
+    
+    {
+        Mutex::Scoped _(_lock);
+        //restore priority to ensure its task-locality
+        if (_priority != Thread::priorityNormal()) _thread->setPriority(Thread::priorityNormal());
+        //consume any set interrupt to ensure its task-locality
+        try { thread::current::interruptPoint(); } catch (Exception& e) {}
+        _thread = nullptr;
+    }
     
     //Finalize any upstream tasks that are waiting
     for (auto& vertex: _vertex->links())
@@ -111,7 +118,7 @@ void Task::operator()()
         if (_state != State::idle)
         {
             _state = State::depDownWait;
-            Task_log_(*this, sout() << "Waiting for downstream. Wait task count: " << _depDownWait);
+            Task_trace(*this, sout() << "Waiting for downstream. Wait task count: " << _depDownWait);
             return;
         }
     }
@@ -124,15 +131,27 @@ void Task::finalize_()
     _depUpWait = _depUpWaitInit;
     _depDownWait = _depDownWaitInit;
     _state = State::idle;
-    Task_log_(*this, "Finalized");
+    Task_trace(*this, "Finalized");
     resetFunctor(); //makes future ready, so task may be destroyed beyond this point
 }
 
+String Task::info() const
+{
+    return sout() << "[Task: " << getId() << ":" << Thread::current().threadId() << "] ";
+}
+
+void Task::trace(const String& file, int line, const String& msg) const
+{
+    Log::inst() << log::level::debug <<
+        "[" << log::srcFilename(file) << ":" << line << "] " <<
+        info() << msg;
+}
+
+bool TaskSched::trace = false;
+
 TaskSched::TaskSched(thread::Pool& pool) :
     _pool(&pool),
-    _bindId(0)
-{       
-}
+    _bindId(0) {}
 
 bool TaskSched::reg(Task& task)
 {
@@ -174,7 +193,7 @@ void TaskSched::bind(Task& root)
     //Binding is a pre-calculation step to optimize worker runtime, we want to re-use these results across multiple enqueues.
     //The root must be dirtied if the structure of its subgraph changes
     Mutex::Scoped _(_lock);
-    Task_log_(root, "Binding root and its upstream");
+    Task_trace(root, "Binding root and its upstream");
     //Cache the vertex for each task
     root._vertex = _depGraph.vertex(root);
     assert(root._vertex, "Bind failed: task must be registered before binding");
@@ -297,7 +316,7 @@ namespace task { namespace priv
         for (auto i: range(10))
         {
             String name = sout() << Char('a'+i);
-            tasks[name[0]] = new Task_<void>([=]{ Task_log(name); }, name);
+            tasks[name[0]] = new Task_<void>([=]{ Log_debug << Task::current().info(); }, name);
         }
         
         tasks['j']->deps().add(*tasks['i']);

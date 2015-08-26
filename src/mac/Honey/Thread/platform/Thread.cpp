@@ -72,9 +72,6 @@ namespace thread { namespace platform
 namespace platform
 {
 
-const int Thread::priorityMin = sched_get_priority_min(SCHED_OTHER);
-const int Thread::priorityMax = sched_get_priority_max(SCHED_OTHER);
-
 Thread::Thread(bool external, int stackSize) :
     _id(threadIdInvalid),
     _stackSize(stackSize),
@@ -125,6 +122,10 @@ void Thread::join()
     _id = threadIdInvalid;
 }
 
+int Thread::priorityNormal()                    { static const int val = Thread::current().getPriority(); return val; }
+int Thread::priorityMin()                       { static const int val = sched_get_priority_min(SCHED_OTHER); return val; }
+int Thread::priorityMax()                       { static const int val = sched_get_priority_max(SCHED_OTHER); return val; }
+    
 void Thread::setPriority(int priority)
 {
     sched_param param;

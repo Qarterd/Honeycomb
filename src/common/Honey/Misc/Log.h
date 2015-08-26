@@ -6,6 +6,10 @@
 
 namespace honey
 {
+
+/// Open a debug log record with prepended source file info
+#define Log_debug               Log::inst() << log::level::debug << "[" << log::srcFilename(__FILE__) << ":" << __LINE__ << "] "
+
 /// Logger methods
 namespace log
 {
@@ -62,6 +66,9 @@ namespace log
         String filepath;
         std::ofstream os;
     };
+    
+    /// Get filename from source path provided by macro __FILE__
+    inline String srcFilename(const String& path)       { szt pos = path.find_last_of(String("\\/")); return pos != String::npos ? path.substr(pos+1) : path; }
 }
 
 /// Logger

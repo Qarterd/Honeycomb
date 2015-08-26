@@ -14,8 +14,12 @@ public:
     /// All tasks must inherit from this class.  std::function is not used here to avoid the operator() virtual call.
     struct Task : mt::FuncptrBase
     {
-        virtual void log(const String& file, int line, const String& msg) const = 0;
-        virtual bool logEnabled() const = 0;
+        friend class Pool;
+        friend class Worker;
+        
+    protected:
+        virtual void trace(const String& file, int line, const String& msg) const;
+        virtual bool traceEnabled() const           { return false; }
     };
     
     /**

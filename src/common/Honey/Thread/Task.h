@@ -7,9 +7,6 @@
 namespace honey
 {
 
-///Uncomment to debug task scheduler
-//#define Task_debug
-
 class Task;
 class TaskSched;
 /** \cond */
@@ -31,8 +28,21 @@ public:
 
     virtual ~Task() {}
     
+    /// Get the current task object. Must be called from a task functor.
+    static Task& current();
+    
     /// Check if task is in queue or executing
     bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
+    
+    /// Request an interrupt in the executing task's thread. Exception must be heap allocated. \see Thread::interrupt()
+    void interrupt(const Exception::Ptr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
+    /// Check whether an interrupt has been requested for the executing task's thread
+    bool interruptRequested()                       { Mutex::Scoped _(_lock); return _thread ? _thread->interruptRequested() : false; }
+    
+    /// Set task's thread execution scheduling priority. \see Thread::setPriority()
+    void setPriority(int priority)                  { Mutex::Scoped _(_lock); _priority = priority; if (_thread) _thread->setPriority(_priority); }
+    /// Get task's thread execution scheduling priority. \see Thread::getPriority()
+    int getPriority() const                         { return _priority; }
     
     /// Set id used for dependency graph and debug output.
     void setId(const Id& id)                        { assert(!_regCount, "Must unregister prior to modifying"); _depNode.setKey(id); }
@@ -47,23 +57,9 @@ public:
 
     /// Get id
     operator const Id&() const                      { return getId(); }
-
-    /// Get the current task object. Must be called from a task functor.
-    static Task& current();
     
-    #ifndef FINAL
-        /// Log a message prepending current task info
-        #define Task_log(msg)                       { Task::current().log(__FILE__, __LINE__, (msg)); }
-    #else
-        #define Task_log(...) {}
-    #endif
-    virtual void log(const String& file, int line, const String& msg) const;
-    
-    #ifdef Task_debug
-        virtual bool logEnabled() const             { return true; }
-    #else
-        virtual bool logEnabled() const             { return false; }
-    #endif
+    /// Get task info for prepending to a log record
+    String info() const;
     
 protected:
     enum class State
@@ -85,6 +81,9 @@ protected:
     /// Clean up task after execution
     void finalize_();
     
+    virtual void trace(const String& file, int line, const String& msg) const;
+    virtual bool traceEnabled() const;
+
     State           _state;
     DepNode         _depNode;
     Mutex           _lock;
@@ -100,6 +99,7 @@ protected:
     DepGraph::Vertex* _vertex;
     bool            _onStack;
     Thread*         _thread;
+    int             _priority;
 };
 
 /// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see TaskSched
@@ -179,6 +179,9 @@ public:
       */
     bool enqueue(Task& task);
     
+    /// Whether to log task execution flow
+    static bool trace;
+    
 private:
     static TaskSched& createSingleton();
     
@@ -191,6 +194,8 @@ private:
     Task::DepGraph  _depGraph;
     int             _bindId;
 };
+
+inline bool Task::traceEnabled() const              { return TaskSched::trace; }
 
 /** \cond */
 namespace task { namespace priv

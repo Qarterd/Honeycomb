@@ -14,37 +14,26 @@ namespace thread
     /** \cond */
     namespace priv
     {
-        InterruptWait::InterruptWait(Condition& cond, Mutex& mutex) :
-            thread(Thread::current()),
-            enable(thread._interruptEnable)
+        InterruptWait::InterruptWait(Thread& thread, Condition& cond, Mutex& mutex) :
+            thread(thread)
         {
-            if (!enable) return;
             SpinLock::Scoped _(*thread._lock);
-            test();
             thread._interruptCond = &cond;
             thread._interruptMutex = &mutex;
         }
 
         InterruptWait::~InterruptWait()
         {
-            if (!enable) return;
             SpinLock::Scoped _(*thread._lock);
             thread._interruptCond = nullptr;
             thread._interruptMutex = nullptr;
-            test();
-        }
-
-        void InterruptWait::test()
-        {
-            if (!thread._interruptEx) return;
-            current::interruptPoint();
         }
     }
     /** \endcond */
 
     namespace current
     {
-        void sleep(MonoClock::Duration time)        { sleep(MonoClock::now() + time); }
+        void sleep(MonoClock::Duration time)        { sleep(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
 
         void sleep(MonoClock::TimePoint time)
         {
@@ -85,9 +74,6 @@ Thread::Static::~Static()
 {
 }
 
-const int Thread::priorityNormal                    = Super::priorityNormal;
-const int Thread::priorityMin                       = Super::priorityMin;
-const int Thread::priorityMax                       = Super::priorityMax;
 const Thread::ThreadId Thread::threadIdInvalid      = Super::threadIdInvalid;
 
 Thread::Thread(bool external, int stackSize) :
@@ -168,15 +154,14 @@ bool Thread::join(MonoClock::TimePoint time)
     return _done;
 }
 
-void Thread::interrupt(const Exception& e)
+void Thread::interrupt(const Exception::Ptr& e)
 {
     SpinLock::Scoped _(*_lock);
-    _interruptEx = &e;
+    _interruptEx = e;
     if (_interruptEnable && _interruptCond)
     {
-        _interruptMutex->lock();
-        _interruptCond->broadcast();
-        _interruptMutex->unlock();
+        Mutex::Scoped lock(*_interruptMutex, lock::Op::tryLock);
+        if (lock) _interruptCond->broadcast();
     }
 }
 

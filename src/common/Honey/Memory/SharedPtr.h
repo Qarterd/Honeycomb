@@ -136,9 +136,9 @@ private:
 
     Subclass& subc()                                    { return static_cast<Subclass&>(*this); }
     
-    Control& _control() const                           { return const_cast<Control&>(reinterpret_cast<const Control&>(_controlStorage)); }
+    Control& _control() const                           { return reinterpret_cast<Control&>(_controlStorage); }
     
-    ControlStorage _controlStorage;
+    mutable ControlStorage _controlStorage;
     debug_if(Control* __control;) //make control visible in debugger
 };
     

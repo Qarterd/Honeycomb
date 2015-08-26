@@ -23,7 +23,7 @@ template<class Range, class Clock, class Dur, typename std::enable_if<mt::isRang
 void waitAll(Range&& range, TimePoint<Clock,Dur> time)      { for (auto& e : range) e.wait(time); }
 /// Wait until all futures in a range are ready or until an amount of time has passed
 template<class Range, class Rep, class Period, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-void waitAll(Range&& range, Duration<Rep,Period> time)      { return waitAll(forward<Range>(range), MonoClock::now() + time); }
+void waitAll(Range&& range, Duration<Rep,Period> time)      { return waitAll(forward<Range>(range), time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
 /// Wait until all futures in a range are ready
 template<class Range, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
 void waitAll(Range&& range)                                 { return waitAll(forward<Range>(range), MonoClock::TimePoint::max); }
@@ -35,43 +35,12 @@ namespace priv
     class waitAny : public mt::FuncptrBase
     {
     public:
-        waitAny()       : td(*threadData()), readyState(nullptr) {}
+        waitAny();
+        ~waitAny();
 
-        ~waitAny()
-        {
-            for (auto& e : td.states)
-            {
-                ConditionLock::Scoped _(e->waiters);
-                stdutil::eraseVal(e->onReady, FuncptrCreate(*this));
-            }
-            td.states.clear();
-        }
-
-        void add(const FutureBase& f)
-        {
-            auto& state = f.__stateBase();
-            state.addOnReady(*this);
-            td.states.push_back(&state);
-        }
-        
-        int wait(MonoClock::TimePoint time)
-        {
-            ConditionLock::Scoped _(td.cond);
-            do
-            {
-                auto it = find(td.states, [&](auto& e) { return e == readyState; });
-                if (it != td.states.end()) return (int)(it - td.states.begin());
-            } while (!td.states.empty() && td.cond.wait(time));
-            return -1;
-        }
-
-        void operator()(StateBase& src)
-        {
-            ConditionLock::Scoped _(td.cond);
-            if (readyState) return;
-            readyState = &src;
-            td.cond.signal();
-        }
+        void add(const FutureBase& f);
+        int wait(MonoClock::TimePoint time);
+        void operator()(StateBase& src);
         
     private:
         /// waitAny() needs state that is expensive to create,
@@ -110,7 +79,7 @@ auto waitAny(Range&& range, TimePoint<Clock,Dur> time) -> mt_iterOf(range)
 }
 /// Wait until any futures in a range are ready or until an amount of time has passed, returns iterator to ready future or range end if timed out
 template<class Range, class Rep, class Period, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-auto waitAny(Range&& range, Duration<Rep,Period> time) -> mt_iterOf(range)      { return waitAny(forward<Range>(range), MonoClock::now() + time); }
+auto waitAny(Range&& range, Duration<Rep,Period> time) -> mt_iterOf(range)      { return waitAny(forward<Range>(range), time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
 /// Wait until any futures in a range are ready, returns iterator to ready future
 template<class Range, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
 auto waitAny(Range&& range) -> mt_iterOf(range)                                 { return waitAny(forward<Range>(range), MonoClock::TimePoint::max); }
@@ -118,9 +87,6 @@ auto waitAny(Range&& range) -> mt_iterOf(range)                                 
 //====================================================
 // async
 //====================================================
-
-///Uncomment to debug async scheduler
-//#define future_async_debug
 
 /** \cond */
 namespace priv
@@ -133,21 +99,10 @@ namespace priv
  
         void operator()()                   { f(); delete_(this); }
         
-        virtual void log(const String& file, int line, const String& msg) const
-        {
-            int pos = (int)file.find_last_of(String("\\/"));
-            String filename = pos != String::npos ? file.substr(pos+1) : file;
-            debug_print(sout()  << "[async: " << std::hex << reinterpret_cast<intptr_t>(this) << std::dec << ":" << Thread::current().threadId() << ", "
-                                << filename << ":" << line << "] " << msg << endl);
-        }
-        
-        #ifdef future_async_debug
-            virtual bool logEnabled() const { return true; }
-        #else
-            virtual bool logEnabled() const { return false; }
-        #endif
-        
         Func f;
+        
+    protected:
+        virtual bool traceEnabled() const;
     };
     
     //TODO: this is a work-around for clang's broken std::function, it can't handle move-only bind args
@@ -199,13 +154,21 @@ struct AsyncSched : thread::Pool, AsyncSched_tag
     
     template<class Func>
     void operator()(Func&& f)                               { enqueue(*new priv::Task<Func>(forward<Func>(f))); }
+    
+    /// Whether to log task execution flow
+    static bool trace;
 };
 
 #ifndef future_async_createSingleton
     /// Default implementation
     inline AsyncSched& async_createSingleton()              { return *new AsyncSched(3, 5); }
 #endif
-    
+
+/** \cond */
+template<class Func>
+bool priv::Task<Func>::traceEnabled() const                 { return AsyncSched::trace; }
+/** \endcond */
+
 /// Call a function asynchronously, returns a future with the result of the function call.
 template<class Sched, class Func, class... Args, typename std::enable_if<mt::is_base_of<AsyncSched_tag, Sched>::value, int>::type=0>
 Future<typename std::result_of<Func(Args...)>::type>
@@ -364,7 +327,7 @@ Future<Result> whenAll(Futures&&... fs)
             if (src.ready && !this->promise.__state().ready)
             {
                 if (src.ex)
-                    this->promise.setException(*src.ex);
+                    this->promise.setException(src.ex);
                 else if (++this->ready == this->max)
                     priv::whenAll_onReady<Result>::func(this->promise, this->fs, mt::make_idxseq<sizeof...(Futures)>());
             }
@@ -407,7 +370,7 @@ Future<Result> whenAll(Range&& range)
             if (src.ready && !this->promise.__state().ready)
             {
                 if (src.ex)
-                    this->promise.setException(*src.ex);
+                    this->promise.setException(src.ex);
                 else if (++this->ready == this->max)
                     priv::whenAll_onReady<Result>::func(this->promise, this->range);
             }
@@ -450,7 +413,7 @@ Future<Result> whenAny(Futures&&... fs)
             if (src.ready && !this->promise.__state().ready)
             {
                 if (src.ex)
-                    this->promise.setException(*src.ex);
+                    this->promise.setException(src.ex);
                 else
                 {
                     auto seq = mt::make_idxseq<sizeof...(Futures)>();
@@ -495,7 +458,7 @@ Future<Result> whenAny(Range&& range)
             if (src.ready && !this->promise.__state().ready)
             {
                 if (src.ex)
-                    this->promise.setException(*src.ex);
+                    this->promise.setException(src.ex);
                 else
                     priv::whenAny_onReady<Result_>::func(this->promise, this->range, whenAny_valIndex(src, this->range));
             }

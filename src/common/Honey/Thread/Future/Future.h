@@ -31,7 +31,7 @@ public:
     void wait() const                                           { wait(MonoClock::TimePoint::max); }
     /// Wait until result is ready or until an amount of time has passed. \throws future::NoState
     template<class Rep, class Period>
-    future::Status wait(Duration<Rep,Period> time) const        { return wait(MonoClock::now() + time); }
+    future::Status wait(Duration<Rep,Period> time) const        { return wait(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
     /// Wait until result is ready or until a certain time. \throws future::NoState
     template<class Clock, class Dur>
     future::Status wait(TimePoint<Clock,Dur> time) const
@@ -66,7 +66,7 @@ namespace future { namespace priv
         unwrapOnReady(Promise<R>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
         {
-            if (src.ready) src.ex ? promise.setException(*src.ex) : promise.setValue(move(static_cast<State<R>&>(src).result()));
+            if (src.ready) src.ex ? promise.setException(src.ex) : promise.setValue(move(static_cast<State<R>&>(src).result()));
             delete_(this);
         }
         Promise<R> promise;
@@ -77,7 +77,7 @@ namespace future { namespace priv
         unwrapOnReady(Promise<void>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
         {
-            if (src.ready) src.ex ? promise.setException(*src.ex) : promise.setValue();
+            if (src.ready) src.ex ? promise.setException(src.ex) : promise.setValue();
             delete_(this);
         }
         Promise<void> promise;
@@ -120,7 +120,7 @@ public:
                 if (src.ready)
                 {
                     if (src.ex)
-                        this->promise.setException(*src.ex);
+                        this->promise.setException(src.ex);
                     else
                     {
                         auto& wrapped = static_cast<State<R>&>(src).result();

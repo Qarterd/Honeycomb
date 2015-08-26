@@ -14,13 +14,12 @@ namespace honey
 #endif
 
 /// Declares methods required for every subclass of honey::Exception.
-#define EXCEPTION(Class)                                                    \
-    typedef SharedPtr<Class> Ptr;                                           \
-    typedef SharedPtr<const Class> ConstPtr;                                \
-                                                                            \
-    virtual Class& clone() const        { return *new Class(*this); }       \
-    virtual String typeName() const     { return typeid(*this).name(); }    \
-    virtual void raise() const          { throw *this; }                    \
+#define EXCEPTION(Class)                                                        \
+    typedef SharedPtr<Class> Ptr;                                               \
+                                                                                \
+    virtual Exception::Ptr clone() const    { return new Class(*this); }        \
+    virtual String typeName() const         { return typeid(*this).name(); }    \
+    virtual void raise() const              { throw *this; }                    \
 
 
 /// Base exception class.  Exceptions inherited from this class provide debug info and can be thrown polymorphically (unlike standard c++ exceptions).
@@ -99,12 +98,12 @@ public:
     const String& message() const                                           { return _message; }
     
     /// Get full diagnostic message
-    const String& what_() const                                             { const_cast<Exception*>(this)->cacheWhat(); return *_what; }
+    const String& what_() const                                             { cacheWhat(); return *_what; }
     /// Get full diagnostic message
     const char* what() const throw()                                        { what_(); return _what_u8->c_str(); }
 
     /// Create a clone of the current exception caught with (...)
-    static Exception& current();
+    static Ptr current();
 
     /// Append custom error message
     template<class T>
@@ -114,7 +113,7 @@ public:
     
 protected:
     /// Create what message.  Called only on demand and result is cached.
-    virtual String createWhat()
+    virtual String createWhat() const
     {
         return sout()
             << "Exception:  "   << typeName()       << endl
@@ -123,17 +122,12 @@ protected:
     }
 
 private:
-    void cacheWhat()
-    {
-        if (_what) return;
-        _what = new String(createWhat());
-        _what_u8 = new std::string(_what->u8());
-    }
+    void cacheWhat() const                                                  { if (_what) return; _what = new String(createWhat()); _what_u8 = new std::string(_what->u8()); }
 
     Source _source;
     String _message;
-    UniquePtr<String> _what;
-    UniquePtr<std::string> _what_u8;
+    mutable UniquePtr<String> _what;
+    mutable UniquePtr<std::string> _what_u8;
 };
 
 /** \cond */
@@ -146,7 +140,7 @@ namespace exception { namespace priv
         EXCEPTION(Std)
         Std(const T& e)                         : _e(e) {}
 
-        virtual String createWhat()
+        virtual String createWhat() const
         {
             return sout()
                 << "Exception:  "   << typeid(_e).name()        << endl
@@ -159,13 +153,13 @@ namespace exception { namespace priv
     };
 
     template<class T>
-    Std<T>& createStd(const T& e)               { return *new Std<T>(e); }
+    typename Std<T>::Ptr createStd(const T& e)  { return new Std<T>(e); }
 
     struct Unknown : Exception                  { EXCEPTION(Unknown) };
 } }
 /** \endcond */
 
-inline Exception& Exception::current()
+inline Exception::Ptr Exception::current()
 {
     using namespace honey::exception::priv;
     //std exceptions are not dynamic so there's no way to clone them trivially
@@ -186,7 +180,7 @@ inline Exception& Exception::current()
     catch(std::bad_typeid& e)           { return createStd(e); }
     catch(std::bad_exception& e)        { return createStd(e); }
     catch(std::exception& e)            { return createStd(e); }
-    catch(...)                          { return *new Unknown(); }
+    catch(...)                          { return new Unknown(); }
 }
 
 namespace debug

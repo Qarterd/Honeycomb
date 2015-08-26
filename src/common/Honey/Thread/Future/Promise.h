@@ -30,11 +30,11 @@ namespace future
                 if (!ready) for (auto& e : onReady) e(*this);
             }
             
-            void setException(const Exception& e, bool setReady = true)
+            void setException(const Exception::Ptr& e, bool setReady = true)
             {
                 ConditionLock::Scoped _(waiters);
                 if (ready) throw_ AlreadySatisfied();
-                ex = &e;
+                ex = e;
                 if (setReady) setReady_();
             }
 
@@ -54,7 +54,7 @@ namespace future
                     onReady.push_back(mt::FuncptrCreate(forward<Func>(f)));
             }
             
-            Exception::ConstPtr ex;
+            Exception::Ptr ex;
             bool ready;
             bool futureRetrieved;
             ConditionLock waiters;
@@ -233,7 +233,7 @@ public:
       * \throws future::AlreadySatisfied    if a result has already been set
       * \throws future::NoState             if invalid
       */ 
-    void setException(const Exception& e)                       { if (!valid()) throw_ future::NoState(); _state->setException(e); }
+    void setException(const Exception::Ptr& e)                  { if (!valid()) throw_ future::NoState(); _state->setException(e); }
 
     /// Check if this instance has state and can be used.  State can be transferred out to another instance through move-assignment.
     bool valid() const                                          { return _state; }
@@ -244,7 +244,7 @@ public:
 private:
     explicit Promise(const SharedPtr<State>& state)             : _state(state) {}
     
-    void finalize()                                             { if (valid() && !_state->ready) setException(*new future::Broken()); }
+    void finalize()                                             { if (valid() && !_state->ready) setException(new future::Broken()); }
 
     SharedPtr<State> _state;
 };

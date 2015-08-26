@@ -3,16 +3,25 @@
 #include "Honey/Thread/Pool.h"
 #include "Honey/Thread/Task.h"
 #include "Honey/Thread/Future/Util.h"
+#include "Honey/Misc/Log.h"
 
 namespace honey { namespace thread
 {
 
 #ifndef FINAL
-    #define Pool_log(taskptr, msg)      if ((taskptr)->logEnabled()) (taskptr)->log(__FILE__, __LINE__, (msg));
+    #define Pool_trace(taskptr, msg)    if ((taskptr)->traceEnabled()) (taskptr)->trace(__FILE__, __LINE__, (msg));
 #else
-    #define Pool_log(...) {}
+    #define Pool_trace(...) {}
 #endif
 
+void Pool::Task::trace(const String& file, int line, const String& msg) const
+{
+    Log::inst() << log::level::debug <<
+        "[" << log::srcFilename(file) << ":" << line << "] " <<
+        "[Task: " << std::hex << reinterpret_cast<intptr_t>(this) << std::dec << ":" << Thread::current().threadId() << "] " <<
+        msg;
+}
+    
 Pool::Pool(int workerCount, int workerTaskMax) :
     _workerTaskMax(workerTaskMax)
 {       
@@ -50,7 +59,7 @@ void Pool::enqueue_(TaskPtr task)
             
             added = true;
             worker._tasks.push_back(move(task));
-            Pool_log(worker._tasks.back(), sout()   << "Pushed to worker queue: " << worker._thread.threadId()
+            Pool_trace(worker._tasks.back(), sout() << "Pushed to worker queue: " << worker._thread.threadId()
                                                     << "; Queue size: " << worker._tasks.size());
         } while(false);
     }
@@ -60,7 +69,7 @@ void Pool::enqueue_(TaskPtr task)
         //All worker queues full, push to pool queue
         Mutex::Scoped _(_lock);
         _tasks.push_back(move(task));
-        Pool_log(_tasks.back(), sout() << "Pushed to pool queue. Queue size: " << _tasks.size());
+        Pool_trace(_tasks.back(), sout() << "Pushed to pool queue. Queue size: " << _tasks.size());
     }
     
     //Find a waiting worker and signal it, start search at min index
@@ -119,9 +128,9 @@ void Pool::Worker::run()
         while ((_task = next()))
             _task();
         
-        //Wait for signal from pool that a task has been queued
+        //Wait for signal from pool that a task has been queued (ignore any thread interrupts)
         ConditionLock::Scoped _(_cond);
-        while (_condWait) _cond.wait();
+        while (_condWait) try { _cond.wait(); } catch (Exception& e) {}
         _condWait = true;
     }
 }
@@ -135,7 +144,7 @@ auto Pool::Worker::next() -> TaskPtr
         {
             TaskPtr task = move(_tasks.front());
             _tasks.pop_front();
-            Pool_log(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
+            Pool_trace(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
             return task;
         }
     }
@@ -162,7 +171,7 @@ auto Pool::Worker::next() -> TaskPtr
             
             TaskPtr task = move(worker._tasks.front());
             worker._tasks.pop_front();
-            Pool_log(task, sout()   << "Stolen from worker queue: " << worker._thread.threadId()
+            Pool_trace(task, sout() << "Stolen from worker queue: " << worker._thread.threadId()
                                     << "; Queue size: " << worker._tasks.size());
             return task;
         } while(false);
@@ -178,7 +187,7 @@ auto Pool::Worker::next() -> TaskPtr
         
             TaskPtr task = move(_pool._tasks.front());
             _pool._tasks.pop_front();
-            Pool_log(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
+            Pool_trace(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
             return task;
         } while (false);
     }

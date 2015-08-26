@@ -33,16 +33,14 @@ namespace thread
             function<void ()> fin;
         };
 
-        /// Attempt to throw interrupt at start (ctor) and end (dtor) of Condition::wait()
+        /// Set interruptible condition
         class InterruptWait : mt::NoCopy
         {
         public:
-            InterruptWait(Condition& cond, Mutex& mutex);
+            InterruptWait(Thread& thread, Condition& cond, Mutex& mutex);
             ~InterruptWait();
         private:
-            void test();
             Thread& thread;
-            bool enable;
         };
     }
     /** \endcond */
@@ -62,7 +60,7 @@ namespace thread
         inline void spin(int count)                 { for (int i = 0; i < count; ++i) pause(); }
         /// Check whether interrupts are enabled for this thread
         bool interruptEnabled();
-        /// Throw an exception if interrupt is enabled and has been requested in this thread.
+        /// Throw an exception if interrupt is enabled and has been requested in this thread
         void interruptPoint();
     }
 
@@ -165,7 +163,7 @@ public:
     /// Wait until thread execution is complete
     void join()                                     { join(MonoClock::TimePoint::max); }
     /// Try to join for an amount of time. Returns true if joined and thread execution is complete.
-    bool join(MonoClock::Duration time)             { return join(MonoClock::now() + time); }
+    bool join(MonoClock::Duration time)             { return join(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
     /// Try to join until a specific time. Returns true if joined and thread execution is complete.
     bool join(MonoClock::TimePoint time);
 
@@ -173,16 +171,16 @@ public:
     /**
       * The thread will throw `e` the next time it waits in join(), current::sleep(), current::interruptPoint(), or Condition::wait().
       */ 
-    void interrupt(const Exception& e = *new thread::Interrupted);
+    void interrupt(const Exception::Ptr& e = new thread::Interrupted);
     /// Check whether an interrupt has been requested for the thread
     bool interruptRequested() const;
 
     /// \name Thread scheduling priority
     /// Higher priority threads are favored for scheduling and will execute more often.
     /// @{
-    static const int priorityNormal;
-    static const int priorityMin;
-    static const int priorityMax;
+    static int priorityNormal()                     { return Super::priorityNormal(); }
+    static int priorityMin()                        { return Super::priorityMin(); }
+    static int priorityMax()                        { return Super::priorityMax(); }
     /// @}
 
     /// Set thread execution scheduling priority
@@ -226,7 +224,7 @@ private:
     UniquePtr<ConditionLock>    _sleepCond;
 
     bool                        _interruptEnable;
-    Exception::ConstPtr         _interruptEx;
+    Exception::Ptr              _interruptEx;
     Condition*                  _interruptCond;
     Mutex*                      _interruptMutex;
 

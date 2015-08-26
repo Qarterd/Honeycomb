@@ -26,7 +26,7 @@ template<class Lock, class... Locks, typename mt::disable_if<mt::isRange<Lock>::
 int tryLock(Lock& l, Locks&... ls)
 {
     UniqueLock<Lock> lock(l, lock::Op::tryLock);
-    if (!lock.owns()) return 0;
+    if (!lock) return 0;
     int failed = tryLock(ls...);
     if (failed >= 0) return failed+1;
     lock.release();
@@ -44,7 +44,7 @@ auto tryLock(Range&& range) -> mt_iterOf(range)
     auto& end = honey::end(range);
     if (begin == end) return end;
     UniqueLock<mt_iterOf(range)::value_type> lock(*begin, lock::Op::tryLock);
-    if (!lock.owns()) return begin;
+    if (!lock) return begin;
     auto failed = tryLock(honey::range(next(begin),end));
     if (failed == end) lock.release();
     return failed;

@@ -24,13 +24,20 @@ public:
     void broadcast()                                                    { Super::broadcast(); }
 
     /// Release lock and wait until thread is signaled
-    void wait(UniqueLock<Mutex>& lock)                                  { Super::wait(lock); }
+    void wait(UniqueLock<Mutex>& lock)                                  { wait(lock, MonoClock::TimePoint::max); }
     /// Release lock and wait until thread is signaled or until an amount of time has passed. Returns true if signaled, false if timed out.
     template<class Rep, class Period>
-    bool wait(UniqueLock<Mutex>& lock, Duration<Rep,Period> time)       { return Super::wait(lock, time); }
+    bool wait(UniqueLock<Mutex>& lock, Duration<Rep,Period> time)       { return wait(lock, time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
     /// Release lock and wait until thread is signaled or until a certain time. Returns true if signaled, false if timed out.
     template<class Clock, class Dur>
-    bool wait(UniqueLock<Mutex>& lock, TimePoint<Clock,Dur> time)       { return Super::wait(lock, time); }
+    bool wait(UniqueLock<Mutex>& lock, TimePoint<Clock,Dur> time)
+    {
+        thread::priv::InterruptWait _(Thread::current(), *this, lock.mutex());
+        thread::current::interruptPoint();
+        bool res = Super::wait(lock, time);
+        thread::current::interruptPoint();
+        return res;
+    }
 };
 
 }

@@ -40,9 +40,9 @@ public:
     void start();
     void join();
 
-    static const int priorityNormal                             = 0;
-    static const int priorityMin;
-    static const int priorityMax;
+    static int priorityNormal();
+    static int priorityMin();
+    static int priorityMax();
     void setPriority(int priority);
     int getPriority() const;
     

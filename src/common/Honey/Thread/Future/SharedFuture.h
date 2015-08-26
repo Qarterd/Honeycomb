@@ -16,7 +16,7 @@ namespace future { namespace priv
         unwrapOnReady(Promise<R>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
         {
-            if (src.ready) src.ex ? promise.setException(*src.ex) : promise.setValue(static_cast<State<R>&>(src).result());
+            if (src.ready) src.ex ? promise.setException(src.ex) : promise.setValue(static_cast<State<R>&>(src).result());
             delete_(this);
         }
         Promise<R> promise;
@@ -27,7 +27,7 @@ namespace future { namespace priv
         unwrapOnReady(Promise<void>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
         {
-            if (src.ready) src.ex ? promise.setException(*src.ex) : promise.setValue();
+            if (src.ready) src.ex ? promise.setException(src.ex) : promise.setValue();
             delete_(this);
         }
         Promise<void> promise;

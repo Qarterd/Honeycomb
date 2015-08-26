@@ -10,17 +10,13 @@ namespace honey
 class ConditionAny
 {
 public:
-
     void signal()                                                       { Mutex::Scoped _(_lock); _cond.signal(); }
-
     void broadcast()                                                    { Mutex::Scoped _(_lock); _cond.broadcast(); }
 
     template<class Lockable>
     void wait(Lockable& lock)                                           { wait(lock, MonoClock::TimePoint::max); }
-
     template<class Lockable, class Rep, class Period>
-    bool wait(Lockable& lock, Duration<Rep,Period> time)                { return wait(lock, MonoClock::now() + time); }
-
+    bool wait(Lockable& lock, Duration<Rep,Period> time)                { return wait(lock, time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
     template<class Lockable, class Clock, class Dur>
     bool wait(Lockable& external, TimePoint<Clock,Dur> time)
     {

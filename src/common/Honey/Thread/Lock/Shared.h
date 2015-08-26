@@ -103,7 +103,8 @@ public:
     }
 
     bool owns() const                                           { return _owns; }
-
+    explicit operator bool() const                              { return owns(); }
+    
     Lockable& mutex()
     {
         assert(_lock, "Lock has been released");
