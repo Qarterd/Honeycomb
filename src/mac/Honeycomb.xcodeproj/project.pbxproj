@@ -14,6 +14,7 @@
 		37AB0D941B61232B0087FBDC /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37AB0D931B61232B0087FBDC /* Random.cpp */; };
 		37AD1DC31B57ACAA000F8AF4 /* libyajl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AD1DC21B57ACAA000F8AF4 /* libyajl.a */; };
 		37B0B9531B8DDE89000051FD /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B9521B8DDE89000051FD /* Util.cpp */; };
+		37B0B9571B8E80A5000051FD /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B9551B8E80A5000051FD /* App.cpp */; };
 		37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */; };
 		37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB43A1B52477D0095BB69 /* Alge.cpp */; };
 		37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4421B52477D0095BB69 /* Matrix4.cpp */; };
@@ -84,6 +85,8 @@
 		37AB0D931B61232B0087FBDC /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		37AD1DC21B57ACAA000F8AF4 /* libyajl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyajl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B0B9521B8DDE89000051FD /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		37B0B9551B8E80A5000051FD /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
+		37B0B9561B8E80A5000051FD /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
 		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -314,6 +317,16 @@
 			name = Libraries;
 			sourceTree = "<group>";
 		};
+		37B0B9541B8E80A5000051FD /* App */ = {
+			isa = PBXGroup;
+			children = (
+				37B0B9551B8E80A5000051FD /* App.cpp */,
+				37B0B9561B8E80A5000051FD /* App.h */,
+			);
+			name = App;
+			path = ../common/Honey/App;
+			sourceTree = "<group>";
+		};
 		37FEB4151B5245010095BB69 = {
 			isa = PBXGroup;
 			children = (
@@ -334,6 +347,7 @@
 		37FEB42C1B5247300095BB69 /* Honeycomb */ = {
 			isa = PBXGroup;
 			children = (
+				37B0B9541B8E80A5000051FD /* App */,
 				37FEB42D1B52477D0095BB69 /* Core */,
 				37FEB4311B52477D0095BB69 /* Graph */,
 				37FEB4371B52477D0095BB69 /* Honeycomb.h */,
@@ -891,6 +905,7 @@
 				37FEB5791B52477D0095BB69 /* Beta.cpp in Sources */,
 				37FEB56B1B52477D0095BB69 /* MinimizeN.cpp in Sources */,
 				37FEB5891B52477D0095BB69 /* Gaussian.cpp in Sources */,
+				37B0B9571B8E80A5000051FD /* App.cpp in Sources */,
 				37FEB5E51B52477D0095BB69 /* Task.cpp in Sources */,
 				37FEB53B1B52477D0095BB69 /* Float.cpp in Sources */,
 				37FEB57F1B52477D0095BB69 /* ChiSqr.cpp in Sources */,

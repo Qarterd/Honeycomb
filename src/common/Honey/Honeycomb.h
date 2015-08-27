@@ -1,6 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
+#include "Honey/App/App.h"
 #include "Honey/Core/Core.h"
 #include "Honey/Core/Meta.h"
 #include "Honey/Core/Preprocessor.h"

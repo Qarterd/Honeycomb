@@ -144,7 +144,7 @@ public:
     operator T() const volatile                                 { return load(); }
    
     void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, static_cast<VarType>(val), o); }
-    T load(Order o = Order::seqCst) const volatile              { return Op::load(_val, o); }
+    T load(Order o = Order::seqCst) const volatile              { return static_cast<T>(Op::load(_val, o)); }
     T add(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<VarType>(rhs), o) + rhs; }
     T sub(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<VarType>(-rhs), o) - rhs; }
     T and_(T rhs, Order o = Order::seqCst) volatile             { return Op::and_(_val, static_cast<VarType>(rhs), o) & rhs; }

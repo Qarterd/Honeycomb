@@ -1,6 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
+#include "Honey/Thread/Thread.h"
 #include "Honey/Thread/Lock/Unique.h"
 #include "Honey/Thread/Condition/platform/Condition.h"
 
