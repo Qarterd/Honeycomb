@@ -1,29 +1,10 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 
 #include "Honey/App/App.h"
+#include "Honey/App/Module.h"
 
 namespace honey
 {
-
-namespace app
-{
-    Module::Module( const Id& id, const function<void ()>& f,
-                    const vector<Id>& outDeps, const vector<Id>& inDeps) :
-        task(new Task_<void>(f, id))
-    {
-        task->deps().add("root"_id, Task::DepNode::DepType::in);
-        for (auto& e: outDeps) task->deps().add(e);
-        for (auto& e: inDeps) task->deps().add(e, Task::DepNode::DepType::in);
-    }
-
-    mt::Void ModuleRegistry::reg(const Module::Ptr& module)
-    {
-        modules[module->task->getId()] = module;
-        return mt::Void();
-    }
-}
-
-static auto _ = app::ModuleRegistry::inst().reg(new app::Module("root"_id, []{}));
 
 App::App() :
     _interruptFreq(30),

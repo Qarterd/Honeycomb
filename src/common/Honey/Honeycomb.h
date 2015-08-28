@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/App/App.h"
+#include "Honey/App/Module.h"
 #include "Honey/Core/Core.h"
 #include "Honey/Core/Meta.h"
 #include "Honey/Core/Preprocessor.h"
