@@ -323,10 +323,10 @@
 		37B0B9541B8E80A5000051FD /* App */ = {
 			isa = PBXGroup;
 			children = (
-				37B0B9561B8E80A5000051FD /* App.h */,
 				37B0B9551B8E80A5000051FD /* App.cpp */,
-				37B0B96C1B902AB7000051FD /* Module.h */,
+				37B0B9561B8E80A5000051FD /* App.h */,
 				37B0B96D1B902ABD000051FD /* Module.cpp */,
+				37B0B96C1B902AB7000051FD /* Module.h */,
 			);
 			name = App;
 			path = ../common/Honey/App;
@@ -588,8 +588,8 @@
 				37FEB4D01B52477D0095BB69 /* Enum.h */,
 				37FEB4D11B52477D0095BB69 /* Exception.h */,
 				37FEB4D21B52477D0095BB69 /* Lazy.h */,
-				37B4F3FE1B6FEAF500B26BDC /* Log.h */,
 				37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */,
+				37B4F3FE1B6FEAF500B26BDC /* Log.h */,
 				37FEB4D31B52477D0095BB69 /* MtMap.h */,
 				37FEB4D41B52477D0095BB69 /* Optional.h */,
 				37FEB4D51B52477D0095BB69 /* Range.h */,
@@ -626,12 +626,12 @@
 		37FEB4E81B52477D0095BB69 /* String */ = {
 			isa = PBXGroup;
 			children = (
-				376C062F1B6B5633007439A4 /* Util.h */,
 				376C062D1B6B562C007439A4 /* Util.cpp */,
-				376C06271B6754C6007439A4 /* Encode.h */,
+				376C062F1B6B5633007439A4 /* Util.h */,
 				376C06281B6754CC007439A4 /* Encode.cpp */,
-				376C06241B6699A8007439A4 /* Bytes.h */,
+				376C06271B6754C6007439A4 /* Encode.h */,
 				376C06251B669B16007439A4 /* Bytes.cpp */,
+				376C06241B6699A8007439A4 /* Bytes.h */,
 				373EA45B1B886C46006A2624 /* ByteStream.h */,
 				37FEB4E91B52477D0095BB69 /* Hash.cpp */,
 				37FEB4EA1B52477D0095BB69 /* Hash.h */,
@@ -693,8 +693,8 @@
 				37FEB4FC1B52477D0095BB69 /* PackagedTask.h */,
 				37FEB4FD1B52477D0095BB69 /* Promise.h */,
 				37FEB4FE1B52477D0095BB69 /* SharedFuture.h */,
-				37FEB4FF1B52477D0095BB69 /* Util.h */,
 				37B0B9521B8DDE89000051FD /* Util.cpp */,
+				37FEB4FF1B52477D0095BB69 /* Util.h */,
 			);
 			path = Future;
 			sourceTree = "<group>";
