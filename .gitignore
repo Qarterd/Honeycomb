@@ -1,7 +1,12 @@
+#sublime-web
+build
+dist
+
+#xcode
+.DS_Store
+xcuserdata
+
+#visual studio
 *.suo
 *.sdf
 *.vcxproj.user
-.DS_Store
-xcuserdata
-build
-dist

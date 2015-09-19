@@ -16,6 +16,7 @@ namespace honey
 /// Declares methods required for every subclass of honey::Exception.
 #define EXCEPTION(Class)                                                        \
     typedef SharedPtr<Class> Ptr;                                               \
+    typedef SharedPtr<const Class> ConstPtr;                                    \
                                                                                 \
     virtual Exception::Ptr clone() const    { return new Class(*this); }        \
     virtual String typeName() const         { return typeid(*this).name(); }    \

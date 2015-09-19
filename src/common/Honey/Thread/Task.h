@@ -35,7 +35,7 @@ public:
     bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
     
     /// Request an interrupt in the executing task's thread. Exception must be heap allocated. \see Thread::interrupt()
-    void interrupt(const Exception::Ptr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
+    void interrupt(const Exception::ConstPtr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
     /// Check whether an interrupt has been requested for the executing task's thread
     bool interruptRequested()                       { Mutex::Scoped _(_lock); return _thread ? _thread->interruptRequested() : false; }
     

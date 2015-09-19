@@ -171,7 +171,7 @@ public:
     /**
       * The thread will throw `e` the next time it waits in join(), current::sleep(), current::interruptPoint(), or Condition::wait().
       */ 
-    void interrupt(const Exception::Ptr& e = new thread::Interrupted);
+    void interrupt(const Exception::ConstPtr& e = new thread::Interrupted);
     /// Check whether an interrupt has been requested for the thread
     bool interruptRequested() const;
 
@@ -224,7 +224,7 @@ private:
     UniquePtr<ConditionLock>    _sleepCond;
 
     bool                        _interruptEnable;
-    Exception::Ptr              _interruptEx;
+    Exception::ConstPtr         _interruptEx;
     Condition*                  _interruptCond;
     Mutex*                      _interruptMutex;
 

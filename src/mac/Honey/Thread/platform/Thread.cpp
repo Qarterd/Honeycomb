@@ -15,13 +15,8 @@ namespace thread { namespace platform
     struct LocalStore
     {
         /// Init for process
-        static bool _init;
         static bool init()
         {
-            static bool initOnce = false;
-            if (initOnce) return true;
-            initOnce = true;
-
             verify(!pthread_key_create(&_key, nullptr));
             return true;
         }
@@ -45,9 +40,7 @@ namespace thread { namespace platform
         /// Get thread local store
         static LocalStore& inst()
         {
-            //initializing here solves static order problem
-            static bool _ = init();
-            mt_unused(_);
+            static auto _ = init(); mt_unused(_);
             
             LocalStore* local = static_cast<LocalStore*>(pthread_getspecific(_key));
             if (!local)
@@ -66,7 +59,6 @@ namespace thread { namespace platform
     };
 
     pthread_key_t LocalStore::_key;
-    bool LocalStore::_init = init();
 } }
 
 namespace platform
@@ -122,7 +114,7 @@ void Thread::join()
     _id = threadIdInvalid;
 }
 
-int Thread::priorityNormal()                    { static const int val = Thread::current().getPriority(); return val; }
+int Thread::priorityNormal()                    { static const int val = (priorityMin() + priorityMax()) / 2; return val; }
 int Thread::priorityMin()                       { static const int val = sched_get_priority_min(SCHED_OTHER); return val; }
 int Thread::priorityMax()                       { static const int val = sched_get_priority_max(SCHED_OTHER); return val; }
     

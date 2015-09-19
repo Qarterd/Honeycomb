@@ -29,7 +29,7 @@ void App::entry()
     }
 }
 
-void App::interrupt(const Exception::Ptr& e)
+void App::interrupt(const Exception::ConstPtr& e)
 {
     Mutex::Scoped _(_lock);
     if (!_thread) return;

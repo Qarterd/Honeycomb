@@ -154,7 +154,7 @@ bool Thread::join(MonoClock::TimePoint time)
     return _done;
 }
 
-void Thread::interrupt(const Exception::Ptr& e)
+void Thread::interrupt(const Exception::ConstPtr& e)
 {
     SpinLock::Scoped _(*_lock);
     _interruptEx = e;
