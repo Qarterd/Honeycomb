@@ -7,8 +7,22 @@
 namespace honey { namespace net
 {
 
-typedef tuple<byte*, size_t> Buffer;
-typedef tuple<const byte*, size_t> BufferConst;
+/// Buffer object. Does not own allocated data memory.
+template<class T>
+struct Buffer_
+{
+    operator T*() const                         { return data; }
+    
+    T* data;
+    size_t size;
+};
+
+typedef Buffer_<byte> Buffer;
+typedef Buffer_<const byte> BufferConst;
+
+/// Cast buffer data type
+template<class T, class U>
+Buffer_<T> buffer_cast(const Buffer_<U>& rhs)   { return Buffer_<T>{static_cast<T*>(rhs.data), rhs.size}; }
 
 /// automatically resizable buffer class based on ByteBuf
 /**
@@ -35,11 +49,11 @@ typedef tuple<const byte*, size_t> BufferConst;
   *     String s;
   *     is >> s;
   */
-template <class Alloc = std::allocator<byte>>
-class StreamBuf : public ByteBuf, mt::NoCopy
+template<class Alloc = std::allocator<byte>>
+class StreamBuf_ : public ByteBuf, mt::NoCopy
 {
 public:
-    StreamBuf(size_t maxSize = numeral<size_t>().max(), const Alloc& alloc = Alloc()) :
+    StreamBuf_(size_t maxSize = numeral<size_t>().max(), const Alloc& alloc = Alloc()) :
         _maxSize(maxSize),
         _buf(alloc)
     {
@@ -182,5 +196,7 @@ private:
     size_t _maxSize;
     vector<byte, Alloc> _buf;
 };
+
+typedef StreamBuf_<> StreamBuf;
 
 } }

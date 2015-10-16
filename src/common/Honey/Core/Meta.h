@@ -69,9 +69,9 @@ template<int64 t, int64 f> struct conditional_int<true, t, f>   : Value<int64, t
 template<class Base, class Derived> struct is_base_of           : std::is_base_of<typename removeRef<Base>::type, typename removeRef<Derived>::type> {};
 
 /// Check if T is a specialization of Template
-template <class T, template <class...> class Template>
+template<class T, template<class...> class Template>
 struct isSpecializationOf                                       : std::false_type {};
-template <template <class...> class Template, class... Param>
+template<template<class...> class Template, class... Param>
 struct isSpecializationOf<Template<Param...>, Template>         : std::true_type {};
     
 /// Check if type is a tuple or a reference to one
