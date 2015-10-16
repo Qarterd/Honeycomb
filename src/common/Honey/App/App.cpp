@@ -81,7 +81,7 @@ void App::run()
         {
             if (_runMode != RunMode::term)
             {
-                Log::inst() << log::level::info << "Terminating...";
+                Log::inst() << log::level::info << "terminating...";
                 _runMode = RunMode::term;
             }
         }

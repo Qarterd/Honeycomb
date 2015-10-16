@@ -7,11 +7,30 @@ namespace honey
 
 class Mutex;
 
+namespace platform { class Thread; }
+
 namespace thread
 {
     namespace platform
     {
-        struct LocalStore;
+        /// Thread local store. Every thread has its own separate store, can be retrieved statically.
+        struct LocalStore
+        {
+            typedef honey::platform::Thread Thread;
+            
+            /// Init for process
+            static bool init();
+            /// Create thread local store
+            static LocalStore& create(Thread& thread);
+            /// Destroy thread local store
+            static void destroy();
+            /// Get thread local store
+            static LocalStore& inst();
+
+            Thread* thread;
+
+            static pthread_key_t _key;
+        };
     }
     
     namespace current { namespace platform

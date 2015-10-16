@@ -9,54 +9,40 @@ namespace honey
 
 namespace thread { namespace platform
 {
-    typedef honey::platform::Thread Thread;
-
-    /// Thread local store.  Every thread has its own separate store, can be retrieved statically.
-    struct LocalStore
+    bool LocalStore::init()
     {
-        /// Init for process
-        static bool init()
+        verify(!pthread_key_create(&_key, nullptr));
+        return true;
+    }
+
+    LocalStore& LocalStore::create(Thread& thread)
+    {
+        LocalStore& local = *new LocalStore();
+        local.thread = &thread;
+        verify(!pthread_setspecific(_key, &local));
+        return local;
+    }
+
+    void LocalStore::destroy()
+    {
+        delete_(&inst());
+        pthread_setspecific(_key, nullptr);
+    }
+
+    LocalStore& LocalStore::inst()
+    {
+        static auto _ = init(); mt_unused(_);
+        
+        LocalStore* local = static_cast<LocalStore*>(pthread_getspecific(_key));
+        if (!local)
         {
-            verify(!pthread_key_create(&_key, nullptr));
-            return true;
+            //externally created thread (eg. main)
+            create(*Thread::createExt());
+            local = static_cast<LocalStore*>(pthread_getspecific(_key));
         }
-
-        /// Create thread local store
-        static LocalStore& create(Thread& thread)
-        {
-            LocalStore& local = *new LocalStore();
-            local.thread = &thread;
-            verify(!pthread_setspecific(_key, &local));
-            return local;
-        }
-
-        /// Destroy thread local store
-        static void destroy()
-        {
-            delete_(&inst());
-            pthread_setspecific(_key, nullptr);
-        }
-
-        /// Get thread local store
-        static LocalStore& inst()
-        {
-            static auto _ = init(); mt_unused(_);
-            
-            LocalStore* local = static_cast<LocalStore*>(pthread_getspecific(_key));
-            if (!local)
-            {
-                //externally created thread (eg. main)
-                create(*Thread::createExt());
-                local = static_cast<LocalStore*>(pthread_getspecific(_key));
-            }
-            assert(local, "Thread local data not created");
-            return *local;
-        }
-
-        Thread* thread;
-
-        static pthread_key_t _key;
-    };
+        assert(local, "Thread local data not created");
+        return *local;
+    }
 
     pthread_key_t LocalStore::_key;
 } }
