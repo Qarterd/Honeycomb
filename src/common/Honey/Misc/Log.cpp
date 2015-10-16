@@ -55,7 +55,7 @@ namespace log
     {
         os.exceptions(std::ofstream::failbit | std::ofstream::badbit); //enable exceptions
         try { os.open(filepath, std::ofstream::out | std::ofstream::app); } //open for append
-        catch (...) { std::cerr << "unable to open log file: " << filepath << endl << Exception::current(); }
+        catch (std::exception& e) { std::cerr << "unable to open log file: " << filepath << endl << e << endl; }
     }
     
     FileSink::~FileSink()
@@ -68,7 +68,7 @@ namespace log
     {
         if (!os.is_open()) return;
         try { StreamSink::operator()(level, record); }
-        catch (...) { std::cerr << "failed to append to log file: " << filepath << endl << Exception::current(); }
+        catch (std::exception& e) { std::cerr << "failed to append to log file: " << filepath << endl << e << endl; }
     }
 }
 

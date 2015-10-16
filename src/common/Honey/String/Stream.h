@@ -59,6 +59,8 @@ namespace std
     /// \ingroup stringstream
     /// @{
     
+    /// Exception to string
+    inline ostream& operator<<(ostream& os, const exception& e)     { return os << e.what(); }
     /// Pair to string
     template<class T1, class T2>
     ostream& operator<<(ostream& os, const pair<T1,T2>& p)  { return os << "[" << p.first << ", " << p.second << "]"; }

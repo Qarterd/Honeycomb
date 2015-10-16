@@ -60,13 +60,12 @@ public:
         Source(const char* func, const char* file, int line)                : func(func), file(file), line(line) {}
         Exception& operator<<(Exception& e)                                 { e._source = *this; return e; }
         Exception&& operator<<(Exception&& e)                               { e._source = *this; return move(e); }
-        
+
         friend ostream& operator<<(ostream& os, const Source& source)
         {
-            return os   << "Function:   " << c_str(source.func) << endl
-                        << "File:       " << c_str(source.file) << ":" << source.line << endl;
+            return os << c_str(source.func) << ":" << c_str(source.file) << ":" << source.line;
         }
-
+        
         const char* func;
         const char* file;
         int line;
@@ -116,10 +115,9 @@ protected:
     /// Create what message.  Called only on demand and result is cached.
     virtual String createWhat() const
     {
-        return sout()
-            << "Exception:  "   << typeName()       << endl
-            << "Message:    "   << message()        << endl
-            << source();
+        return source().func ?
+            sout() << message() << " (exception: " << typeName() << "; " << source() << ")" :
+            sout() << message();
     }
 
 private:
@@ -131,23 +129,21 @@ private:
     mutable UniquePtr<std::string> _what_u8;
 };
 
-/** \cond */
-namespace exception { namespace priv
+/// Exception util
+namespace exception
 {
-    /// Wrapper around std exception to make dynamic
+    /// Wrapper around std exception to allow for polymorphic throw
     template<class T>
     struct Std : Exception
     {
-        EXCEPTION(Std)
-        Std(const T& e)                         : _e(e) {}
-
-        virtual String createWhat() const
-        {
-            return sout()
-                << "Exception:  "   << typeid(_e).name()        << endl
-                << "Message:    "   << message() << _e.what()   << endl
-                << source();
-        }
+        typedef SharedPtr<Std> Ptr;
+        typedef SharedPtr<const Std> ConstPtr;
+        
+        Std(const T& e)                         : _e(e) { *this << _e.what(); }
+        
+        virtual Exception::Ptr clone() const    { return new Std(_e); }
+        virtual String typeName() const         { return typeid(_e).name(); }
+        virtual void raise() const              { throw _e; }
 
     private:
         T _e;
@@ -157,31 +153,29 @@ namespace exception { namespace priv
     typename Std<T>::Ptr createStd(const T& e)  { return new Std<T>(e); }
 
     struct Unknown : Exception                  { EXCEPTION(Unknown) };
-} }
-/** \endcond */
+}
 
 inline Exception::Ptr Exception::current()
 {
-    using namespace honey::exception::priv;
     //std exceptions are not dynamic so there's no way to clone them trivially
     try { throw; }
-    catch(Exception& e)                 { return e.clone(); }
-    catch(std::domain_error& e)         { return createStd(e); }
-    catch(std::invalid_argument& e)     { return createStd(e); }
-    catch(std::length_error& e)         { return createStd(e); }
-    catch(std::out_of_range& e)         { return createStd(e); }
-    catch(std::logic_error& e)          { return createStd(e); }
-    catch(std::range_error& e)          { return createStd(e); }
-    catch(std::overflow_error& e)       { return createStd(e); }
-    catch(std::underflow_error& e)      { return createStd(e); }
-    catch(std::ios_base::failure& e)    { return createStd(e); }
-    catch(std::runtime_error& e)        { return createStd(e); }
-    catch(std::bad_alloc& e)            { return createStd(e); }
-    catch(std::bad_cast& e)             { return createStd(e); }
-    catch(std::bad_typeid& e)           { return createStd(e); }
-    catch(std::bad_exception& e)        { return createStd(e); }
-    catch(std::exception& e)            { return createStd(e); }
-    catch(...)                          { return new Unknown(); }
+    catch (Exception& e)                { return e.clone(); }
+    catch (std::domain_error& e)        { return honey::exception::createStd(e); }
+    catch (std::invalid_argument& e)    { return honey::exception::createStd(e); }
+    catch (std::length_error& e)        { return honey::exception::createStd(e); }
+    catch (std::out_of_range& e)        { return honey::exception::createStd(e); }
+    catch (std::logic_error& e)         { return honey::exception::createStd(e); }
+    catch (std::range_error& e)         { return honey::exception::createStd(e); }
+    catch (std::overflow_error& e)      { return honey::exception::createStd(e); }
+    catch (std::underflow_error& e)     { return honey::exception::createStd(e); }
+    catch (std::ios_base::failure& e)   { return honey::exception::createStd(e); }
+    catch (std::runtime_error& e)       { return honey::exception::createStd(e); }
+    catch (std::bad_alloc& e)           { return honey::exception::createStd(e); }
+    catch (std::bad_cast& e)            { return honey::exception::createStd(e); }
+    catch (std::bad_typeid& e)          { return honey::exception::createStd(e); }
+    catch (std::bad_exception& e)       { return honey::exception::createStd(e); }
+    catch (std::exception& e)           { return honey::exception::createStd(e); }
+    catch (...)                         { return new honey::exception::Unknown(); }
 }
 
 namespace debug

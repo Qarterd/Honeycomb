@@ -4,7 +4,6 @@
 #include "Honey/Thread/Condition/Lock.h"
 #include "Honey/Thread/Lock/Spin.h"
 #include "Honey/Misc/Range.h"
-#include "Honey/Math/Alge/Alge.h"
 
 namespace honey
 {

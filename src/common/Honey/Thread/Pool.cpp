@@ -130,7 +130,7 @@ void Pool::Worker::run()
         
         //Wait for signal from pool that a task has been queued (ignore any thread interrupts)
         ConditionLock::Scoped _(_cond);
-        while (_condWait) try { _cond.wait(); } catch (Exception& e) {}
+        while (_condWait) try { _cond.wait(); } catch (...) {}
         _condWait = true;
     }
 }

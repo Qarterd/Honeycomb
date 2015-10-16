@@ -173,7 +173,7 @@ void test()
         for (auto i : range(2))
         {
             task(i);
-            try { task.future().get(); } catch (Exception& e) { debug_print(e.what_()); }
+            try { task.future().get(); } catch (std::exception& e) { debug_print(sout() << e << endl); }
             task.reset();
         }
 

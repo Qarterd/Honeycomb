@@ -78,6 +78,8 @@
 #include "Honey/Misc/ScopeGuard.h"
 #include "Honey/Misc/StdUtil.h"
 #include "Honey/Misc/Variant.h"
+#include "Honey/Net/Socket.h"
+#include "Honey/Net/Stream.h"
 #include "Honey/Object/ComObject.h"
 #include "Honey/Object/Listener.h"
 #include "Honey/Object/ListenerList.h"

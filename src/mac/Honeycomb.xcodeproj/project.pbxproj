@@ -16,6 +16,8 @@
 		37B0B9531B8DDE89000051FD /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B9521B8DDE89000051FD /* Util.cpp */; };
 		37B0B9571B8E80A5000051FD /* App.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B9551B8E80A5000051FD /* App.cpp */; };
 		37B0B96E1B902ABD000051FD /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B0B96D1B902ABD000051FD /* Module.cpp */; };
+		37B3B2C81BD0DE4E0001DEFF /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3B2C61BD0DE4E0001DEFF /* Socket.cpp */; };
+		37B3B2CD1BD0DE660001DEFF /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3B2CB1BD0DE660001DEFF /* Socket.cpp */; };
 		37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */; };
 		37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB43A1B52477D0095BB69 /* Alge.cpp */; };
 		37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4421B52477D0095BB69 /* Matrix4.cpp */; };
@@ -90,6 +92,11 @@
 		37B0B9561B8E80A5000051FD /* App.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = App.h; sourceTree = "<group>"; };
 		37B0B96C1B902AB7000051FD /* Module.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		37B0B96D1B902ABD000051FD /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
+		37B3B2C61BD0DE4E0001DEFF /* Socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Socket.cpp; sourceTree = "<group>"; };
+		37B3B2C71BD0DE4E0001DEFF /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
+		37B3B2CB1BD0DE660001DEFF /* Socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Socket.cpp; sourceTree = "<group>"; };
+		37B3B2CC1BD0DE660001DEFF /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
+		37B3B2CF1BD0E7E30001DEFF /* Stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stream.h; sourceTree = "<group>"; };
 		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -332,6 +339,28 @@
 			path = ../common/Honey/App;
 			sourceTree = "<group>";
 		};
+		37B3B2C51BD0DE4E0001DEFF /* Net */ = {
+			isa = PBXGroup;
+			children = (
+				37B3B2CA1BD0DE660001DEFF /* platform */,
+				37B3B2C61BD0DE4E0001DEFF /* Socket.cpp */,
+				37B3B2C71BD0DE4E0001DEFF /* Socket.h */,
+				37B3B2CF1BD0E7E30001DEFF /* Stream.h */,
+			);
+			name = Net;
+			path = ../common/Honey/Net;
+			sourceTree = "<group>";
+		};
+		37B3B2CA1BD0DE660001DEFF /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				37B3B2CB1BD0DE660001DEFF /* Socket.cpp */,
+				37B3B2CC1BD0DE660001DEFF /* Socket.h */,
+			);
+			name = platform;
+			path = Honey/Net/platform;
+			sourceTree = SOURCE_ROOT;
+		};
 		37FEB4151B5245010095BB69 = {
 			isa = PBXGroup;
 			children = (
@@ -360,6 +389,7 @@
 				37FEB4381B52477D0095BB69 /* Math */,
 				37FEB4C11B52477D0095BB69 /* Memory */,
 				37FEB4C81B52477D0095BB69 /* Misc */,
+				37B3B2C51BD0DE4E0001DEFF /* Net */,
 				37FEB4DA1B52477D0095BB69 /* Object */,
 				37FEB4E81B52477D0095BB69 /* String */,
 				37FEB4F21B52477D0095BB69 /* Thread */,
@@ -820,16 +850,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		37FEB41C1B5245010095BB69 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		37FEB41D1B5245010095BB69 /* Honeycomb */ = {
 			isa = PBXNativeTarget;
@@ -837,7 +857,6 @@
 			buildPhases = (
 				37FEB41A1B5245010095BB69 /* Sources */,
 				37FEB41B1B5245010095BB69 /* Frameworks */,
-				37FEB41C1B5245010095BB69 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -920,6 +939,7 @@
 				37FEB52A1B52477D0095BB69 /* Quat.cpp in Sources */,
 				37FEB5991B52477D0095BB69 /* Simplex.cpp in Sources */,
 				37FEB5871B52477D0095BB69 /* Gamma.cpp in Sources */,
+				37B3B2CD1BD0DE660001DEFF /* Socket.cpp in Sources */,
 				37FEB5C91B52477D0095BB69 /* String.cpp in Sources */,
 				37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */,
 				37FEB5651B52477D0095BB69 /* Interp.cpp in Sources */,
@@ -927,6 +947,7 @@
 				376C062E1B6B562C007439A4 /* Util.cpp in Sources */,
 				37B0B9531B8DDE89000051FD /* Util.cpp in Sources */,
 				37FEB5381B52477D0095BB69 /* Double.cpp in Sources */,
+				37B3B2C81BD0DE4E0001DEFF /* Socket.cpp in Sources */,
 				37FEB5611B52477D0095BB69 /* BisectN.cpp in Sources */,
 				37AB0D941B61232B0087FBDC /* Random.cpp in Sources */,
 				37FEB56D1B52477D0095BB69 /* Polynomial.cpp in Sources */,

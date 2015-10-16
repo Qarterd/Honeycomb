@@ -69,7 +69,7 @@ void Task::operator()()
     }
     
     Task_trace(*this, "Executing");
-    try { exec(); } catch (Exception& e) { Log_debug << info() << "Unexpected task execution error: " << e; }
+    try { exec(); } catch (std::exception& e) { Log_debug << info() << "Unexpected task execution error: " << e; }
     Task_trace(*this, "Completed");
     
     {
@@ -77,7 +77,7 @@ void Task::operator()()
         //restore priority to ensure its task-locality
         if (_priority != Thread::priorityNormal()) _thread->setPriority(Thread::priorityNormal());
         //consume any set interrupt to ensure its task-locality
-        try { thread::current::interruptPoint(); } catch (Exception& e) {}
+        try { thread::current::interruptPoint(); } catch (...) {}
         _thread = nullptr;
     }
     

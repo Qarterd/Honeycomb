@@ -20,26 +20,42 @@ public:
     typedef std::stringbuf Super;
     
     explicit ByteBuf(ios_base::openmode mode = 0)
-                                                            : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
+                                                                : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
     explicit ByteBuf(const Bytes& bs, ios_base::openmode mode = 0)
-                                                            : ByteBuf(mode) { bytes(bs); }
-    ByteBuf(ByteBuf&& rhs)                                  : Super(move(rhs)), _mode(rhs._mode) {}
+                                                                : ByteBuf(mode) { bytes(bs); }
+    ByteBuf(ByteBuf&& rhs)                                      : Super(move(rhs)), _mode(rhs._mode) {}
     
-    ByteBuf& operator=(ByteBuf&& rhs)                       { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
+    ByteBuf& operator=(ByteBuf&& rhs)                           { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
     
-    Bytes bytes() const                                     { return Bytes(reinterpret_cast<const byte*>(pbase()), reinterpret_cast<const byte*>(egptr() > pptr() ? egptr() : pptr())); }
+    Bytes bytes() const                                         { return Bytes(pbase(), egptr() > pptr() ? egptr() : pptr()); }
     void bytes(const Bytes& bs)
     {
         seekoff(0, ios_base::beg, ios_base::out);
-        sputn(reinterpret_cast<const char*>(bs.data()), bs.size());
+        sputn(bs.data(), bs.size());
         setg(pbase(), pbase(), pptr());
         if (!appendMode()) seekoff(0, ios_base::beg, ios_base::out);
     }
     
+    std::streamsize sgetn(byte* s, std::streamsize n)           { return Super::sgetn(reinterpret_cast<char*>(s), n); }
+    int sputbackc(byte c)                                       { return Super::sputbackc(c); }
+    
+    int sputc(byte c)                                           { return Super::sputc(c); }
+    std::streamsize sputn(const byte* s, std::streamsize n)     { return Super::sputn(reinterpret_cast<const char*>(s), n); }
+    
+    byte* eback() const                                         { return reinterpret_cast<byte*>(Super::eback()); }
+    byte* gptr() const                                          { return reinterpret_cast<byte*>(Super::gptr()); }
+    byte* egptr() const                                         { return reinterpret_cast<byte*>(Super::egptr()); }
+    void setg(byte* gbeg, byte* gnext, byte* gend)              { Super::setg(reinterpret_cast<char*>(gbeg), reinterpret_cast<char*>(gnext), reinterpret_cast<char*>(gend)); }
+    
+    byte* pbase() const                                         { return reinterpret_cast<byte*>(Super::pbase()); }
+    byte* pptr() const                                          { return reinterpret_cast<byte*>(Super::pptr()); }
+    byte* epptr() const                                         { return reinterpret_cast<byte*>(Super::epptr()); }
+    void setp(byte* new_pbase, byte* new_epptr)                 { Super::setp(reinterpret_cast<char*>(new_pbase), reinterpret_cast<char*>(new_epptr)); }
+    
 private:
     std::basic_string<byte> str() const;
     void str(const std::basic_string<byte>& s);
-    bool appendMode() const                                 { return _mode & (ios_base::app | ios_base::ate); }
+    bool appendMode() const                                     { return _mode & (ios_base::app | ios_base::ate); }
     
     ios_base::openmode _mode;
 };
@@ -55,29 +71,23 @@ public:
     
     ByteStream& operator=(ByteStream&& rhs)                     { Super::operator=(std::move(rhs)); return *this; }
     
-    using Super::get;
+    int_type get()                                              { return Super::get(); }
     ByteStream& get(byte& c)                                    { Super::get(reinterpret_cast<char&>(c)); return *this; }
     ByteStream& get(byte* s, std::streamsize n)                 { Super::get(reinterpret_cast<char*>(s), n); return *this; }
     ByteStream& get(byte* s, std::streamsize n, byte delim)     { Super::get(reinterpret_cast<char*>(s), n, delim); return *this; }
     ByteStream& get(std::streambuf& sb)                         { Super::get(sb); return *this; }
     ByteStream& get(std::streambuf& sb, byte delim)             { Super::get(sb, delim); return *this; }
-    using Super::getline;
     ByteStream& getline(byte* s, std::streamsize n)             { Super::getline(reinterpret_cast<char*>(s), n); return *this; }
     ByteStream& getline(byte* s, std::streamsize n, byte delim) { Super::getline(reinterpret_cast<char*>(s), n, delim); return *this; }
     ByteStream& ignore(std::streamsize count = 1, int_type delim = traits_type::eof()) { Super::ignore(count, delim); return *this; }
-    using Super::read;
     ByteStream& read(byte* s, std::streamsize n)                { Super::read(reinterpret_cast<char*>(s), n); return *this; }
-    using Super::readsome;
     std::streamsize readsome(byte* s, std::streamsize n)        { return Super::readsome(reinterpret_cast<char*>(s), n); }
-    using Super::putback;
     ByteStream& putback(byte c)                                 { Super::putback(c); return *this; }
     ByteStream& unget()                                         { Super::unget(); return *this; }
     ByteStream& seekg(pos_type pos)                             { Super::seekg(pos); return *this; }
     ByteStream& seekg(off_type off, ios_base::seekdir dir)      { Super::seekg(off, dir); return *this; }
     
-    using Super::put;
     ByteStream& put(byte c)                                     { Super::put(c); return *this; }
-    using Super::write;
     ByteStream& write(const byte* s, std::streamsize n)         { Super::write(reinterpret_cast<const char*>(s), n); return *this; }
     ByteStream& seekp(pos_type pos)                             { Super::seekp(pos); return *this; }
     ByteStream& seekp(off_type off, ios_base::seekdir dir)      { Super::seekp(off, dir); return *this; }
@@ -107,7 +117,7 @@ inline ByteStream& operator>>(ByteStream& is, bool& val)        { val = is.get()
 /// Byte from bytes
 inline ByteStream& operator>>(ByteStream& is, byte& val)        { is.get(val); return is; }
 /// UTF-8 char from bytes
-inline ByteStream& operator>>(ByteStream& is, char& val)        { is.get(val); return is; }
+inline ByteStream& operator>>(ByteStream& is, char& val)        { is.std::iostream::get(val); return is; }
 /// Multi-byte number from big-endian bytes
 template<class T, typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, int>::type=0>
 ByteStream& operator>>(ByteStream& is, T& val)
@@ -203,10 +213,10 @@ inline ByteStream& operator<<(ByteStream& os, const Char* str)
                                                         { auto len = std::char_traits<Char>::length(str); os << bytestream::varSize(len); for (auto& e: range(str,str+len)) os << e; return os; }
 /// UTF-8 string to bytes
 inline ByteStream& operator<<(ByteStream& os, const std::string& str)
-                                                        { os << bytestream::varSize(str.length()); os.write(str.data(), str.length()); return os; }
+                                                        { os << bytestream::varSize(str.length()); os.std::iostream::write(str.data(), str.length()); return os; }
 /// UTF-8 C-string to bytes
 inline ByteStream& operator<<(ByteStream& os, const char* str)
-                                                        { auto len = strlen(str); os << bytestream::varSize(len); os.write(str, len); return os; }
+                                                        { auto len = strlen(str); os << bytestream::varSize(len); os.std::iostream::write(str, len); return os; }
 /// Bytes to bytes
 inline ByteStream& operator<<(ByteStream& os, const Bytes& bs)
                                                         { os << bytestream::varSize(bs.size()); os.write(bs.data(), bs.size()); return os; }
@@ -283,10 +293,10 @@ inline ByteStream& operator>>(ByteStream& is, Char* str)
                                                         { szt size; is >> bytestream::varSize(size); for (auto& e: range(str, str+size)) is >> e; str[size] = 0; return is; }
 /// UTF-8 string from bytes
 inline ByteStream& operator>>(ByteStream& is, std::string& str)
-                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.read(str.length() ? &str[0] : nullptr, str.length()); return is; }
+                                                        { szt size; is >> bytestream::varSize(size); str.resize(size); is.std::iostream::read(str.length() ? &str[0] : nullptr, str.length()); return is; }
 /// UTF-8 C-string from bytes. Pointer must point to allocated memory that is large enough to hold string including null character.
 inline ByteStream& operator>>(ByteStream& is, char* str)
-                                                        { szt size; is >> bytestream::varSize(size); is.read(str, size); str[size] = 0; return is; }
+                                                        { szt size; is >> bytestream::varSize(size); is.std::iostream::read(str, size); str[size] = 0; return is; }
 /// Bytes from bytes
 inline ByteStream& operator>>(ByteStream& is, Bytes& bs)
                                                         { szt size; is >> bytestream::varSize(size); bs.resize(size); is.read(bs.data(), bs.size()); return is; }

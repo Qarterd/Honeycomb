@@ -59,9 +59,9 @@ void App::run()
             {
                 try { it->get(); }
                 catch (Terminated& e) {}
-                catch (Exception& e)
+                catch (std::exception& e)
                 {
-                    Log::inst() << log::level::critical << e;
+                    Log::inst() << log::level::critical << e.what();
                 }
                 modules.erase(modules.begin() + (it - results.begin()));
                 results.erase(it);
