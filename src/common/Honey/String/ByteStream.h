@@ -14,18 +14,17 @@ namespace honey
 /// @{
 
 /// A stream I/O buffer of bytes, to be passed into ByteStream
-class ByteBuf : public std::stringbuf
+class ByteStreamBuf : public std::stringbuf
 {
 public:
     typedef std::stringbuf Super;
     
-    explicit ByteBuf(ios_base::openmode mode = 0)
-                                                                : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
-    explicit ByteBuf(const Bytes& bs, ios_base::openmode mode = 0)
-                                                                : ByteBuf(mode) { bytes(bs); }
-    ByteBuf(ByteBuf&& rhs)                                      : Super(move(rhs)), _mode(rhs._mode) {}
+    explicit ByteStreamBuf(ios_base::openmode mode = 0)         : Super(ios_base::in|ios_base::out|mode), _mode(mode) {}
+    explicit ByteStreamBuf(const Bytes& bs, ios_base::openmode mode = 0)
+                                                                : ByteStreamBuf(mode) { bytes(bs); }
+    ByteStreamBuf(ByteStreamBuf&& rhs)                          : Super(move(rhs)), _mode(rhs._mode) {}
     
-    ByteBuf& operator=(ByteBuf&& rhs)                           { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
+    ByteStreamBuf& operator=(ByteStreamBuf&& rhs)               { Super::operator=(move(rhs)); _mode = rhs._mode; return *this; }
     
     Bytes bytes() const                                         { return Bytes(pbase(), egptr() > pptr() ? egptr() : pptr()); }
     void bytes(const Bytes& bs)

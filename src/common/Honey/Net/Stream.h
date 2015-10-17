@@ -7,24 +7,7 @@
 namespace honey { namespace net
 {
 
-/// Buffer object. Does not own allocated data memory.
-template<class T>
-struct Buffer_
-{
-    operator T*() const                         { return data; }
-    
-    T* data;
-    size_t size;
-};
-
-typedef Buffer_<byte> Buffer;
-typedef Buffer_<const byte> BufferConst;
-
-/// Cast buffer data type
-template<class T, class U>
-Buffer_<T> buffer_cast(const Buffer_<U>& rhs)   { return Buffer_<T>{static_cast<T*>(rhs.data), rhs.size}; }
-
-/// automatically resizable buffer class based on ByteBuf
+/// automatically resizable buffer class based on ByteStreamBuf
 /**
   * Examples:
   *
@@ -40,7 +23,7 @@ Buffer_<T> buffer_cast(const Buffer_<U>& rhs)   { return Buffer_<T>{static_cast<
   * Reading from a socket directly into a StreamBuf:
   *
   *     net::StreamBuf b;
-  *     net::Buffer buf = b.prepare(512); //reserve 512 bytes in output sequence
+  *     ByteBuf buf = b.prepare(512); //reserve 512 bytes in output sequence
   *
   *     size_t n = sock.receive(buf); //receive some data into buffer
   *     b.commit(n); //received data is "committed" from output sequence to input sequence
@@ -50,7 +33,7 @@ Buffer_<T> buffer_cast(const Buffer_<U>& rhs)   { return Buffer_<T>{static_cast<
   *     is >> s;
   */
 template<class Alloc = std::allocator<byte>>
-class StreamBuf_ : public ByteBuf, mt::NoCopy
+class StreamBuf_ : public ByteStreamBuf, mt::NoCopy
 {
 public:
     StreamBuf_(size_t maxSize = numeral<size_t>().max(), const Alloc& alloc = Alloc()) :
@@ -68,7 +51,7 @@ public:
     /// get the max sum of sizes of the input and output sequences
     size_t maxSize() const                  { return _maxSize; }
     /// get the data that represents the input sequence
-    BufferConst data() const                { return BufferConst(gptr(), size()); }
+    ByteBufConst data() const               { return ByteBufConst(gptr(), size()); }
 
     /// get a buffer that represents the output sequence with the given size
     /**
@@ -78,7 +61,7 @@ public:
       *
       * \note the returned buffer is invalidated by any function that modifies the input or output sequences
       */
-    Buffer prepare(size_t n)                { reserve(n); return Buffer(pptr(), n); }
+    ByteBuf prepare(size_t n)               { reserve(n); return ByteBuf(pptr(), n); }
 
     /// move characters from the output sequence to the input sequence
     /**

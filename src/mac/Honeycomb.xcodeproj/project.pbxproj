@@ -97,6 +97,7 @@
 		37B3B2CB1BD0DE660001DEFF /* Socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Socket.cpp; sourceTree = "<group>"; };
 		37B3B2CC1BD0DE660001DEFF /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
 		37B3B2CF1BD0E7E30001DEFF /* Stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stream.h; sourceTree = "<group>"; };
+		37B3B2D11BD1E7DF0001DEFF /* Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -595,6 +596,7 @@
 			isa = PBXGroup;
 			children = (
 				37FEB4C21B52477D0095BB69 /* Allocator.h */,
+				37B3B2D11BD1E7DF0001DEFF /* Buffer.h */,
 				37FEB4C31B52477D0095BB69 /* Pool.cpp */,
 				37FEB4C41B52477D0095BB69 /* Pool.h */,
 				37FEB4C51B52477D0095BB69 /* SharedPtr.h */,

@@ -59,6 +59,7 @@
 #include "Honey/Math/Ratio.h"
 #include "Honey/Math/Real.h"
 #include "Honey/Memory/Allocator.h"
+#include "Honey/Memory/Buffer.h"
 #include "Honey/Memory/Pool.h"
 #include "Honey/Memory/SharedPtr.h"
 #include "Honey/Memory/SmallAllocator.h"

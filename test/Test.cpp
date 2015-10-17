@@ -254,7 +254,7 @@ void test()
     }
     
     {
-        ByteBuf buf;
+        ByteStreamBuf buf;
         ByteStream bs(&buf);
         bs << make_tuple(true, 97_b, 'b', -0xFFF, -0xFFFFFFFFFL, 0xFFFFFFFFFUL, 1.1f, 2.2);
         debug_print(sout() << "Tuple to bytes: " << buf.bytes() << endl);

@@ -3,6 +3,7 @@
 
 #include "Honey/Misc/BitOp.h"
 #include "Honey/Misc/Range.h"
+#include "Honey/Memory/Buffer.h"
 
 namespace honey
 {
@@ -98,5 +99,9 @@ struct ByteArray : array<byte, N>
     /// Read byte array from string stream using current decoding
     friend istream& operator>>(istream& is, ByteArray& val)         { Bytes bs; is >> bs; val = bs; return is; }
 };
+
+/// A buffer of bytes
+typedef Buffer<byte> ByteBuf;
+typedef Buffer<const byte> ByteBufConst;
 
 }
