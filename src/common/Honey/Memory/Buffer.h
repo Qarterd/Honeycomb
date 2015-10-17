@@ -6,7 +6,13 @@
 namespace honey
 {
 
-/// A contiguous region of referenced (not owned) memory
+/// A contiguous region of referenced (not owned by object) memory
+/**
+  * A buffer is a light wrapper around a pointer, as such the constness of a buffer object
+  * does not affect the mutability of its referenced memory. Also, for readability it
+  * is better to pass a buffer by value instead of by const reference
+  * (eg. declare `Buffer<T>` instead of `const Buffer<T>&`, similar to how one would declare `T*` instead of `T* const&`).
+  */
 template<class T>
 class Buffer
 {
