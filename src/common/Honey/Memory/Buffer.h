@@ -17,14 +17,12 @@ template<class T>
 class Buffer
 {
 public:
-    typedef T           value_type;
-    typedef szt         size_type;
-    typedef sdt         difference_type;
-    typedef T&          reference;
-    typedef const T&    const_reference;
-    typedef T*          pointer;
-    typedef const T*    const_pointer;
-    typedef T*          iterator;
+    typedef T   value_type;
+    typedef szt size_type;
+    typedef sdt difference_type;
+    typedef T&  reference;
+    typedef T*  pointer;
+    typedef T*  iterator;
     typedef std::reverse_iterator<iterator>         reverse_iterator;
     
     /// Construct empty buffer with null data and zero size
