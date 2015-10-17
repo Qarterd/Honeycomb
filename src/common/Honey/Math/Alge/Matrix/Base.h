@@ -5,12 +5,11 @@
 #include "Honey/Math/Alge/Matrix/Builder.h"
 #include "Honey/Math/Alge/Matrix/Iter.h"
 #include "Honey/Math/Alge/Matrix/Block.h"
+#include "Honey/Math/Alge/Trig.h"
 
 namespace honey
 {
 
-template<class Real> class Alge_;
-template<class Real> class Trig_;
 template<class Real> class Svd;
 
 /// Matrix base class

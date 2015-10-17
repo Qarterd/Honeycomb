@@ -14,7 +14,7 @@ namespace hash
 {
 
 /** \cond */
-/// Constexpr version of MurmurHash3_x86_32
+/// Compile-time version of MurmurHash3_x86_32
 namespace priv { namespace murmur_constexpr
 {
     constexpr uint32 rotLeft(uint32 v, int32 n)      { return (v << n) | (v >> (32-n)); }
@@ -47,14 +47,14 @@ namespace priv { namespace murmur_constexpr
 /** \endcond */
 
 /// Quickly generate a small hash value. Each seed value produces a unique hash from the same data.
-int fast(const byte* data, szt len, int seed = 0);
+int fast(ByteBufConst bs, int seed = 0);
 /// fast() for UTF-8 strings
-inline int fast(const char* str, int seed = 0)                              { return fast(reinterpret_cast<const byte*>(str), strlen(str), seed); }
+inline int fast(const char* str, int seed = 0)                              { return fast(ByteBufConst(reinterpret_cast<const byte*>(str), strlen(str)), seed); }
 /// fast() for UTF-8 strings
-inline int fast(const std::string& str, int seed = 0)                       { return fast(reinterpret_cast<const byte*>(str.data()), str.length(), seed); }
+inline int fast(const std::string& str, int seed = 0)                       { return fast(ByteBufConst(reinterpret_cast<const byte*>(str.data()), str.length()), seed); }
 /// fast() for strings, converted to UTF-8 before hashing
 inline int fast(const String& str, int seed = 0)                            { return fast(str.u8(), seed); }
-/// fast() for UTF-8 strings
+/// Compile-time version of fast() for UTF-8 strings
 inline constexpr int fast_(const char* str, szt len, int seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 4, 0, seed); }
 
 /// 256-bit secure hash value
@@ -73,11 +73,11 @@ struct sval : ByteArray<32>
   * \param  key     Generate a keyed HMAC that can be used to verify message authenticity.
   *                 Each key produces a unique hash from the same data.
   */
-sval secure(const byte* data, szt len, optional<const sval&> key = optnull);
+sval secure(ByteBufConst bs, optional<const sval&> key = optnull);
 /// secure() for UTF-8 strings
-inline sval secure(const char* str, optional<const sval&> key = optnull)        { return secure(reinterpret_cast<const byte*>(str), strlen(str), key); }
+inline sval secure(const char* str, optional<const sval&> key = optnull)        { return secure(ByteBufConst(reinterpret_cast<const byte*>(str), strlen(str)), key); }
 /// secure() for UTF-8 strings
-inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(reinterpret_cast<const byte*>(str.data()), str.length(), key); }
+inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(ByteBufConst(reinterpret_cast<const byte*>(str.data()), str.length()), key); }
 /// secure() for strings, converted to UTF-8 before hashing
 inline sval secure(const String& str, optional<const sval&> key = optnull)      { return secure(str.u8(), key); }
 

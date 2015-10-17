@@ -219,9 +219,12 @@ inline ByteStream& operator<<(ByteStream& os, const char* str)
 /// Bytes to bytes
 inline ByteStream& operator<<(ByteStream& os, const Bytes& bs)
                                                         { os << bytestream::varSize(bs.size()); os.write(bs.data(), bs.size()); return os; }
-/// Byte C-string to bytes, unimplemented, use ByteStream::write(bs, n) instead
+/// Byte C-string to bytes, unimplemented, use ByteBufConst(bs, n) instead
 template<class T, typename std::enable_if<std::is_same<T,const byte*>::value || std::is_same<T,byte*>::value,int>::type=0>
-ByteStream& operator<<(ByteStream& os, T bs)            { static_assert(!mt::True<T>::value, "Unimplemented, use ByteStream::write(bs, n) instead"); return os; }
+ByteStream& operator<<(ByteStream& os, T bs)            { static_assert(!mt::True<T>::value, "Unimplemented, use ByteBufConst(bs, n) instead"); return os; }
+/// Byte buffer to bytes
+inline ByteStream& operator<<(ByteStream& os, ByteBufConst bs)
+                                                        { os << bytestream::varSize(bs.size()); os.write(bs.data(), bs.size()); return os; }
 /// Set to bytes
 template<class T, class Compare, class Alloc>
 ByteStream& operator<<(ByteStream& os, const set<T,Compare,Alloc>& set)

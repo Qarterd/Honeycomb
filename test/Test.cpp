@@ -705,15 +705,15 @@ void test()
 
     crypt.setKey(key);
     crypt.setIv(iv);
-    crypt.encrypt(reinterpret_cast<const byte*>(msg.u8().data()), cipher, msg.length());
+    crypt.encrypt(ByteBufConst(reinterpret_cast<const byte*>(msg.u8().data()), msg.length()), ByteBuf(cipher, msg.length()));
     crypt.setIv(iv2);
-    crypt.encrypt(reinterpret_cast<const byte*>(msg2.u8().data()), cipher+msg.length(), msg2.length());
+    crypt.encrypt(ByteBufConst(reinterpret_cast<const byte*>(msg2.u8().data()), msg2.length()), ByteBuf(cipher+msg.length(), msg2.length()));
 
     crypt.setKey(key);
     crypt.setIv(iv);
-    crypt.decrypt(cipher, reinterpret_cast<byte*>(decipher), msg.length());
+    crypt.decrypt(ByteBuf(cipher, msg.length()), ByteBuf(reinterpret_cast<byte*>(decipher), msg.length()));
     crypt.setIv(iv2);
-    crypt.decrypt(cipher+msg.length(), reinterpret_cast<byte*>(decipher+msg.length()), msg2.length());
+    crypt.decrypt(ByteBuf(cipher+msg.length(), msg2.length()), ByteBuf(reinterpret_cast<byte*>(decipher+msg.length()), msg2.length()));
     decipher[msg.length()+msg2.length()] = 0;
     
     {

@@ -1,13 +1,9 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Math/Alge/Vec/Vec1.h"
-#include "Honey/Math/Alge/Vec/Vec2.h"
-#include "Honey/Math/Alge/Vec/Vec3.h"
-#include "Honey/Math/Alge/Vec/Vec4.h"
-#include "Honey/Math/Alge/Matrix/Matrix4.h"
-#include "Honey/Math/NumAnalysis/Svd.h"
-#include "Honey/Math/Alge/Quat.h"
+#include "Honey/Math/Float.h"
+#include "Honey/Math/Double.h"
+#include "Honey/Math/Quad.h"
 
 namespace honey
 {
@@ -19,6 +15,7 @@ class Alge_ : mt::NoCopy
     typedef typename Numeral<Real>::Real_           Real_;
     typedef typename Numeral<Real>::Int             Int;
     typedef typename std::make_unsigned<Int>::type  UInt;
+    
 public:
     /// Get absolute value of signed integer
     static Int abs(Int x)                                                   { return x >= 0 ? x : -x;  }

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/Alge/Vec/Swiz.h"
+#include "Honey/Math/Alge/Vec/Vec2.h"
 
 namespace honey
 {

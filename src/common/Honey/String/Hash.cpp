@@ -81,12 +81,12 @@ namespace priv { namespace murmur
 } }
 /** \endcond */
 
-int fast(const byte* data, szt len, int seed)
+int fast(ByteBufConst bs, int seed)
 {
-    return priv::murmur::hash(data, len, seed);
+    return priv::murmur::hash(bs.data(), bs.size(), seed);
 }
 
-sval secure(const byte* data, szt len, optional<const sval&> key)
+sval secure(ByteBufConst bs, optional<const sval&> key)
 {
     sval res;
     if (key)
@@ -103,7 +103,7 @@ sval secure(const byte* data, szt len, optional<const sval&> key)
         blake2b_state S;
         blake2b_init(&S, res.size());
         blake2b_update(&S, ikeypad.data(), ikeypad.size());
-        blake2b_update(&S, data, len);
+        blake2b_update(&S, bs.data(), bs.size());
         blake2b_final(&S, res.data(), res.size());
   
         blake2b_init(&S, res.size());
@@ -113,7 +113,7 @@ sval secure(const byte* data, szt len, optional<const sval&> key)
     }
     else
     {
-        blake2b(res.data(), data, nullptr, res.size(), len, 0);
+        blake2b(res.data(), bs.data(), nullptr, res.size(), bs.size(), 0);
     }
     return res;
 }
@@ -133,11 +133,11 @@ vector<sval> secureKeys(const String& password, const Bytes& salt, int iterCount
             if (!iter)
             {
                 BitOp::toPartsBig(static_cast<uint32>(k)+1, salt_k.data()+salt.size());
-                u = secure(salt_k.data(), salt_k.size(), passkey);
+                u = secure(salt_k, passkey);
                 key = u;
                 continue;
             }
-            u = secure(u.data(), u.size(), passkey);
+            u = secure(u, passkey);
             for (auto i : range(key.ints().size())) key.ints()[i] ^= u.ints()[i];
         }
     }

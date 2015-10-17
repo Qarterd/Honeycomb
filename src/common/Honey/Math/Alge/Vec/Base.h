@@ -6,8 +6,6 @@
 namespace honey
 {
 
-template<class Real> class Alge_;
-
 /// Vector base class
 template<class Subclass>
 class VecBase : public MatrixBase<Subclass>

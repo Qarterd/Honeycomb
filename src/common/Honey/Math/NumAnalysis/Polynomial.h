@@ -3,6 +3,7 @@
 
 #include "Honey/Math/Alge/Alge.h"
 #include "Honey/Math/Alge/Trig.h"
+#include "Honey/Math/Alge/Vec/Vec4.h"
 
 namespace honey
 {

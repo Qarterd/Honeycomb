@@ -1,9 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Math/Float.h"
-#include "Honey/Math/Double.h"
-#include "Honey/Math/Quad.h"
+#include "Honey/Math/Alge/Alge.h"
 #include "Honey/String/Stream.h"
 
 namespace honey

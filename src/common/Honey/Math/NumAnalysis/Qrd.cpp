@@ -1,7 +1,6 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 
 #include "Honey/Math/NumAnalysis/Qrd.h"
-#include "Honey/Math/Alge/Alge.h"
 
 namespace honey
 {

@@ -2,8 +2,6 @@
 
 #include "Honey/Math/Alge/Matrix/Matrix4.h"
 #include "Honey/Math/Alge/Transform.h"
-#include "Honey/Math/Alge/Alge.h"
-#include "Honey/Math/Alge/Trig.h"
 
 #define Section_Source
 #include "Honey/Math/Alge/Matrix/platform/Matrix4.h"

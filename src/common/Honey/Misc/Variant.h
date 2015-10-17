@@ -18,18 +18,18 @@ namespace priv
     class variant<Subclass, id, Type, Types...> : public variant<Subclass, id+1, Types...>
     {
         typedef variant<Subclass, id+1, Types...> Super;
-        typedef typename std::remove_const<Type>::type Type_nonconst;
+        typedef typename std::remove_const<Type>::type Type_mutable;
     public:
         operator Type&()                                    { return this->subc().template get<Type>(); }
         operator const Type&() const                        { return this->subc().template get<const Type>(); }
         
     protected:
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_constructible<Type>::value, int>::type=0>
-        void construct(const Type_nonconst& val)            { construct_(val); }
+        void construct(const Type_mutable& val)             { construct_(val); }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_constructible<Type>::value, int>::type=0>
-        void construct(Type_nonconst& val)                  { construct_(val); }
+        void construct(Type_mutable& val)                   { construct_(val); }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_move_constructible<Type>::value, int>::type=0>
-        void construct(Type_nonconst&& val)                 { construct_(move(val)); }
+        void construct(Type_mutable&& val)                  { construct_(move(val)); }
         template<class T>
         void construct(T&& val)                             { Super::construct(forward<T>(val)); }
         
@@ -41,11 +41,11 @@ namespace priv
         void destroy()                                      { _id() == id ? _val().~Type() : Super::destroy(); }
     
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_assignable<Type>::value, int>::type=0>
-        void assign(const Type_nonconst& val)               { if (_id() != id) assign_new(val); else _val() = val; }
+        void assign(const Type_mutable& val)                { if (_id() != id) assign_new(val); else _val() = val; }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_assignable<Type>::value, int>::type=0>
-        void assign(Type_nonconst& val)                     { if (_id() != id) assign_new(val); else _val() = val; }
+        void assign(Type_mutable& val)                      { if (_id() != id) assign_new(val); else _val() = val; }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_move_assignable<Type>::value, int>::type=0>
-        void assign(Type_nonconst&& val)                    { if (_id() != id) assign_new(move(val)); else _val() = move(val); }
+        void assign(Type_mutable&& val)                     { if (_id() != id) assign_new(move(val)); else _val() = move(val); }
         template<class T>
         void assign(T&& val)                                { Super::assign(forward<T>(val)); }
         
@@ -97,16 +97,16 @@ namespace priv
     class variant<Subclass, id, Type&, Types...> : public variant<Subclass, id+1, Types...>
     {
         typedef variant<Subclass, id+1, Types...> Super;
-        typedef typename std::remove_const<Type>::type Type_nonconst;
+        typedef typename std::remove_const<Type>::type Type_mutable;
     public:
         operator Type&()                                    { return this->subc().template get<Type>(); }
         operator const Type&() const                        { return this->subc().template get<const Type>(); }
         
     protected:
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_const<Type>::value, int>::type=0>
-        void construct(const Type_nonconst& val)            { construct_(val); }
-        void construct(Type_nonconst& val)                  { construct_(val); }
-        void construct(Type_nonconst&& val)                 { construct_(move(val)); }
+        void construct(const Type_mutable& val)             { construct_(val); }
+        void construct(Type_mutable& val)                   { construct_(val); }
+        void construct(Type_mutable&& val)                  { construct_(move(val)); }
         template<class T>
         void construct(T&& val)                             { Super::construct(forward<T>(val)); }
         
@@ -118,9 +118,9 @@ namespace priv
         void destroy()                                      { if (_id() == id) _ptr() = nullptr; else Super::destroy(); }
         
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_const<Type>::value, int>::type=0>
-        void bind(const Type_nonconst& val)                 { bind_(val); }
-        void bind(Type_nonconst& val)                       { bind_(val); }
-        void bind(Type_nonconst&& val)                      { bind_(move(val)); }
+        void bind(const Type_mutable& val)                  { bind_(val); }
+        void bind(Type_mutable& val)                        { bind_(val); }
+        void bind(Type_mutable&& val)                       { bind_(move(val)); }
         template<class T>
         void bind(T&& val)                                  { Super::bind(forward<T>(val)); }
         
@@ -130,11 +130,11 @@ namespace priv
         void bind_convert(T&& val)                          { Super::bind_convert(forward<T>(val)); }
     
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_assignable<Type>::value, int>::type=0>
-        void assign(const Type_nonconst& val)               { _val() = val; }
+        void assign(const Type_mutable& val)                { _val() = val; }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_copy_assignable<Type>::value, int>::type=0>
-        void assign(Type_nonconst& val)                     { _val() = val; }
+        void assign(Type_mutable& val)                      { _val() = val; }
         template<class _=void, typename std::enable_if<mt::True<_>::value && std::is_move_assignable<Type>::value, int>::type=0>
-        void assign(Type_nonconst&& val)                    { _val() = move(val); }
+        void assign(Type_mutable&& val)                     { _val() = move(val); }
         template<class T>
         void assign(T&& val)                                { Super::assign(forward<T>(val)); }
         

@@ -23,7 +23,7 @@ namespace bloom_filter
     template<class T>
     struct hash
     {
-        int operator()(const T& val, szt hashIndex) const       { return honey::hash::fast(reinterpret_cast<const byte*>(&val), sizeof(T), priv::seeds[hashIndex]); }
+        int operator()(const T& val, szt hashIndex) const       { return honey::hash::fast(ByteBufConst(reinterpret_cast<const byte*>(&val), sizeof(T)), priv::seeds[hashIndex]); }
     };
 
     /// Calculate optimal bloom parameters -- bit and hash count

@@ -149,8 +149,11 @@ void Chacha::setIv(const Iv& iv)
     _state.core[9] = 0;
 }
 
-void Chacha::encrypt(const byte* m, byte* c, szt len)
+void Chacha::encrypt(ByteBufConst msg, ByteBuf cipher)
 {
+    const byte* m = msg.data();
+    byte* c = cipher.data();
+    szt len = msg.size();
     uint32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
     uint32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
     byte* ctarget = 0;
@@ -289,9 +292,9 @@ void Chacha::encrypt(const byte* m, byte* c, szt len)
     _state.resIdx = _state.coreSize;
 }
 
-void Chacha::decrypt(const byte* cipher, byte* msg, szt len)
+void Chacha::decrypt(ByteBufConst cipher, ByteBuf msg)
 {
-    encrypt(cipher, msg, len);
+    encrypt(cipher, msg);
 }
 
 }

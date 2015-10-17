@@ -110,6 +110,16 @@ public:
     const Block* blocks() const                 { return _blocks; }
     Block* blocks()                             { return _blocks; }
     
+    /// Create Bytes from big-endian bits (the first index contains the MSB)
+    Bytes toBytes() const
+    {
+        Bytes bs;
+        bs.resize(size()/8 + (size()%8 != 0));
+        szt i = 0;
+        for (auto& b: bs) for (auto j: range(8)) if (i < size()) b |= test(i++) << (7-j);
+        return bs;
+    }
+    
 private:
     static const szt bitToBlockShift            = mt::log2Floor<bitsPerBlock>::value;
     static const szt bitOffsetMask              = bitsPerBlock-1;

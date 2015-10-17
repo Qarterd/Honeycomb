@@ -1,8 +1,8 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Math/Random/Chacha.h"
 #include "Honey/Math/NumAnalysis/BackSub.h"
+#include "Honey/Math/Random/Chacha.h"
 
 namespace honey
 {
@@ -119,7 +119,7 @@ private:
     Matrix          _u;
     Matrix          _ut;
     Matrix          _vt;
-    Chacha           _rand;
+    Chacha          _rand;
     BackSub<Real>   _backSub;
 };
 

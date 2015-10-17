@@ -42,22 +42,11 @@ class Chacha : public RandomGen
 {
 public:
     /// 256-bit Cryptographic Key
-    struct Key : ByteArray<32>
-    {
-        using ByteArray::ByteArray;
-    };
-
+    typedef ByteArray<32> Key;
     /// 64-bit Cryptographic IV
-    struct Iv : ByteArray<8>
-    {
-        using ByteArray::ByteArray;
-    };
-
+    typedef ByteArray<8> Iv;
     /// 320-bit Seed (Key+IV)
-    struct Seed : ByteArray<40>
-    {
-        using ByteArray::ByteArray;
-    };
+    typedef ByteArray<40> Seed;
 
     /// Generator State
     struct State
@@ -90,10 +79,10 @@ public:
     /// Set initialization vector into generator. Call for every message between encrypt/decrypt calls to produce unique streams.
     void setIv(const Iv& iv);
 
-    /// Encrypt a mesage of length len.  Result is stored in cipher.
-    void encrypt(const byte* msg, byte* cipher, szt len);
-    /// Decrypt a cipher of length len.  Result is stored in msg.
-    void decrypt(const byte* cipher, byte* msg, szt len);
+    /// Encrypt a message.  Result is stored in cipher.
+    void encrypt(ByteBufConst msg, ByteBuf cipher);
+    /// Decrypt a cipher.  Result is stored in msg.
+    void decrypt(ByteBufConst cipher, ByteBuf msg);
 
     /// Set the state of the generator
     void setState(const State& state)               { _state = state; }

@@ -51,7 +51,7 @@ bool reg(const Id& id,  const function<ostream& (ostream& os, const Bytes& val)>
 }
 
 static auto __hex = reg("hex"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << hex_encode(val.data(), val.size()); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << hex_encode(val); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -68,15 +68,15 @@ static auto __hex = reg("hex"_id,
         return is;
     });
     
-String hex_encode(const byte* data, szt len)
+String hex_encode(ByteBufConst bs)
 {
     String ret;
-    ret.reserve(len*2);
+    ret.reserve(bs.size()*2);
 
-    for (auto b: range(len))
+    for (auto b: bs)
     {
-        ret += toHex(data[b] >> 4);
-        ret += toHex(data[b] & 0xf);
+        ret += toHex(b >> 4);
+        ret += toHex(b & 0xf);
     }
     return ret;
 }
@@ -95,7 +95,7 @@ Bytes hex_decode(const String& string)
 }
 
 static auto __dec = reg("dec"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << dec_encode(val.data(), val.size()); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << dec_encode(val); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -112,9 +112,9 @@ static auto __dec = reg("dec"_id,
         return is;
     });
     
-String dec_encode(const byte* data, szt len)
+String dec_encode(ByteBufConst bs)
 {
-    const byte* cur = data, *end = data + len;
+    const byte* cur = bs.begin(), *end = bs.end();
     
     //skip and count leading zeroes
     szt zeroes;
@@ -202,7 +202,7 @@ static auto __u8 = reg("u8"_id,
     });
     
 static auto __base64 = reg("base64"_id,
-    [](ostream& os, const Bytes& val) -> ostream& { return os << base64_encode(val.data(), val.size()); },
+    [](ostream& os, const Bytes& val) -> ostream& { return os << base64_encode(val); },
     [](istream& is, Bytes& val) -> istream&
     {
         String str;
@@ -219,16 +219,16 @@ static auto __base64 = reg("base64"_id,
         return is;
     });
     
-String base64_encode(const byte* data, szt len)
+String base64_encode(ByteBufConst bs)
 {
     String ret;
-    ret.reserve((len*4)/3 + 4); //round to full block
+    ret.reserve((bs.size()*4)/3 + 4); //round to full block
     szt i = 0;
     byte chars_3[3], chars_4[4];
     
-    for (auto b: range(len))
+    for (auto b: bs)
     {
-        chars_3[i++] = data[b];
+        chars_3[i++] = b;
         if (i == 3)
         {
             chars_4[0] = (chars_3[0] & 0xfc) >> 2;

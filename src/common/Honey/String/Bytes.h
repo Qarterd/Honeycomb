@@ -16,9 +16,12 @@ constexpr byte operator"" _b(unsigned long long int i)  { return static_cast<byt
 /// Construct byte from character literal (eg. 'x'_b)
 constexpr byte operator"" _b(char c)                    { return static_cast<byte>(c); }
 
+/// A buffer of bytes
+typedef Buffer<byte> ByteBuf;
+typedef Buffer<const byte> ByteBufConst;
+
 template<szt N> struct ByteArray;
-template<class Block, class Alloc> class BitSet_;
-    
+
 /// String of bytes
 class Bytes : public vector<byte>
 {
@@ -26,17 +29,9 @@ public:
     using vector::vector;
     
     Bytes() = default;
+    Bytes(ByteBufConst bs)                              : vector(bs.begin(), bs.end()) {}
     template<szt N>
     Bytes(const ByteArray<N>& bs)                       : vector(bs.begin(), bs.end()) {}
-    
-    /// Construct from big-endian bits (the first index contains the MSB)
-    template<class Block, class Alloc>
-    Bytes(const BitSet_<Block,Alloc>& bs)
-    {
-        resize(bs.size()/8 + (bs.size()%8 != 0));
-        szt i = 0;
-        for (auto& b: *this) for (auto j: range(8)) if (i < bs.size()) b |= bs.test(i++) << (7-j);
-    }
     
     /// Write bytes to string stream using current encoding
     friend ostream& operator<<(ostream& os, const Bytes& val);
@@ -46,6 +41,9 @@ public:
 
 /// Construct bytes from string literal (eg. "something"_b)
 inline Bytes operator"" _b(const char* str, szt len)    { return Bytes(str, str+len); }
+
+/// Write byte buffer to string stream using current encoding
+inline ostream& operator<<(ostream& os, ByteBufConst val)   { os << Bytes(val); return os; }
 
 /// Convert integral value to bytes
 template<class Int>
@@ -81,7 +79,6 @@ typename std::enable_if<std::is_integral<Int>::value, Int>::type
     }
 }
 
-
 /// Fixed array of N bytes
 template<szt N>
 struct ByteArray : array<byte, N>
@@ -92,6 +89,7 @@ struct ByteArray : array<byte, N>
     /// Construct from list of byte values
     template<class... Bytes>
     ByteArray(byte b, Bytes&&... bs)    : Super{b, forward<Bytes>(bs)...} {}
+    ByteArray(ByteBufConst bs)          { assert(bs.size() == this->size()); std::copy(bs.begin(), bs.end(), this->begin()); }
     ByteArray(const Bytes& bs)          { assert(bs.size() == this->size()); std::copy(bs.begin(), bs.end(), this->begin()); }
     
     /// Write byte array to string stream using current encoding
@@ -99,9 +97,5 @@ struct ByteArray : array<byte, N>
     /// Read byte array from string stream using current decoding
     friend istream& operator>>(istream& is, ByteArray& val)         { Bytes bs; is >> bs; val = bs; return is; }
 };
-
-/// A buffer of bytes
-typedef Buffer<byte> ByteBuf;
-typedef Buffer<const byte> ByteBufConst;
 
 }
