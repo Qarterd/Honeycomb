@@ -142,7 +142,7 @@ void test()
         tasks['c']->deps().add(*tasks['b']);
         tasks['b']->deps().add(*tasks['a']);
         
-        DepTaskSched sched(future::AsyncSched::inst());
+        DepSched sched(future::AsyncSched::inst());
         for (auto& e: values(tasks)) sched.reg(*e);
 
         auto future = tasks['j']->future();

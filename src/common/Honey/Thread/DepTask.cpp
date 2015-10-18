@@ -147,13 +147,13 @@ void DepTask::trace(const String& file, int line, const String& msg) const
         info() << msg;
 }
 
-bool DepTaskSched::trace = false;
+bool DepSched::trace = false;
 
-DepTaskSched::DepTaskSched(thread::Pool& pool) :
+DepSched::DepSched(thread::Pool& pool) :
     _pool(&pool),
     _bindId(0) {}
 
-bool DepTaskSched::reg(DepTask& task)
+bool DepSched::reg(DepTask& task)
 {
     Mutex::Scoped _(_lock);
     if (_depGraph.vertex(task) || !_depGraph.add(task._depNode)) return false;
@@ -173,7 +173,7 @@ bool DepTaskSched::reg(DepTask& task)
     return true;
 }
 
-bool DepTaskSched::unreg(DepTask& task)
+bool DepSched::unreg(DepTask& task)
 {
     Mutex::Scoped _(_lock);
     if (!_depGraph.remove(task._depNode)) return false;
@@ -188,7 +188,7 @@ bool DepTaskSched::unreg(DepTask& task)
     return true;
 }
 
-void DepTaskSched::bind(DepTask& root)
+void DepSched::bind(DepTask& root)
 {
     //Binding is a pre-calculation step to optimize worker runtime, we want to re-use these results across multiple enqueues.
     //The root must be dirtied if the structure of its subgraph changes
@@ -276,7 +276,7 @@ void DepTaskSched::bind(DepTask& root)
     }
 }
 
-bool DepTaskSched::enqueue(DepTask& task)
+bool DepSched::enqueue(DepTask& task)
 {
     if (task.active()) return false;
     if (task._sched != this || task._root.lock() != &task || task._bindDirty)
@@ -284,7 +284,7 @@ bool DepTaskSched::enqueue(DepTask& task)
     return enqueue_priv(task);
 }
 
-bool DepTaskSched::enqueue_priv(DepTask& task)
+bool DepSched::enqueue_priv(DepTask& task)
 {
     {
         Mutex::Scoped _(task._lock);

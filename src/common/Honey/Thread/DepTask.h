@@ -8,7 +8,7 @@ namespace honey
 {
 
 class DepTask;
-class DepTaskSched;
+class DepSched;
 /** \cond */
 //for weak ptr, is_base_of doesn't work when a class tests itself in the class definition
 namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, DepTask> : std::true_type {}; }
@@ -17,7 +17,7 @@ namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, DepTask>
 /// Base class of `DepTask_`, can be added to scheduler.  Instances must be created through class `DepTask_`.
 class DepTask : public SharedObj<DepTask>, thread::Pool::Task
 {
-    friend class DepTaskSched;
+    friend class DepSched;
     friend struct mt::Funcptr<void ()>;
     
 public:
@@ -88,7 +88,7 @@ protected:
     DepNode             _depNode;
     Mutex               _lock;
     int                 _regCount;
-    DepTaskSched*       _sched;
+    DepSched*           _sched;
     WeakPtr<DepTask>    _root;
     int                 _bindId;
     bool                _bindDirty;
@@ -102,7 +102,7 @@ protected:
     int                 _priority;
 };
 
-/// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see DepTaskSched
+/// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see DepSched
 template<class Result>
 class DepTask_ : public DepTask
 {
@@ -139,20 +139,20 @@ private:
 
 /// Scheduler for dependent tasks, serializes and parallelizes task execution given a dependency graph of tasks and a pool of threads.
 /**
-  * To run a task, first register it and any dependent tasks with DepTaskSched::reg(), then call DepTaskSched::enqueue(rootTask).
+  * To run a task, first register it and any dependent tasks with DepSched::reg(), then call DepSched::enqueue(rootTask).
   */
-class DepTaskSched
+class DepSched
 {
     friend class DepTask;
     
 public:
     /// Get singleton, uses global future::AsyncSched pool
-    static mt_global(DepTaskSched, inst, (future::AsyncSched::inst()));
+    static mt_global(DepSched, inst, (future::AsyncSched::inst()));
     
     /**
       * \param pool     Shared ref to thread pool with which all tasks will be enqueued.
       */
-    DepTaskSched(thread::Pool& pool);
+    DepSched(thread::Pool& pool);
     
     /// Register a task.  DepTask id must be unique.  Once registered, tasks are linked through the dependency graph by id.
     /**
@@ -169,7 +169,7 @@ public:
       * - the enqueued task becomes a `root` task, and the entire subgraph of upstream tasks (dependencies) are bound to this root
       * - the subgraph of tasks are bound to this scheduler
       *
-      * A task can be enqueued again once it is complete. Wait for completion by calling DepTask::future().get().
+      * A task can be enqueued again once it is complete. Wait for completion by calling DepTask_::future().get().
       * Be wary of enqueueing tasks that are upstream of other currently active tasks.
       *
       * This method will error if:
@@ -183,7 +183,7 @@ public:
     static bool trace;
     
 private:
-    static DepTaskSched& createSingleton();
+    static DepSched& createSingleton();
     
     void bind(DepTask& root);    
     bool enqueue_priv(DepTask& task);
@@ -195,6 +195,6 @@ private:
     int                     _bindId;
 };
 
-inline bool DepTask::traceEnabled() const           { return DepTaskSched::trace; }
+inline bool DepTask::traceEnabled() const           { return DepSched::trace; }
 
 }

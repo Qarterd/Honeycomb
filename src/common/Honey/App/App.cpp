@@ -38,8 +38,8 @@ void App::interrupt(const Exception::ConstPtr& e)
 
 void App::run()
 {
-    for (auto& e: values(app::ModuleRegistry::inst().modules)) DepTaskSched::inst().reg(*e->task);
-    DepTaskSched::inst().enqueue(*app::ModuleRegistry::inst().modules["root"_id]->task);
+    for (auto& e: values(app::ModuleRegistry::inst().modules)) DepSched::inst().reg(*e->task);
+    DepSched::inst().enqueue(*app::ModuleRegistry::inst().modules["root"_id]->task);
     
     vector<app::Module::Ptr> modules;
     vector<Future<void>> results;
