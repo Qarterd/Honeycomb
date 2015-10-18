@@ -34,7 +34,7 @@ public:
     /// Check if task is in queue or executing
     bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
     
-    /// Request an interrupt in the executing task's thread. Exception must be heap allocated. \see Thread::interrupt()
+    /// Request an interrupt in the executing task's thread. \see Thread::interrupt()
     void interrupt(const Exception::ConstPtr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
     /// Check whether an interrupt has been requested for the executing task's thread
     bool interruptRequested()                       { Mutex::Scoped _(_lock); return _thread ? _thread->interruptRequested() : false; }
@@ -44,11 +44,11 @@ public:
     /// Get task's thread execution scheduling priority. \see Thread::getPriority()
     int getPriority() const                         { return _priority; }
     
-    /// Set id used for dependency graph and debug output.
+    /// Set id used for dependency graph and debug output
     void setId(const Id& id)                        { assert(!_regCount, "Must unregister prior to modifying"); _depNode.setKey(id); }
     const Id& getId() const                         { return _depNode.getKey(); }
     
-    /// Get dependency node.  Upstream and downstream tasks can be specified through the node.
+    /// Get dependency node. Upstream and downstream tasks can be specified through the node.
     /**
       * Out links are 'upstream' tasks that will be completed before this one.
       * In links are 'downstream' tasks that will be completed after this one.
@@ -117,9 +117,9 @@ public:
     template<class Func>
     DepTask_(Func&& f, const Id& id = idnull)       : DepTask(id), _func(forward<Func>(f)) {}
 
-    /// Get future from which delayed result can be retrieved.  The result pertains to a future enqueueing or currently active task.
+    /// Get future from which delayed result can be retrieved
     /**
-      * \throws future::FutureAlreadyRetrieved      if future() has been called more than once per task execution.
+      * \throws future::FutureAlreadyRetrieved      if future() has been called more than once per task execution
       */
     Future<Result> future()                         { return _func.future(); }
 
@@ -154,9 +154,9 @@ public:
       */
     DepSched(thread::Pool& pool);
     
-    /// Register a task.  DepTask id must be unique.  Once registered, tasks are linked through the dependency graph by id.
+    /// Register a task, linking it into this scheduler's dependency graph
     /**
-      * DepTasks can be registered with multiple schedulers.
+      * Tasks can be registered with multiple schedulers.
       * \return     false if a task with the same id is already registered
       */
     bool reg(DepTask& task);

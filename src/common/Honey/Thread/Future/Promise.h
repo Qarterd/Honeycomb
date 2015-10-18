@@ -228,7 +228,7 @@ public:
     /// Set stored result for void result type
     void setValue()                                             { static_assert(!mt::True<R>::value, "Only for use with void type"); }
 
-    /// Set stored exception. Exception must be heap allocated.
+    /// Set stored exception
     /**
       * \throws future::AlreadySatisfied    if a result has already been set
       * \throws future::NoState             if invalid

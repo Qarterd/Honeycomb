@@ -26,7 +26,7 @@ public:
     /// Application entry point, call from main()
     virtual void entry() final;
     
-    /// Request an interrupt in the app's thread. Exception must be heap allocated.
+    /// Request an interrupt in the app's thread
     void interrupt(const Exception::ConstPtr& e);
     
     RunMode runMode() const                     { return _runMode; }

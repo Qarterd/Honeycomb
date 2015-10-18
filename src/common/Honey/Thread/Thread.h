@@ -167,7 +167,7 @@ public:
     /// Try to join until a specific time. Returns true if joined and thread execution is complete.
     bool join(MonoClock::TimePoint time);
 
-    /// Request an interrupt in the thread. Exception must be heap allocated.
+    /// Request an interrupt in the thread
     /**
       * The thread will throw `e` the next time it waits in join(), current::sleep(), current::interruptPoint(), or Condition::wait().
       */ 
