@@ -25,6 +25,9 @@ namespace priv
     extern const String hex_chars;
     extern const int8 hex_chars_rev[55];
     
+    extern const String base32_chars;
+    extern const int8 base32_chars_rev[73];
+    
     extern const String base64_chars;
     extern const int8 base64_chars_rev[80];
 }
@@ -69,7 +72,22 @@ inline ostream& u8(ostream& os)             { priv::Manip::inst(os).encoding = "
 /// Use UTF-8 decoding when reading bytes from a string stream
 inline istream& u8(istream& is)             { priv::Manip::inst(is).encoding = "u8"_id; return is; }
 
-/// Check if character is in base64 charset (alphanumeric and [+/=])
+/// Check if character is in base32 charset (case-insensitive [a-z], numeric [2-7], and padding '=')
+inline bool isBase32(Char c)                { return c >= '2' && c < '2' + sizeof(priv::base32_chars_rev) && priv::base32_chars_rev[c - '2'] != -1; }
+/// Convert byte to base32 character
+inline Char toBase32(byte b)                { return priv::base32_chars[b]; }
+/// Convert base32 character to byte
+inline byte fromBase32(Char c)              { return priv::base32_chars_rev[c - '2']; }
+/// Convert bytes to string using base32 encoding
+String base32_encode(ByteBufConst bs);
+/// Convert string to bytes using base32 decoding
+Bytes base32_decode(const String& string);
+/// Use base32 encoding when writing bytes to a string stream
+inline ostream& base32(ostream& os)         { priv::Manip::inst(os).encoding = "base32"_id; return os; }
+/// Use base32 decoding when reading bytes from a string stream
+inline istream& base32(istream& is)         { priv::Manip::inst(is).encoding = "base32"_id; return is; }
+
+/// Check if character is in base64 charset (alphanumeric, symbols [+/], and padding '=')
 inline bool isBase64(Char c)                { return c >= '+' && c < '+' + sizeof(priv::base64_chars_rev) && priv::base64_chars_rev[c - '+'] != -1; }
 /// Convert byte to base64 character
 inline Char toBase64(byte b)                { return priv::base64_chars[b]; }

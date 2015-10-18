@@ -23,6 +23,22 @@ namespace priv
         11,12,13,14,15
     };
     
+    const String base32_chars =
+        "abcdefghijklmnopqrstuvwxyz"
+        "234567=";
+
+    const int8 base32_chars_rev[73] =
+    {
+        26,27,28,29,30,31,-1,-1,-1,-1,
+        -1,32,-1,-1,-1,0 ,1 ,2 ,3 ,4 ,
+        5 ,6 ,7 ,8 ,9 ,10,11,12,13,14,
+        15,16,17,18,19,20,21,22,23,24,
+        25,-1,-1,-1,-1,-1,-1,0 ,1 ,2 ,
+        3 ,4 ,5 ,6 ,7 ,8 ,9 ,10,11,12,
+        13,14,15,16,17,18,19,20,21,22,
+        23,24,25
+    };
+    
     const String base64_chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
@@ -114,7 +130,7 @@ static auto __dec = reg("dec"_id,
     
 String dec_encode(ByteBufConst bs)
 {
-    const byte* cur = bs.begin(), *end = bs.end();
+    auto cur = bs.begin(), end = bs.end();
     
     //skip and count leading zeroes
     szt zeroes;
@@ -201,6 +217,141 @@ static auto __u8 = reg("u8"_id,
         return is;
     });
     
+static auto __base32 = reg("base32"_id,
+    [](ostream& os, const Bytes& val) -> ostream& { return os << base32_encode(val); },
+    [](istream& is, Bytes& val) -> istream&
+    {
+        String str;
+        auto flags = is.flags(); //save flags
+        is >> std::ws >> std::noskipws; //skip initial whitespace then disable skipping
+        while (isBase32(is.peek()))
+        {
+            char c;
+            is >> c;
+            str += c;
+        }
+        is.flags(flags); //restore flags
+        val = base32_decode(str);
+        return is;
+    });
+    
+String base32_encode(ByteBufConst bs)
+{
+    auto cur = bs.begin(), end = bs.end();
+    
+    String ret;
+    ret.reserve((bs.size()+4)/5*8); //round to full block
+    
+    int mode=0, left=0;
+    while (cur < end)
+    {
+        auto enc = *(cur++);
+        switch (mode)
+        {
+        case 0: // we have no bits
+            ret += toBase32(enc >> 3);
+            left = (enc & 7) << 2;
+            mode = 1;
+            break;
+
+        case 1: // we have three bits
+            ret += toBase32(left | (enc >> 6));
+            ret += toBase32((enc >> 1) & 31);
+            left = (enc & 1) << 4;
+            mode = 2;
+            break;
+
+        case 2: // we have one bit
+            ret += toBase32(left | (enc >> 4));
+            left = (enc & 15) << 1;
+            mode = 3;
+            break;
+
+        case 3: // we have four bits
+            ret += toBase32(left | (enc >> 7));
+            ret += toBase32((enc >> 2) & 31);
+            left = (enc & 3) << 3;
+            mode = 4;
+            break;
+
+        case 4: // we have two bits
+            ret += toBase32(left | (enc >> 5));
+            ret += toBase32(enc & 31);
+            mode = 0;
+        }
+    }
+
+    static const int padding[5] = {0, 6, 4, 3, 1};
+    if (mode)
+    {
+        ret += toBase32(left);
+        for (auto i: range(padding[mode])) { mt_unused(i); ret += '='; }
+    }
+
+    return ret;
+}
+
+Bytes base32_decode(const String& string)
+{
+    Bytes ret;
+    ret.reserve((5*string.length())/8);
+
+    int mode = 0, left = 0;
+    for (auto e: string)
+    {
+        if (!isBase32(e) || e == '=') break;
+        auto dec = fromBase32(e);
+        switch (mode)
+        {
+        case 0: // we have no bits and get 5
+            left = dec;
+            mode = 1;
+            break;
+
+        case 1: // we have 5 bits and keep 2
+            ret.push_back((left<<3) | (dec>>2));
+            left = dec & 3;
+            mode = 2;
+            break;
+
+        case 2: // we have 2 bits and keep 7
+            left = left << 5 | dec;
+            mode = 3;
+            break;
+
+        case 3: // we have 7 bits and keep 4
+            ret.push_back((left<<1) | (dec>>4));
+            left = dec & 15;
+            mode = 4;
+            break;
+
+        case 4: // we have 4 bits, and keep 1
+            ret.push_back((left<<4) | (dec>>1));
+            left = dec & 1;
+            mode = 5;
+            break;
+
+        case 5: // we have 1 bit, and keep 6
+            left = left << 5 | dec;
+            mode = 6;
+            break;
+
+        case 6: // we have 6 bits, and keep 3
+            ret.push_back((left<<2) | (dec>>3));
+            left = dec & 7;
+            mode = 7;
+            break;
+
+        case 7: // we have 3 bits, and keep 0
+            ret.push_back((left<<5) | dec);
+            mode = 0;
+            break;
+        }
+    }
+
+    return ret;
+}
+
 static auto __base64 = reg("base64"_id,
     [](ostream& os, const Bytes& val) -> ostream& { return os << base64_encode(val); },
     [](istream& is, Bytes& val) -> istream&
@@ -269,7 +420,7 @@ Bytes base64_decode(const String& string)
         chars_4[i++] = e;
         if (i == 4)
         { 
-            for(auto i: range(4)) chars_4[i] = fromBase64(chars_4[i]);
+            for (auto i: range(4)) chars_4[i] = fromBase64(chars_4[i]);
 
             chars_3[0] = (chars_4[0] << 2) + ((chars_4[1] & 0x30) >> 4);
             chars_3[1] = ((chars_4[1] & 0xf) << 4) + ((chars_4[2] & 0x3c) >> 2);
@@ -282,14 +433,14 @@ Bytes base64_decode(const String& string)
 
     if (i)
     {
-        for(auto j: range(i, 4)) chars_4[j] = 0;
-        for(auto j: range(4)) chars_4[j] = fromBase64(chars_4[j]);
+        for (auto j: range(i, 4)) chars_4[j] = 0;
+        for (auto j: range(4)) chars_4[j] = fromBase64(chars_4[j]);
 
         chars_3[0] = (chars_4[0] << 2) + ((chars_4[1] & 0x30) >> 4);
         chars_3[1] = ((chars_4[1] & 0xf) << 4) + ((chars_4[2] & 0x3c) >> 2);
         chars_3[2] = ((chars_4[2] & 0x3) << 6) + chars_4[3];
 
-        for(auto j: range(i-1)) ret.push_back(chars_3[j]);
+        for (auto j: range(i-1)) ret.push_back(chars_3[j]);
     }
     return ret;
 }
