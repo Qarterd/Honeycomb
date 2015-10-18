@@ -7,29 +7,29 @@
 namespace honey
 {
 
-class Task;
-class TaskSched;
+class DepTask;
+class DepTaskSched;
 /** \cond */
 //for weak ptr, is_base_of doesn't work when a class tests itself in the class definition
-namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, Task> : std::true_type {}; }
+namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, DepTask> : std::true_type {}; }
 /** \endcond */
 
-/// Base class of `Task_`, can be added to scheduler.  Instances must be created through class `Task_`.
-class Task : public SharedObj<Task>, thread::Pool::Task
+/// Base class of `DepTask_`, can be added to scheduler.  Instances must be created through class `DepTask_`.
+class DepTask : public SharedObj<DepTask>, thread::Pool::Task
 {
-    friend class TaskSched;
+    friend class DepTaskSched;
     friend struct mt::Funcptr<void ()>;
     
 public:
-    typedef SharedPtr<Task> Ptr;
+    typedef SharedPtr<DepTask> Ptr;
     typedef function<void ()> Func;
-    typedef DepNode<Task*> DepNode;
-    typedef DepGraph<Task::DepNode> DepGraph;
+    typedef DepNode<DepTask*> DepNode;
+    typedef DepGraph<DepTask::DepNode> DepGraph;
 
-    virtual ~Task() {}
+    virtual ~DepTask() {}
     
     /// Get the current task object. Must be called from a task functor.
-    static Task& current();
+    static DepTask& current();
     
     /// Check if task is in queue or executing
     bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
@@ -71,7 +71,7 @@ protected:
         depDownWait     ///< Waiting for downsteam tasks (immediate dependees) to complete
     };
     
-    Task(const Id& id = idnull);
+    DepTask(const Id& id = idnull);
 
     virtual void exec() = 0;
     virtual void resetFunctor() = 0;
@@ -84,38 +84,38 @@ protected:
     virtual void trace(const String& file, int line, const String& msg) const;
     virtual bool traceEnabled() const;
 
-    State           _state;
-    DepNode         _depNode;
-    Mutex           _lock;
-    int             _regCount;
-    TaskSched*      _sched;
-    WeakPtr<Task>   _root;
-    int             _bindId;
-    bool            _bindDirty;
-    int             _depUpWaitInit;
-    int             _depUpWait;
-    int             _depDownWaitInit;
-    int             _depDownWait;
-    DepGraph::Vertex* _vertex;
-    bool            _onStack;
-    Thread*         _thread;
-    int             _priority;
+    State               _state;
+    DepNode             _depNode;
+    Mutex               _lock;
+    int                 _regCount;
+    DepTaskSched*       _sched;
+    WeakPtr<DepTask>    _root;
+    int                 _bindId;
+    bool                _bindDirty;
+    int                 _depUpWaitInit;
+    int                 _depUpWait;
+    int                 _depDownWaitInit;
+    int                 _depDownWait;
+    DepGraph::Vertex*   _vertex;
+    bool                _onStack;
+    Thread*             _thread;
+    int                 _priority;
 };
 
-/// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see TaskSched
+/// Holds a functor and dependency information, enqueue in a scheduler to run the task. \see DepTaskSched
 template<class Result>
-class Task_ : public Task
+class DepTask_ : public DepTask
 {
 public:
-    typedef SharedPtr<Task_> Ptr;
+    typedef SharedPtr<DepTask_> Ptr;
 
-    Task_() {}
+    DepTask_() {}
     /**
       * \param f        functor to execute
       * \param id       used for dependency graph and debug output
       */
     template<class Func>
-    Task_(Func&& f, const Id& id = idnull)          : Task(id), _func(forward<Func>(f)) {}
+    DepTask_(Func&& f, const Id& id = idnull)       : DepTask(id), _func(forward<Func>(f)) {}
 
     /// Get future from which delayed result can be retrieved.  The result pertains to a future enqueueing or currently active task.
     /**
@@ -123,8 +123,8 @@ public:
       */
     Future<Result> future()                         { return _func.future(); }
 
-    /// Wrapper for Task::current()
-    static Task_& current()                         { return static_cast<Task_&>(Task::current()); }
+    /// Wrapper for DepTask::current()
+    static DepTask_& current()                      { return static_cast<DepTask_&>(DepTask::current()); }
 
     /// Set functor to execute
     template<class Func>
@@ -137,31 +137,31 @@ private:
     PackagedTask<Result ()> _func;
 };
 
-/// Task scheduler, serializes and parallelizes task execution, given a dependency graph of tasks and a pool of threads.
+/// Scheduler for dependent tasks, serializes and parallelizes task execution given a dependency graph of tasks and a pool of threads.
 /**
-  * To run a task, first register it and any dependent tasks with TaskSched::reg(), then call TaskSched::enqueue(rootTask).
+  * To run a task, first register it and any dependent tasks with DepTaskSched::reg(), then call DepTaskSched::enqueue(rootTask).
   */
-class TaskSched
+class DepTaskSched
 {
-    friend class Task;
+    friend class DepTask;
     
 public:
     /// Get singleton, uses global future::AsyncSched pool
-    static mt_global(TaskSched, inst, (future::AsyncSched::inst()));
+    static mt_global(DepTaskSched, inst, (future::AsyncSched::inst()));
     
     /**
       * \param pool     Shared ref to thread pool with which all tasks will be enqueued.
       */
-    TaskSched(thread::Pool& pool);
+    DepTaskSched(thread::Pool& pool);
     
-    /// Register a task.  Task id must be unique.  Once registered, tasks are linked through the dependency graph by id.
+    /// Register a task.  DepTask id must be unique.  Once registered, tasks are linked through the dependency graph by id.
     /**
-      * Tasks can be registered with multiple schedulers.
+      * DepTasks can be registered with multiple schedulers.
       * \return     false if a task with the same id is already registered
       */
-    bool reg(Task& task);
+    bool reg(DepTask& task);
     /// Unregister a task.  Returns false if not registered.
-    bool unreg(Task& task);
+    bool unreg(DepTask& task);
 
     /// Schedule a task for execution.  Returns false if task is already active.
     /**
@@ -169,7 +169,7 @@ public:
       * - the enqueued task becomes a `root` task, and the entire subgraph of upstream tasks (dependencies) are bound to this root
       * - the subgraph of tasks are bound to this scheduler
       *
-      * A task can be enqueued again once it is complete. Wait for completion by calling Task::future().get().
+      * A task can be enqueued again once it is complete. Wait for completion by calling DepTask::future().get().
       * Be wary of enqueueing tasks that are upstream of other currently active tasks.
       *
       * This method will error if:
@@ -177,32 +177,24 @@ public:
       * - `task` or any upstream tasks are active
       * - a cyclic dependency is detected
       */
-    bool enqueue(Task& task);
+    bool enqueue(DepTask& task);
     
     /// Whether to log task execution flow
     static bool trace;
     
 private:
-    static TaskSched& createSingleton();
+    static DepTaskSched& createSingleton();
     
-    void bind(Task& root);    
-    bool enqueue_priv(Task& task);
+    void bind(DepTask& root);    
+    bool enqueue_priv(DepTask& task);
     
     SharedPtr<thread::Pool> _pool;
-    Mutex           _lock;
-    vector<Task*>   _taskStack;
-    Task::DepGraph  _depGraph;
-    int             _bindId;
+    Mutex                   _lock;
+    vector<DepTask*>        _taskStack;
+    DepTask::DepGraph       _depGraph;
+    int                     _bindId;
 };
 
-inline bool Task::traceEnabled() const              { return TaskSched::trace; }
-
-/** \cond */
-namespace task { namespace priv
-{
-    /// Test task scheduler
-    void test();
-} }
-/** \endcond */
+inline bool DepTask::traceEnabled() const           { return DepTaskSched::trace; }
 
 }

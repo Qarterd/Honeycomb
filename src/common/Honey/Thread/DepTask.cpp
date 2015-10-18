@@ -1,18 +1,18 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 
-#include "Honey/Thread/Task.h"
+#include "Honey/Thread/DepTask.h"
 #include "Honey/Misc/Log.h"
 
 namespace honey
 {
 
 #ifndef FINAL
-    #define Task_trace(task, msg)   if ((task).traceEnabled()) (task).trace(__FILE__, __LINE__, (msg));
+    #define DepTask_trace(task, msg)    if ((task).traceEnabled()) (task).trace(__FILE__, __LINE__, (msg));
 #else
-    #define Task_trace(...) {}
+    #define DepTask_trace(...) {}
 #endif
     
-Task::Task(const Id& id) :
+DepTask::DepTask(const Id& id) :
     _state(State::idle),
     _depNode(this, id),
     _regCount(0),
@@ -29,14 +29,14 @@ Task::Task(const Id& id) :
     _thread(nullptr),
     _priority(Thread::priorityNormal()) {}
 
-Task& Task::current()
+DepTask& DepTask::current()
 {
-    Task* task = static_cast<Task*>(thread::Pool::current());
+    DepTask* task = static_cast<DepTask*>(thread::Pool::current());
     assert(task, "No active task in current thread, this method can only be called from a task functor");
     return *task;
 }
     
-void Task::bindDirty()
+void DepTask::bindDirty()
 {
     //If we are part of the root's binding, inform root that its subgraph is now dirty 
     auto root = _root.lock();
@@ -44,7 +44,7 @@ void Task::bindDirty()
         root->_bindDirty = true;
 }
 
-void Task::operator()()
+void DepTask::operator()()
 {
     //Enqueue upstream tasks
     for (auto& vertex: _vertex->links())
@@ -59,7 +59,7 @@ void Task::operator()()
         if (_depUpWait > 0)
         {
             _state = State::depUpWait;
-            Task_trace(*this, sout() << "Waiting for upstream. Wait task count: " << _depUpWait);
+            DepTask_trace(*this, sout() << "Waiting for upstream. Wait task count: " << _depUpWait);
             return;
         }
         assert(!_depUpWait, "Task state corrupt");
@@ -68,9 +68,9 @@ void Task::operator()()
         if (_priority != Thread::priorityNormal()) _thread->setPriority(_priority);
     }
     
-    Task_trace(*this, "Executing");
+    DepTask_trace(*this, "Executing");
     try { exec(); } catch (std::exception& e) { Log_debug << info() << "Unexpected task execution error: " << e; }
-    Task_trace(*this, "Completed");
+    DepTask_trace(*this, "Completed");
     
     {
         Mutex::Scoped _(_lock);
@@ -85,7 +85,7 @@ void Task::operator()()
     for (auto& vertex: _vertex->links())
     {
         if (!vertex->nodes().size()) continue;
-        Task& e = ****vertex->nodes().begin();
+        DepTask& e = ****vertex->nodes().begin();
         Mutex::Scoped _(e._lock);
         if (--e._depDownWait > 0) continue;
         e.finalize_();
@@ -95,7 +95,7 @@ void Task::operator()()
     for (auto& vertex: _vertex->links(DepNode::DepType::in))
     {
         if (!vertex->nodes().size()) continue;
-        Task& e = ****vertex->nodes().begin();
+        DepTask& e = ****vertex->nodes().begin();
         if (e._sched != _sched || e._bindId != _bindId) continue; //This task is not upstream of root
         {
             Mutex::Scoped _(e._lock);
@@ -118,42 +118,42 @@ void Task::operator()()
         if (_state != State::idle)
         {
             _state = State::depDownWait;
-            Task_trace(*this, sout() << "Waiting for downstream. Wait task count: " << _depDownWait);
+            DepTask_trace(*this, sout() << "Waiting for downstream. Wait task count: " << _depDownWait);
             return;
         }
     }
 }
 
-void Task::finalize_()
+void DepTask::finalize_()
 {
     //Reset task to initial state
     assert(!_depDownWait, "Task state corrupt");
     _depUpWait = _depUpWaitInit;
     _depDownWait = _depDownWaitInit;
     _state = State::idle;
-    Task_trace(*this, "Finalized");
+    DepTask_trace(*this, "Finalized");
     resetFunctor(); //makes future ready, so task may be destroyed beyond this point
 }
 
-String Task::info() const
+String DepTask::info() const
 {
     return sout() << "[Task: " << getId() << ":" << Thread::current().threadId() << "] ";
 }
 
-void Task::trace(const String& file, int line, const String& msg) const
+void DepTask::trace(const String& file, int line, const String& msg) const
 {
     Log::inst() << log::level::debug <<
         "[" << log::srcFilename(file) << ":" << line << "] " <<
         info() << msg;
 }
 
-bool TaskSched::trace = false;
+bool DepTaskSched::trace = false;
 
-TaskSched::TaskSched(thread::Pool& pool) :
+DepTaskSched::DepTaskSched(thread::Pool& pool) :
     _pool(&pool),
     _bindId(0) {}
 
-bool TaskSched::reg(Task& task)
+bool DepTaskSched::reg(DepTask& task)
 {
     Mutex::Scoped _(_lock);
     if (_depGraph.vertex(task) || !_depGraph.add(task._depNode)) return false;
@@ -161,19 +161,19 @@ bool TaskSched::reg(Task& task)
     //Structural change, must dirty newly linked tasks
     auto vertex = _depGraph.vertex(task);
     assert(vertex);
-    for (auto i: range(Task::DepNode::DepType::valMax))
+    for (auto i: range(DepTask::DepNode::DepType::valMax))
     {
-        for (auto& v: vertex->links(Task::DepNode::DepType(i)))
+        for (auto& v: vertex->links(DepTask::DepNode::DepType(i)))
         {
             if (!v->nodes().size()) continue;
-            Task& e = ****v->nodes().begin();
+            DepTask& e = ****v->nodes().begin();
             if (e._sched == this) e.bindDirty();
         }
     }
     return true;
 }
 
-bool TaskSched::unreg(Task& task)
+bool DepTaskSched::unreg(DepTask& task)
 {
     Mutex::Scoped _(_lock);
     if (!_depGraph.remove(task._depNode)) return false;
@@ -188,12 +188,12 @@ bool TaskSched::unreg(Task& task)
     return true;
 }
 
-void TaskSched::bind(Task& root)
+void DepTaskSched::bind(DepTask& root)
 {
     //Binding is a pre-calculation step to optimize worker runtime, we want to re-use these results across multiple enqueues.
     //The root must be dirtied if the structure of its subgraph changes
     Mutex::Scoped _(_lock);
-    Task_trace(root, "Binding root and its upstream");
+    DepTask_trace(root, "Binding root and its upstream");
     //Cache the vertex for each task
     root._vertex = _depGraph.vertex(root);
     assert(root._vertex, "Bind failed: task must be registered before binding");
@@ -204,7 +204,7 @@ void TaskSched::bind(Task& root)
     _taskStack.push_back(&root);
     while (!_taskStack.empty())
     {
-        Task& task = *_taskStack.back();
+        DepTask& task = *_taskStack.back();
         
         //If already visited
         if (task._sched == this && task._bindId == _bindId)
@@ -220,7 +220,7 @@ void TaskSched::bind(Task& root)
         //Not visited, bind task
         task.bindDirty();
         task._sched = this;
-        task._root = Task::Ptr(&root);
+        task._root = DepTask::Ptr(&root);
         task._bindId = _bindId;
         task._bindDirty = false;
         task._depDownWaitInit = 0;
@@ -230,7 +230,7 @@ void TaskSched::bind(Task& root)
         #ifdef DEBUG
             auto stackTrace = [&]() -> String
             {
-                unordered_set<Task*> unique;
+                unordered_set<DepTask*> unique;
                 int count = 0;
                 ostringstream os;
                 for (auto& e: reversed(_taskStack))
@@ -245,7 +245,7 @@ void TaskSched::bind(Task& root)
             for (auto& vertex: task._vertex->links())
             {
                 if (!vertex->nodes().size()) continue;
-                Task& e = ****vertex->nodes().begin();
+                DepTask& e = ****vertex->nodes().begin();
                 if (e.active())
                 {
                     error_(sout()   << "Bind failed: Upstream task already active. "
@@ -267,7 +267,7 @@ void TaskSched::bind(Task& root)
         for (auto& vertex: task._vertex->links())
         {
             if (!vertex->nodes().size()) continue;
-            Task& e = ****vertex->nodes().begin();
+            DepTask& e = ****vertex->nodes().begin();
             e._vertex = vertex;
             _taskStack.push_back(&e);
             ++task._depUpWaitInit;
@@ -276,7 +276,7 @@ void TaskSched::bind(Task& root)
     }
 }
 
-bool TaskSched::enqueue(Task& task)
+bool DepTaskSched::enqueue(DepTask& task)
 {
     if (task.active()) return false;
     if (task._sched != this || task._root.lock() != &task || task._bindDirty)
@@ -284,18 +284,18 @@ bool TaskSched::enqueue(Task& task)
     return enqueue_priv(task);
 }
 
-bool TaskSched::enqueue_priv(Task& task)
+bool DepTaskSched::enqueue_priv(DepTask& task)
 {
     {
         Mutex::Scoped _(task._lock);
         switch (task._state)
         {
-            case Task::State::idle:
-                task._state = Task::State::queued;
+            case DepTask::State::idle:
+                task._state = DepTask::State::queued;
                 break;
-            case Task::State::depUpWait:
+            case DepTask::State::depUpWait:
                 if (task._depUpWait > 0) return false;
-                task._state = Task::State::queued;
+                task._state = DepTask::State::queued;
                 break;
             default:
                 return false;
@@ -305,39 +305,6 @@ bool TaskSched::enqueue_priv(Task& task)
     _pool->enqueue(task);
     return true;
 }
-
-/** \cond */
-namespace task { namespace priv
-{
-    void test()
-    {
-        //Prints a b c d e f g h i j
-        std::map<Char, Task_<void>::Ptr> tasks;
-        for (auto i: range(10))
-        {
-            String name = sout() << Char('a'+i);
-            tasks[name[0]] = new Task_<void>([=]{ Log_debug << Task::current().info(); }, name);
-        }
-        
-        tasks['j']->deps().add(*tasks['i']);
-        tasks['i']->deps().add(*tasks['h']);
-        tasks['h']->deps().add(*tasks['g']);
-        tasks['g']->deps().add(*tasks['f']);
-        tasks['f']->deps().add(*tasks['e']);
-        tasks['e']->deps().add(*tasks['d']);
-        tasks['d']->deps().add(*tasks['c']);
-        tasks['c']->deps().add(*tasks['b']);
-        tasks['b']->deps().add(*tasks['a']);
-        
-        TaskSched sched(future::AsyncSched::inst());
-        for (auto& e: values(tasks)) sched.reg(*e);
-
-        auto future = tasks['j']->future();
-        sched.enqueue(*tasks['j']);
-        future.wait();
-    }
-} }
-/** \endcond */
 
 }
 

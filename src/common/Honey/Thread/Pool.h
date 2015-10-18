@@ -30,8 +30,8 @@ public:
     ~Pool();
 
     /// Schedule a task for execution
-    template<class Func>
-    void enqueue(Func&& f)                          { enqueue_(TaskPtr(forward<Func>(f))); }
+    template<class Task>
+    void enqueue(Task&& task)                       { enqueue_(TaskPtr(forward<Task>(task))); }
     
     /// Get the current task object of the calling thread.  Must be called from inside a task, returns null otherwise.
     static Task* current()                          { auto& ptr = Worker::current()._task; return ptr ? &(*ptr) : nullptr; }
@@ -41,7 +41,8 @@ private:
     {
         TaskPtr() = default;
         TaskPtr(nullptr_t)                          : TaskPtr() {}
-        template<class F> TaskPtr(F&& f)            : mt::Funcptr<void ()>(forward<F>(f)) {}
+        template<class Task>
+        TaskPtr(Task&& task)                        : mt::Funcptr<void ()>(forward<Task>(task)) {}
     
         Task& operator*() const                     { assert(base); return static_cast<Task&>(*base); }
         Task* operator->() const                    { assert(base); return static_cast<Task*>(base); }

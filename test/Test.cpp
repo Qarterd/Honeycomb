@@ -10,7 +10,7 @@ namespace honey
 void test()
 {
     //=============================
-    //LockFree list test
+    // LockFree list
     //=============================
     {
         typedef lockfree::List<int> List;
@@ -70,7 +70,7 @@ void test()
     //=============================
 
     //=============================
-    //Concurrent deque test
+    // Concurrent deque
     //=============================
     {
         typedef concur::Deque<int> List;
@@ -120,7 +120,35 @@ void test()
     }
     //=============================
     
-    task::priv::test();
+    //=============================
+    // DepTask
+    //=============================
+    {
+        //Prints a b c d e f g h i j
+        std::map<Char, DepTask_<void>::Ptr> tasks;
+        for (auto i: range(10))
+        {
+            String name = sout() << Char('a'+i);
+            tasks[name[0]] = new DepTask_<void>([=]{ Log_debug << DepTask::current().info(); }, name);
+        }
+        
+        tasks['j']->deps().add(*tasks['i']);
+        tasks['i']->deps().add(*tasks['h']);
+        tasks['h']->deps().add(*tasks['g']);
+        tasks['g']->deps().add(*tasks['f']);
+        tasks['f']->deps().add(*tasks['e']);
+        tasks['e']->deps().add(*tasks['d']);
+        tasks['d']->deps().add(*tasks['c']);
+        tasks['c']->deps().add(*tasks['b']);
+        tasks['b']->deps().add(*tasks['a']);
+        
+        DepTaskSched sched(future::AsyncSched::inst());
+        for (auto& e: values(tasks)) sched.reg(*e);
+
+        auto future = tasks['j']->future();
+        sched.enqueue(*tasks['j']);
+        future.wait();
+    }
 
     {        
         Promise<int> promise;

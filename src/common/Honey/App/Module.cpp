@@ -9,11 +9,11 @@ static auto _ = ModuleRegistry::inst().reg(new Module("root"_id, []{}));
 
 Module::Module( const Id& id, const function<void ()>& f,
                 const vector<Id>& outDeps, const vector<Id>& inDeps) :
-    task(new Task_<void>(f, id))
+    task(new DepTask_<void>(f, id))
 {
-    task->deps().add("root"_id, Task::DepNode::DepType::in);
+    task->deps().add("root"_id, DepTask::DepNode::DepType::in);
     for (auto& e: outDeps) task->deps().add(e);
-    for (auto& e: inDeps) task->deps().add(e, Task::DepNode::DepType::in);
+    for (auto& e: inDeps) task->deps().add(e, DepTask::DepNode::DepType::in);
 }
 
 mt::Void ModuleRegistry::reg(const Module::Ptr& module)

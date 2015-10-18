@@ -1,7 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Thread/Task.h"
+#include "Honey/Thread/DepTask.h"
 
 namespace honey 
 {
@@ -17,7 +17,7 @@ struct Module : SharedObj<Module>
     Module( const Id& id, const function<void ()>& f,
             const vector<Id>& outDeps = {}, const vector<Id>& inDeps = {});
     
-    Task_<void>::Ptr task;
+    DepTask_<void>::Ptr task;
 };
 
 /// List of application modules.
