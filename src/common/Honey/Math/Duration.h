@@ -4,6 +4,23 @@
 #include "Honey/Math/Ratio.h"
 #include "Honey/Math/Numeral.h"
 
+namespace honey { template<class Rep, class Period> class Duration; }
+
+/** \cond */
+namespace std
+{
+/** \endcond */
+    /// Get common duration between two durations. The period of the resulting duration is the greatest common divisor.
+    /** \relates Duration */
+    template<class Rep, class Period, class Rep2, class Period2>
+    struct common_type<honey::Duration<Rep,Period>, honey::Duration<Rep2,Period2>>
+    {
+        typedef honey::Duration<typename common_type<Rep,Rep2>::type, typename common_type<Period,Period2>::type> type;
+    };
+/** \cond */
+}
+/** \endcond */
+
 namespace honey
 {
 
@@ -17,15 +34,6 @@ public:
     typedef Period_ Period;
 
     static_assert(Period::num > 0, "Period can't be negative or 0");
-
-    /// Get common type between this duration and another
-    template<class rhs>
-    struct common
-    {
-        typedef Duration<   typename std::common_type<Rep,typename rhs::Rep>::type,
-                            typename Period::template common<typename rhs::Period>::type
-                        > type;
-    };
     
     constexpr Duration() = default;
     /// Construct from repetition
@@ -53,13 +61,13 @@ public:
     Duration& operator%=(const Rep& rhs)                        { _rep %= rhs; return *this; }
     Duration& operator%=(const Duration& rhs)                   { _rep %= rhs._rep; return *this; }
 
-    template<class Rep2, class Period2, class DurCommon = typename common<Duration<Rep2,Period2>>::type>
+    template<class Rep2, class Period2, class DurCommon = typename std::common_type<Duration, Duration<Rep2,Period2>>::type>
     constexpr bool operator==(const Duration<Rep2,Period2>& rhs) const  { return DurCommon(*this)._rep == DurCommon(rhs)._rep; }
 
     template<class Rep2, class Period2>
     constexpr bool operator!=(const Duration<Rep2,Period2>& rhs) const  { return !(*this == rhs); }
 
-    template<class Rep2, class Period2, class DurCommon = typename common<Duration<Rep2,Period2>>::type>
+    template<class Rep2, class Period2, class DurCommon = typename std::common_type<Duration, Duration<Rep2,Period2>>::type>
     constexpr bool operator<(const Duration<Rep2,Period2>& rhs) const   { return DurCommon(*this)._rep < DurCommon(rhs)._rep; }
 
     template<class Rep2, class Period2>
@@ -91,14 +99,14 @@ private:
 
 /// operator+(Duration, Duration). Returns a duration with best-fit period and repetition types.
 template<class Rep, class Period, class Rep2, class Period2,
-    class DurCommon = typename Duration<Rep,Period>::template common<Duration<Rep2,Period2>>::type>
+    class DurCommon = typename std::common_type<Duration<Rep,Period>, Duration<Rep2,Period2>>::type>
 constexpr DurCommon operator+(const Duration<Rep,Period>& lhs, const Duration<Rep2,Period2>& rhs)
 {
     return DurCommon(DurCommon(lhs).count() + DurCommon(rhs).count());
 }
 /// operator-(Duration, Duration). Returns a duration with best-fit period and repetition types.
 template<class Rep, class Period, class Rep2, class Period2,
-    class DurCommon = typename Duration<Rep,Period>::template common<Duration<Rep2,Period2>>::type>
+    class DurCommon = typename std::common_type<Duration<Rep,Period>, Duration<Rep2,Period2>>::type>
 constexpr DurCommon operator-(const Duration<Rep,Period>& lhs, const Duration<Rep2,Period2>& rhs)
 {
     return DurCommon(DurCommon(lhs).count() - DurCommon(rhs).count());
@@ -127,7 +135,7 @@ constexpr DurCommon operator/(const Duration<Rep,Period>& lhs, const Rep2& rhs)
 }
 /// operator/(Duration, Duration). Returns a repetition of best-fit type.
 template<class Rep, class Period, class Rep2, class Period2,
-    class DurCommon = typename Duration<Rep,Period>::template common<Duration<Rep2,Period2>>::type,
+    class DurCommon = typename std::common_type<Duration<Rep,Period>, Duration<Rep2,Period2>>::type,
     class RepCommon = typename std::common_type<Rep,Rep2>::type>
 constexpr RepCommon operator/(const Duration<Rep,Period>& lhs, const Duration<Rep2,Period2>& rhs)
 {
@@ -143,7 +151,7 @@ constexpr DurCommon operator%(const Duration<Rep,Period>& lhs, const Rep2& rhs)
 }
 /// operator%(Duration, Duration). Returns a duration of best-fit period and repetition types.
 template<class Rep, class Period, class Rep2, class Period2,
-    class DurCommon = typename Duration<Rep,Period>::template common<Duration<Rep2,Period2>>::type>
+    class DurCommon = typename std::common_type<Duration<Rep,Period>, Duration<Rep2,Period2>>::type>
 constexpr DurCommon operator%(const Duration<Rep,Period>& lhs, const Duration<Rep2,Period2>& rhs)
 {
     return DurCommon(DurCommon(lhs).count() % DurCommon(rhs).count());

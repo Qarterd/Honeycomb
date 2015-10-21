@@ -70,29 +70,29 @@ private:
 
 /// operator+(TimePoint, Duration). Returns a time point of best-fit duration.
 template<class Clock, class Dur, class Rep, class Period,
-    class TimeCommon = TimePoint<Clock, typename Duration<Rep,Period>::template common<Dur>::type>>
+    class TimeCommon = TimePoint<Clock, typename std::common_type<Dur, Duration<Rep,Period>>::type>>
 constexpr TimeCommon operator+(const TimePoint<Clock,Dur>& lhs, const Duration<Rep,Period>& rhs)
 {
     return TimeCommon(lhs.time() + rhs);
 }
 /// operator+(Duration, TimePoint). Returns a time point of best-fit duration.
 template<class Clock, class Dur, class Rep, class Period,
-    class TimeCommon = TimePoint<Clock, typename Duration<Rep,Period>::template common<Dur>::type>>
-constexpr TimeCommon operator+(const Duration<Rep,Period>& rhs, const TimePoint<Clock,Dur>& lhs)
+    class TimeCommon = TimePoint<Clock, typename std::common_type<Dur, Duration<Rep,Period>>::type>>
+constexpr TimeCommon operator+(const Duration<Rep,Period>& lhs, const TimePoint<Clock,Dur>& rhs)
 {
-    return TimeCommon(rhs + lhs.time());
+    return rhs + lhs;
 }
 /// operator-(TimePoint, Duration). Returns a time point of best-fit duration.
 template<class Clock, class Dur, class Rep, class Period,
-    class TimeCommon = TimePoint<Clock, typename Duration<Rep,Period>::template common<Dur>::type>>
+    class TimeCommon = TimePoint<Clock, typename std::common_type<Dur, Duration<Rep,Period>>::type>>
 constexpr TimeCommon operator-(const TimePoint<Clock,Dur>& lhs, const Duration<Rep,Period>& rhs)
 {
     return lhs + (-rhs);
 }
 /// operator-(TimePoint, TimePoint). Returns a best-fit duration.
-template<class Clock, class Dur, class Rep, class Period,
-     class DurCommon = typename Duration<Rep,Period>::template common<Dur>::type>
-constexpr DurCommon operator-(const TimePoint<Clock,Dur>& lhs, const TimePoint<Clock,Duration<Rep,Period>>& rhs)
+template<class Clock, class Dur, class Dur2,
+     class DurCommon = typename std::common_type<Dur, Dur2>::type>
+constexpr DurCommon operator-(const TimePoint<Clock,Dur>& lhs, const TimePoint<Clock,Dur2>& rhs)
 {
     return lhs.time() - rhs.time();
 }

@@ -76,17 +76,6 @@ public:
     template<class rhs>
     struct greaterEqual                                 : mt::Value<bool, !less<rhs>::value> {};
 
-    /// Get common ratio between this type and rhs
-    template<class rhs>
-    struct common
-    {
-    private:
-        static const int64 gcdNum = mt::gcd<num, rhs::num>::value;
-        static const int64 gcdDen = mt::gcd<den, rhs::den>::value;
-    public:
-        typedef Ratio<gcdNum, (den / gcdDen) * rhs::den> type;
-    };
-
 private:
     template<class lhs, class rhs> struct lessCmpFrac;
     
@@ -174,3 +163,21 @@ namespace ratio
 
 }
 
+/** \cond */
+namespace std
+{
+/** \endcond */
+    /// Get common ratio between two ratios
+    /** \relates Ratio */
+    template<honey::int64 Num, honey::int64 Den, honey::int64 Num2, honey::int64 Den2>
+    struct common_type<honey::Ratio<Num,Den>, honey::Ratio<Num2,Den2>>
+    {
+    private:
+        static const honey::int64 gcdNum = honey::mt::gcd<Num, Num2>::value;
+        static const honey::int64 gcdDen = honey::mt::gcd<Den, Den2>::value;
+    public:
+        typedef honey::Ratio<gcdNum, (Den / gcdDen) * Den2> type;
+    };
+/** \cond */
+}
+/** \endcond */
