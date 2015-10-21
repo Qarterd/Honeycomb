@@ -194,7 +194,8 @@ public:
     
     SharedPtr()                                                     : _ptr(nullptr) {}
     SharedPtr(nullptr_t)                                            : _ptr(nullptr) {}
-    /// Reference an object. For intrusive pointers only.
+    
+    /// Reference an object, allowing for implicit construction. For intrusive pointers only.
     template<class U, typename std::enable_if<mt::True<U>::value && isIntrusive, int>::type=0>
     SharedPtr(U* ptr)                                               : _ptr(nullptr) { set(ptr); }
     /// Reference an object with finalizer and internal control block allocator. For non-intrusive pointers only.
@@ -202,31 +203,27 @@ public:
       * Finalizer is run when reference count reaches 0 (deletes object by default).
       */
     template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && isIntrusive, int>::type=0>
-    SharedPtr(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())         : _ptr(nullptr) { set(ptr, forward<Fin>(f), forward<Alloc>(a)); }
+    explicit SharedPtr(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())    : _ptr(nullptr) { set(ptr, forward<Fin>(f), forward<Alloc>(a)); }
+    
     /// Reference the object pointed to by another shared pointer
     SharedPtr(const SharedPtr& ptr)                                 : _ptr(nullptr) { set(ptr); }
-    template<class U> SharedPtr(const SharedPtr<U>& ptr)            : _ptr(nullptr) { set(ptr); }
+    template<class U>
+    SharedPtr(const SharedPtr<U>& ptr)                              : _ptr(nullptr) { set(ptr); }
     /// Transfer ownership out of shared pointer, leaving it null
     SharedPtr(SharedPtr&& ptr)                                      : _ptr(nullptr) { set(move(ptr)); }
-    template<class U> SharedPtr(SharedPtr<U>&& ptr)                 : _ptr(nullptr) { set(move(ptr)); }
-    
+    template<class U>
+    SharedPtr(SharedPtr<U>&& ptr)                                   : _ptr(nullptr) { set(move(ptr)); }
+
     /// Lock a weak pointer to get access to its object.  Shared ptr will be null if the object has already been destroyed.
-    template<class U> SharedPtr(const WeakPtr<U>& ptr) :
-        _ptr(ptr._ptr)
-    {
-        this->_control(ptr._control());
-        if (_ptr && !getControl().refLock()) _ptr = nullptr;
-    }
+    template<class U>
+    explicit SharedPtr(const WeakPtr<U>& ptr)                       : _ptr(ptr._ptr) { this->_control(ptr._control()); if (_ptr && !getControl().refLock()) _ptr = nullptr; }
     
     /// Transfer ownership out of unique pointer, leaving it null
-    template<class U, class Fin> SharedPtr(UniquePtr<U,Fin>&& ptr)  : _ptr(nullptr) { operator=(move(ptr)); }
+    template<class U, class Fin>
+    SharedPtr(UniquePtr<U,Fin>&& ptr)                               : _ptr(nullptr) { operator=(move(ptr)); }
 
     ~SharedPtr()                                                    { set(nullptr); }
 
-    /// Set the object referenced by this shared pointer. Non-intrusive pointers use default finalizer/allocator.
-    template<class U>
-    SharedPtr& operator=(U* rhs)                                    { set(rhs); return *this; }
-    SharedPtr& operator=(nullptr_t)                                 { set(nullptr); return *this; }
     SharedPtr& operator=(const SharedPtr& rhs)                      { set(rhs); return *this; }
     template<class U>
     SharedPtr& operator=(const SharedPtr<U>& rhs)                   { set(rhs); return *this; }
@@ -401,13 +398,12 @@ public:
     WeakPtr& operator=(const WeakPtr<U>& rhs)                       { setControl(rhs._ptr, rhs._control()); return *this; }
     template<class U>
     WeakPtr& operator=(const SharedPtr<U>& rhs)                     { setControl(rhs._ptr, rhs._control()); return *this; }
-    WeakPtr& operator=(nullptr_t)                                   { set(nullptr); return *this; }
 
     /// Set to null, release reference
     void set(nullptr_t)                                             { setControl(static_cast<T*>(nullptr), nullptr); }
 
     /// Acquire access to object.  Shared ptr prevents object from being destroyed while in use.  Returns null if object has been destroyed.
-    SharedPtr<T> lock() const                                       { return *this; }
+    SharedPtr<T> lock() const                                       { return SharedPtr<T>(*this); }
 
     /// Get strong reference (SharedPtr) count 
     int refCount() const                                            { if (_ptr) return getControl().count(); return 0; }

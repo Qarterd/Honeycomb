@@ -125,31 +125,49 @@ void test()
     //=============================
     {
         //Prints a b c d e f g h i j
-        std::map<Char, DepTask_<void>::Ptr> tasks;
+        std::map<Id, DepTask_<void>::Ptr> tasks;
         for (auto i: range(10))
         {
             String name = sout() << Char('a'+i);
-            tasks[name[0]] = new DepTask_<void>([=]{ Log_debug << DepTask::current().info(); }, name);
+            tasks[name] = new DepTask_<void>([=]{ Log_debug << DepTask::current().info(); }, name);
         }
         
-        tasks['j']->deps().add(*tasks['i']);
-        tasks['i']->deps().add(*tasks['h']);
-        tasks['h']->deps().add(*tasks['g']);
-        tasks['g']->deps().add(*tasks['f']);
-        tasks['f']->deps().add(*tasks['e']);
-        tasks['e']->deps().add(*tasks['d']);
-        tasks['d']->deps().add(*tasks['c']);
-        tasks['c']->deps().add(*tasks['b']);
-        tasks['b']->deps().add(*tasks['a']);
+        tasks["j"_id]->deps().add(*tasks["i"_id]);
+        tasks["i"_id]->deps().add(*tasks["h"_id]);
+        tasks["h"_id]->deps().add(*tasks["g"_id]);
+        tasks["g"_id]->deps().add(*tasks["f"_id]);
+        tasks["f"_id]->deps().add(*tasks["e"_id]);
+        tasks["e"_id]->deps().add(*tasks["d"_id]);
+        tasks["d"_id]->deps().add(*tasks["c"_id]);
+        tasks["c"_id]->deps().add(*tasks["b"_id]);
+        tasks["b"_id]->deps().add(*tasks["a"_id]);
         
         DepSched sched(future::AsyncSched::inst());
         for (auto& e: values(tasks)) sched.reg(*e);
 
-        auto future = tasks['j']->future();
-        sched.enqueue(*tasks['j']);
+        auto future = tasks["j"_id]->future();
+        sched.enqueue(*tasks["j"_id]);
         future.wait();
     }
 
+    //=============================
+    // PeriodicTask
+    //=============================
+    {
+        //adds new task with 100ms period every 100ms, from a to e
+        std::map<Id, PeriodicTask_<void>::Ptr> tasks;
+        auto start = MonoClock::now();
+        for (auto i: range(5))
+        {
+            String name = sout() << Char('a'+i);
+            tasks[name] = PeriodicSched::inst().schedule(
+                [=]{ Log_debug << PeriodicTask::current().info() << "elapsed " << Millisec(MonoClock::now() - start) << "ms"; },
+                Millisec(100), Millisec(i*100), name);
+        }
+        tasks["e"_id]->future().wait();
+        for (auto& e: values(tasks)) e->cancel();
+    }
+    
     {        
         Promise<int> promise;
         Future<int> future = promise.future();
@@ -315,7 +333,7 @@ void test()
         bs >> uptr;
         debug_print(sout() << "UniquePtr from bytes: " << uptr << endl);
         
-        std::array<SharedPtr<int>, 5> sptrs{new int(5), new int(9), nullptr, nullptr, nullptr};
+        std::array<SharedPtr<int>, 5> sptrs{make_shared<int>(5), make_shared<int>(9), nullptr, nullptr, nullptr};
         sptrs[2] = sptrs[0]; sptrs[3] = sptrs[1]; sptrs[4] = sptrs[3];
         bs << sptrs;
         std::array<SharedPtr<int>, 5> sptrs_{};

@@ -2,6 +2,7 @@
 
 #include "Honey/Misc/Debug.h"
 #include "Honey/Misc/Exception.h"
+#include "Honey/Misc/Log.h"
 
 /** \cond */
 namespace honey { namespace debug { namespace platform
@@ -9,6 +10,7 @@ namespace honey { namespace debug { namespace platform
 
 void print(const String& str)
 {
+    auto _ = Log::inst().lock();
     std::cout << str;
     std::cout.flush();
 }

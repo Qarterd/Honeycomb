@@ -423,7 +423,7 @@ ByteStream& operator<<(ByteStream& os, const UniquePtr<T,Fin>& p)
                                                                 { return p ? os << true << *p : os << false; }
 /// UniquePtr from bytes, object is allocated if necessary using current bytestream allocator
 template<class T, class Fin>
-ByteStream& operator>>(ByteStream& is, UniquePtr<T,Fin>& p)     { bool exists; is >> exists; p = exists ? new (bytestream::priv::Manip::inst(is).alloc<T>(1)) T : nullptr; return exists ? is >> *p : is; }
+ByteStream& operator>>(ByteStream& is, UniquePtr<T,Fin>& p)     { bool exists; is >> exists; p.set(exists ? new (bytestream::priv::Manip::inst(is).alloc<T>(1)) T : nullptr); return exists ? is >> *p : is; }
 /// SharedPtr to bytes, outputs object pointed to (and exists flag), or index into current shared table if already output (index=flag-2), or a null flag if no object
 template<class T>
 ByteStream& operator<<(ByteStream& os, const SharedPtr<T>& p)   { szt i = bytestream::priv::Manip::inst(os).sharedToIndex(p); return i == 1 ? os << bytestream::varSize(i) << *p : os << bytestream::varSize(i); }

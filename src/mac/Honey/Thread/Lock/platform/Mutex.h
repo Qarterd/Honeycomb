@@ -5,7 +5,6 @@
 namespace honey { namespace platform
 {
 
-/// Provides timed mutex functionality to a windows critical section
 class Mutex
 {
 public:

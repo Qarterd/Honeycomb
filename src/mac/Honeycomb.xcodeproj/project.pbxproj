@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37232FC81BD4EA410067B4F2 /* PeriodicTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37232FC61BD4EA410067B4F2 /* PeriodicTask.cpp */; };
 		376C06261B669B16007439A4 /* Bytes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C06251B669B16007439A4 /* Bytes.cpp */; };
 		376C06291B6754CC007439A4 /* Encode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C06281B6754CC007439A4 /* Encode.cpp */; };
 		376C062E1B6B562C007439A4 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 376C062D1B6B562C007439A4 /* Util.cpp */; };
@@ -76,6 +77,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		37232FC61BD4EA410067B4F2 /* PeriodicTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeriodicTask.cpp; sourceTree = "<group>"; };
+		37232FC71BD4EA410067B4F2 /* PeriodicTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PeriodicTask.h; sourceTree = "<group>"; };
 		373EA45B1B886C46006A2624 /* ByteStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteStream.h; sourceTree = "<group>"; };
 		376C06241B6699A8007439A4 /* Bytes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bytes.h; sourceTree = "<group>"; };
 		376C06251B669B16007439A4 /* Bytes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bytes.cpp; sourceTree = "<group>"; };
@@ -688,10 +691,12 @@
 				37FEB4FA1B52477D0095BB69 /* Future */,
 				37FEB5001B52477D0095BB69 /* Lock */,
 				37FEB50C1B52477D0095BB69 /* LockFree */,
+				37FEB5131B52477D0095BB69 /* DepTask.h */,
+				37FEB5121B52477D0095BB69 /* DepTask.cpp */,
+				37232FC61BD4EA410067B4F2 /* PeriodicTask.cpp */,
+				37232FC71BD4EA410067B4F2 /* PeriodicTask.h */,
 				37FEB5101B52477D0095BB69 /* Pool.cpp */,
 				37FEB5111B52477D0095BB69 /* Pool.h */,
-				37FEB5121B52477D0095BB69 /* DepTask.cpp */,
-				37FEB5131B52477D0095BB69 /* DepTask.h */,
 				37FEB5141B52477D0095BB69 /* Thread.cpp */,
 				37FEB5151B52477D0095BB69 /* Thread.h */,
 			);
@@ -920,6 +925,7 @@
 				37FEB58D1B52477D0095BB69 /* Poisson.cpp in Sources */,
 				37FEB5771B52477D0095BB69 /* Chacha.cpp in Sources */,
 				37FEB5631B52477D0095BB69 /* Eigen.cpp in Sources */,
+				37232FC81BD4EA410067B4F2 /* PeriodicTask.cpp in Sources */,
 				37FEB5B71B52477D0095BB69 /* Component.cpp in Sources */,
 				37FEB5741B52477D0095BB69 /* Quad.cpp in Sources */,
 				37FEB58B1B52477D0095BB69 /* HyperGeo.cpp in Sources */,

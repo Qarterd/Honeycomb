@@ -13,8 +13,8 @@ namespace honey
 #endif
     
 DepTask::DepTask(const Id& id) :
-    _state(State::idle),
     _depNode(this, id),
+    _state(State::idle),
     _regCount(0),
     _sched(nullptr),
     _root(nullptr),

@@ -16,11 +16,8 @@ namespace socket
 }
 
 /// Socket class
-class Socket : platform::Socket, mt::NoCopy
+class Socket : mt::NoCopy
 {
-    typedef platform::Socket Super;
-    friend class platform::Socket;
-
 public:
 
 };

@@ -10,7 +10,7 @@ namespace honey
 class DepTask;
 class DepSched;
 /** \cond */
-//for weak ptr, is_base_of doesn't work when a class tests itself in the class definition
+//for weak ptr member var, is_base_of needs a defined class
 namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, DepTask> : std::true_type {}; }
 /** \endcond */
 
@@ -32,7 +32,7 @@ public:
     static DepTask& current();
     
     /// Check if task is in queue or executing
-    bool active() const                             { atomic::Op::fence(); return _state != State::idle; }
+    bool active() const                             { return _state != State::idle; }
     
     /// Request an interrupt in the executing task's thread. \see Thread::interrupt()
     void interrupt(const Exception::ConstPtr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
@@ -71,7 +71,7 @@ protected:
         depDownWait     ///< Waiting for downsteam tasks (immediate dependees) to complete
     };
     
-    DepTask(const Id& id = idnull);
+    DepTask(const Id& id);
 
     virtual void exec() = 0;
     virtual void resetFunctor() = 0;
@@ -84,9 +84,9 @@ protected:
     virtual void trace(const String& file, int line, const String& msg) const;
     virtual bool traceEnabled() const;
 
-    State               _state;
     DepNode             _depNode;
     Mutex               _lock;
+    atomic::Var<State>  _state;
     int                 _regCount;
     DepSched*           _sched;
     WeakPtr<DepTask>    _root;
@@ -109,7 +109,6 @@ class DepTask_ : public DepTask
 public:
     typedef SharedPtr<DepTask_> Ptr;
 
-    DepTask_() {}
     /**
       * \param f        functor to execute
       * \param id       used for dependency graph and debug output
@@ -126,10 +125,6 @@ public:
     /// Wrapper for DepTask::current()
     static DepTask_& current()                      { return static_cast<DepTask_&>(DepTask::current()); }
 
-    /// Set functor to execute
-    template<class Func>
-    void setFunctor(Func&& f)                       { _func = PackagedTask<Result ()>(forward<Func>(f)); }
-
 private:
     virtual void exec()                             { _func.invoke_delayedReady(); }
     virtual void resetFunctor()                     { _func.setReady(true); }
@@ -137,7 +132,7 @@ private:
     PackagedTask<Result ()> _func;
 };
 
-/// Scheduler for dependent tasks, serializes and parallelizes task execution given a dependency graph of tasks and a pool of threads.
+/// Scheduler that serializes and parallelizes task execution given a dependency graph of tasks and a pool of threads
 /**
   * To run a task, first register it and any dependent tasks with DepSched::reg(), then call DepSched::enqueue(rootTask).
   */
@@ -183,8 +178,6 @@ public:
     static bool trace;
     
 private:
-    static DepSched& createSingleton();
-    
     void bind(DepTask& root);    
     bool enqueue_priv(DepTask& task);
     

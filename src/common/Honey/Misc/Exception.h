@@ -78,7 +78,7 @@ public:
         void operator^(const ostream& os)                                   { auto& ms = static_cast<const MsgStream&>(os); assert(ms.e); ms.e->_message += ms.str(); ms.e->raise(); }
     };
 
-    Exception()                                                             {}
+    Exception() = default;
     Exception(const Exception& rhs)                                         { operator=(rhs); }
 
     Exception& operator=(const Exception& rhs)
@@ -86,7 +86,6 @@ public:
         _source = rhs._source;
         _message = rhs._message;
         _what = nullptr;
-        _what_u8 = nullptr;
         return *this;
     }
     
@@ -98,9 +97,7 @@ public:
     const String& message() const                                           { return _message; }
     
     /// Get full diagnostic message
-    const String& what_() const                                             { cacheWhat(); return *_what; }
-    /// Get full diagnostic message
-    const char* what() const throw()                                        { what_(); return _what_u8->c_str(); }
+    const char* what() const throw()                                        { cacheWhat(); return _what->c_str(); }
 
     /// Create a clone of the current exception caught with (...)
     static Ptr current();
@@ -109,7 +106,7 @@ public:
     template<class T>
     MsgStream operator<<(T&& val)                                           { return forward<MsgStream>(MsgStream(*this) << std::forward<T>(val)); }
     
-    friend ostream& operator<<(ostream& os, const Exception& e)             { return os << e.what_(); }
+    friend ostream& operator<<(ostream& os, const Exception& e)             { return os << e.what(); }
     
 protected:
     /// Create what message.  Called only on demand and result is cached.
@@ -121,12 +118,11 @@ protected:
     }
 
 private:
-    void cacheWhat() const                                                  { if (_what) return; _what = new String(createWhat()); _what_u8 = new std::string(_what->u8()); }
+    void cacheWhat() const                                                  { if (!_what) _what = honey::make_unique<std::string>(createWhat()); }
 
     Source _source;
     String _message;
-    mutable UniquePtr<String> _what;
-    mutable UniquePtr<std::string> _what_u8;
+    mutable UniquePtr<std::string> _what;
 };
 
 /// Exception util

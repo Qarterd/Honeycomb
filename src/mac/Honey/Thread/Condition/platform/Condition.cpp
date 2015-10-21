@@ -16,10 +16,11 @@ void Condition::broadcast()     { pthread_cond_broadcast(&_handle); }
 
 bool Condition::wait(UniqueLock<honey::Mutex>& lock, honey::MonoClock::TimePoint time)
 {
+    auto rel = time - honey::MonoClock::now();
     timespec time_;
-    time_.tv_sec = Alge::min(Seconds(time.time()).count(), numeral<int>().max());
-    time_.tv_nsec = time.time() % Seconds(1);
-    return !pthread_cond_timedwait(&_handle, &lock.mutex().handle(), &time_);
+    time_.tv_sec = Alge::min(Seconds(rel).count(), numeral<int>().max());
+    time_.tv_nsec = rel % Seconds(1);
+    return !pthread_cond_timedwait_relative_np(&_handle, &lock.mutex().handle(), &time_);
 }
 
 } }

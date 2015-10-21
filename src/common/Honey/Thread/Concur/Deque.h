@@ -142,7 +142,7 @@ private:
         sdt dif = _size - size;
         for (sdt i = 0; i < dif; ++i) _alloc.destroy(_data + ringIndex(_head+size+i));
         //Set new array
-        _data = data;
+        _data.set(data);
         _capacity = capacity;
         _size = size;
         _head = 0;

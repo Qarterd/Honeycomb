@@ -65,13 +65,13 @@ private:
         /// Get next task
         TaskPtr next();
         
-        Pool& _pool;
-        Thread _thread;
-        bool _active;
-        ConditionLock _cond;
-        bool _condWait;
-        deque<TaskPtr> _tasks;
-        TaskPtr _task;
+        Pool&           _pool;
+        Thread          _thread;
+        bool            _active;
+        ConditionLock   _cond;
+        bool            _condWait;
+        deque<TaskPtr>  _tasks;
+        TaskPtr         _task;
         static thread::Local<Worker*> _current;
     };
     

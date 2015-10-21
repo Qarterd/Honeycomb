@@ -102,16 +102,62 @@ public:
 /** \cond */
 namespace priv
 {
-    /// Get an atomic type that is large enough to hold T
-    template<class T> struct VarType                            { typedef typename std::conditional<sizeof(T) <= 4, int32, int64>::type type; };
+    /// Get an atomically-swappable type that is large enough to hold T
+    template<class T> struct SwapType
+    {
+        static_assert(sizeof(T) <= sizeof(int64), "Type too large for atomic ops");
+        typedef typename std::conditional<sizeof(T) <= sizeof(int32), int32, int64>::type type;
+    };
 }
 /** \endcond */
 
-/// Wrapper around integer types to make all operations atomic.  Default order for read/assign is relaxed for best performance, all other ops are sequential.
+template<class T, bool B = std::is_integral<T>::value>
+class Var;
+
+/// Wrapper around trivially copyable type to make load/store operations atomic
 template<class T>
-class Var
+class Var<T, false>
 {
-    typedef typename priv::VarType<T>::type VarType;
+    typedef typename priv::SwapType<T>::type SwapType;
+    
+    //holds a T object in a SwapType value
+    struct SwapVal
+    {
+        SwapVal(T val)                                          { new (&this->val) T(val); }
+        operator SwapType() const                               { return val; }
+        SwapType val;
+    };
+    
+public:
+    static_assert(std::is_trivially_copyable<T>::value, "Atomic type must be trivially copyable");
+    
+    Var() = default;
+    Var(T val)                                                  { operator=(val); }
+    Var(const Var& val)                                         { operator=(val); }
+
+    /// Assign value
+    T operator=(T val) volatile                                 { store(val); return *this; }
+    T operator=(const Var& val) volatile                        { store(val); return *this; }
+
+    /// Read value
+    operator T() const volatile                                 { return load(); }
+   
+    void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, SwapVal(val), o); }
+    T load(Order o = Order::seqCst) const volatile              { auto ret = Op::load(_val, o); return reinterpret_cast<T&>(ret); }
+
+    /// Compare and swap.  If atomic is equal to comparand `cmp` then atomic is assigned to newVal and true is returned. Returns false otherwise.
+    bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, SwapVal(newVal), SwapVal(cmp), o); }
+
+private:
+    SwapType _val;
+};
+
+/// Wrapper around integral type to make all operations atomic
+template<class T>
+class Var<T, true>
+{
+    typedef typename priv::SwapType<T>::type SwapType;
+    
 public:
     Var() = default;
     Var(T val)                                                  { operator=(val); }
@@ -143,26 +189,27 @@ public:
     /// Read value
     operator T() const volatile                                 { return load(); }
    
-    void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, static_cast<VarType>(val), o); }
+    void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, static_cast<SwapType>(val), o); }
     T load(Order o = Order::seqCst) const volatile              { return static_cast<T>(Op::load(_val, o)); }
-    T add(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<VarType>(rhs), o) + rhs; }
-    T sub(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<VarType>(-rhs), o) - rhs; }
-    T and_(T rhs, Order o = Order::seqCst) volatile             { return Op::and_(_val, static_cast<VarType>(rhs), o) & rhs; }
-    T or_(T rhs, Order o = Order::seqCst) volatile              { return Op::or_(_val, static_cast<VarType>(rhs), o) | rhs; }
-    T xor_(T rhs, Order o = Order::seqCst) volatile             { return Op::xor_(_val, static_cast<VarType>(rhs), o) ^ rhs; }
+    T add(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<SwapType>(rhs), o) + rhs; }
+    T sub(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<SwapType>(-rhs), o) - rhs; }
+    T and_(T rhs, Order o = Order::seqCst) volatile             { return Op::and_(_val, static_cast<SwapType>(rhs), o) & rhs; }
+    T or_(T rhs, Order o = Order::seqCst) volatile              { return Op::or_(_val, static_cast<SwapType>(rhs), o) | rhs; }
+    T xor_(T rhs, Order o = Order::seqCst) volatile             { return Op::xor_(_val, static_cast<SwapType>(rhs), o) ^ rhs; }
 
     /// Compare and swap.  If atomic is equal to comparand `cmp` then atomic is assigned to newVal and true is returned. Returns false otherwise.
-    bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, static_cast<VarType>(newVal), static_cast<VarType>(cmp), o); }
+    bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, static_cast<SwapType>(newVal), static_cast<SwapType>(cmp), o); }
 
 private:
-    VarType _val;
+    SwapType _val;
 };
 
-/// Wrapper around pointer types to make all operations atomic.
+/// Wrapper around pointer type to make all operations atomic
 template<class T>
-class Var<T*>
+class Var<T*, false>
 {
-    typedef typename priv::VarType<T*>::type VarType;
+    typedef typename priv::SwapType<T*>::type SwapType;
+    
 public:
     Var() = default;
     Var(T* val)                                                 { operator=(val); }
@@ -182,15 +229,15 @@ public:
     T& operator*() const volatile                               { return *load(); }
     operator T*() const volatile                                { return load(); }
 
-    void store(T* val, Order o = Order::seqCst) volatile        { Op::store(_val, reinterpret_cast<VarType>(val), o); }
+    void store(T* val, Order o = Order::seqCst) volatile        { Op::store(_val, reinterpret_cast<SwapType>(val), o); }
     T* load(Order o = Order::seqCst) const volatile             { return reinterpret_cast<T*>(Op::load(_val, o)); }
     T* add(sdt rhs, Order o = Order::seqCst) volatile           { return reinterpret_cast<T*>(Op::add(_val, rhs*sizeof(T), o)) + rhs; }
     T* sub(sdt rhs, Order o = Order::seqCst) volatile           { return reinterpret_cast<T*>(Op::add(_val, -rhs*sizeof(T), o)) - rhs; }
 
-    bool cas(T* newVal, T* cmp, Order o = Order::seqCst) volatile   { return Op::cas(_val, reinterpret_cast<VarType>(newVal), reinterpret_cast<VarType>(cmp), o); }
+    bool cas(T* newVal, T* cmp, Order o = Order::seqCst) volatile   { return Op::cas(_val, reinterpret_cast<SwapType>(newVal), reinterpret_cast<SwapType>(cmp), o); }
 
 private:
-    VarType _val;
+    SwapType _val;
 };
 
 } 

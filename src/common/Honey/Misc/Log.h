@@ -119,6 +119,9 @@ public:
     /// Push a record with level to all sinks
     RecordStream operator<<(const log::Level& level)    { return RecordStream(*this, level); }
     
+    /// Acquire lock to synchronize output to sinks, other loggers should call this before outputting to the same sinks
+    SpinLock::Scoped lock()                             { return _lock; }
+    
 private:
     typedef unordered_map<Id, std::set<Id>> FilterMap;
 

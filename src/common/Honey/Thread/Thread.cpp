@@ -38,7 +38,7 @@ namespace thread
         {
             Thread& thread = Thread::current();
             ConditionLock::Scoped _(*thread._sleepCond);
-            thread._sleepCond->wait(time);
+            while (thread._sleepCond->wait(time));
         }
 
         bool interruptEnabled()                     { return Thread::current()._interruptEnable; }

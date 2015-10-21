@@ -24,7 +24,7 @@ void Pool::Task::trace(const String& file, int line, const String& msg) const
 Pool::Pool(int workerCount, int workerTaskMax) :
     _workerTaskMax(workerTaskMax)
 {       
-    for (auto i: range(workerCount)) { _workers.push_back(new Worker(*this)); mt_unused(i); }
+    for (auto i: range(workerCount)) { _workers.push_back(make_unique<Worker>(*this)); mt_unused(i); }
     for (auto& e: _workers) e->start();
 }
 
@@ -124,10 +124,9 @@ void Pool::Worker::run()
     
     while (_active)
     {
-        while ((_task = next()))
-            _task();
+        while ((_task = next())) _task();
         
-        //Wait for signal from pool that a task has been queued (ignore any thread interrupts)
+        //Wait for a task to be queued (ignore any thread interrupts)
         ConditionLock::Scoped _(_cond);
         while (_condWait) try { _cond.wait(); } catch (...) {}
         _condWait = true;

@@ -118,5 +118,6 @@
 #include "Honey/Thread/LockFree/Mem.h"
 #include "Honey/Thread/Atomic.h"
 #include "Honey/Thread/DepTask.h"
+#include "Honey/Thread/PeriodicTask.h"
 #include "Honey/Thread/Pool.h"
 #include "Honey/Thread/Thread.h"

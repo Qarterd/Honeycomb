@@ -12,7 +12,7 @@ namespace honey
   *
   * String ids provide a fast way to compare strings. \n
   * An Id is composed of a name string and its hashed integral value (using hash::fast()). \n
-  * In final mode an Id only holds the hash; name() and operator<<() are not available.
+  * In final mode an Id only holds the hash, name() is not available.
   *
   * \see string literal operator `_id` to create ids at compile-time.
   */

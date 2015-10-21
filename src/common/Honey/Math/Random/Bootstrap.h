@@ -62,9 +62,9 @@ public:
         bootRes(nullptr), jackRes(nullptr), jackMean(0)
     {
         if (samples.size() == 0) return;
-        bootRes = new Vec[bootSampleCount];
+        bootRes.set(new Vec[bootSampleCount]);
         bootSamples.resize(samples.size());
-        jackRes = new Vec[samples.size()];
+        jackRes.set(new Vec[samples.size()]);
     }
 
     ~Bootstrap() {}

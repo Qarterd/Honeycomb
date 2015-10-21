@@ -61,7 +61,7 @@ public:
         //Assign new array
         _size = size;
         _blockCount = blockCount;
-        _blocks = blocks;
+        _blocks.set(blocks);
         //Zero out unused bits
         trim();
     }

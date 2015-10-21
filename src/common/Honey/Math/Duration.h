@@ -18,9 +18,8 @@ public:
 
     static_assert(Period::num > 0, "Period can't be negative or 0");
 
-    /// No init
-    Duration()                                                  {}
-    /// Construct from another type of repetition
+    Duration() = default;
+    /// Construct from any type of repetition
     template<class Rep2>
     Duration(const Rep2& rep)                                   { operator=(rep); }
     /// Construct from another type of duration

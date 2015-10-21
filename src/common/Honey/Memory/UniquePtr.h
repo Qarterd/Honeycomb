@@ -27,16 +27,15 @@ public:
     typedef Elem* Ptr;
     
     UniquePtr()                                                     : _ptr(nullptr) {}
+    UniquePtr(nullptr_t)                                            : _ptr(nullptr) {}
     template<class Fin_ = Fin>
-    UniquePtr(Ptr ptr, Fin_&& f = Fin_())                           : _ptr(ptr), _fin(forward<Fin_>(f)) {}
+    explicit UniquePtr(Ptr ptr, Fin_&& f = Fin_())                  : _ptr(ptr), _fin(forward<Fin_>(f)) {}
     /// Moves pointer and finalizer out of rhs.  To set a new finalizer into rhs use move assign: rhs = UniquePtr(p,f);
     UniquePtr(UniquePtr&& rhs) noexcept                             : _ptr(rhs.release()), _fin(forward<Fin>(rhs._fin)) {}
-    template<class U, class F> UniquePtr(UniquePtr<U,F>&& rhs)      : _ptr(rhs.release()), _fin(forward<F>(rhs._fin)) {}
+    template<class U, class F>
+    UniquePtr(UniquePtr<U,F>&& rhs)                                 : _ptr(rhs.release()), _fin(forward<F>(rhs._fin)) {}
 
     ~UniquePtr()                                                    { if (_ptr) _fin(_ptr); }
-
-    /// Set ptr
-    UniquePtr& operator=(Ptr rhs)                                   { set(rhs); return *this; }
 
     /// Moves pointer and finalizer out of rhs
     UniquePtr& operator=(UniquePtr&& rhs)                           { return operator=<T,Fin>(move(rhs)); }

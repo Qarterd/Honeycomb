@@ -3,18 +3,9 @@
 #include "Honey/Net/Socket.h"
 
 /** \cond */
-namespace honey { namespace net
-{
-
-namespace socket { namespace platform
+namespace honey { namespace net { namespace socket { namespace platform
 {
     
-} }
-
-namespace platform
-{
-
-
-} } }
+} } } }
 /** \endcond */
 

@@ -2,24 +2,8 @@
 #pragma once
 
 /** \cond */
-namespace honey { namespace net
+namespace honey { namespace net { namespace socket { namespace platform
 {
 
-namespace socket
-{
-    namespace platform
-    {
-        
-    }
-}
-
-namespace platform
-{
-
-class Socket
-{
-public:
-};
-
-} } }
+} } } }
 /** \endcond */
