@@ -24,7 +24,7 @@ public:
     static TimePoint now()                              { return Super::now(); }
 
     /// Convert to standard C time
-    static time_t toStdTime(const TimePoint& t)         { return time_t(Seconds(t.time())); }
+    static time_t toStdTime(const TimePoint& t)         { return time_t(Seconds(t.time()).count()); }
 
     /// Convert from standard C time
     static TimePoint fromStdTime(const time_t& t)       { return TimePoint(Seconds(t)); }

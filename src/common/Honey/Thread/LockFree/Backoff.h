@@ -17,7 +17,7 @@ public:
       * \param timeMax      Max sleep time
       * \param tickThresh   Tick threshold used to determine whether to spin or sleep, and when to grow the sleep time.
       */
-    Backoff(bool spin = true, Nanosec timeMin = 100, Nanosec timeMax = Microsec(100), int tickThresh = 5) :
+    Backoff(bool spin = true, Nanosec timeMin = 100_ns, Nanosec timeMax = 100_us, int tickThresh = 5) :
         _spin(spin),
         _timeMin(timeMin),
         _timeMax(timeMax),
@@ -33,7 +33,7 @@ public:
             //Deactivate spin
             if (l.spin) { l.spin = false; continue; }
             //Grow sleep time
-            l.time = l.time*2 + 1;
+            l.time = l.time*2 + 1_ns;
             if (l.time > _timeMax) l.time = _timeMax;
         }
     }

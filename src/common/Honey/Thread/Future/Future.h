@@ -28,10 +28,10 @@ public:
     bool ready() const                                          { auto state = stateBase(); if (!state) throw_ future::NoState(); return state->ready; }
     
     /// Wait until result is ready. \throws future::NoState
-    void wait() const                                           { wait(MonoClock::TimePoint::max); }
+    void wait() const                                           { wait(MonoClock::TimePoint::max()); }
     /// Wait until result is ready or until an amount of time has passed. \throws future::NoState
     template<class Rep, class Period>
-    future::Status wait(Duration<Rep,Period> time) const        { return wait(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+    future::Status wait(Duration<Rep,Period> time) const        { return wait(time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
     /// Wait until result is ready or until a certain time. \throws future::NoState
     template<class Clock, class Dur>
     future::Status wait(TimePoint<Clock,Dur> time) const

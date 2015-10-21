@@ -10,7 +10,7 @@ namespace honey { namespace platform
 template<class Subclass>
 typename SystemClock<Subclass>::TimePoint SystemClock<Subclass>::now()
 {
-    return TimePoint(std::chrono::system_clock::now().time_since_epoch().count());
+    return TimePoint(typename TimePoint::Duration(std::chrono::system_clock::now().time_since_epoch().count()));
 }
 
 template struct SystemClock<honey::SystemClock>;
@@ -20,7 +20,7 @@ template struct SystemClock<honey::SystemClock>;
 template<class Subclass>
 typename MonoClock<Subclass>::TimePoint MonoClock<Subclass>::now()
 {
-    return TimePoint(std::chrono::steady_clock::now().time_since_epoch().count());
+    return TimePoint(typename TimePoint::Duration(std::chrono::steady_clock::now().time_since_epoch().count()));
 }
 
 template struct MonoClock<honey::MonoClock>;

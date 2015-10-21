@@ -54,7 +54,7 @@ void App::run()
         try
         {
             thread::current::interruptPoint();
-            auto it = future::waitAny(results, _runMode == RunMode::run ? Millisec::max : Millisec(1000 / _interruptFreq));
+            auto it = future::waitAny(results, _runMode == RunMode::run ? Millisec::max() : 1000_ms / _interruptFreq);
             if (it != results.end())
             {
                 try { it->get(); }

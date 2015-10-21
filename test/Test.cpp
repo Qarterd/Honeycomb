@@ -162,7 +162,7 @@ void test()
             String name = sout() << Char('a'+i);
             tasks[name] = PeriodicSched::inst().schedule(
                 [=]{ Log_debug << PeriodicTask::current().info() << "elapsed " << Millisec(MonoClock::now() - start) << "ms"; },
-                Millisec(100), Millisec(i*100), name);
+                100_ms, 100_ms*i, name);
         }
         tasks["e"_id]->future().wait();
         for (auto& e: values(tasks)) e->cancel();
@@ -171,7 +171,7 @@ void test()
     {        
         Promise<int> promise;
         Future<int> future = promise.future();
-        verify(future.wait(Millisec(1)) == future::Status::timeout);
+        verify(future.wait(1_ms) == future::Status::timeout);
         promise.setValue(1);
         
         Promise<int> promise2;
@@ -774,7 +774,7 @@ void test()
         auto keys = hash::secureKeys("password", "some string"_b, 1 << 15, 2);
         debug_print(sout() << "Secure Key 1: " << keys[0] << endl);
         debug_print(sout() << "Secure Key 2: " << keys[1] << endl);
-        debug_print(sout() << "Secure Key Time: " << Millisec(MonoClock::now()-time) / 1000. << endl);
+        debug_print(sout() << "Secure Key Time: " << Millisec(MonoClock::now()-time) << "ms" << endl);
     }
     
     {
@@ -991,11 +991,11 @@ void test()
         auto time = MonoClock::now(); mt_unused(time);
         for (int i = 0; i < iter; ++i)
             if (bloom.contains(keys[i%count])) ++dummy;
-        debug_print(sout() << "Bloom Time 0: " << Millisec(MonoClock::now()-time) / 1000. << endl);
+        debug_print(sout() << "Bloom Time 0: " << Millisec(MonoClock::now()-time) << "ms" << endl);
 
         for (int i = 0; i < iter; ++i)
             if (set.count(keys[i%count])) ++dummy;
-        debug_print(sout() << "Bloom Time 1: " << Millisec(MonoClock::now()-time) / 1000. << " " << dummy << endl);
+        debug_print(sout() << "Bloom Time 1: " << Millisec(MonoClock::now()-time) << "ms " << dummy << endl);
     }
 }
 

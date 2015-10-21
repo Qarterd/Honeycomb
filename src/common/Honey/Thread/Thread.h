@@ -161,9 +161,9 @@ public:
     void start();
 
     /// Wait until thread execution is complete
-    void join()                                     { join(MonoClock::TimePoint::max); }
+    void join()                                     { join(MonoClock::TimePoint::max()); }
     /// Try to join for an amount of time. Returns true if joined and thread execution is complete.
-    bool join(MonoClock::Duration time)             { return join(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+    bool join(MonoClock::Duration time)             { return join(time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
     /// Try to join until a specific time. Returns true if joined and thread execution is complete.
     bool join(MonoClock::TimePoint time);
 

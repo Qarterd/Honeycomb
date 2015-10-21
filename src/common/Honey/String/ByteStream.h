@@ -431,6 +431,13 @@ ByteStream& operator<<(ByteStream& os, const SharedPtr<T>& p)   { szt i = bytest
 template<class T>
 ByteStream& operator>>(ByteStream& is, SharedPtr<T>& p)         { szt i; is >> bytestream::varSize(i); p = bytestream::priv::Manip::inst(is).indexToShared<T>(i); return i == 1 ? is >> *p : is; }
     
+/// Duration to bytes
+template<class Rep, class Period>
+ByteStream& operator<<(ByteStream& os, const Duration<Rep,Period>& d)   { return os << d.count(); }
+/// Duration from bytes
+template<class Rep, class Period>
+ByteStream& operator>>(ByteStream& is, Duration<Rep,Period>& d)         { Rep r; is >> r; d = Duration<Rep,Period>(r); return is; }
+
 /// @}
 
 }

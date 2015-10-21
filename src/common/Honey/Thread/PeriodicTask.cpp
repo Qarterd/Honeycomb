@@ -104,7 +104,7 @@ PeriodicSched::~PeriodicSched()
 
 void PeriodicSched::add(PeriodicTask& task)
 {
-    task._due = MonoClock::now() + (task._delay ? *task._delay : task._period ? *task._period : MonoClock::Duration::zero);
+    task._due = MonoClock::now() + (task._delay ? *task._delay : task._period ? *task._period : MonoClock::Duration::zero());
     task._state = PeriodicTask::State::wait;
     
     ConditionLock::Scoped _(_cond);
@@ -187,7 +187,7 @@ void PeriodicSched::run()
             ConditionLock::Scoped _(_cond);
             bool timeout = false;
             while (_condWait && !timeout)
-                try { timeout = !_cond.wait(!_tasks.empty() ? _tasks.begin()->second->_due.load() : MonoClock::TimePoint::max); } catch (...) {}
+                try { timeout = !_cond.wait(!_tasks.empty() ? _tasks.begin()->second->_due.load() : MonoClock::TimePoint::max()); } catch (...) {}
             _condWait = true;
         }
     }

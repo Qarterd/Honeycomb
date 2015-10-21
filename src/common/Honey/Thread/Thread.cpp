@@ -32,7 +32,7 @@ namespace thread
 
     namespace current
     {
-        void sleep(MonoClock::Duration time)        { sleep(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+        void sleep(MonoClock::Duration time)        { sleep(time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
 
         void sleep(MonoClock::TimePoint time)
         {

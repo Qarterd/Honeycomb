@@ -23,10 +23,10 @@ template<class Range, class Clock, class Dur, typename std::enable_if<mt::isRang
 void waitAll(Range&& range, TimePoint<Clock,Dur> time)      { for (auto& e : range) e.wait(time); }
 /// Wait until all futures in a range are ready or until an amount of time has passed
 template<class Range, class Rep, class Period, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-void waitAll(Range&& range, Duration<Rep,Period> time)      { return waitAll(forward<Range>(range), time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+void waitAll(Range&& range, Duration<Rep,Period> time)      { return waitAll(forward<Range>(range), time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
 /// Wait until all futures in a range are ready
 template<class Range, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-void waitAll(Range&& range)                                 { return waitAll(forward<Range>(range), MonoClock::TimePoint::max); }
+void waitAll(Range&& range)                                 { return waitAll(forward<Range>(range), MonoClock::TimePoint::max()); }
 
 /** \cond */
 namespace priv
@@ -65,7 +65,7 @@ int waitAny(Future&& f, Futures&&... fs)
     priv::waitAny waiter;
     array<const FutureBase*, sizeof...(Futures)+1> futures = {&f, &fs...};
     for (auto& e : futures) waiter.add(*e);
-    return waiter.wait(MonoClock::TimePoint::max);
+    return waiter.wait(MonoClock::TimePoint::max());
 }
 
 /// Wait until any futures in a range are ready or until a certain time, returns iterator to ready future or range end if timed out
@@ -79,10 +79,10 @@ auto waitAny(Range&& range, TimePoint<Clock,Dur> time) -> mt_iterOf(range)
 }
 /// Wait until any futures in a range are ready or until an amount of time has passed, returns iterator to ready future or range end if timed out
 template<class Range, class Rep, class Period, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-auto waitAny(Range&& range, Duration<Rep,Period> time) -> mt_iterOf(range)      { return waitAny(forward<Range>(range), time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+auto waitAny(Range&& range, Duration<Rep,Period> time) -> mt_iterOf(range)      { return waitAny(forward<Range>(range), time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
 /// Wait until any futures in a range are ready, returns iterator to ready future
 template<class Range, typename std::enable_if<mt::isRange<Range>::value, int>::type=0>
-auto waitAny(Range&& range) -> mt_iterOf(range)                                 { return waitAny(forward<Range>(range), MonoClock::TimePoint::max); }
+auto waitAny(Range&& range) -> mt_iterOf(range)                                 { return waitAny(forward<Range>(range), MonoClock::TimePoint::max()); }
 
 //====================================================
 // async

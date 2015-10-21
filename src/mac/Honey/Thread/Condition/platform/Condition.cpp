@@ -19,7 +19,7 @@ bool Condition::wait(UniqueLock<honey::Mutex>& lock, honey::MonoClock::TimePoint
     auto rel = time - honey::MonoClock::now();
     timespec time_;
     time_.tv_sec = Alge::min(Seconds(rel).count(), numeral<int>().max());
-    time_.tv_nsec = rel % Seconds(1);
+    time_.tv_nsec = (rel % Seconds(1)).count();
     return !pthread_cond_timedwait_relative_np(&_handle, &lock.mutex().handle(), &time_);
 }
 

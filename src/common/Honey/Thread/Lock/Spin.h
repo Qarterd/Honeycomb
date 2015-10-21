@@ -36,7 +36,7 @@ public:
     /// Attempt to acquire the lock, returns immediately.  Returns true if the lock was acquired, false otherwise.
     bool tryLock();
     /// Attempt to acquire the lock for an amount of time.  Returns true if the lock was acquired, false otherwise.
-    bool tryLock(MonoClock::Duration time)          { return tryLock(time == time.max ? MonoClock::TimePoint::max : MonoClock::now() + time); }
+    bool tryLock(MonoClock::Duration time)          { return tryLock(time == time.max() ? MonoClock::TimePoint::max() : MonoClock::now() + time); }
     /// Attempt to acquire the lock until a certain time.  Returns true if the lock was acquired, false otherwise.
     bool tryLock(MonoClock::TimePoint time);
 
