@@ -1,8 +1,8 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Misc/TimePoint.h"
-#include "Honey/Misc/platform/Clock.h"
+#include "Honey/Chrono/TimePoint.h"
+#include "Honey/Chrono/platform/Clock.h"
 
 namespace honey
 {

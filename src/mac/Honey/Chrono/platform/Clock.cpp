@@ -1,6 +1,6 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 
-#include "Honey/Misc/Clock.h"
+#include "Honey/Chrono/Clock.h"
 #include <chrono>
 
 /** \cond */

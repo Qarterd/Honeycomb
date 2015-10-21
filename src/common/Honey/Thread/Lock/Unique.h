@@ -3,7 +3,7 @@
 
 #include "Honey/Misc/Enum.h"
 #include "Honey/Misc/ScopeGuard.h"
-#include "Honey/Misc/Clock.h"
+#include "Honey/Chrono/Clock.h"
 #include "Honey/Thread/Lock/Mutex.h"
 
 namespace honey

@@ -20,6 +20,7 @@
 		37B3B2C81BD0DE4E0001DEFF /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3B2C61BD0DE4E0001DEFF /* Socket.cpp */; };
 		37B3B2CD1BD0DE660001DEFF /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B3B2CB1BD0DE660001DEFF /* Socket.cpp */; };
 		37B4F3FD1B6FEAEC00B26BDC /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */; };
+		37B612341BD81C6F006C3AEF /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37B612321BD81C6F006C3AEF /* Clock.cpp */; };
 		37FEB51F1B52477D0095BB69 /* Alge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB43A1B52477D0095BB69 /* Alge.cpp */; };
 		37FEB5261B52477D0095BB69 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4421B52477D0095BB69 /* Matrix4.cpp */; };
 		37FEB52A1B52477D0095BB69 /* Quat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB4471B52477D0095BB69 /* Quat.cpp */; };
@@ -69,7 +70,6 @@
 		37FEB5E31B52477D0095BB69 /* Pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB5101B52477D0095BB69 /* Pool.cpp */; };
 		37FEB5E51B52477D0095BB69 /* DepTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB5121B52477D0095BB69 /* DepTask.cpp */; };
 		37FEB5E71B52477D0095BB69 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB5141B52477D0095BB69 /* Thread.cpp */; };
-		37FEB6691B524BCB0095BB69 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB65B1B524B290095BB69 /* Clock.cpp */; };
 		37FEB66A1B524BCB0095BB69 /* Debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB65D1B524B290095BB69 /* Debug.cpp */; };
 		37FEB66B1B524BCB0095BB69 /* Thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB6611B524B3C0095BB69 /* Thread.cpp */; };
 		37FEB66C1B524BCB0095BB69 /* Condition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37FEB6671B524B590095BB69 /* Condition.cpp */; };
@@ -103,6 +103,11 @@
 		37B3B2D11BD1E7DF0001DEFF /* Buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Buffer.h; sourceTree = "<group>"; };
 		37B4F3FC1B6FEAEC00B26BDC /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
 		37B4F3FE1B6FEAF500B26BDC /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		37B6122E1BD81C61006C3AEF /* Clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
+		37B6122F1BD81C61006C3AEF /* Duration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Duration.h; sourceTree = "<group>"; };
+		37B612301BD81C61006C3AEF /* TimePoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimePoint.h; sourceTree = "<group>"; };
+		37B612321BD81C6F006C3AEF /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
+		37B612331BD81C6F006C3AEF /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEB42E1B52477D0095BB69 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		37FEB42F1B52477D0095BB69 /* Meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meta.h; sourceTree = "<group>"; };
@@ -138,7 +143,6 @@
 		37FEB4561B52477D0095BB69 /* Vec4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vec4.h; sourceTree = "<group>"; };
 		37FEB4571B52477D0095BB69 /* Double.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Double.cpp; sourceTree = "<group>"; };
 		37FEB4581B52477D0095BB69 /* Double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Double.h; sourceTree = "<group>"; };
-		37FEB4591B52477D0095BB69 /* Duration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Duration.h; sourceTree = "<group>"; };
 		37FEB45A1B52477D0095BB69 /* Float.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Float.cpp; sourceTree = "<group>"; };
 		37FEB45B1B52477D0095BB69 /* Float.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Float.h; sourceTree = "<group>"; };
 		37FEB47F1B52477D0095BB69 /* BackSub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackSub.h; sourceTree = "<group>"; };
@@ -215,7 +219,6 @@
 		37FEB4CB1B52477D0095BB69 /* BitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitSet.h; sourceTree = "<group>"; };
 		37FEB4CC1B52477D0095BB69 /* BloomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BloomFilter.cpp; sourceTree = "<group>"; };
 		37FEB4CD1B52477D0095BB69 /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
-		37FEB4CE1B52477D0095BB69 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		37FEB4CF1B52477D0095BB69 /* Debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
 		37FEB4D01B52477D0095BB69 /* Enum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Enum.h; sourceTree = "<group>"; };
 		37FEB4D11B52477D0095BB69 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
@@ -225,7 +228,6 @@
 		37FEB4D51B52477D0095BB69 /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
 		37FEB4D61B52477D0095BB69 /* ScopeGuard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeGuard.h; sourceTree = "<group>"; };
 		37FEB4D71B52477D0095BB69 /* StdUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUtil.h; sourceTree = "<group>"; };
-		37FEB4D81B52477D0095BB69 /* TimePoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimePoint.h; sourceTree = "<group>"; };
 		37FEB4D91B52477D0095BB69 /* Variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Variant.h; sourceTree = "<group>"; };
 		37FEB4DB1B52477D0095BB69 /* ComObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComObject.cpp; sourceTree = "<group>"; };
 		37FEB4DC1B52477D0095BB69 /* ComObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComObject.h; sourceTree = "<group>"; };
@@ -285,8 +287,6 @@
 		37FEB6551B524AE30095BB69 /* Vec4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vec4.h; sourceTree = "<group>"; };
 		37FEB6571B524AF30095BB69 /* Quat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Quat.h; sourceTree = "<group>"; };
 		37FEB6591B524B110095BB69 /* Numeral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Numeral.h; sourceTree = "<group>"; };
-		37FEB65B1B524B290095BB69 /* Clock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
-		37FEB65C1B524B290095BB69 /* Clock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		37FEB65D1B524B290095BB69 /* Debug.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Debug.cpp; sourceTree = "<group>"; };
 		37FEB65E1B524B290095BB69 /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
 		37FEB6601B524B3C0095BB69 /* Atomic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
@@ -365,6 +365,28 @@
 			path = Honey/Net/platform;
 			sourceTree = SOURCE_ROOT;
 		};
+		37B6122D1BD81C61006C3AEF /* Chrono */ = {
+			isa = PBXGroup;
+			children = (
+				37B612311BD81C6F006C3AEF /* platform */,
+				37B6122E1BD81C61006C3AEF /* Clock.h */,
+				37B6122F1BD81C61006C3AEF /* Duration.h */,
+				37B612301BD81C61006C3AEF /* TimePoint.h */,
+			);
+			name = Chrono;
+			path = ../common/Honey/Chrono;
+			sourceTree = "<group>";
+		};
+		37B612311BD81C6F006C3AEF /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				37B612321BD81C6F006C3AEF /* Clock.cpp */,
+				37B612331BD81C6F006C3AEF /* Clock.h */,
+			);
+			name = platform;
+			path = Honey/Chrono/platform;
+			sourceTree = SOURCE_ROOT;
+		};
 		37FEB4151B5245010095BB69 = {
 			isa = PBXGroup;
 			children = (
@@ -388,6 +410,7 @@
 				37FEB4371B52477D0095BB69 /* Honeycomb.h */,
 				37FEB66E1B524D9F0095BB69 /* Honeycomb.pch */,
 				37B0B9541B8E80A5000051FD /* App */,
+				37B6122D1BD81C61006C3AEF /* Chrono */,
 				37FEB42D1B52477D0095BB69 /* Core */,
 				37FEB4311B52477D0095BB69 /* Graph */,
 				37FEB4381B52477D0095BB69 /* Math */,
@@ -431,7 +454,6 @@
 				37FEB4391B52477D0095BB69 /* Alge */,
 				37FEB4571B52477D0095BB69 /* Double.cpp */,
 				37FEB4581B52477D0095BB69 /* Double.h */,
-				37FEB4591B52477D0095BB69 /* Duration.h */,
 				37FEB45A1B52477D0095BB69 /* Float.cpp */,
 				37FEB45B1B52477D0095BB69 /* Float.h */,
 				37FEB47E1B52477D0095BB69 /* NumAnalysis */,
@@ -618,7 +640,6 @@
 				37FEB4CB1B52477D0095BB69 /* BitSet.h */,
 				37FEB4CC1B52477D0095BB69 /* BloomFilter.cpp */,
 				37FEB4CD1B52477D0095BB69 /* BloomFilter.h */,
-				37FEB4CE1B52477D0095BB69 /* Clock.h */,
 				37FEB4CF1B52477D0095BB69 /* Debug.h */,
 				37FEB4D01B52477D0095BB69 /* Enum.h */,
 				37FEB4D11B52477D0095BB69 /* Exception.h */,
@@ -630,7 +651,6 @@
 				37FEB4D51B52477D0095BB69 /* Range.h */,
 				37FEB4D61B52477D0095BB69 /* ScopeGuard.h */,
 				37FEB4D71B52477D0095BB69 /* StdUtil.h */,
-				37FEB4D81B52477D0095BB69 /* TimePoint.h */,
 				37FEB4D91B52477D0095BB69 /* Variant.h */,
 			);
 			name = Misc;
@@ -815,8 +835,6 @@
 		37FEB65A1B524B290095BB69 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				37FEB65B1B524B290095BB69 /* Clock.cpp */,
-				37FEB65C1B524B290095BB69 /* Clock.h */,
 				37FEB65D1B524B290095BB69 /* Debug.cpp */,
 				37FEB65E1B524B290095BB69 /* Debug.h */,
 			);
@@ -910,7 +928,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37FEB6691B524BCB0095BB69 /* Clock.cpp in Sources */,
 				37FEB66A1B524BCB0095BB69 /* Debug.cpp in Sources */,
 				37FEB66B1B524BCB0095BB69 /* Thread.cpp in Sources */,
 				37FEB66C1B524BCB0095BB69 /* Condition.cpp in Sources */,
@@ -932,6 +949,7 @@
 				37FEB5C21B52477D0095BB69 /* Hash.cpp in Sources */,
 				37FEB5BA1B52477D0095BB69 /* ListenerList.cpp in Sources */,
 				37FEB5E71B52477D0095BB69 /* Thread.cpp in Sources */,
+				37B612341BD81C6F006C3AEF /* Clock.cpp in Sources */,
 				37FEB5811B52477D0095BB69 /* Discrete.cpp in Sources */,
 				37FEB5911B52477D0095BB69 /* Uniform.cpp in Sources */,
 				37FEB5791B52477D0095BB69 /* Beta.cpp in Sources */,

@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Honey/Misc/Exception.h"
-#include "Honey/Misc/Clock.h"
+#include "Honey/Chrono/Clock.h"
 #include "Honey/Thread/platform/Thread.h"
 
 namespace honey

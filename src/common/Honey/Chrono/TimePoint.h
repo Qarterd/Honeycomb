@@ -1,7 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Math/Duration.h"
+#include "Honey/Chrono/Duration.h"
 
 namespace honey
 {
