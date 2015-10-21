@@ -10,25 +10,22 @@ namespace honey
 {
 
 /// Dependency node for insertion into graph
-template<class Data_, class Key_ = Id>
+template<class Data_, class Key_ = Id, template<class> class Alloc_ = SmallAllocator>
 class DepNode
 {
 public:
-    #define ENUM_LIST(e,_)  \
-        e(_, out)           \
-        e(_, in)            \
-
-    /**
-      * \retval out         this node depends on the target node
-      * \retval in          this node is depended on by the target node
-      */
-    ENUM(DepNode, DepType);
-    #undef ENUM_LIST
-
+    enum class DepType
+    {
+        out,    ///< this node depends on the target node
+        in      ///< this node is depended on by the target node
+    };
+    static const int depTypeMax = 2;
+    
     typedef Data_ Data;
     typedef Key_ Key;
-    typedef stdutil::unordered_map<Key, DepType, SmallAllocator> DepMap;
-
+    template<class T> using Alloc = Alloc_<T>;
+    typedef stdutil::unordered_map<Key, DepType, Alloc> DepMap;
+    
     DepNode(const Data& data = Data(), const Key& key = Key())      : _data(data), _key(key) {}
 
     /// Set the data that this node contains
@@ -88,18 +85,19 @@ class DepGraph
     typedef typename DepNode::Data Data;
     typedef typename DepNode::Key Key;
     typedef typename DepNode::DepType DepType;
-
+    template<class T> using Alloc = typename DepNode::template Alloc<T>;
+    
 public:
     class Vertex;
 
 private:
-    typedef stdutil::unordered_map<Key, Vertex*, SmallAllocator> VertexMap;
-    typedef list<Vertex, SmallAllocator<Vertex>> VertexList;
+    typedef stdutil::unordered_map<Key, Vertex*, Alloc> VertexMap;
+    typedef list<Vertex, Alloc<Vertex>> VertexList;
 
 public:
-    typedef stdutil::unordered_set<DepNode*, SmallAllocator>        NodeList;
-    typedef stdutil::unordered_set<const DepNode*, SmallAllocator>  NodeListConst;
-    typedef stdutil::unordered_set<Key, SmallAllocator>             KeyList;
+    typedef stdutil::unordered_set<DepNode*, Alloc>        NodeList;
+    typedef stdutil::unordered_set<const DepNode*, Alloc>  NodeListConst;
+    typedef stdutil::unordered_set<Key, Alloc>             KeyList;
 
     /// A vertex is initially associated with one key and acts like a multi-map, storing all nodes and graph links of DepNodes matching that key.
     /**
@@ -110,8 +108,8 @@ public:
     {
         friend class DepGraph;
     public:
-        typedef stdutil::unordered_map<Vertex*, int, SmallAllocator> LinkMap;
-        typedef stdutil::unordered_map<const Vertex*, int, SmallAllocator> LinkMapConst;
+        typedef stdutil::unordered_map<Vertex*, int, Alloc> LinkMap;
+        typedef stdutil::unordered_map<const Vertex*, int, Alloc> LinkMapConst;
 
         /// Get all nodes that constitute this vertex
         const NodeList& nodes()                         { return nodeList; }
@@ -120,9 +118,9 @@ public:
         const KeyList& keys() const                     { return keyList; }
         /// Get all vertices along in/out links
         auto links(DepType type = DepType::out) -> decltype(honey::keys(declval<const LinkMap>()))
-                                                        { return honey::keys(const_cast<const Vertex*>(this)->linkMaps[type]); }
+                                                        { return honey::keys(const_cast<const Vertex*>(this)->linkMaps[static_cast<int>(type)]); }
         auto links(DepType type = DepType::out) const -> decltype(honey::keys(declval<const LinkMapConst>()))
-                                                        { return honey::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[type])); }
+                                                        { return honey::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[static_cast<int>(type)])); }
 
     private:
         /// Add link, increment reference by count
@@ -139,14 +137,15 @@ public:
         {
             auto& linkMap = this->linkMap(type);
             auto itMap = linkMap.find(vertex);
-            assert(itMap != linkMap.end(), sout() << "Unable to remove dependency link. Vertex: " << *keyList.begin() << " ; Link Type: " << type << " ; Link Key: " << *vertex->keyList.begin());
+            assert(itMap != linkMap.end(), sout() <<    "Unable to remove dependency link. Vertex: " << *keyList.begin() <<
+                                                        " ; Link Type: " << static_cast<int>(type) << " ; Link Key: " << *vertex->keyList.begin());
             auto& refCount = itMap->second;
             refCount -= count;
             if (refCount <= 0) linkMap.erase(itMap);
         }
 
-        const LinkMap& linkMap(DepType type) const      { return linkMaps[type]; }
-        LinkMap& linkMap(DepType type)                  { return linkMaps[type]; }
+        const LinkMap& linkMap(DepType type) const      { return linkMaps[static_cast<int>(type)]; }
+        LinkMap& linkMap(DepType type)                  { return linkMaps[static_cast<int>(type)]; }
 
         /// A phantom vertex exists only because it was referenced as a dependency, but it is otherwise uninitialized and not considered for graph operations
         bool isPhantom() const                          { return nodeList.empty(); }
@@ -156,22 +155,22 @@ public:
         typename VertexList::iterator itAlloc;
         NodeList nodeList;
         KeyList keyList;
-        array<LinkMap, DepType::valMax> linkMaps;
+        array<LinkMap, DepNode::depTypeMax> linkMaps;
     };
 
 private:
-    typedef vector<Vertex*, SmallAllocator<Vertex*>> VertexPList;
-    typedef stdutil::unordered_set<Vertex*, SmallAllocator> VertexSet;
+    typedef vector<Vertex*, Alloc<Vertex*>> VertexPList;
+    typedef stdutil::unordered_set<Vertex*, Alloc> VertexSet;
 
     struct CondenseData
     {
         CondenseData() : preOrd(0) {}
 
-        typedef stdutil::unordered_map<Vertex*, int, SmallAllocator> PreOrdMap;
+        typedef stdutil::unordered_map<Vertex*, int, Alloc> PreOrdMap;
         //Merge vertex -> Component vertices
-        typedef stdutil::unordered_map<Vertex*, VertexSet, SmallAllocator> MergeMap;
+        typedef stdutil::unordered_map<Vertex*, VertexSet, Alloc> MergeMap;
         //Component vertices -> Merge vertex
-        typedef stdutil::unordered_map<Vertex*, Vertex*, SmallAllocator> MergeMapR;
+        typedef stdutil::unordered_map<Vertex*, Vertex*, Alloc> MergeMapR;
 
         VertexPList stackS;
         VertexPList stackP;
@@ -191,7 +190,7 @@ private:
                     typename Vertex::LinkMap::const_iterator, k_linkIt
                     > VertexLink;
 
-    typedef vector<VertexLink, SmallAllocator<VertexLink>> VertexLinkList;
+    typedef vector<VertexLink, Alloc<VertexLink>> VertexLinkList;
 
 public:
     /// Add a node to the graph
@@ -246,7 +245,8 @@ public:
 
             //Find dependency vertex in map
             auto itMap = _vertexMap.find(key);
-            assert(itMap != _vertexMap.end(), sout() << "Unable to remove dependency. Node: " << node.getKey() << " ; DepType: " << type << " ; DepKey: " << key);
+            assert(itMap != _vertexMap.end(), sout() << "Unable to remove dependency. Node: " << node.getKey() <<
+                                                        " ; DepType: " << static_cast<int>(type) << " ; DepKey: " << key);
             auto& depVertex = *itMap->second;
             //Vertex can't depend on itself
             if (&depVertex == &vertex) continue;
@@ -524,7 +524,7 @@ public:
             auto& oldVertexList = e.second;
 
             //Build merged vertex links
-            for (auto i : honey::range(DepType::valMax))
+            for (auto i : honey::range(DepNode::depTypeMax))
             {
                 auto type = DepType(i);
                 auto depTypeOpp = DepNode::depTypeOpp(type);
@@ -720,7 +720,7 @@ private:
         for (auto& e : mergeVertex.nodeList) { add(*e); }
 
         //Loop through links and update links on other side
-        for (auto i : honey::range(DepType::valMax))
+        for (auto i : honey::range(DepNode::depTypeMax))
         {
             auto type = DepType(i);
             auto depTypeOpp = DepNode::depTypeOpp(type);

@@ -161,7 +161,7 @@ bool DepSched::reg(DepTask& task)
     //Structural change, must dirty newly linked tasks
     auto vertex = _depGraph.vertex(task);
     assert(vertex);
-    for (auto i: range(DepTask::DepNode::DepType::valMax))
+    for (auto i: range(DepTask::DepNode::depTypeMax))
     {
         for (auto& v: vertex->links(DepTask::DepNode::DepType(i)))
         {

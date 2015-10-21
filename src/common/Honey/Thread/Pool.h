@@ -26,7 +26,7 @@ public:
       * \param workerCount      Number of workers
       * \param workerTaskMax    Max size of per-worker task queue, overflow will be pushed onto pool queue
       */
-    Pool(int workerCount, int workerTaskMax);
+    Pool(szt workerCount, szt workerTaskMax);
     ~Pool();
 
     /// Schedule a task for execution
@@ -65,22 +65,24 @@ private:
         /// Get next task
         TaskPtr next();
         
-        Pool&           _pool;
-        Thread          _thread;
-        bool            _active;
-        ConditionLock   _cond;
-        bool            _condWait;
-        deque<TaskPtr>  _tasks;
-        TaskPtr         _task;
+        Pool&               _pool;
+        Thread              _thread;
+        bool                _active;
+        ConditionLock       _cond;
+        bool                _condWait;
+        deque<TaskPtr>      _tasks;
+        atomic::Var<szt>    _taskCount;
+        TaskPtr             _task;
         static thread::Local<Worker*> _current;
     };
     
     void enqueue_(TaskPtr task);
     
-    int                 _workerTaskMax;
+    szt                 _workerTaskMax;
     Mutex               _lock;
     vector<UniquePtr<Worker>> _workers;
     deque<TaskPtr>      _tasks;
+    atomic::Var<szt>    _taskCount;
 };
 
 } }

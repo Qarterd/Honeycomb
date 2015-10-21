@@ -7,7 +7,7 @@ namespace honey
 
 const vector<Component::Ptr> ComObject::_nullComs;
 
-void ComObject::insertCom_priv(Component& com, int index, bool createDeps)
+void ComObject::insertCom_priv(Component& com, sdt index, bool createDeps)
 {
     static mt::Void _ = ComRegistry::inst().buildDepGraph();  //build dep graph the first time this function is called
     mt_unused(_);

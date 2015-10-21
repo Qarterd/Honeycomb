@@ -59,8 +59,9 @@ void PeriodicTask::operator()()
         try { thread::current::interruptPoint(); } catch (...) {}
         _thread = nullptr;
         
+        readyFunctor(static_cast<bool>(_period)); //make future ready, if periodic then create future for next exec
+        if (_period && _cancelled) cancelFunctor(); //if periodic and no next exec then cancel future
         _state = _period && !_cancelled ? State::wait : State::idle; //tell scheduler that task is ready for next exec
-        resetFunctor(); //make future ready
     }
 }
 
@@ -131,7 +132,6 @@ void PeriodicSched::run()
     
     while (_active)
     {
-        if (!_actions.empty())
         {
             ConditionLock::Scoped _(_cond);
             for (auto& e: _actions)
@@ -149,6 +149,7 @@ void PeriodicSched::run()
                         auto it = stdutil::findVal(_tasks, task->_due.load(), task);
                         if (it != _tasks.end())
                         {
+                            if (task->_state == PeriodicTask::State::wait) task->cancelFunctor();
                             PeriodicTask_trace(*task, "Cancelled");
                             _tasks.erase(it);
                         }

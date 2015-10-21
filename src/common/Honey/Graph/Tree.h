@@ -13,23 +13,23 @@ namespace honey
   * Every tree node has one parent node, multiple children, and a generic data value.
   * Nodes may contain a key for identification and fast retrieval. The key doesn't have to be unique.
   */ 
-template<class Data_, class Key_ = Id>
+template<class Data_, class Key_ = Id, template<class> class Alloc = SmallAllocator>
 class TreeNode
 {
-    template<class Data, class Key> friend class TreeNode;
+    template<class, class, template<class> class> friend class TreeNode;
 public:
     typedef Data_ Data;
     typedef Key_ Key;
     
     /// Child linked list
-    typedef list<deref_wrap<TreeNode>, SmallAllocator<deref_wrap<TreeNode>>> ChildList;
+    typedef list<deref_wrap<TreeNode>, Alloc<deref_wrap<TreeNode>>> ChildList;
     typedef typename ChildList::iterator                ChildIter;
     typedef typename ChildList::const_iterator          ChildConstIter;
     typedef typename ChildList::reverse_iterator        ChildIterR;
     typedef typename ChildList::const_reverse_iterator  ChildConstIterR;
     
     /// Map holding children at keys
-    typedef stdutil::unordered_multimap<Key, deref_wrap<TreeNode>, SmallAllocator> ChildMap;
+    typedef stdutil::unordered_multimap<Key, deref_wrap<TreeNode>, Alloc> ChildMap;
     typedef typename ChildMap::iterator                 ChildMapIter;
     typedef typename ChildMap::const_iterator           ChildMapConstIter;
 
@@ -56,7 +56,6 @@ public:
         setParent(nullptr);
         clearChildren();
         if (hasListenerList()) _listenerList().template dispatch<sigDestroy>(*this);
-        delete_(_listenerList_p);
     }
 
     /// Set the data that this node contains
@@ -391,7 +390,6 @@ private:
     {
         _parent = nullptr;
         _itSib = _childList.end();
-        _listenerList_p = nullptr;
     }
     
     ///There are potentially multiple children with same key, find the specific child pointer in map
@@ -399,8 +397,7 @@ private:
     
     /// \name Optional addons for the tree node, created automatically when requested
     /// @{
-    ListenerList& _listenerList()                               { if (_listenerList_p) return *_listenerList_p; return *(_listenerList_p = new ListenerList()); }
-    const ListenerList& _listenerList() const                   { return const_cast<TreeNode*>(this)->_listenerList(); }
+    ListenerList& _listenerList()                               { if (_listenerList_p) return *_listenerList_p; return *(_listenerList_p = make_unique<ListenerList>()); }
     bool hasListenerList() const                                { return _listenerList_p; }
     /// @}
 
@@ -410,11 +407,12 @@ private:
     ChildList _childList;
     Key _key;
     ChildMap _childMap;
-    ListenerList* _listenerList_p;
+    UniquePtr<ListenerList> _listenerList_p;
 
-    static Key _keyNull;    ///< Used to check if key is set
+    static const Key _keyNull;  ///< Used to check if key is set
 };
 
-template<class Data, class Key> Key TreeNode<Data, Key>::_keyNull;
+template<class Data, class Key, template<class> class Alloc>
+const Key TreeNode<Data,Key,Alloc>::_keyNull;
 
 }

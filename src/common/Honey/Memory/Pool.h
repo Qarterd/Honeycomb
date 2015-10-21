@@ -14,16 +14,16 @@ namespace honey
 /**
   * A pool instance is constructed by using the Factory class. \n
   * A pool instance can handle allocations of any size and alignment. \n
-  * The pool primarily allocates from buckets of fixed size blocks, if there's no block big enough to hold the allocation then the pool falls back on the system heap allocator. \n
-  * The pool is thread-safe, each bucket can concurrently run Alloc and Free (i.e. Alloc does not block Free).
+  * The pool primarily allocates from buckets of fixed size blocks, if there's no block big enough to hold
+  * the allocation then the pool falls back on the system heap allocator. \n
+  * The pool is thread-safe and lock-free (locks are only used when expanding).
   *
   * The pool will initially allocate the memory for all its buckets/blocks in one contiguous memory chunk. \n
   * Each bucket has a fixed block size and an initial block count. \n
   * The buckets automatically expand like vectors, but the memory chunks are not contiguous across expansions.
   *
   * Alloc complexity is O(log B) amortized, where B is the number of buckets, expansions may occur. \n
-  * Free complexity is O(1). \n
-  * Destruction complexity is O(B + N) where B is the number of buckets, N is the number of blocks allocated by the heap allocator.
+  * Free complexity is O(1).
   */
 class MemPool : mt::NoCopy
 {
@@ -156,7 +156,6 @@ private:
             _blockCountInit(blockCount),
             _chunkSizeTotal(0),
             _freeHead(nullptr),
-            _freeTail(nullptr),
             _freeCount(0),
             _usedHead(nullptr),
             _usedCount(0),
@@ -189,20 +188,18 @@ private:
         szt blockStride() const                             { return (szt)(intptr_t)alignCeil((void*)(_blockSize + sizeof(BlockHeader)), _pool._blockAlign); }
         szt blockOffsetMax() const                          { return _pool._blockAlign-1; }
 
-        MemPool&            _pool;
-        szt                 _bucketIndex;
-        const szt           _blockSize;         ///< Data size of each block
-        const szt           _blockCountInit;    ///< Initial number of blocks
-        vector<uint8*>      _chunkList;         ///< System heap chunks
-        atomic::Var<szt>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
-        BlockHeader*        _freeHead;          ///< Head of free blocks list
-        BlockHeader*        _freeTail;          ///< Tail of free blocks list
-        atomic::Var<szt>    _freeCount;         ///< Number of free blocks
-        BlockHeader*        _usedHead;          ///< Head of used blocks list
-        atomic::Var<szt>    _usedCount;         ///< Number of used blocks
-        szt                 _usedSize;          ///< Total number of bytes allocated in used blocks
-        SpinLock            _lock;
-        SpinLock            _tailLock;
+        MemPool&                    _pool;
+        szt                         _bucketIndex;
+        const szt                   _blockSize;         ///< Data size of each block
+        const szt                   _blockCountInit;    ///< Initial number of blocks
+        vector<uint8*>              _chunkList;         ///< System heap chunks
+        atomic::Var<szt>            _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        atomic::Var<BlockHeader*>   _freeHead;          ///< Head of free blocks list
+        atomic::Var<szt>            _freeCount;         ///< Number of free blocks
+        BlockHeader*                _usedHead;          ///< Head of used blocks list
+        atomic::Var<szt>            _usedCount;         ///< Number of used blocks
+        szt                         _usedSize;          ///< Total number of bytes allocated in used blocks
+        SpinLock                    _lock;
     };
     typedef std::map<szt, Bucket*> BucketMap;
 
@@ -253,13 +250,13 @@ private:
 
     void lock() const
     {
-        for (auto& e : _bucketList) { e->_lock.lock(); e->_tailLock.lock(); }
+        for (auto& e : _bucketList) e->_lock.lock();
         _heap->_lock.lock();
     }
 
     void unlock() const
     {
-        for (auto& e : _bucketList) { e->_lock.unlock(); e->_tailLock.unlock(); }
+        for (auto& e : _bucketList) e->_lock.unlock();
         _heap->_lock.unlock();
     }
     

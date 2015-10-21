@@ -27,14 +27,14 @@ template<class Config> class Value_;
   * \tparam ordered     If true then insertion order of name/value pairs in a json object will be preserved
   *                     in an additional list member `Value::Object::orderedNames`. \see ObjectOrdered.
   */
-template<bool ordered = false>
+template<bool ordered = false, template<class> class Alloc = SmallAllocator>
 struct Config
 {
     typedef Value_<Config> Value;
     /// Holds a value in an array/object
-    typedef recursive_wrap<Value, SmallAllocator<Value>> value_wrap;
-    typedef vector<value_wrap, SmallAllocator<value_wrap>> Array;
-    typedef stdutil::unordered_map<NameId, value_wrap, SmallAllocator> ObjectUnordered;
+    typedef recursive_wrap<Value, Alloc<Value>> value_wrap;
+    typedef vector<value_wrap, Alloc<value_wrap>> Array;
+    typedef stdutil::unordered_map<NameId, value_wrap, Alloc> ObjectUnordered;
     
     struct ObjectOrdered : ObjectUnordered
     {
@@ -62,7 +62,7 @@ struct Config
         }
     
         /// List of names in order of name/value pair insertion
-        vector<Id, SmallAllocator<Id>> orderedNames;
+        vector<Id, Alloc<Id>> orderedNames;
     };
     
     typedef typename std::conditional<ordered, ObjectOrdered, ObjectUnordered>::type Object;

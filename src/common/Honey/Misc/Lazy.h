@@ -45,10 +45,7 @@ public:
     template<class... Args>
     T& get(Args&&... args)
     {
-        // Check before lock for early return
-        if (!(isDirty() || (_pred && _pred(args...)))) return _val;
         SpinLock::Scoped _(_lock);
-        // Must check again after lock, another thread may have eval'd
         if (!(isDirty() || (_pred && _pred(args...)))) return _val;
         _eval(_val, args...);
         _dirty = false;

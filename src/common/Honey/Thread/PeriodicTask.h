@@ -24,6 +24,9 @@ public:
     typedef SharedPtr<PeriodicTask> Ptr;
     typedef function<void ()> Func;
 
+    /// Future result when cancelled
+    struct Cancelled : Exception                    { EXCEPTION(Cancelled) };
+    
     virtual ~PeriodicTask() {}
     
     /// Get the current task object. Must be called from a task functor.
@@ -34,7 +37,7 @@ public:
     /// Returns time remaining until task is due for execution (task is due at zero time or less)
     MonoClock::Duration delay() const               { return _due.load() - MonoClock::now(); }
     
-    /// Unschedule task from further execution
+    /// Unschedule task from further execution. If the task is awaiting execution then its future will throw exception Cancelled.
     void cancel();
     /// Request an interrupt in the executing task's thread. \see Thread::interrupt()
     void interrupt(const Exception::ConstPtr& e = new thread::Interrupted)   { Mutex::Scoped _(_lock); if (_thread) _thread->interrupt(e); }
@@ -62,7 +65,8 @@ protected:
     PeriodicTask(PeriodicSched& sched, optional<MonoClock::Duration> period, optional<MonoClock::Duration> delay, const Id& id);
 
     virtual void exec() = 0;
-    virtual void resetFunctor() = 0;
+    virtual void readyFunctor(bool reset) = 0;
+    virtual void cancelFunctor() = 0;
     
     void operator()();
     
@@ -106,8 +110,9 @@ private:
                                                     : PeriodicTask(sched, period, delay, id), _func(forward<Func>(f)) {}
     
     virtual void exec()                             { _func.invoke_delayedReady(); }
-    virtual void resetFunctor()                     { _func.setReady(true); }
-
+    virtual void readyFunctor(bool reset)           { _func.setReady(reset); }
+    virtual void cancelFunctor()                    { _func.setFunc([]{ throw_ Cancelled(); }); _func(); }
+    
     PackagedTask<Result ()> _func;
 };
 

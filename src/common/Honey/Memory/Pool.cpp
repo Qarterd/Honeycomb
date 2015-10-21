@@ -33,38 +33,28 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
         blockData += blockStride();
     }
 
-    //Attach free blocks to tail
-    if (_freeTail) _freeTail->next = first;
-    _freeTail = prev;
-    if (!_freeHead) _freeHead = first;
-
+    //Attach chunk as free head
+    assert(!_freeHead && !_freeCount);
+    _freeHead = first;
+    _freeCount = blockCount;
+    
     //Add memory chunk to list so it can be freed
     _chunkList.push_back(chunk);
     _chunkSizeTotal += chunkSize;
-    _freeCount += blockCount;
 }
 
 void* MemPool::Bucket::alloc(szt size, szt align_, const char* srcFile, int srcLine)
 {
     mt_unused(size); mt_unused(srcFile); mt_unused(srcLine);
 
+    //Detach head free block
     BlockHeader* header;
+    do
     {
-        //Detach head free block
-        //Lock both head and tail if they are sharing pointers
-        SpinLock::Scoped _(_lock);
-        SpinLock::Scoped __(_tailLock, _freeCount <= 1 ? lock::Op::lock : lock::Op::defer);
-        if (_freeCount == 0) expand();
-        assert(_freeHead);
         header = _freeHead;
-        _freeHead = header->next;
-        if (header == _freeTail)
-        {
-            assert(_freeCount == 1 && !_freeHead, "Free list double-lock algorithm is broken");
-            _freeTail = nullptr;    //Free head/tail have now been consumed
-        }
-        --_freeCount;
-    }
+        if (!header) { expand(); continue; }
+    } while (!_freeHead.cas(header->next, header));
+    --_freeCount;
 
     header->validate(BlockHeader::sigFree);
     //If the current block has offset from alignment, or alignment is requested
@@ -110,8 +100,9 @@ void* MemPool::Bucket::alloc(szt size, szt align_, const char* srcFile, int srcL
 
 void MemPool::Bucket::expand()
 {
-    /// Assumes that bucket is locked
-    szt expandCount = (_freeCount + _usedCount) / 2 + 1; //Expand 50%
+    SpinLock::Scoped _(_lock);
+    if (_freeCount) return;
+    szt expandCount = _usedCount / 2 + 1; //Expand 50%
     szt allocSize = blockOffsetMax() + blockStride() * expandCount;
     uint8* chunk = honey::alloc<uint8>(allocSize);
     assert(chunk, sout() << "Allocation failed: " << allocSize << " bytes");
@@ -135,19 +126,14 @@ void MemPool::Bucket::free(BlockHeader* header)
     #endif
     --_usedCount;
 
-    header->next = nullptr;
+    //Attach block as free head
+    BlockHeader* old;
+    do
     {
-        //Attach to free list as tail
-        SpinLock::Scoped _(_tailLock);
-        if (_freeCount == 0)
-        {
-            assert(!_freeHead && !_freeTail, "Free list double-lock algorithm is broken");
-            _freeHead = header;
-        }
-        if (_freeTail) _freeTail->next = header;
-        _freeTail = header;
-        ++_freeCount;
-    }
+        old = _freeHead;
+        header->next = old;
+    } while (!_freeHead.cas(header, old));
+    ++_freeCount;
 }
 
 void* MemPool::Heap::alloc(szt size, szt align_, const char* srcFile, int srcLine)

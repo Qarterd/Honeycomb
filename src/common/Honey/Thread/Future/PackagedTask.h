@@ -46,16 +46,27 @@ public:
     {
         if (!valid()) throw_ future::NoState();
         assert(_invoked);
-        Promise<R> promise(move(_promise));
-        if (reset) this->reset();
-        promise._state->setReady();
+        if (reset)
+        {
+            Promise<R> promise(move(_promise));
+            this->reset();
+            promise._state->setReady();
+        }
+        else
+            _promise._state->setReady();
     }
 
     /// Check if this instance has state and can be used.  State can be transferred out to another instance through move-assignment.
     bool valid() const                              { return _promise.valid(); }
     /// Reset the task so it can be invoked again, a new future is created for the next result
     void reset()                                    { *this = PackagedTask(move(_func)); }
-
+    
+    /// Get function that will be invoked
+    function<R (Param...)>& getFunc()               { return _func; }
+    /// Set function to be invoked
+    template<class F>
+    void setFunc(F&& f)                             { _func = forward<F>(f); }
+    
 private:
     template<class F, class Alloc>
     PackagedTask(F&& f, Alloc&& a, Promise<R>&& promise) :

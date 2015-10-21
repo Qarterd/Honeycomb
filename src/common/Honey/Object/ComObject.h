@@ -66,8 +66,8 @@ public:
       * The component will be also added to the end of any supertype slots.
       * Components contained by this object will be released upon object destruction.
       */ 
-    void insertCom(Component& com, int index, bool createDeps = false)
-                                                                { assert(index >= 0); insertCom_priv(com, index, createDeps); }
+    void insertCom(Component& com, szt index, bool createDeps = false)
+                                                                { insertCom_priv(com, index, createDeps); }
 
     /// hasComInSlot() with type `Com`
     template<class Com>
@@ -88,13 +88,13 @@ public:
 
     /// comCountInSlot() with type `Com` 
     template<class Com>
-    int comCount() const                                        { return comCountInSlot(Com::s_comType()); }
+    szt comCount() const                                        { return comCountInSlot(Com::s_comType()); }
 
     /// Get number of components of type that this object contains. O(1) complexity.
-    int comCountInSlot(const Id& type) const
+    szt comCountInSlot(const Id& type) const
     {
         auto slot = this->slot(type);
-        return slot ? size(slot->list) : 0;
+        return slot ? slot->list.size() : 0;
     }
 
     /// Get iterator over all slots in this object.  A slot may contain one or many components.
@@ -169,13 +169,13 @@ public:
 
     /// removeComInSlot() with type `Com`
     template<class Com>
-    void removeComAtIndex(int index, bool removeDeps = false)   { removeComInSlot(Com::s_comType(), index, removeDeps); }
+    void removeComAtIndex(szt index, bool removeDeps = false)   { removeComInSlot(Com::s_comType(), index, removeDeps); }
 
     /// Remove component of type at index. O(1) complexity, must exist.
-    void removeComInSlot(const Id& type, int index, bool removeDeps = false)
+    void removeComInSlot(const Id& type, szt index, bool removeDeps = false)
     {
         auto slotIt = _slotMap.find(type);
-        assert(slotIt != _slotMap.end() && index >= 0 && index < size(slotIt->second.list));
+        assert(slotIt != _slotMap.end() && index < slotIt->second.list.size());
         removeComInSlot(slotIt, slotIt->second.list.begin() + index, removeDeps);
     }
 
@@ -205,7 +205,7 @@ private:
     Slot* slot(const Id& type)                                  { auto it = _slotMap.find(type); return it != _slotMap.end() ? &it->second : nullptr; }
 
     /// If index is -1 then add to end
-    void insertCom_priv(Component& com, int index, bool createDeps);
+    void insertCom_priv(Component& com, sdt index, bool createDeps);
     /// `slotIt` will be set to end if slot is erased
     void removeComInSlot(SlotMap::iterator slotIt, Slot::List::iterator it, bool removeDeps);
     void removeComsInSlot(SlotMap::iterator slotIt, bool removeDeps);
