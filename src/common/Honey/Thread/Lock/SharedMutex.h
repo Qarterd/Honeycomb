@@ -72,11 +72,11 @@ private:
 
     bool isShared() const                                   { return (_state & ~State::unique) != 0; }
 
-    atomic::Var<int>                _state;
-    ConditionLock                   _cond;
-    atomic::Var<Thread::ThreadId>   _owner;
-    int                             _holdCount;
-    atomic::Var<int>                _waitCount;
+    Atomic<int>                 _state;
+    ConditionLock               _cond;
+    Atomic<Thread::ThreadId>    _owner;
+    int                         _holdCount;
+    Atomic<int>                 _waitCount;
 };
 
 

@@ -86,7 +86,7 @@ protected:
 
     DepNode             _depNode;
     Mutex               _lock;
-    atomic::Var<State>  _state;
+    Atomic<State>       _state;
     int                 _regCount;
     DepSched*           _sched;
     WeakPtr<DepTask>    _root;

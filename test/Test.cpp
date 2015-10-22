@@ -27,16 +27,16 @@ void test()
                     switch (Discrete(rand, 0, 5).nextInt())
                     {
                     case 0:
-                        list.pushFront(i);
+                        list.push_front(i);
                         break;
                     case 1:
-                        list.pushBack(i);
+                        list.push_back(i);
                         break;
                     case 2:
-                        list.popFront(data);
+                        list.pop_front(data);
                         break;
                     case 3:
-                        list.popBack(data);
+                        list.pop_back(data);
                         break;
                     case 4:
                         {
@@ -87,16 +87,16 @@ void test()
                     switch (Discrete(rand, 0, 3).nextInt())
                     {
                     case 0:
-                        list.pushFront(i);
+                        list.push_front(i);
                         break;
                     case 1:
-                        list.pushBack(i);
+                        list.push_back(i);
                         break;
                     case 2:
-                        list.popFront(data);
+                        list.pop_front(data);
                         break;
                     case 3:
-                        list.popBack(data);
+                        list.pop_back(data);
                         break;
                     }
                 }
@@ -112,7 +112,7 @@ void test()
         int data;
         int count = 0;
         debug_print(sout() << "Deque Size: " << list.size() << endl);
-        while (list.popFront(data))
+        while (list.pop_front(data))
         {
             debug_print(sout() << "Deque " << count << " : " << data << endl);
             ++count;

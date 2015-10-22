@@ -12,23 +12,21 @@ namespace honey
 
 /// Memory pool
 /**
-  * A pool instance is constructed by using the Factory class. \n
-  * A pool instance can handle allocations of any size and alignment. \n
+  * A pool instance is constructed via MemPool::Factory.
   * The pool primarily allocates from buckets of fixed size blocks, if there's no block big enough to hold
-  * the allocation then the pool falls back on the system heap allocator. \n
-  * The pool is thread-safe and lock-free (locks are only used when expanding).
+  * the allocation then the pool falls back on the system heap allocator.
   *
-  * The pool will initially allocate the memory for all its buckets/blocks in one contiguous memory chunk. \n
-  * Each bucket has a fixed block size and an initial block count. \n
-  * The buckets automatically expand like vectors, but the memory chunks are not contiguous across expansions.
+  * The pool will initially allocate memory for all its buckets in one contiguous chunk.
+  * Buckets automatically expand but their chunks are not contiguous across expansions.
   *
-  * Alloc complexity is O(log B) amortized, where B is the number of buckets, expansions may occur. \n
-  * Free complexity is O(1).
+  * The pool is thread-safe and its buckets are lock-free, although locks may be encountered
+  * during allocation when bucket expansion is required.
+  *
+  * Alloc complexity is O(log B) where B is the number of buckets. Free complexity is O(1).
   */
 class MemPool : mt::NoCopy
 {
 public:
-
     /// Pool creator
     class Factory
     {
@@ -39,15 +37,15 @@ public:
         /// Create pool using factory config
         MemPool& create()                                   { return *new MemPool(*this); }
 
-        /// Set alignment byte boundary for all blocks.  alignment must be a power of two.
+        /// Set alignment byte boundary for all blocks. Alignment must be a power of two.
         void setBlockAlign(szt bytes)                       { param[align()] = bytes; }
 
         /// Add a bucket of blocks available to the pool for allocation
         /**
-          * \param blockSize_   size in bytes of each block.
-          * \param blockCount_  initial number of blocks (bucket automatically expands).
+          * \param blockSize    size in bytes of each block.
+          * \param blockCount   initial number of blocks (bucket automatically expands).
           */
-        void addBucket(szt blockSize_, szt blockCount_)     { bucketList.push_back(mtmap(blockSize() = blockSize_, blockCount() = blockCount_)); }
+        void addBucket(szt blockSize, szt blockCount)       { bucketList.push_back(mtmap(Factory::blockSize() = blockSize, Factory::blockCount() = blockCount)); }
 
     private:
         mtkey(align);
@@ -67,17 +65,9 @@ public:
     }
 
     /// Allocate a `size` bytes block of memory at byte boundary `align`.  alignment must be a power of two.
-    void* alloc(szt size, szt align = 1, const char* srcFile = nullptr, int srcLine = 0);
-
+    void* alloc(szt size, uint8 align = 1, const char* srcFile = nullptr, int srcLine = 0);
     /// Free a memory block allocated from the pool
     void free(void* ptr_);
-
-    /// Free entire pool
-    void free()
-    {
-        for (auto& e : _bucketList) { e->free(); }
-        _heap->free();
-    }
 
     /// Calc total bytes allocated by pool
     szt allocBytes() const;
@@ -103,61 +93,88 @@ public:
     const Id& getId() const                                 { return _id; }
 
 private:
-    class Bucket;
-
-    /// Bucket block header, 8 bytes.  Block header types are determined by examining the 4 bytes prior to the block data.
-    struct BlockHeader
-    {
-        /// Info only available in debug
-        struct DebugInfo
-        {
-            szt                 size;
-            int                 srcLine;
-            const char*         srcFile;
-            BlockHeader*        prev;
-            int                 _pad;
-            int                 sig;                ///< Signature sentinel to verify block state
-        };
-
-        static const int sigFree = 0xB10CF8EE;      ///< Block Free
-        static const int sigUsed = 0x05EDB10C;      ///< Used Block
-
-        #ifdef DEBUG
-            /// Assert that block signature is valid and matches expected value `sig`
-            void validate(int sig)
-            {
-                assert(debug.sig == sigFree || debug.sig == sigUsed, "Error: invalid block signature. Block header overwritten.");
-                assert(debug.sig == sig, "Error: invalid block signature. Block not in expected state (eg. block freed twice).");
-            }
-        #else
-            void validate(int) {}
-        #endif
-
-        int16           bucket;
-        uint16          offset;    ///< Offset from original block position due to alignment (can change each allocation)
-        #ifdef DEBUG
-            DebugInfo   debug;
-        #endif
-        BlockHeader*    next;
-    };
-    
-
-    static BlockHeader* blockHeader(uint8* data)            { return reinterpret_cast<BlockHeader*>(data - sizeof(BlockHeader)); }
-    static uint8* blockData(BlockHeader* header)            { return reinterpret_cast<uint8*>(header) + sizeof(BlockHeader); }
-
     /// Bucket that holds a number of blocks of fixed size
     class Bucket
     {
     public:
+        /// Blocks are linked via indices rather than pointers so that they can include a tag while still maintaining a swappable size
+        struct Handle
+        {
+            //divide max swappable into 2 parts
+            typedef mt::uintBySize<sizeof(atomic::SwapMaxType)/2>::type Int;
+            
+            Handle()                                        : index(-1) {}
+            Handle(nullptr_t)                               : Handle() {}
+            Handle(uint8 chunk, Int block)                  : index((block << 8) | chunk) {}
+            
+            bool operator==(Handle handle) const            { return index == handle.index; }
+            bool operator!=(Handle handle) const            { return !operator==(handle); }
+            explicit operator bool() const                  { return index != Int(-1); }
+            
+            uint8 chunk() const                             { return index & 0xFF; }
+            Int block() const                               { return index >> 8; }
+            
+            Int index;
+        };
+        
+        /// Holds block handle and tag to prevent lock-free ABA issues
+        struct TaggedHandle : Handle
+        {
+            TaggedHandle()                                  : tag(0) {}
+            TaggedHandle(Handle handle, Int tag)            : Handle(handle), tag(tag) {}
+            
+            TaggedHandle& operator=(Handle handle)          { Handle::operator=(handle); return *this; }
+            
+            Int nextTag() const                             { return tag+1; }
+            
+            Int tag;
+        };
+        
+        /// Bucket block header
+        struct BlockHeader
+        {
+            struct Debug
+            {
+                static const int sigFree = 0xB10CF8EE;  ///< Block Free
+                static const int sigUsed = 0x05EDB10C;  ///< Used Block
+            
+                szt             size;
+                int             srcLine;
+                const char*     srcFile;
+                Handle          prev;
+                int             sig;    ///< Signature sentinel to verify block state
+            };
+
+            /// Get bucket from reserved area
+            uint8& bucket()                                 { return *(reinterpret_cast<uint8*>(this) + sizeof(BlockHeader) - 1); }
+            
+            #ifdef DEBUG
+                /// Assert that block signature is valid and matches expected value `sig`
+                void validate(int sig)                      { assert(debug.sig == sig, "Error: invalid block signature. Block overwritten by overflow or in unexpected state (eg. freed twice)."); }
+            #else
+                void validate(int) {}
+            #endif
+
+            #ifdef DEBUG
+                Debug       debug;
+            #endif
+            Handle          handle;
+            Handle          next;
+            uint8           offset;     ///< Offset from original block position due to alignment (can change each allocation)
+            uint8           reserved;   ///< Last byte is reserved to differentiate block header types
+        };
+        
+        static BlockHeader* blockHeader(uint8* data)        { return reinterpret_cast<BlockHeader*>(data - sizeof(BlockHeader)); }
+        static uint8* blockData(BlockHeader* header)        { return reinterpret_cast<uint8*>(header) + sizeof(BlockHeader); }
+        
         Bucket(MemPool& pool, szt blockSize, szt blockCount) :
             _pool(pool),
             _bucketIndex(-1),
             _blockSize(blockSize),
             _blockCountInit(blockCount),
             _chunkSizeTotal(0),
-            _freeHead(nullptr),
+            _freeHead(TaggedHandle()),
             _freeCount(0),
-            _usedHead(nullptr),
             _usedCount(0),
             _usedSize(0)
         {}
@@ -167,39 +184,43 @@ private:
             //The first memory chunk is the initial pool allocation, we don't own it
             _chunkList.erase(_chunkList.begin());
             //Delete all expansion chunks
-            deleteRange(_chunkList);
+            for (auto& e : _chunkList) delete_(e.data());
         }
 
         /// Initialize blocks in memory chunk
         void initChunk(uint8* chunk, szt chunkSize, szt blockCount);
-
         /// Alloc a block with alignment byte boundary `align`
-        void* alloc(szt size, szt align, const char* srcFile, int srcLine);
-
+        void* alloc(szt size, uint8 align, const char* srcFile, int srcLine);
         /// Increase number of blocks in bucket by allocating a new chunk
         void expand();
-
         /// Free a block
         void free(BlockHeader* header);
 
-        /// Free entire bucket
-        void free()                                         { for (auto header = _usedHead; header; header = _usedHead) free(header); }
-
-        szt blockStride() const                             { return (szt)(intptr_t)alignCeil((void*)(_blockSize + sizeof(BlockHeader)), _pool._blockAlign); }
         szt blockOffsetMax() const                          { return _pool._blockAlign-1; }
-
-        MemPool&                    _pool;
-        szt                         _bucketIndex;
-        const szt                   _blockSize;         ///< Data size of each block
-        const szt                   _blockCountInit;    ///< Initial number of blocks
-        vector<uint8*>              _chunkList;         ///< System heap chunks
-        atomic::Var<szt>            _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
-        atomic::Var<BlockHeader*>   _freeHead;          ///< Head of free blocks list
-        atomic::Var<szt>            _freeCount;         ///< Number of free blocks
-        BlockHeader*                _usedHead;          ///< Head of used blocks list
-        atomic::Var<szt>            _usedCount;         ///< Number of used blocks
-        szt                         _usedSize;          ///< Total number of bytes allocated in used blocks
-        SpinLock                    _lock;
+        szt blockStride() const                             { return (szt)(intptr_t)alignCeil((void*)(_blockSize + sizeof(BlockHeader)), _pool._blockAlign); }
+        
+        /// Get block header from handle
+        BlockHeader* deref(Handle handle) const
+        {
+            assert(handle && handle.chunk() < _chunkList.size());
+            auto& chunk = _chunkList[handle.chunk()];
+            assert(blockStride()*handle.block() < chunk.size());
+            uint8* blockData = alignCeil(chunk.data() + sizeof(BlockHeader), _pool._blockAlign);
+            return blockHeader(blockData + blockStride()*handle.block());
+        }
+        
+        MemPool&                _pool;
+        uint8                   _bucketIndex;
+        const szt               _blockSize;         ///< Data size of each block
+        const szt               _blockCountInit;    ///< Initial number of blocks
+        vector<Buffer<uint8>>   _chunkList;         ///< System heap chunks
+        Atomic<szt>             _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        Atomic<TaggedHandle>    _freeHead;          ///< Head of free blocks list
+        Atomic<szt>             _freeCount;         ///< Number of free blocks
+        TaggedHandle            _usedHead;          ///< Head of used blocks list
+        Atomic<szt>             _usedCount;         ///< Number of used blocks
+        szt                     _usedSize;          ///< Total number of bytes allocated in used blocks
+        SpinLock                _lock;
     };
     typedef std::map<szt, Bucket*> BucketMap;
 
@@ -207,15 +228,36 @@ private:
     class Heap
     {
     public:
-        /// Heap block header, 8 bytes + base
-        struct BlockHeader : MemPool::BlockHeader
+        /// Heap block header
+        struct BlockHeader
         {
-            typedef MemPool::BlockHeader Super;
+            struct Debug
+            {
+                int             srcLine;
+                const char*     srcFile;
+                BlockHeader*    prev;
+                int             sig;        ///< Signature sentinel to verify block state
+            };
 
-            BlockHeader* next_()                            { return static_cast<BlockHeader*>(Super::next); }
-
-            szt     size;
-            Heap*   heap;
+            static const uint8 heapTag = -1;
+            
+            /// Get tag from reserved area
+            uint8& tag()                                    { return *(reinterpret_cast<uint8*>(this) + sizeof(BlockHeader) - 1); }
+            
+            #ifdef DEBUG
+                /// Assert that block signature is valid and matches expected value `sig`
+                void validate(int sig)                      { assert(debug.sig == sig, "Error: invalid block signature. Block overwritten by overflow or in unexpected state (eg. freed twice)."); }
+            #else
+                void validate(int) {}
+            #endif
+            
+            #ifdef DEBUG
+                Debug           debug;
+            #endif
+            BlockHeader*        next;
+            szt                 size;
+            uint8               offset;     ///< Offset from original block position due to alignment (can change each allocation)
+            uint8               reserved;   ///< Last byte is reserved to differentiate block header types
         };
 
         static BlockHeader* blockHeader(uint8* data)        { return reinterpret_cast<BlockHeader*>(data - sizeof(BlockHeader)); }
@@ -228,37 +270,24 @@ private:
             _usedCount(0)
         {}
 
-        ~Heap()                                             { free(); }
-
         /// Alloc an `size` bytes block with alignment byte boundary `align`
-        void* alloc(szt size, szt align, const char* srcFile, int srcLine);
-
+        void* alloc(szt size, uint8 align, const char* srcFile, int srcLine);
         /// Free a block
         void free(BlockHeader* header);
 
-        /// Free entire bucket
-        void free()                                         { for (auto header = _usedHead; header; header = _usedHead) free(header); }
-
         MemPool&            _pool;
-        atomic::Var<szt>    _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        Atomic<szt>         _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         BlockHeader*        _usedHead;          ///< Head of used blocks list
-        atomic::Var<szt>    _usedCount;         ///< Number of used blocks
+        Atomic<szt>         _usedCount;         ///< Number of used blocks
         SpinLock            _lock;
     };
 
     MemPool(const Factory& factory);
 
-    void lock() const
-    {
-        for (auto& e : _bucketList) e->_lock.lock();
-        _heap->_lock.lock();
-    }
-
-    void unlock() const
-    {
-        for (auto& e : _bucketList) e->_lock.unlock();
-        _heap->_lock.unlock();
-    }
+    #ifdef DEBUG
+        void lock() const;
+        void unlock() const;
+    #endif
     
     Id                      _id;
     const szt               _blockAlign;        ///< alignment of all blocks
@@ -283,10 +312,10 @@ public:
     using typename Super::pointer;
     using typename Super::size_type;
     
-    pointer allocate(size_type n, const void* = 0)                  { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n)); }
+    pointer allocate(size_type n, const void* = 0)          { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n)); }
     pointer allocate(size_type n, const char* srcFile, int srcLine, const void* = 0)
-                                                                    { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n, 1, srcFile, srcLine)); }
-    void deallocate(pointer p, size_type)                           { this->subc().pool().free(p); }
+                                                            { return static_cast<pointer>(this->subc().pool().alloc(sizeof(T)*n, 1, srcFile, srcLine)); }
+    void deallocate(pointer p, size_type)                   { this->subc().pool().free(p); }
 };
 
 /// @}

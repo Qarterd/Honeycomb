@@ -80,7 +80,7 @@ public:
     }
 
     /// Insert new element at beginning of list
-    void pushFront(const Data& data)
+    void push_front(const Data& data)
     {
         Node& node = createNode(data);
         Node* prev = _mem.deRefLink(_head);
@@ -102,7 +102,7 @@ public:
     }
 
     /// Add new element onto end of list
-    void pushBack(const Data& data)
+    void push_back(const Data& data)
     {
         Node& node = createNode(data);
         Node* next = _mem.deRefLink(_tail);
@@ -123,7 +123,7 @@ public:
     }
 
     /// Pop element from beginning of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool popFront(optional<Data&> data = optnull)
+    bool pop_front(optional<Data&> data = optnull)
     {
         Node* prev = _mem.deRefLink(_head);
         _backoff.reset();
@@ -166,7 +166,7 @@ public:
     }
 
     /// Pop element from end of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool popBack(optional<Data&> data = optnull)
+    bool pop_back(optional<Data&> data = optnull)
     {
         Node* next = _mem.deRefLink(_tail);
         Node* node = _mem.deRefLink(next->prev);
@@ -358,12 +358,12 @@ public:
     typedef IterR_<const Data> ConstIterR;
 
     /// Get reverse iterator to the end of the list
-    ConstIterR beginR() const                               { return --end(); }
-    IterR beginR()                                          { return --end(); }
+    ConstIterR rbegin() const                               { return --end(); }
+    IterR rbegin()                                          { return --end(); }
 
     /// Get reverse iterator to the beginning of the list
-    ConstIterR endR() const                                 { return ConstIter(*this, false); }
-    IterR endR()                                            { return Iter(*this, false); }
+    ConstIterR rend() const                                 { return ConstIter(*this, false); }
+    IterR rend()                                            { return Iter(*this, false); }
 
     /// Get reference to front element.  Returns true on success, false if there is no element.
     bool front(Data& data)
@@ -377,8 +377,8 @@ public:
     /// Get reference to back element.  Returns true on success, false if there is no element.
     bool back(Data& data)
     {
-        IterR it = beginR();
-        if (it == endR() || !it.valid()) return false;
+        IterR it = rbegin();
+        if (it == rend() || !it.valid()) return false;
         data = *it;
         return true;
     }
@@ -625,13 +625,13 @@ private:
         return *prev;
     }
 
-    Alloc                   _alloc;
-    Mem<List>               _mem;
-    Link                    _head;
-    Link                    _tail;
-    atomic::Var<sdt>        _size;
-    Backoff                 _backoff;
-    Backoff                 _backoffCp; ///< Backoff for correctPrev
+    Alloc           _alloc;
+    Mem<List>       _mem;
+    Link            _head;
+    Link            _tail;
+    Atomic<sdt>     _size;
+    Backoff         _backoff;
+    Backoff         _backoffCp; ///< Backoff for correctPrev
 };
 
 } }

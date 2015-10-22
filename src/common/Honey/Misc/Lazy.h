@@ -56,11 +56,11 @@ public:
     const T& get(Args&&... args) const              { return const_cast<lazy*>(this)->get(forward<Args>(args)...); }
 
 private:
-    T                   _val;
-    atomic::Var<bool>   _dirty;
-    Pred                _pred;
-    Eval                _eval;
-    SpinLock            _lock;
+    T               _val;
+    Atomic<bool>    _dirty;
+    Pred            _pred;
+    Eval            _eval;
+    SpinLock        _lock;
 };
 
 /// Create a lazy value from a function that returns a value. Ex. `auto lazy = lazyCreate([] { return T(); });`

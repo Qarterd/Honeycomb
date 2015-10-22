@@ -79,8 +79,8 @@ protected:
     Id                                  _id;
     Mutex                               _lock;
     Ptr                                 _self;
-    atomic::Var<State>                  _state;
-    atomic::Var<MonoClock::TimePoint>   _due;
+    Atomic<State>                       _state;
+    Atomic<MonoClock::TimePoint>        _due;
     bool                                _cancelled;
     Thread*                             _thread;
     int                                 _priority;

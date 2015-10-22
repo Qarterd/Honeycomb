@@ -26,7 +26,7 @@ template<class T> struct identity                               { typedef T type
 /// Do nothing, can be used to evaluate an unpack expression.
 template<class... Args> void pass(Args...) {}
 /// Holds a constant integral value
-template<class T, T val> struct Value                           { static const T value = val; };
+template<class T, T val> using Value                            = std::integral_constant<T, val>;
 /// Always returns true.  Can be used to force a clause to be type dependent.
 template<class...> struct True                                  : std::true_type {};
 /// Variant of True for integers
@@ -290,6 +290,12 @@ struct NoCopy
 protected:
     NoCopy() = default;
 };
+
+/// Get minimum of all arguments
+/** \class min */
+template<int64... vals> struct min;
+template<int64 val, int64... vals> struct min<val, vals...>     : Value<int64, (val < min<vals...>::value ? val : min<vals...>::value)> {};
+template<int64 val> struct min<val>                             : Value<int64, val> {};
     
 /// Get maximum of all arguments
 /** \class max */
@@ -311,6 +317,23 @@ template<int64 a, int64 b> struct gcd                           : gcd<b, a % b> 
 template<int64 a> struct gcd<a, 0>                              : Value<int64, abs<a>::value> {};
 template<int64 b> struct gcd<0, b>                              : Value<int64, abs<b>::value> {};
 
+/** \cond */
+namespace priv
+{
+    template<uint64 N> struct byteCount                         : Value<int, ((max<log2Floor<N>::value, 1>::value + 7) >> 3)> {};
+
+    template<uint64 N> struct byteType                          : identity<uint64> {};
+    template<> struct byteType<4>                               : identity<uint32> {};
+    template<> struct byteType<3>                               : identity<uint32> {};
+    template<> struct byteType<2>                               : identity<uint16> {};
+    template<> struct byteType<1>                               : identity<uint8> {};
+}
+/** \cond */
+
+/// Get smallest unsigned integral type that can hold value N
+template<uint64 N> struct uintByValue                           : priv::byteType<priv::byteCount<N>::value> {};
+/// Get smallest unsigned integral type that has a size of at least N bytes
+template<int N> struct uintBySize                               : priv::byteType<N> {};
 
 //====================================================
 // funcTraits

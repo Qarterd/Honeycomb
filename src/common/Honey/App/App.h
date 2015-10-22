@@ -38,9 +38,9 @@ protected:
     /// Module run loop
     virtual void run();
     
-    Thread* _thread;
-    Mutex _lock;
-    atomic::Var<RunMode> _runMode;
+    Thread*         _thread;
+    Mutex           _lock;
+    Atomic<RunMode> _runMode;
 };
     
 }

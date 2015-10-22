@@ -8,6 +8,8 @@
 namespace honey { namespace atomic { namespace platform
 {
 
+typedef int64 SwapMaxType;
+
 class Op
 {
 public:

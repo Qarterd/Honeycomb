@@ -43,7 +43,7 @@ public:
 private:
     bool tryLock_priv(Thread::ThreadId threadId);
 
-    atomic::Var<Thread::ThreadId> _owner;
+    Atomic<Thread::ThreadId> _owner;
     int _holdCount;
 };
 

@@ -15,48 +15,56 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
     //Initialize and link all the new blocks in order
     for (auto i : range(blockCount))
     {
-        mt_unused(i);
-        BlockHeader* header = blockHeader(blockData);
-        header->bucket = _bucketIndex;
+        BlockHeader* header = blockHeader(blockData + blockStride()*i);
+        
+        header->handle = Handle(_chunkList.size(), static_cast<Handle::Int>(i));
+        header->next = nullptr;
         header->offset = 0;
+        header->bucket() = _bucketIndex;
         #ifdef DEBUG
             header->debug.size = 0;
             header->debug.srcFile = nullptr;
             header->debug.srcLine = 0;
             header->debug.prev = nullptr;
-            header->debug.sig = BlockHeader::sigFree;
+            header->debug.sig = BlockHeader::Debug::sigFree;
         #endif
-        header->next = nullptr;
-
-        if (prev) prev->next = header;
+        
+        if (prev) prev->next = header->handle;
         prev = header;
-        blockData += blockStride();
     }
 
-    //Attach chunk as free head
-    assert(!_freeHead && !_freeCount);
-    _freeHead = first;
-    _freeCount = blockCount;
+    if (prev)
+    {
+        //Attach chunk as free head
+        TaggedHandle old;
+        do
+        {
+            old = _freeHead;
+            prev->next = old;
+        } while (!_freeHead.cas(TaggedHandle(first->handle, old.nextTag()), old));
+        _freeCount += blockCount;
+    }
     
-    //Add memory chunk to list so it can be freed
-    _chunkList.push_back(chunk);
+    //Add memory chunk to list so it can later be freed
+    _chunkList.push_back(Buffer<uint8>(chunk, chunkSize));
     _chunkSizeTotal += chunkSize;
 }
 
-void* MemPool::Bucket::alloc(szt size, szt align_, const char* srcFile, int srcLine)
+void* MemPool::Bucket::alloc(szt size, uint8 align_, const char* srcFile, int srcLine)
 {
     mt_unused(size); mt_unused(srcFile); mt_unused(srcLine);
-
+    
     //Detach head free block
+    TaggedHandle old;
     BlockHeader* header;
     do
     {
-        header = _freeHead;
-        if (!header) { expand(); continue; }
-    } while (!_freeHead.cas(header->next, header));
+        while (!(old = _freeHead)) expand();
+        header = deref(old);
+    } while (!_freeHead.cas(TaggedHandle(header->next, old.nextTag()), old));
     --_freeCount;
-
-    header->validate(BlockHeader::sigFree);
+    header->validate(BlockHeader::Debug::sigFree);
+    
     //If the current block has offset from alignment, or alignment is requested
     if (header->offset != 0 || align_ > 1)
     {
@@ -65,18 +73,20 @@ void* MemPool::Bucket::alloc(szt size, szt align_, const char* srcFile, int srcL
         //We want to revert to the original (no offset), then align the original
         uint8* original = blockData(header) - header->offset;
         uint8* aligned = alignCeil(original, align_);
-        //Erase header
-        #ifdef DEBUG
-            header->debug.sig = 0;
-        #endif
+        assert(aligned - original < _blockSize, "Alignment too large for block");
         //Init new header
+        Handle handle = header->handle;
+        #ifdef DEBUG
+            header->debug.sig = 0; //erase old sig
+        #endif
         header = blockHeader(aligned);
-        header->bucket = _bucketIndex;
+        header->handle = handle;
         header->offset = aligned - original;
+        header->bucket() = _bucketIndex;
     }
 
     #ifdef DEBUG
-        header->debug.sig = BlockHeader::sigUsed;
+        header->debug.sig = BlockHeader::Debug::sigUsed;
         header->debug.size = size;
         header->debug.srcFile = srcFile;
         header->debug.srcLine = srcLine;
@@ -84,10 +94,10 @@ void* MemPool::Bucket::alloc(szt size, szt align_, const char* srcFile, int srcL
         //Attach block to used list as head
         {
             SpinLock::Scoped _(_lock);
-            if (_usedHead) _usedHead->debug.prev = header;
+            if (_usedHead) deref(_usedHead)->debug.prev = header->handle;
             header->next = _usedHead;
             header->debug.prev = nullptr;
-            _usedHead = header;
+            _usedHead = header->handle;
             _usedSize += header->debug.size;
         }
     #else
@@ -111,32 +121,31 @@ void MemPool::Bucket::expand()
 
 void MemPool::Bucket::free(BlockHeader* header)
 {
-    header->validate(BlockHeader::sigUsed);
-
+    header->validate(BlockHeader::Debug::sigUsed);
     #ifdef DEBUG
         {
             //Detach from used list
             SpinLock::Scoped _(_lock);
-            if (_usedHead == header) _usedHead = header->next;
-            if (header->debug.prev) header->debug.prev->next = header->next;
-            if (header->next) header->next->debug.prev = header->debug.prev;
+            if (_usedHead == header->handle) _usedHead = header->next;
+            if (header->debug.prev) deref(header->debug.prev)->next = header->next;
+            if (header->next) deref(header->next)->debug.prev = header->debug.prev;
             _usedSize -= header->debug.size;
         }
-        header->debug.sig = BlockHeader::sigFree;
+        header->debug.sig = BlockHeader::Debug::sigFree;
     #endif
     --_usedCount;
 
     //Attach block as free head
-    BlockHeader* old;
+    TaggedHandle old;
     do
     {
         old = _freeHead;
         header->next = old;
-    } while (!_freeHead.cas(header, old));
+    } while (!_freeHead.cas(TaggedHandle(header->handle, old.nextTag()), old));
     ++_freeCount;
 }
 
-void* MemPool::Heap::alloc(szt size, szt align_, const char* srcFile, int srcLine)
+void* MemPool::Heap::alloc(szt size, uint8 align_, const char* srcFile, int srcLine)
 {
     mt_unused(srcFile); mt_unused(srcLine);
 
@@ -145,13 +154,12 @@ void* MemPool::Heap::alloc(szt size, szt align_, const char* srcFile, int srcLin
     BlockHeader* header = blockHeader(alignCeil(blockData(headerUnalign), align_));
     header->offset = reinterpret_cast<uint8*>(header) - reinterpret_cast<uint8*>(headerUnalign);
     header->size = alignSize;
-    header->heap = this;
+    header->tag() = BlockHeader::heapTag;
 
     #ifdef DEBUG
-        header->debug.size = alignSize;
         header->debug.srcFile = srcFile;
         header->debug.srcLine = srcLine;
-        header->debug.sig = BlockHeader::sigUsed;
+        header->debug.sig = Bucket::BlockHeader::Debug::sigUsed;
         {
             //Attach block to used list as head
             SpinLock::Scoped _(_lock);
@@ -171,17 +179,16 @@ void* MemPool::Heap::alloc(szt size, szt align_, const char* srcFile, int srcLin
 
 void MemPool::Heap::free(BlockHeader* header)
 {
-    header->validate(BlockHeader::sigUsed);
-
+    header->validate(Bucket::BlockHeader::Debug::sigUsed);
     #ifdef DEBUG
         {
             //Detach from used list
             SpinLock::Scoped _(_lock);
-            if (_usedHead == header) _usedHead = header->next_();
+            if (_usedHead == header) _usedHead = header->next;
             if (header->debug.prev) header->debug.prev->next = header->next;
             if (header->next) header->next->debug.prev = header->debug.prev;
         }
-        header->debug.sig = BlockHeader::sigFree;
+        header->debug.sig = Bucket::BlockHeader::Debug::sigFree;
         --_usedCount;
     #endif
     
@@ -197,9 +204,7 @@ MemPool::MemPool(const Factory& factory) :
 {
     //Initialize the buckets from the factory
     for (auto& e : factory.bucketList)
-    {
         _bucketMap[e[Factory::blockSize()]] = new Bucket(*this, e[Factory::blockSize()], e[Factory::blockCount()]);
-    }
 
     //Build sorted bucket list
     for (auto& e : values(_bucketMap))
@@ -216,7 +221,7 @@ MemPool::MemPool(const Factory& factory) :
     for (auto& e : _bucketList) { chunkSize += e->blockOffsetMax() + e->blockStride() * e->_blockCountInit; }
 
     //Allocate initial contiguous memory chunk
-    if (chunkSize > 0)
+    if (chunkSize)
     {
         _bucketChunk = honey::alloc<uint8>(chunkSize);
         assert(_bucketChunk, sout() << "Allocation failed: " << chunkSize << " bytes");
@@ -233,9 +238,9 @@ MemPool::MemPool(const Factory& factory) :
     _heap = new Heap(*this);
 }
 
-void* MemPool::alloc(szt size, szt align, const char* srcFile, int srcLine)
+void* MemPool::alloc(szt size, uint8 align, const char* srcFile, int srcLine)
 {
-    assert(size > 0 && align >= 1 && align <= numeral<uint16>().max());
+    assert(size > 0 && align >= 1);
     szt alignSize = align-1 + size;
     if (alignSize <= _blockSizeMax)
         //Small enough to use bucket allocator
@@ -249,15 +254,16 @@ void MemPool::free(void* ptr_)
 {
     uint8* ptr = static_cast<uint8*>(ptr_);
     //Get type of block
-    if (*reinterpret_cast<Heap**>(ptr - sizeof(Heap*)) == _heap)
+    if (*(ptr - 1) == Heap::BlockHeader::heapTag)
         //Heap block
         _heap->free(Heap::blockHeader(ptr));
     else
     {
         //Bucket block
-        BlockHeader* header = blockHeader(ptr);
-        header->validate(BlockHeader::sigUsed);
-        _bucketList[header->bucket]->free(header);
+        Bucket::BlockHeader* header = Bucket::blockHeader(ptr);
+        header->validate(Bucket::BlockHeader::Debug::sigUsed);
+        assert(header->bucket() < _bucketList.size());
+        _bucketList[header->bucket()]->free(header);
     }
 }
 
@@ -279,20 +285,32 @@ szt MemPool::usedBytes() const
 
 #ifdef DEBUG
 
+void MemPool::lock() const
+{
+    for (auto& e : _bucketList) e->_lock.lock();
+    _heap->_lock.lock();
+}
+
+void MemPool::unlock() const
+{
+    for (auto& e : _bucketList) e->_lock.unlock();
+    _heap->_lock.unlock();
+}
+    
 void MemPool::validate() const
 {
     lock();
 
     for (auto& e : _bucketList)
     {
-        for (auto header = e->_usedHead; header; header = header->next)
-            header->validate(BlockHeader::sigUsed);
-        for (auto header = e->_freeHead; header; header = header->next)
-            header->validate(BlockHeader::sigFree);
+        for (Bucket::Handle handle = e->_usedHead; handle; handle = e->deref(handle)->next)
+            e->deref(handle)->validate(Bucket::BlockHeader::Debug::sigUsed);
+        for (Bucket::Handle handle = e->_freeHead; handle; handle = e->deref(handle)->next)
+            e->deref(handle)->validate(Bucket::BlockHeader::Debug::sigFree);
     }
 
-    for (auto header = _heap->_usedHead; header; header = header->next_())
-        header->validate(BlockHeader::sigUsed);
+    for (auto header = _heap->_usedHead; header; header = header->next)
+        header->validate(Bucket::BlockHeader::Debug::sigUsed);
 
     unlock();
 }
@@ -326,7 +344,7 @@ String MemPool::printStats() const
             << "Total Allocated Bytes: " << allocTotal << endl
             << "Total Used Bytes: " << usedSize
                 << " (" << Real(usedSize)/allocTotal*100 << "%)" << endl
-            << "Block Header Size: " << sizeof(BlockHeader) << endl
+            << "Block Header Size: " << sizeof(Bucket::BlockHeader) << endl
             << "Bucket Count: " << _bucketMap.size() << endl
             << "Bucket Blocks Used: " << usedCount << " / " << (freeCount+usedCount)
                 << " (" << Real(usedCount)/(freeCount+usedCount)*100 << "%)" << endl;
@@ -389,9 +407,10 @@ String MemPool::printUsed() const
     szt block = 0;
     for (auto& e : _bucketList)
     {
-        for (auto header = e->_usedHead; header; header = header->next, ++block)
+        for (Bucket::Handle handle = e->_usedHead; handle; handle = e->deref(handle)->next, ++block)
         {
-            header->validate(BlockHeader::sigUsed);
+            auto header = e->deref(handle);
+            header->validate(Bucket::BlockHeader::Debug::sigUsed);
             stream  << "Block #" << block << endl
                     << "{" << endl
                     << "    Allocator: Bucket #" << bucket << endl
@@ -404,14 +423,14 @@ String MemPool::printUsed() const
         ++bucket;
     }
 
-    for (auto header = _heap->_usedHead; header; header = header->next_(), ++block)
+    for (auto header = _heap->_usedHead; header; header = header->next, ++block)
     {
-        header->validate(BlockHeader::sigUsed);
+        header->validate(Bucket::BlockHeader::Debug::sigUsed);
         stream  << "Block #" << block << endl
                 << "{" << endl
                 << "    Allocator: Heap" << endl
-                << "    Alloc Size: " << header->debug.size
-                    << " (" << Real(header->debug.size)/usedSize*100 << "%)" << endl
+                << "    Alloc Size: " << header->size
+                    << " (" << Real(header->size)/usedSize*100 << "%)" << endl
                 << "    Source File: " << c_str(header->debug.srcFile) << endl
                 << "    Source Line: " << header->debug.srcLine << endl
                 << "}" << endl;

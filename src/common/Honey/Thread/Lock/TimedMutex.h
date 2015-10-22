@@ -32,7 +32,7 @@ public:
     bool tryLock(MonoClock::TimePoint time);
 
 private:
-    atomic::Var<int> _tryWaitCount;
+    Atomic<int> _tryWaitCount;
     ConditionLock _tryCond;
 };
 

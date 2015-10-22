@@ -34,119 +34,124 @@ enum class Order
 
 #include "Honey/Thread/platform/Atomic.h"
 
-namespace honey { namespace atomic
+namespace honey
 {
 
-/// Methods to perform thread-safe atomic read/write operations
-class Op : platform::Op
+namespace atomic
 {
-    typedef platform::Op Super;
-public:
+    /// Methods to perform thread-safe atomic read/write operations
+    class Op : platform::Op
+    {
+        typedef platform::Op Super;
+    public:
 
-    /// Returns val
-    template<class T>
-    static T load(volatile const T& val, Order o = Order::seqCst)               { return Super::load(val, o); }
-    using Super::load;
+        /// Returns val
+        template<class T>
+        static T load(volatile const T& val, Order o = Order::seqCst)               { return Super::load(val, o); }
+        using Super::load;
 
-    /// Assigns dst to newVal
-    template<class T>
-    static void store(volatile T& dst, T newVal, Order o = Order::seqCst)       { return Super::store(dst, newVal, o); }
-    using Super::store;
+        /// Assigns dst to newVal
+        template<class T>
+        static void store(volatile T& dst, T newVal, Order o = Order::seqCst)       { return Super::store(dst, newVal, o); }
+        using Super::store;
 
-    /// Compare and swap.  If dst is equal to comparand `cmp` then dst is assigned to newVal and true is returned.  Returns false otherwise.
-    template<class T>
-    static bool cas(volatile T& dst, T newVal, T cmp, Order o = Order::seqCst)  { return Super::cas(dst, newVal, cmp, o); }
+        /// Compare and swap.  If dst is equal to comparand `cmp` then dst is assigned to newVal and true is returned.  Returns false otherwise.
+        template<class T>
+        static bool cas(volatile T& dst, T newVal, T cmp, Order o = Order::seqCst)  { return Super::cas(dst, newVal, cmp, o); }
 
-    /// Assigns dst to newVal and returns initial value of dst.
-    template<class T>
-    static T swap(volatile T& dst, T newVal, Order o = Order::seqCst)           { T v; do { v = dst; } while (!cas(dst, newVal, v, o)); return v; }
-    using Super::swap;
-    
-    /// Increments val. Returns the initial value.
-    template<class T>
-    static T inc(volatile T& val, Order o = Order::seqCst)                      { T v; do { v = val; } while (!cas(val, v+1, v, o)); return v; }
-    using Super::inc;
-    
-    /// Decrements val. Returns the initial value.
-    template<class T>
-    static T dec(volatile T& val, Order o = Order::seqCst)                      { T v; do { v = val; } while (!cas(val, v-1, v, o)); return v; }
-    using Super::dec;
-    
-    /// val += rhs. Returns the initial value.
-    template<class T>
-    static T add(volatile T& val, T rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, v+rhs, v, o)); return v; }
-    
-    /// val &= rhs. Returns the initial value.
-    template<class T>
-    static T and_(volatile T& val, T rhs, Order o = Order::seqCst)              { T v; do { v = val; } while (!cas(val, v&rhs, v, o)); return v; }
-    
-    /// val |= rhs. Returns the initial value.
-    template<class T>
-    static T or_(volatile T& val, T rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, v|rhs, v, o)); return v; }
-    
-    /// val ^= rhs. Returns the initial value.
-    template<class T>
-    static T xor_(volatile T& val, T rhs, Order o = Order::seqCst)              { T v; do { v = val; } while (!cas(val, v^rhs, v, o)); return v; }
+        /// Assigns dst to newVal and returns initial value of dst.
+        template<class T>
+        static T swap(volatile T& dst, T newVal, Order o = Order::seqCst)           { T v; do { v = dst; } while (!cas(dst, newVal, v, o)); return v; }
+        using Super::swap;
+        
+        /// Increments val. Returns the initial value.
+        template<class T>
+        static T inc(volatile T& val, Order o = Order::seqCst)                      { T v; do { v = val; } while (!cas(val, v+1, v, o)); return v; }
+        using Super::inc;
+        
+        /// Decrements val. Returns the initial value.
+        template<class T>
+        static T dec(volatile T& val, Order o = Order::seqCst)                      { T v; do { v = val; } while (!cas(val, v-1, v, o)); return v; }
+        using Super::dec;
+        
+        /// val += rhs. Returns the initial value.
+        template<class T>
+        static T add(volatile T& val, T rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, v+rhs, v, o)); return v; }
+        
+        /// val &= rhs. Returns the initial value.
+        template<class T>
+        static T and_(volatile T& val, T rhs, Order o = Order::seqCst)              { T v; do { v = val; } while (!cas(val, v&rhs, v, o)); return v; }
+        
+        /// val |= rhs. Returns the initial value.
+        template<class T>
+        static T or_(volatile T& val, T rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, v|rhs, v, o)); return v; }
+        
+        /// val ^= rhs. Returns the initial value.
+        template<class T>
+        static T xor_(volatile T& val, T rhs, Order o = Order::seqCst)              { T v; do { v = val; } while (!cas(val, v^rhs, v, o)); return v; }
 
-    /// Create a memory barrier that synchronizes operations.
-    /**
-      * An acquire fence synchronizes with all releases before it. \n
-      * A release fence synchronizes with all acquires after it. \n
-      * A sequencial fence is a sequentially consistent acquire and release fence.
-      *
-      * \see std::atomic_thread_fence for details.
-      */
-    static void fence(Order o = Order::seqCst)                                  { Super::fence(o); }
-};
+        /// Create a memory barrier that synchronizes operations.
+        /**
+          * An acquire fence synchronizes with all releases before it. \n
+          * A release fence synchronizes with all acquires after it. \n
+          * A sequential fence is a sequentially consistent acquire and release fence.
+          *
+          * \see std::atomic_thread_fence for details.
+          */
+        static void fence(Order o = Order::seqCst)                                  { Super::fence(o); }
+    };
 
-/** \cond */
-namespace priv
-{
-    /// Get an atomically-swappable type that is large enough to hold T
+    /// Largest atomically-swappable type
+    typedef platform::SwapMaxType SwapMaxType;
+
+    /// Get the smallest atomically-swappable type that is large enough to hold T
     template<class T> struct SwapType
     {
-        static_assert(sizeof(T) <= sizeof(int64), "Type too large for atomic ops");
-        typedef typename std::conditional<sizeof(T) <= sizeof(int32), int32, int64>::type type;
+        static_assert(sizeof(T) <= sizeof(SwapMaxType), "Type too large for atomic ops");
+        typedef typename std::conditional<
+            sizeof(T) <= sizeof(int32), int32,
+            typename std::conditional<sizeof(T) <= sizeof(int64), int64, SwapMaxType>::type
+            >::type type;
     };
 }
-/** \endcond */
 
 template<class T, bool B = std::is_integral<T>::value>
-class Var;
+class Atomic;
 
 /// Wrapper around trivially copyable type to make load/store operations atomic
 template<class T>
-class Var<T, false>
+class Atomic<T, false>
 {
-    typedef typename priv::SwapType<T>::type SwapType;
+    typedef typename atomic::SwapType<T>::type SwapType;
+    typedef atomic::Order Order;
+    typedef atomic::Op Op;
     
     //holds a T object in a SwapType value
     struct SwapVal
     {
         SwapVal(T val)                                          { new (&this->val) T(val); }
-        operator SwapType() const                               { return val; }
         SwapType val;
     };
     
 public:
     static_assert(std::is_trivially_copyable<T>::value, "Atomic type must be trivially copyable");
     
-    Var() = default;
-    Var(T val)                                                  { operator=(val); }
-    Var(const Var& val)                                         { operator=(val); }
+    Atomic() = default;
+    Atomic(T val)                                               { operator=(val); }
+    Atomic(const Atomic& val)                                   { operator=(val); }
 
     /// Assign value
     T operator=(T val) volatile                                 { store(val); return *this; }
-    T operator=(const Var& val) volatile                        { store(val); return *this; }
+    T operator=(const Atomic& val) volatile                     { store(val); return *this; }
 
     /// Read value
     operator T() const volatile                                 { return load(); }
    
-    void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, SwapVal(val), o); }
+    void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, SwapVal(val).val, o); }
     T load(Order o = Order::seqCst) const volatile              { auto ret = Op::load(_val, o); return reinterpret_cast<T&>(ret); }
 
     /// Compare and swap.  If atomic is equal to comparand `cmp` then atomic is assigned to newVal and true is returned. Returns false otherwise.
-    bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, SwapVal(newVal), SwapVal(cmp), o); }
+    bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, SwapVal(newVal).val, SwapVal(cmp).val, o); }
 
 private:
     SwapType _val;
@@ -154,18 +159,20 @@ private:
 
 /// Wrapper around integral type to make all operations atomic
 template<class T>
-class Var<T, true>
+class Atomic<T, true>
 {
-    typedef typename priv::SwapType<T>::type SwapType;
+    typedef typename atomic::SwapType<T>::type SwapType;
+    typedef atomic::Order Order;
+    typedef atomic::Op Op;
     
 public:
-    Var() = default;
-    Var(T val)                                                  { operator=(val); }
-    Var(const Var& val)                                         { operator=(val); }
+    Atomic() = default;
+    Atomic(T val)                                               { operator=(val); }
+    Atomic(const Atomic& val)                                   { operator=(val); }
 
     /// Assign value
     T operator=(T val) volatile                                 { store(val); return *this; }
-    T operator=(const Var& val) volatile                        { store(val); return *this; }
+    T operator=(const Atomic& val) volatile                     { store(val); return *this; }
 
     /// Pre-increment, returns new value
     T operator++() volatile                                     { return Op::inc(_val) + 1; }
@@ -206,17 +213,19 @@ private:
 
 /// Wrapper around pointer type to make all operations atomic
 template<class T>
-class Var<T*, false>
+class Atomic<T*, false>
 {
-    typedef typename priv::SwapType<T*>::type SwapType;
+    typedef typename atomic::SwapType<T*>::type SwapType;
+    typedef atomic::Order Order;
+    typedef atomic::Op Op;
     
 public:
-    Var() = default;
-    Var(T* val)                                                 { operator=(val); }
-    Var(const Var& val)                                         { operator=(val); }
+    Atomic() = default;
+    Atomic(T* val)                                              { operator=(val); }
+    Atomic(const Atomic& val)                                   { operator=(val); }
 
     T* operator=(T* val) volatile                               { store(val); return *this; }
-    T* operator=(const Var& val) volatile                       { store(val); return *this; }
+    T* operator=(const Atomic& val) volatile                    { store(val); return *this; }
 
     T* operator++() volatile                                    { return reinterpret_cast<T*>(Op::add(_val, sizeof(T))) + 1; }
     T* operator++(int) volatile                                 { return reinterpret_cast<T*>(Op::add(_val, sizeof(T))); }
@@ -240,10 +249,8 @@ private:
     SwapType _val;
 };
 
-} 
-
-/** \relates atomic::Var */
+/** \relates Atomic */
 template<class T>
-ostream& operator<<(ostream& os, const atomic::Var<T>& val)     { return os << val.load(); }
+ostream& operator<<(ostream& os, const Atomic<T>& val)          { return os << val.load(); }
 
 }

@@ -41,8 +41,8 @@ namespace priv
         virtual void finalize() = 0;
         virtual void destroy() = 0;
         
-        atomic::Var<int> _count;
-        atomic::Var<int> _weakCount;
+        Atomic<int> _count;
+        Atomic<int> _weakCount;
     };
     
     /// Control block for non-intrusive pointers.  Holds pointer and calls finalizer.  Alloc is used to deallocate the control block.

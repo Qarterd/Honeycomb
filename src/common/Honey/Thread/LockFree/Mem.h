@@ -15,9 +15,9 @@ struct MemNode
     szt                     id;             ///< Unique id, used for index into "in-use mark" list in scan()
     int16                   threadId;       ///< Thread that created this node, used to return node to original free list
 
-    atomic::Var<int>        ref;            ///< Reference count by all threads
-    atomic::Var<bool>       trace;          ///< Used in scan()
-    atomic::Var<bool>       del;            ///< Marked for deletion
+    Atomic<int>             ref;            ///< Reference count by all threads
+    Atomic<bool>            trace;          ///< Used in scan()
+    Atomic<bool>            del;            ///< Marked for deletion
 
     /// Thread-local node reference info. Each thread may contain a local reference to this node.
     struct Tlref
@@ -28,7 +28,7 @@ struct MemNode
     };
     thread::Local<Tlref>    tlref;
 
-    atomic::Var<MemNode*>   recycleNext;    ///< Next node in recycle bin
+    Atomic<MemNode*>        recycleNext;    ///< Next node in recycle bin
 };
 
 /// Base link class, contains a generic Cas-able data chunk.  The data chunk contains a pointer to a MemNode.
@@ -38,7 +38,7 @@ struct MemLink
     /// Get node pointer
     Node* ptr() const                       { return reinterpret_cast<Node*>(*data); }
 
-    atomic::Var<intptr_t> data;
+    Atomic<intptr_t> data;
 };
 
 /// Configuration interface for memory manager.  Inherit this class and override types and static members.
@@ -121,29 +121,29 @@ private:
             deleteArray(recycleBins);
         }
 
-        Mem&                        mem;
-        int                         id;
+        Mem&                mem;
+        int                 id;
 
-        vector<Node*>               nodeFreeList;
-        szt                         nodeCount;
+        vector<Node*>       nodeFreeList;
+        szt                 nodeCount;
 
-        array<atomic::Var<Node*>, Config::tlrefMax> tlrefs;
-        vector<int8>                tlrefFreeList;
+        array<Atomic<Node*>, Config::tlrefMax> tlrefs;
+        vector<int8>        tlrefFreeList;
 
         struct DelNode
         {
             DelNode()                       : node(nullptr), claim(0), done(false), next(nullptr) {}
 
-            atomic::Var<Node*>          node;
-            atomic::Var<int>            claim;
-            atomic::Var<bool>           done;
-            DelNode*                    next;
+            Atomic<Node*>   node;
+            Atomic<int>     claim;
+            Atomic<bool>    done;
+            DelNode*        next;
         };
-        DelNode*                    delNodes;
-        vector<DelNode*>            delNodeFreeList;
-        vector<bool>                delTlrefs;
-        DelNode*                    delHead;
-        szt                         delCount;
+        DelNode*            delNodes;
+        vector<DelNode*>    delNodeFreeList;
+        vector<bool>        delTlrefs;
+        DelNode*            delHead;
+        szt                 delCount;
 
         /// Lock-free list of recycled free nodes
         /**
@@ -154,10 +154,10 @@ private:
         struct Recycle
         {
             Recycle()                       : head(nullptr), tail(nullptr) {}
-            atomic::Var<Node*>          head;
-            atomic::Var<Node*>          tail;
+            Atomic<Node*>   head;
+            Atomic<Node*>   tail;
         };
-        Recycle*                    recycleBins;
+        Recycle*            recycleBins;
     };
     
 public:
@@ -500,10 +500,10 @@ private:
     const int                       _threshClean;
     const int                       _threshScan;
     ThreadData**                    _threadDataList;
-    atomic::Var<int>                _threadDataCount;
+    Atomic<int>                     _threadDataCount;
     thread::Local<ThreadDataPtr>    _threadData;
     SpinLock                        _threadDataLock;
-    atomic::Var<szt>                _nodeId;
+    Atomic<szt>                     _nodeId;
 };
 
 

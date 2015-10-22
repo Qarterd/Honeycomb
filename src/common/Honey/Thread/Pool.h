@@ -71,7 +71,7 @@ private:
         ConditionLock       _cond;
         bool                _condWait;
         deque<TaskPtr>      _tasks;
-        atomic::Var<szt>    _taskCount;
+        Atomic<szt>         _taskCount;
         TaskPtr             _task;
         static thread::Local<Worker*> _current;
     };
@@ -82,7 +82,7 @@ private:
     Mutex               _lock;
     vector<UniquePtr<Worker>> _workers;
     deque<TaskPtr>      _tasks;
-    atomic::Var<szt>    _taskCount;
+    Atomic<szt>         _taskCount;
 };
 
 } }

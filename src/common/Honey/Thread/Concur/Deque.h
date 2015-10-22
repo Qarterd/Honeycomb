@@ -45,7 +45,7 @@ public:
     }
 
     /// Insert new element at beginning of list
-    void pushFront(const Data& data)
+    void push_front(const Data& data)
     {
         //At size == 0, head and tail are vying to push the same first spot
         //At size == capacity-1, head and tail are vying to push the same last spot
@@ -59,7 +59,7 @@ public:
     }
 
     /// Add new element onto end of list
-    void pushBack(const Data& data)
+    void push_back(const Data& data)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
@@ -72,7 +72,7 @@ public:
     }
 
     /// Pop element from beginning of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool popFront(optional<Data&> data = optnull)
+    bool pop_front(optional<Data&> data = optnull)
     {
         //At size == 1, head and tail are vying to pop the last spot
         SpinLock::Scoped _(_headLock);
@@ -86,7 +86,7 @@ public:
     }
 
     /// Pop element from end of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool popBack(optional<Data&> data = optnull)
+    bool pop_back(optional<Data&> data = optnull)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
@@ -100,7 +100,7 @@ public:
     }
 
     /// Remove all elements
-    void clear()                                            { while (popBack()); }
+    void clear()                                            { while (pop_back()); }
 
     /// Number of elements in list
     szt size() const                                        { return _size; }
@@ -151,14 +151,14 @@ private:
 
     void expand()                                           { setCapacity(_capacity + _capacity/2 + 1); } //Expand 50%
 
-    Alloc               _alloc;
+    Alloc           _alloc;
     UniquePtr<Data, finalize<Data,Alloc>> _data;
-    szt                 _capacity;
-    atomic::Var<szt>    _size;
-    szt                 _head;
-    szt                 _tail;
-    SpinLock            _headLock;
-    SpinLock            _tailLock;
+    szt             _capacity;
+    Atomic<szt>     _size;
+    szt             _head;
+    szt             _tail;
+    SpinLock        _headLock;
+    SpinLock        _tailLock;
 };
 
 } }
