@@ -10,7 +10,7 @@ namespace honey
 void test()
 {
     //=============================
-    // LockFree list
+    // LockFree List
     //=============================
     {
         typedef lockfree::List<int> List;
@@ -70,10 +70,10 @@ void test()
     //=============================
 
     //=============================
-    // Concurrent deque
+    // LockFree Deque
     //=============================
     {
-        typedef concur::Deque<int> List;
+        typedef lockfree::Deque<int> List;
 
         struct ListThread
         {

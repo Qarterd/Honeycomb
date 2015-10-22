@@ -22,6 +22,7 @@ namespace honey
   * The pool is thread-safe and its buckets are lock-free, although locks may be encountered
   * during allocation when bucket expansion is required.
   *
+  * On platforms with a 64-bit atomic swap the pool supports 2^24 blocks per bucket.
   * Alloc complexity is O(log B) where B is the number of buckets. Free complexity is O(1).
   */
 class MemPool : mt::NoCopy

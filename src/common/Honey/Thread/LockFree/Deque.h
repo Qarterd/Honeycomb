@@ -3,14 +3,13 @@
 
 #include "Honey/Thread/Lock/Spin.h"
 
-namespace honey
-{
-/// Concurrent methods and containers
-namespace concur
+namespace honey { namespace lockfree
 {
 
-/// Concurrent double-lock deque. Contention is split between the front and back locks.  Automatically expands storage size as needed.
+/// Deque that is lock-free only when used by a single producer and consumer, otherwise contention is split between front and back locks.
 /**
+  * Automatically expands storage size as needed (requires lock).
+  *
   * Internally maintains a ring-buffer (traversing from head to tail may loop around end of buffer).
   */
 template<class Data, class Alloc_ = typename DefaultAllocator<Data>::type>
