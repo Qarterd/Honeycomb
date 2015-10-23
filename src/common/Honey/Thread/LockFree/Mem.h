@@ -163,7 +163,8 @@ private:
 public:
     /**
       * \param config
-      * \param threadMax    Max number of threads that can access the memory manager.  Use a thread pool so the threads have a longer life cycle than the mem manager.
+      * \param threadMax    Max number of threads that can access the memory manager.
+                            Use a thread pool and ensure that it has a longer life cycle than the mem manager.
       */ 
     Mem(Config& config, int threadMax = 8) :
         _config(config),

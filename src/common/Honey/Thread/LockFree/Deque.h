@@ -12,15 +12,16 @@ namespace honey { namespace lockfree
   *
   * Internally maintains a ring-buffer (traversing from head to tail may loop around end of buffer).
   */
-template<class Data, class Alloc_ = typename DefaultAllocator<Data>::type>
+template<class T, class Alloc_ = typename DefaultAllocator<T>::type>
 class Deque : mt::NoCopy
 {
 public:
-    typedef typename Alloc_::template rebind<Data>::other Alloc;
+    typedef T value_type;
+    typedef typename Alloc_::template rebind<T>::other Alloc;
 
-    Deque(szt size = 0, const Data& initVal = Data(), const Alloc& alloc = Alloc()) :
+    Deque(szt size = 0, const T& initVal = T(), const Alloc& alloc = Alloc()) :
         _alloc(alloc),
-        _data(nullptr, finalize<Data, Alloc>()),
+        _data(nullptr, finalize<T, Alloc>()),
         _capacity(0),
         _size(0),
         _head(0),
@@ -31,7 +32,7 @@ public:
 
     ~Deque()                                                { clear(); }
 
-    void resize(szt size, const Data& initVal = Data())
+    void resize(szt size, const T& initVal = T())
     {
         SpinLock::Scoped _(_headLock);
         SpinLock::Scoped __(_tailLock);
@@ -44,7 +45,8 @@ public:
     }
 
     /// Insert new element at beginning of list
-    void push_front(const Data& data)
+    template<class T_>
+    void push_front(T_&& data)
     {
         //At size == 0, head and tail are vying to push the same first spot
         //At size == capacity-1, head and tail are vying to push the same last spot
@@ -53,31 +55,32 @@ public:
         SpinLock::Scoped __(_tailLock, _size == 0 || _size >= _capacity-1 ? lock::Op::lock : lock::Op::defer);
         if (_size == _capacity) expand();
         _head = ringDec(_head);
-        _alloc.construct(_data + _head, data);
+        _alloc.construct(_data + _head, forward<T_>(data));
         ++_size;
     }
 
     /// Add new element onto end of list
-    void push_back(const Data& data)
+    template<class T_>
+    void push_back(T_&& data)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
         //Lock head first to prevent deadlock
         if (_size == 0 || _size >= _capacity-1) { tailLock.unlock(); headLock.lock(); tailLock.lock(); }
         if (_size == _capacity) expand();
-        _alloc.construct(_data + _tail, data);
+        _alloc.construct(_data + _tail, forward<T_>(data));
         _tail = ringInc(_tail);
         ++_size;
     }
 
     /// Pop element from beginning of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_front(optional<Data&> data = optnull)
+    bool pop_front(optional<T&> data = optnull)
     {
         //At size == 1, head and tail are vying to pop the last spot
         SpinLock::Scoped _(_headLock);
         SpinLock::Scoped __(_tailLock, _size == 1 ? lock::Op::lock : lock::Op::defer);
         if (_size == 0) return false;
-        if (data) data = _data[_head];
+        if (data) data = move(_data[_head]);
         _alloc.destroy(_data + _head);
         _head = ringInc(_head);
         --_size;
@@ -85,14 +88,14 @@ public:
     }
 
     /// Pop element from end of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_back(optional<Data&> data = optnull)
+    bool pop_back(optional<T&> data = optnull)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
         if (_size == 1) { tailLock.unlock(); headLock.lock(); tailLock.lock(); }
         if (_size == 0) return false;
         _tail = ringDec(_tail);
-        if (data) data = _data[_tail];
+        if (data) data = move(_data[_tail]);
         _alloc.destroy(_data + _tail);
         --_size;
         return true;
@@ -118,7 +121,7 @@ private:
         //Get size (active element count) of new array, may be smaller than old
         szt size = capacity < _size ? capacity : _size.load();
         //Alloc new array
-        Data* data = nullptr;
+        T* data = nullptr;
         if (capacity > 0)
         {
             data = _alloc.allocate(capacity);
@@ -151,7 +154,7 @@ private:
     void expand()                                           { setCapacity(_capacity + _capacity/2 + 1); } //Expand 50%
 
     Alloc           _alloc;
-    UniquePtr<Data, finalize<Data,Alloc>> _data;
+    UniquePtr<T, finalize<T,Alloc>> _data;
     szt             _capacity;
     Atomic<szt>     _size;
     szt             _head;
