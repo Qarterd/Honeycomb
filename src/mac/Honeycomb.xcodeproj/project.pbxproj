@@ -89,7 +89,9 @@
 		37AB04B91B64572100A95E28 /* libBLAKE2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libBLAKE2.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37AB0D921B61217C0087FBDC /* Random.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
 		37AB0D931B61232B0087FBDC /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
-		37ACE01E1BD973A1002C9B39 /* Deque.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Deque.h; sourceTree = "<group>"; };
+		37ACC39A1BDAC99A003F75C9 /* SpscDeque.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpscDeque.h; sourceTree = "<group>"; };
+		37ACC39B1BDADB8D003F75C9 /* HazardMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HazardMem.h; sourceTree = "<group>"; };
+		37ACC39C1BDAF1EE003F75C9 /* FreeList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FreeList.h; sourceTree = "<group>"; };
 		37AD1DC21B57ACAA000F8AF4 /* libyajl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libyajl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B0B9521B8DDE89000051FD /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
 		37B0B9551B8E80A5000051FD /* App.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = App.cpp; sourceTree = "<group>"; };
@@ -273,7 +275,6 @@
 		37FEB50B1B52477D0095BB69 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		37FEB50D1B52477D0095BB69 /* Backoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Backoff.h; sourceTree = "<group>"; };
 		37FEB50E1B52477D0095BB69 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = List.h; sourceTree = "<group>"; };
-		37FEB50F1B52477D0095BB69 /* Mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mem.h; sourceTree = "<group>"; };
 		37FEB5101B52477D0095BB69 /* Pool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pool.cpp; sourceTree = "<group>"; };
 		37FEB5111B52477D0095BB69 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pool.h; sourceTree = "<group>"; };
 		37FEB5121B52477D0095BB69 /* DepTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DepTask.cpp; sourceTree = "<group>"; };
@@ -770,9 +771,10 @@
 			isa = PBXGroup;
 			children = (
 				37FEB50D1B52477D0095BB69 /* Backoff.h */,
-				37ACE01E1BD973A1002C9B39 /* Deque.h */,
+				37ACC39C1BDAF1EE003F75C9 /* FreeList.h */,
+				37ACC39B1BDADB8D003F75C9 /* HazardMem.h */,
 				37FEB50E1B52477D0095BB69 /* List.h */,
-				37FEB50F1B52477D0095BB69 /* Mem.h */,
+				37ACC39A1BDAC99A003F75C9 /* SpscDeque.h */,
 			);
 			path = LockFree;
 			sourceTree = "<group>";

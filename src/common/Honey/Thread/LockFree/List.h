@@ -1,7 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Thread/LockFree/Mem.h"
+#include "Honey/Thread/LockFree/HazardMem.h"
 #include "Honey/Thread/LockFree/Backoff.h"
 
 namespace honey
@@ -15,21 +15,20 @@ namespace lockfree
   * Based on the paper: "Lock-free deques and doubly linked lists", Sundell, et al. - 2008
   *
   * \tparam T           Container element type
-  * \tparam Alloc       Node allocator.  Pointers returned by allocator must be at least 2-byte aligned.
   * \tparam Backoff     Backoff algorithm to reduce contention
   * \tparam iterMax     Max number of iterator instances per thread
   */
-template<class T, class Alloc_ = typename DefaultAllocator<T>::type, class Backoff = Backoff, int8 iterMax = 2>
-class List : MemConfig, mt::NoCopy
+template<class T, class Backoff = Backoff, int8 iterMax = 2>
+class List : HazardMemConfig, mt::NoCopy
 {
-    template<class> friend class Mem;
+    template<class> friend class HazardMem;
 private:
-    struct Node : MemNode
+    struct Node : HazardMemNode
     {
         ///Combines node pointer and delete mark in one Cas-able integer
-        struct Link : MemLink<Node>
+        struct Link : HazardMemLink<Node>
         {
-            using MemLink<Node>::data;
+            using HazardMemLink<Node>::data;
             static const intptr_t d_mask = 1;
             static const intptr_t ptr_mask = ~d_mask;
 
@@ -51,14 +50,12 @@ private:
 
 public:
     typedef T value_type;
-    typedef typename Alloc_::template rebind<Node>::other Alloc;
 
     /**
-      * \param threadMax    Max number of threads that can access this container. Use a thread pool so the threads have a longer life cycle than this container.
-      * \param alloc
+      * \param threadMax    Max number of threads that can access this container.
+                            Use a thread pool so the threads have a longer life cycle than this container.
       */
-    List(int threadMax = 8, const Alloc& alloc = Alloc()) :
-        _alloc(alloc),
+    List(int threadMax = 8) :
         _mem(*this, threadMax),
         _size(0)
     {
@@ -466,17 +463,14 @@ public:
     szt size() const                                        { sdt size = _size; return size > 0 ? size : 0; } //Size can be less than 0 temporarily because of concurrency
 
 private:
-    /// Override from MemConfig
+    /// Override from HazardMemConfig
     static const int linkMax = 2;
-    /// Override from MemConfig
+    /// Override from HazardMemConfig
     static const int linkDelMax = linkMax;
-    /// Override from MemConfig
-    static const int8 tlrefMax = 5 + iterMax;
+    /// Override from HazardMemConfig
+    static const int8 hazardMax = 5 + iterMax;
 
-    /// Override from MemConfig
-    Alloc& getAlloc()                                       { return _alloc; }
-
-    /// Override from MemConfig
+    /// Override from HazardMemConfig
     void cleanUpNode(Node& node)
     {
         while (true)
@@ -509,7 +503,7 @@ private:
         }
     }
 
-    /// Override from MemConfig
+    /// Override from HazardMemConfig
     void terminateNode(Node& node, bool concurrent)
     {
         if (!concurrent)
@@ -627,8 +621,7 @@ private:
         return *prev;
     }
 
-    Alloc           _alloc;
-    Mem<List>       _mem;
+    HazardMem<List> _mem;
     Link            _head;
     Link            _tail;
     Atomic<sdt>     _size;

@@ -9,11 +9,12 @@ namespace honey
 /// \addtogroup Memory
 /// @{
 
-MemPool& SmallAllocator_createSingleton();
+UniquePtr<MemPool> SmallAllocator_createSingleton();
 /** \cond */
 namespace priv
 {
-    inline MemPool& SmallAllocator_pool()               { static MemPool& inst = SmallAllocator_createSingleton(); return inst; }
+    //release ptr so that the pool is never destroyed, as other static objects depend on it
+    inline MemPool& SmallAllocator_pool()               { static MemPool& inst = *SmallAllocator_createSingleton().release(); return inst; }
 }
 /** \endcond */
 
@@ -34,18 +35,18 @@ typedef AllocatorObject<SmallAllocator> SmallAllocatorObject;
 
 #ifndef SmallAllocator_createSingleton_
     /// Default implementation
-    inline MemPool& SmallAllocator_createSingleton()
+    inline UniquePtr<MemPool> SmallAllocator_createSingleton()
     {
         MemPool::Factory factory;
-        factory.addBucket(8, 5000);
+        factory.addBucket(8, 2000);
         factory.addBucket(16, 2000);
-        factory.addBucket(32, 2000);
-        factory.addBucket(64, 2000);
-        factory.addBucket(128, 500);
+        factory.addBucket(32, 1000);
+        factory.addBucket(64, 500);
+        factory.addBucket(128, 200);
         factory.addBucket(256, 100);
         factory.addBucket(512, 50);
-        auto& pool = factory.create();
-        pool.setId("Small"_id);
+        auto pool = factory.create();
+        pool->setId("Small"_id);
         return pool;
     }
 #endif

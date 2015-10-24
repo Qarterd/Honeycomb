@@ -13,13 +13,13 @@ namespace honey { namespace lockfree
   * Internally maintains a ring-buffer (traversing from head to tail may loop around end of buffer).
   */
 template<class T, class Alloc_ = typename DefaultAllocator<T>::type>
-class Deque : mt::NoCopy
+class SpscDeque : mt::NoCopy
 {
 public:
     typedef T value_type;
     typedef typename Alloc_::template rebind<T>::other Alloc;
 
-    Deque(szt size = 0, const T& initVal = T(), const Alloc& alloc = Alloc()) :
+    SpscDeque(szt size = 0, const T& initVal = T(), const Alloc& alloc = Alloc()) :
         _alloc(alloc),
         _data(nullptr, finalize<T, Alloc>()),
         _capacity(0),
@@ -30,7 +30,7 @@ public:
         resize(size, initVal);
     }
 
-    ~Deque()                                                { clear(); }
+    ~SpscDeque()                                            { clear(); }
 
     void resize(szt size, const T& initVal = T())
     {

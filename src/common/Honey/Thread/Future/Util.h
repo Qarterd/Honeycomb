@@ -144,13 +144,13 @@ namespace priv
 
 struct AsyncSched;
 struct AsyncSched_tag {};
-AsyncSched& async_createSingleton();
+SharedPtr<AsyncSched> async_createSingleton();
 
 struct AsyncSched : thread::Pool, AsyncSched_tag
 {
     AsyncSched(int workerCount, int workerTaskMax)          : thread::Pool(workerCount, workerTaskMax) {}
     
-    static AsyncSched& inst()                               { static SharedPtr<AsyncSched> inst = &async_createSingleton(); return *inst; }
+    static AsyncSched& inst()                               { static SharedPtr<AsyncSched> inst = async_createSingleton(); return *inst; }
     
     template<class Func>
     void operator()(Func&& f)                               { enqueue(*new priv::Task<Func>(forward<Func>(f))); }
@@ -161,7 +161,7 @@ struct AsyncSched : thread::Pool, AsyncSched_tag
 
 #ifndef future_async_createSingleton
     /// Default implementation
-    inline AsyncSched& async_createSingleton()              { return *new AsyncSched(3, 5); }
+    inline SharedPtr<AsyncSched> async_createSingleton()    { return new AsyncSched(3, 5); }
 #endif
 
 /** \cond */

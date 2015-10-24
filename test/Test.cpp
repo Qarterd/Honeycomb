@@ -21,7 +21,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
+                int count = 100000;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 5).nextInt())
@@ -70,10 +70,10 @@ void test()
     //=============================
 
     //=============================
-    // LockFree Deque
+    // SpscDeque
     //=============================
     {
-        typedef lockfree::Deque<int> List;
+        typedef lockfree::SpscDeque<int> List;
 
         struct ListThread
         {

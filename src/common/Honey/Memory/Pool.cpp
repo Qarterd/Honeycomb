@@ -210,7 +210,7 @@ MemPool::MemPool(const Factory& factory) :
     for (auto& e : values(_bucketMap))
     {
         e->_bucketIndex = _bucketList.size();
-        _bucketList.push_back(e);
+        _bucketList.push_back(UniquePtr<Bucket>(e));
     }
 
     assert(!_bucketMap.empty());
@@ -223,7 +223,7 @@ MemPool::MemPool(const Factory& factory) :
     //Allocate initial contiguous memory chunk
     if (chunkSize)
     {
-        _bucketChunk = honey::alloc<uint8>(chunkSize);
+        _bucketChunk = UniquePtr<uint8>(honey::alloc<uint8>(chunkSize));
         assert(_bucketChunk, sout() << "Allocation failed: " << chunkSize << " bytes");
     }
     //Set up the buckets
@@ -235,7 +235,7 @@ MemPool::MemPool(const Factory& factory) :
         chunk += chunkSize;
     }
 
-    _heap = new Heap(*this);
+    _heap = UniquePtr<Heap>(new Heap(*this));
 }
 
 void* MemPool::alloc(szt size, uint8 align, const char* srcFile, int srcLine)

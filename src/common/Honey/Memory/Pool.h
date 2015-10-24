@@ -7,6 +7,8 @@
 namespace honey
 {
 
+namespace lockfree { template<class> class FreeList; }
+
 /// \addtogroup Memory
 /// @{
 
@@ -27,6 +29,7 @@ namespace honey
   */
 class MemPool : mt::NoCopy
 {
+    template<class> friend class lockfree::FreeList;
 public:
     /// Pool creator
     class Factory
@@ -36,7 +39,7 @@ public:
         Factory()                                           : param(mtmap(align() = alignof(double))) {}
 
         /// Create pool using factory config
-        MemPool& create()                                   { return *new MemPool(*this); }
+        UniquePtr<MemPool> create()                         { return UniquePtr<MemPool>(new MemPool(*this)); }
 
         /// Set alignment byte boundary for all blocks. Alignment must be a power of two.
         void setBlockAlign(szt bytes)                       { param[align()] = bytes; }
@@ -57,13 +60,6 @@ public:
         vector<MtMap<szt, blockSize, szt, blockCount>> bucketList;
     };
     friend class Factory;
-
-    ~MemPool()
-    {
-        deleteRange(_bucketList);
-        delete_(_bucketChunk);
-        delete_(_heap);
-    }
 
     /// Allocate a `size` bytes block of memory at byte boundary `align`.  alignment must be a power of two.
     void* alloc(szt size, uint8 align = 1, const char* srcFile = nullptr, int srcLine = 0);
@@ -223,7 +219,6 @@ private:
         szt                     _usedSize;          ///< Total number of bytes allocated in used blocks
         SpinLock                _lock;
     };
-    typedef std::map<szt, Bucket*> BucketMap;
 
     /// Allocator that wraps blocks allocated from the system heap
     class Heap
@@ -290,13 +285,13 @@ private:
         void unlock() const;
     #endif
     
-    Id                      _id;
-    const szt               _blockAlign;        ///< alignment of all blocks
-    szt                     _blockSizeMax;      ///< Maximum block size
-    vector<Bucket*>         _bucketList;
-    BucketMap               _bucketMap;         ///< Buckets ordered by size
-    uint8*                  _bucketChunk;       ///< Initial contiguous chunk of memory for all buckets, allocated from system heap
-    Heap*                   _heap;              ///< Heap allocator
+    Id                          _id;
+    const szt                   _blockAlign;        ///< alignment of all blocks
+    szt                         _blockSizeMax;      ///< Maximum block size
+    vector<UniquePtr<Bucket>>   _bucketList;
+    std::map<szt, Bucket*>      _bucketMap;         ///< Buckets ordered by size
+    UniquePtr<uint8>            _bucketChunk;       ///< Initial contiguous chunk of memory for all buckets, allocated from system heap
+    UniquePtr<Heap>             _heap;              ///< Heap allocator
 };
 
 /// MemPool allocator
