@@ -14,7 +14,6 @@ namespace lockfree { template<class> class FreeList; }
 
 /// Memory pool
 /**
-  * A pool instance is constructed via MemPool::Factory.
   * The pool primarily allocates from buckets of fixed size blocks, if there's no block big enough to hold
   * the allocation then the pool falls back on the system heap allocator.
   *
@@ -31,36 +30,13 @@ class MemPool : mt::NoCopy
 {
     template<class> friend class lockfree::FreeList;
 public:
-    /// Pool creator
-    class Factory
-    {
-        friend class MemPool;
-    public:
-        Factory()                                           : param(mtmap(align() = alignof(double))) {}
-
-        /// Create pool using factory config
-        UniquePtr<MemPool> create()                         { return UniquePtr<MemPool>(new MemPool(*this)); }
-
-        /// Set alignment byte boundary for all blocks. Alignment must be a power of two.
-        void setBlockAlign(szt bytes)                       { param[align()] = bytes; }
-
-        /// Add a bucket of blocks available to the pool for allocation
-        /**
-          * \param blockSize    size in bytes of each block.
-          * \param blockCount   initial number of blocks (bucket automatically expands).
-          */
-        void addBucket(szt blockSize, szt blockCount)       { bucketList.push_back(mtmap(Factory::blockSize() = blockSize, Factory::blockCount() = blockCount)); }
-
-    private:
-        mtkey(align);
-        MtMap<szt, align> param;
-
-        mtkey(blockSize);
-        mtkey(blockCount);
-        vector<MtMap<szt, blockSize, szt, blockCount>> bucketList;
-    };
-    friend class Factory;
-
+    /**
+      * \param buckets  A vector of tuples (blockSize, blockCount).
+      *                 Buckets of blocks available to the pool for allocation.
+      * \param align    Alignment byte boundary for all blocks. Alignment must be a power of two.
+      */
+    MemPool(const vector<tuple<szt,szt>>& buckets, const Id& id = idnull, szt align = alignof(double));
+    
     /// Allocate a `size` bytes block of memory at byte boundary `align`.  alignment must be a power of two.
     void* alloc(szt size, uint8 align = 1, const char* srcFile = nullptr, int srcLine = 0);
     /// Free a memory block allocated from the pool
@@ -86,8 +62,7 @@ public:
         String printUsed() const                            { return ""; }
     #endif
 
-    void setId(const Id& id)                                { _id = id; }
-    const Id& getId() const                                 { return _id; }
+    const Id& id() const                                    { return _id; }
 
 private:
     /// Bucket that holds a number of blocks of fixed size
@@ -181,7 +156,7 @@ private:
         ~Bucket()
         {
             //Delete all expansion chunks. The first chunk is the initial pool allocation, we don't own it.
-            for (auto i : range(1, _chunkCount.load())) delete_(_chunkList[i].data());
+            for (auto i : range(1, _chunkCount.load())) delete_(_chunks[i].data());
         }
 
         /// Initialize blocks in memory chunk
@@ -200,7 +175,7 @@ private:
         BlockHeader* deref(Handle handle) const
         {
             assert(handle && handle.chunk() < _chunkCount);
-            auto& chunk = _chunkList[handle.chunk()];
+            auto& chunk = _chunks[handle.chunk()];
             assert(blockStride()*handle.block() < chunk.size());
             uint8* blockData = alignCeil(chunk.data() + sizeof(BlockHeader), _pool._blockAlign);
             return blockHeader(blockData + blockStride()*handle.block());
@@ -210,7 +185,7 @@ private:
         uint8                   _bucketIndex;
         const szt               _blockSize;         ///< Data size of each block
         const szt               _blockCountInit;    ///< Initial number of blocks
-        array<Buffer<uint8>, numeral<uint8>().max()> _chunkList;    ///< System heap chunks
+        array<Buffer<uint8>, numeral<uint8>().max()> _chunks;    ///< System heap chunks
         Atomic<uint8>           _chunkCount;
         Atomic<szt>             _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         Atomic<TaggedHandle>    _freeHead;          ///< Head of free blocks list
@@ -279,8 +254,6 @@ private:
         SpinLock            _lock;
     };
 
-    MemPool(const Factory& factory);
-
     #ifdef DEBUG
         void lock() const;
         void unlock() const;
@@ -289,7 +262,7 @@ private:
     Id                          _id;
     const szt                   _blockAlign;        ///< alignment of all blocks
     szt                         _blockSizeMax;      ///< Maximum block size
-    vector<UniquePtr<Bucket>>   _bucketList;
+    vector<UniquePtr<Bucket>>   _buckets;
     std::map<szt, Bucket*>      _bucketMap;         ///< Buckets ordered by size
     UniquePtr<uint8>            _bucketChunk;       ///< Initial contiguous chunk of memory for all buckets, allocated from system heap
     UniquePtr<Heap>             _heap;              ///< Heap allocator

@@ -34,7 +34,7 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
     }
 
     //keep track of chunk so that handles can reference their chunk by index
-    _chunkList[_chunkCount++] = Buffer<uint8>(chunk, chunkSize);
+    _chunks[_chunkCount++] = Buffer<uint8>(chunk, chunkSize);
     _chunkSizeTotal += chunkSize;
     
     if (prev)
@@ -196,19 +196,19 @@ void MemPool::Heap::free(BlockHeader* header)
     honey::free(reinterpret_cast<uint8*>(header) - header->offset);
 }
 
-MemPool::MemPool(const Factory& factory) :
-    _blockAlign(factory.param[Factory::align()]),
+MemPool::MemPool(const vector<tuple<szt,szt>>& buckets, const Id& id, szt align) :
+    _id(id),
+    _blockAlign(align),
     _bucketChunk(nullptr)
 {
-    //Initialize the buckets from the factory
-    for (auto& e : factory.bucketList)
-        _bucketMap[e[Factory::blockSize()]] = new Bucket(*this, e[Factory::blockSize()], e[Factory::blockCount()]);
+    //Initialize the buckets
+    for (auto& e : buckets) _bucketMap[get<0>(e)] = new Bucket(*this, get<0>(e), get<1>(e));
 
     //Build sorted bucket list
     for (auto& e : values(_bucketMap))
     {
-        e->_bucketIndex = _bucketList.size();
-        _bucketList.push_back(UniquePtr<Bucket>(e));
+        e->_bucketIndex = _buckets.size();
+        _buckets.push_back(UniquePtr<Bucket>(e));
     }
 
     assert(!_bucketMap.empty());
@@ -216,7 +216,7 @@ MemPool::MemPool(const Factory& factory) :
 
     //Get a chunk size that can hold all buckets
     szt chunkSize = 0;
-    for (auto& e : _bucketList) { chunkSize += e->blockOffsetMax() + e->blockStride() * e->_blockCountInit; }
+    for (auto& e : _buckets) { chunkSize += e->blockOffsetMax() + e->blockStride() * e->_blockCountInit; }
 
     //Allocate initial contiguous memory chunk
     if (chunkSize)
@@ -226,7 +226,7 @@ MemPool::MemPool(const Factory& factory) :
     }
     //Set up the buckets
     uint8* chunk = _bucketChunk;
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         szt chunkSize = e->blockOffsetMax() + e->blockStride() * e->_blockCountInit;
         e->initChunk(chunk, chunkSize, e->_blockCountInit);
@@ -260,15 +260,15 @@ void MemPool::free(void* ptr_)
         //Bucket block
         Bucket::BlockHeader* header = Bucket::blockHeader(ptr);
         header->validate(Bucket::BlockHeader::Debug::sigUsed);
-        assert(header->bucket() < _bucketList.size());
-        _bucketList[header->bucket()]->free(header);
+        assert(header->bucket() < _buckets.size());
+        _buckets[header->bucket()]->free(header);
     }
 }
 
 szt MemPool::allocBytes() const
 {
     szt total = 0;
-    for (auto& e : _bucketList) { total += e->_chunkSizeTotal; }
+    for (auto& e : _buckets) { total += e->_chunkSizeTotal; }
     total += _heap->_allocTotal;
     return total;
 }
@@ -276,7 +276,7 @@ szt MemPool::allocBytes() const
 szt MemPool::usedBytes() const
 {
     szt total = 0;
-    for (auto& e : _bucketList) { total += e->_blockSize*e->_usedCount; }
+    for (auto& e : _buckets) { total += e->_blockSize*e->_usedCount; }
     total += _heap->_allocTotal;
     return total;
 }
@@ -285,13 +285,13 @@ szt MemPool::usedBytes() const
 
 void MemPool::lock() const
 {
-    for (auto& e : _bucketList) e->_lock.lock();
+    for (auto& e : _buckets) e->_lock.lock();
     _heap->_lock.lock();
 }
 
 void MemPool::unlock() const
 {
-    for (auto& e : _bucketList) e->_lock.unlock();
+    for (auto& e : _buckets) e->_lock.unlock();
     _heap->_lock.unlock();
 }
     
@@ -299,7 +299,7 @@ void MemPool::validate() const
 {
     lock();
 
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         for (Bucket::Handle handle = e->_usedHead; handle; handle = e->deref(handle)->next)
             e->deref(handle)->validate(Bucket::BlockHeader::Debug::sigUsed);
@@ -325,7 +325,7 @@ String MemPool::printStats() const
     szt usedSize = 0;
     szt usedCount = 0;
     szt freeCount = 0;
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         allocTotal += e->_chunkSizeTotal;
         usedSize += e->_usedSize;
@@ -348,7 +348,7 @@ String MemPool::printStats() const
                 << " (" << Real(usedCount)/(freeCount+usedCount)*100 << "%)" << endl;
 
     szt i = 0;
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         szt blockCount = e->_freeCount + e->_usedCount;
         stream  << "Bucket #" << i++ << ":" << endl
@@ -388,7 +388,7 @@ String MemPool::printUsed() const
 
     szt usedCount = 0;
     szt usedSize = 0;
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         usedCount += e->_usedCount;
         usedSize += e->_usedSize;
@@ -403,7 +403,7 @@ String MemPool::printUsed() const
 
     szt bucket = 0;
     szt block = 0;
-    for (auto& e : _bucketList)
+    for (auto& e : _buckets)
     {
         for (Bucket::Handle handle = e->_usedHead; handle; handle = e->deref(handle)->next, ++block)
         {

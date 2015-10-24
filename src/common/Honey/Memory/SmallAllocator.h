@@ -37,17 +37,16 @@ typedef AllocatorObject<SmallAllocator> SmallAllocatorObject;
     /// Default implementation
     inline UniquePtr<MemPool> SmallAllocator_createSingleton()
     {
-        MemPool::Factory factory;
-        factory.addBucket(8, 2000);
-        factory.addBucket(16, 2000);
-        factory.addBucket(32, 1000);
-        factory.addBucket(64, 500);
-        factory.addBucket(128, 200);
-        factory.addBucket(256, 100);
-        factory.addBucket(512, 50);
-        auto pool = factory.create();
-        pool->setId("Small"_id);
-        return pool;
+        return UniquePtr<MemPool>(new MemPool(
+            {
+                make_tuple(8, 2000),
+                make_tuple(16, 2000),
+                make_tuple(32, 1000),
+                make_tuple(64, 500),
+                make_tuple(128, 200),
+                make_tuple(256, 100),
+                make_tuple(512, 50)
+            }, "Small"_id));
     }
 #endif
 
