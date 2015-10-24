@@ -21,7 +21,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100000;
+                int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 5).nextInt())

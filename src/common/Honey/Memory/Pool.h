@@ -94,10 +94,11 @@ private:
     class Bucket
     {
     public:
-        /// Blocks are linked via indices rather than pointers so that they can include a tag while still maintaining a swappable size
+        /// Enables blocks to be referenced via index rather than pointer so that they can include a tag while still maintaining a swappable size
+        /** Each chunk holds an exponential expansion of a bucket, so a 1-byte chunk index is sufficient. */
         struct Handle
         {
-            //divide max swappable into 2 parts
+            //divide max swappable into 2 parts, index and tag
             typedef mt::uintBySize<sizeof(atomic::SwapMaxType)/2>::type Int;
             
             Handle()                                        : index(-1) {}
@@ -169,6 +170,7 @@ private:
             _bucketIndex(-1),
             _blockSize(blockSize),
             _blockCountInit(blockCount),
+            _chunkCount(0),
             _chunkSizeTotal(0),
             _freeHead(TaggedHandle()),
             _freeCount(0),
@@ -178,10 +180,8 @@ private:
 
         ~Bucket()
         {
-            //The first memory chunk is the initial pool allocation, we don't own it
-            _chunkList.erase(_chunkList.begin());
-            //Delete all expansion chunks
-            for (auto& e : _chunkList) delete_(e.data());
+            //Delete all expansion chunks. The first chunk is the initial pool allocation, we don't own it.
+            for (auto i : range(1, _chunkCount.load())) delete_(_chunkList[i].data());
         }
 
         /// Initialize blocks in memory chunk
@@ -199,7 +199,7 @@ private:
         /// Get block header from handle
         BlockHeader* deref(Handle handle) const
         {
-            assert(handle && handle.chunk() < _chunkList.size());
+            assert(handle && handle.chunk() < _chunkCount);
             auto& chunk = _chunkList[handle.chunk()];
             assert(blockStride()*handle.block() < chunk.size());
             uint8* blockData = alignCeil(chunk.data() + sizeof(BlockHeader), _pool._blockAlign);
@@ -210,7 +210,8 @@ private:
         uint8                   _bucketIndex;
         const szt               _blockSize;         ///< Data size of each block
         const szt               _blockCountInit;    ///< Initial number of blocks
-        vector<Buffer<uint8>>   _chunkList;         ///< System heap chunks
+        array<Buffer<uint8>, numeral<uint8>().max()> _chunkList;    ///< System heap chunks
+        Atomic<uint8>           _chunkCount;
         Atomic<szt>             _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         Atomic<TaggedHandle>    _freeHead;          ///< Head of free blocks list
         Atomic<szt>             _freeCount;         ///< Number of free blocks
@@ -261,7 +262,7 @@ private:
 
         Heap(MemPool& pool) :
             _pool(pool),
-            _chunkSizeTotal(0),
+            _allocTotal(0),
             _usedHead(nullptr),
             _usedCount(0)
         {}
@@ -272,7 +273,7 @@ private:
         void free(BlockHeader* header);
 
         MemPool&            _pool;
-        Atomic<szt>         _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
+        Atomic<szt>         _allocTotal;        ///< Total number of bytes allocated from system heap
         BlockHeader*        _usedHead;          ///< Head of used blocks list
         Atomic<szt>         _usedCount;         ///< Number of used blocks
         SpinLock            _lock;

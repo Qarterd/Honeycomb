@@ -17,7 +17,7 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
     {
         BlockHeader* header = blockHeader(blockData + blockStride()*i);
         
-        header->handle = Handle(_chunkList.size(), static_cast<Handle::Int>(i));
+        header->handle = Handle(_chunkCount, static_cast<Handle::Int>(i));
         header->next = nullptr;
         header->offset = 0;
         header->bucket() = _bucketIndex;
@@ -33,6 +33,10 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
         prev = header;
     }
 
+    //keep track of chunk so that handles can reference their chunk by index
+    _chunkList[_chunkCount++] = Buffer<uint8>(chunk, chunkSize);
+    _chunkSizeTotal += chunkSize;
+    
     if (prev)
     {
         //Attach chunk as free head
@@ -44,10 +48,6 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
         } while (!_freeHead.cas(TaggedHandle(first->handle, old.nextTag()), old));
         _freeCount += blockCount;
     }
-    
-    //Add memory chunk to list so it can later be freed
-    _chunkList.push_back(Buffer<uint8>(chunk, chunkSize));
-    _chunkSizeTotal += chunkSize;
 }
 
 void* MemPool::Bucket::alloc(szt size, uint8 align_, const char* srcFile, int srcLine)
@@ -171,8 +171,7 @@ void* MemPool::Heap::alloc(szt size, uint8 align_, const char* srcFile, int srcL
         ++_usedCount;
     #endif
 
-    //Add to total allocated
-    _chunkSizeTotal += header->size;
+    _allocTotal += header->size;
 
     return blockData(header);
 }
@@ -192,8 +191,7 @@ void MemPool::Heap::free(BlockHeader* header)
         --_usedCount;
     #endif
     
-    //Remove from total allocated
-    _chunkSizeTotal -= header->size;
+    _allocTotal -= header->size;
 
     honey::free(reinterpret_cast<uint8*>(header) - header->offset);
 }
@@ -271,7 +269,7 @@ szt MemPool::allocBytes() const
 {
     szt total = 0;
     for (auto& e : _bucketList) { total += e->_chunkSizeTotal; }
-    total += _heap->_chunkSizeTotal;
+    total += _heap->_allocTotal;
     return total;
 }
 
@@ -279,7 +277,7 @@ szt MemPool::usedBytes() const
 {
     szt total = 0;
     for (auto& e : _bucketList) { total += e->_blockSize*e->_usedCount; }
-    total += _heap->_chunkSizeTotal;
+    total += _heap->_allocTotal;
     return total;
 }
 
@@ -335,8 +333,8 @@ String MemPool::printStats() const
         freeCount += e->_freeCount;
     }
 
-    allocTotal += _heap->_chunkSizeTotal;
-    usedSize += _heap->_chunkSizeTotal;
+    allocTotal += _heap->_allocTotal;
+    usedSize += _heap->_allocTotal;
 
     stream  << stringstream::indentInc << "{" << endl;
 
@@ -369,8 +367,8 @@ String MemPool::printStats() const
 
     stream  << "Heap:" << endl
             << stringstream::indentInc << "{" << endl
-            << "Allocated Bytes: " << _heap->_chunkSizeTotal
-                << " (" << Real(_heap->_chunkSizeTotal)/allocTotal*100 << "%)" << endl
+            << "Allocated Bytes: " << _heap->_allocTotal
+                << " (" << Real(_heap->_allocTotal)/allocTotal*100 << "%)" << endl
             << "Blocks Used: " << _heap->_usedCount
             << stringstream::indentDec << endl << "}";
 
@@ -397,7 +395,7 @@ String MemPool::printUsed() const
     }
 
     usedCount += _heap->_usedCount;
-    usedSize += _heap->_chunkSizeTotal;
+    usedSize += _heap->_allocTotal;
 
     stream  << "MemPool Id: " << _id << endl
             << "Total Used Bytes: " << usedSize << endl
