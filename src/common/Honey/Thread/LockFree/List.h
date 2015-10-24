@@ -10,7 +10,7 @@ namespace honey
 namespace lockfree
 {
 
-/// Lock-free doubly-linked list.
+/// Lock-free doubly-linked list. Automatically expands to accommodate new elements.
 /**
   * Based on the paper: "Lock-free deques and doubly linked lists", Sundell, et al. - 2008
   *
@@ -18,7 +18,7 @@ namespace lockfree
   * \tparam Backoff     Backoff algorithm to reduce contention
   * \tparam iterMax     Max number of iterator instances per thread
   */
-template<class T, class Backoff = Backoff, int8 iterMax = 2>
+template<class T, class Backoff = Backoff, uint8 iterMax = 2>
 class List : HazardMemConfig, mt::NoCopy
 {
     template<class> friend class HazardMem;
@@ -52,11 +52,12 @@ public:
     typedef T value_type;
 
     /**
+      * \param capacity     initial capacity
       * \param threadMax    Max number of threads that can access this container.
-                            Use a thread pool so the threads have a longer life cycle than this container.
+      *                     Use a thread pool so the threads have a longer life cycle than this container.
       */
-    List(int threadMax = 8) :
-        _mem(*this, threadMax),
+    List(szt capacity = 0, int threadMax = 8) :
+        _mem(*this, capacity, threadMax),
         _size(0)
     {
         _mem.storeRef(_head, &createNode(T()));
@@ -74,6 +75,9 @@ public:
         _mem.deleteNode(*_tail.ptr());
     }
 
+    /// Ensure that enough storage is allocated for a number of elements
+    void reserve(szt capacity)                              { _mem.reserve(capacity); }
+    
     /// Insert new element at beginning of list
     template<class T_>
     void push_front(T_&& data)
@@ -464,11 +468,11 @@ public:
 
 private:
     /// Override from HazardMemConfig
-    static const int linkMax = 2;
+    static const uint8 linkMax = 2;
     /// Override from HazardMemConfig
-    static const int linkDelMax = linkMax;
+    static const uint8 linkDelMax = linkMax;
     /// Override from HazardMemConfig
-    static const int8 hazardMax = 5 + iterMax;
+    static const uint8 hazardMax = 5 + iterMax;
 
     /// Override from HazardMemConfig
     void cleanUpNode(Node& node)

@@ -16,13 +16,21 @@ public:
     typedef MemPool::Bucket::Handle Handle;
     typedef MemPool::Bucket::TaggedHandle TaggedHandle;
     
-    FreeList(szt size = 0)                          : _pool({make_tuple(sizeof(T), size)}) {}
+    FreeList(szt capacity = 0)                      : _pool({make_tuple(sizeof(T), capacity)}) {}
     
+    /// Ensure that enough storage is allocated for a number of objects
+    void reserve(szt capacity)                      { _pool._buckets[0]->reserve(capacity); }
+    
+    szt capacity() const                            { return _pool._buckets[0]->_blockCount; }
+    
+    /// Construct object and remove from free list
     template<class... Args>
     T* construct(Args&&... args)                    { return new (_pool.alloc(sizeof(T))) T(forward<Args>(args)...); }
     
+    /// Destruct object and add to free list
     void destruct(T* ptr)                           { assert(ptr); ptr->~T(); _pool.free(ptr); }
     
+    /// Get lock-free handle for object
     Handle handle(T* ptr) const
     {
         if (!ptr) return nullptr;
@@ -31,6 +39,7 @@ public:
         return header->handle;
     }
     
+    /// Get object from lock-free handle
     T* deref(Handle handle) const                   { return reinterpret_cast<T*>(MemPool::Bucket::blockData(_pool._buckets[0]->deref(handle))); }
     
 private:
@@ -43,10 +52,11 @@ class FreeListAllocator : public MemPoolAllocator<FreeListAllocator, T>
 public:
     FreeListAllocator() = default;
     template<class U>
-    FreeListAllocator(const FreeListAllocator<U>&)  {}
+    FreeListAllocator(const FreeListAllocator<U>&) {}
 
     MemPool& pool()                                 { return _freeList._pool; }
     
+private:
     FreeList<T> _freeList;
 };
 

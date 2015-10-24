@@ -13,8 +13,6 @@ struct HazardMemNode
 {
     HazardMemNode()                         : ref(0), trace(false), del(false) {}
 
-    int16                   threadId;       ///< Thread that created this node, used to return node to original free list
-
     Atomic<int>             ref;            ///< Reference count by all threads
     Atomic<bool>            trace;          ///< Used in scan()
     Atomic<bool>            del;            ///< Marked for deletion
@@ -46,11 +44,11 @@ struct HazardMemConfig
     typedef HazardMemLink<Node>   Link;
 
     /// Number of links per node
-    static const int linkMax = 2;
+    static const uint8 linkMax = 2;
     /// Number of links per node that may transiently point to a deleted node
-    static const int linkDelMax = linkMax;
+    static const uint8 linkDelMax = linkMax;
     /// Number of thread-local hazard pointers
-    static const int8 hazardMax = 6;
+    static const uint8 hazardMax = 6;
 
     /// Update all links in the node to point to active (non-deleted) nodes
     void cleanUpNode(Node& node);
@@ -82,12 +80,10 @@ private:
             hazards.fill(nullptr);
             
             hazardFreeList.reserve(hazards.size());
-            for (szt i = 0; i < hazards.size(); ++i)
-                hazardFreeList.push_back(i);
+            for (auto i : range(hazards.size())) hazardFreeList.push_back(i);
             
             delNodeFreeList.reserve(mem._threshClean);
-            for (int i = 0; i < mem._threshClean; ++i)
-                delNodeFreeList.push_back(&delNodes[i]);
+            for (auto i : range(mem._threshClean)) delNodeFreeList.push_back(&delNodes[i]);
         }
 
         ~ThreadData()
@@ -121,28 +117,21 @@ public:
     /**
       * \param config
       * \param threadMax    Max number of threads that can access the memory manager.
-                            Use a thread pool and ensure that it has a longer life cycle than the mem manager.
+      *                     Use a thread pool and ensure that it has a longer life cycle than the mem manager.
       */ 
-    HazardMem(Config& config, int threadMax = 8) :
+    HazardMem(Config& config, szt capacity = 0, int threadMax = 8) :
         _config(config),
         _threadMax(threadMax),
         _threshClean(_threadMax*(Config::hazardMax + Config::linkMax + Config::linkDelMax + 1)),
         _threshScan(Config::hazardMax*2 < _threshClean ? Config::hazardMax*2 : _threshClean),
-        _threadDataList(new ThreadData*[_threadMax]),
+        _freeList(capacity),
+        _threadDataList(_threadMax),
         _threadDataCount(0),
-        _threadData(bind(&HazardMem::initThreadData, this))
-    {
-        std::fill(_threadDataList, _threadDataList + _threadMax, nullptr);
-    }
+        _threadData(bind(&HazardMem::initThreadData, this)) {}
 
-    ~HazardMem()
-    {
-        //Delete all thread data
-        for (int ti = 0; ti < _threadDataCount; ++ti)
-            delete_(_threadDataList[ti]);
-        delete_(_threadDataList);
-    }
-
+    /// Ensure enough storage space for a number of nodes
+    void reserve(szt capacity)              { _freeList.reserve(capacity); }
+    
     Node& createNode()
     {
         Node* node = _freeList.construct();
@@ -270,25 +259,21 @@ public:
     }
 
 private:
-    /// Thread data ptr holder.  This indirection gives us control of the thread data life cycle, otherwise it would be deleted on thread exit.
-    struct ThreadDataPtr
-    {
-        ThreadDataPtr(ThreadData* ptr)      : ptr(ptr) {}
-        ThreadData* ptr;
-    };
+    /// This indirection gives us control of the thread data life cycle, otherwise it would be deleted on thread exit.
+    struct ThreadDataRef { ThreadData& obj; };
 
-    ThreadDataPtr* initThreadData()
+    ThreadDataRef* initThreadData()
     {
         SpinLock::Scoped _(_threadDataLock);
         //Increase thread count
         assert(_threadDataCount < _threadMax, "Too many threads accessing memory manager");
         //Create new data and add to list
-        ThreadData* threadData = new ThreadData(*this);
-        _threadDataList[_threadDataCount++] = threadData;
-        return new ThreadDataPtr(threadData);
+        auto threadData = new ThreadData(*this);
+        _threadDataList[_threadDataCount++] = UniquePtr<ThreadData>(threadData);
+        return new ThreadDataRef{*threadData};
     }
 
-    ThreadData& threadData()                { return *_threadData->ptr; }
+    ThreadData& threadData()                { return _threadData->obj; }
 
     /// Update nodes deleted by this thread so links referencing deleted nodes are replaced with live nodes 
     void cleanUpLocal()
@@ -301,10 +286,10 @@ private:
     /// Update nodes deleted by all threads so links referencing deleted nodes are replaced with live nodes 
     void cleanUpAll()
     {
-        for (int ti = 0; ti < _threadDataCount; ++ti)
+        for (auto ti : range(_threadDataCount.load()))
         {
             ThreadData* td = _threadDataList[ti];
-            for (int i = 0; i < _threshClean; ++i)
+            for (auto i : range(_threshClean))
             {
                 auto& delNode = td->delNodes[i];
                 Node* node = delNode.node;
@@ -337,10 +322,10 @@ private:
         }
 
         //Flag all del nodes that have a hazard so they are not reclaimed
-        for (int ti = 0; ti < _threadDataCount; ++ti)
+        for (auto ti : range(_threadDataCount.load()))
         {
             ThreadData* tdata = _threadDataList[ti];
-            for (szt i = 0; i < tdata->hazards.size(); ++i)
+            for (auto i : range(tdata->hazards.size()))
             {
                 Node* node = tdata->hazards[i];
                 if (node) td.delHazards.insert(node);
@@ -383,13 +368,13 @@ private:
 
     Config&                         _config;
     const int                       _threadMax;
-    const int                       _threshClean;
-    const int                       _threshScan;
-    ThreadData**                    _threadDataList;
-    Atomic<int>                     _threadDataCount;
-    thread::Local<ThreadDataPtr>    _threadData;
-    SpinLock                        _threadDataLock;
+    const szt                       _threshClean;
+    const szt                       _threshScan;
     FreeList<Node>                  _freeList;
+    vector<UniquePtr<ThreadData>>   _threadDataList;
+    Atomic<int>                     _threadDataCount;
+    thread::Local<ThreadDataRef>    _threadData;
+    SpinLock                        _threadDataLock;
 };
 
 

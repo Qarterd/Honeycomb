@@ -73,7 +73,7 @@ namespace thread
         typedef function<void (T*)> Fin;
 
         /// Init / Finalize func is called once per thread to create/destroy local object instance
-        Local(const Init& init = &initObj, const Fin& fin = finalize<T>());
+        Local(const Init& init = []{ return new T(); }, const Fin& fin = finalize<T>());
         ~Local();
 
         /// Assign thread-local object to rhs
@@ -92,8 +92,6 @@ namespace thread
         T& get();
 
     private:
-        static T* initObj()                         { return new T; }
-
         priv::StoreId _id;
         Init _init;
         Fin _fin;

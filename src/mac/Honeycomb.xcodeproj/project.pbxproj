@@ -111,6 +111,7 @@
 		37B612301BD81C61006C3AEF /* TimePoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimePoint.h; sourceTree = "<group>"; };
 		37B612321BD81C6F006C3AEF /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
 		37B612331BD81C6F006C3AEF /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
+		37BCBB5D1BDBEDA3001D133A /* Stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEB42E1B52477D0095BB69 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		37FEB42F1B52477D0095BB69 /* Meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meta.h; sourceTree = "<group>"; };
@@ -775,6 +776,7 @@
 				37ACC39B1BDADB8D003F75C9 /* HazardMem.h */,
 				37FEB50E1B52477D0095BB69 /* List.h */,
 				37ACC39A1BDAC99A003F75C9 /* SpscDeque.h */,
+				37BCBB5D1BDBEDA3001D133A /* Stack.h */,
 			);
 			path = LockFree;
 			sourceTree = "<group>";

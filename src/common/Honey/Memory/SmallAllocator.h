@@ -9,12 +9,12 @@ namespace honey
 /// \addtogroup Memory
 /// @{
 
-UniquePtr<MemPool> SmallAllocator_createSingleton();
+MemPool* SmallAllocator_createSingleton();
 /** \cond */
 namespace priv
 {
-    //release ptr so that the pool is never destroyed, as other static objects depend on it
-    inline MemPool& SmallAllocator_pool()               { static MemPool& inst = *SmallAllocator_createSingleton().release(); return inst; }
+    //hold the pool as a reference so that it's never destroyed, as other static objects depend on it
+    inline MemPool& SmallAllocator_pool()               { static MemPool& inst = *SmallAllocator_createSingleton(); return inst; }
 }
 /** \endcond */
 
@@ -35,9 +35,9 @@ typedef AllocatorObject<SmallAllocator> SmallAllocatorObject;
 
 #ifndef SmallAllocator_createSingleton_
     /// Default implementation
-    inline UniquePtr<MemPool> SmallAllocator_createSingleton()
+    inline MemPool* SmallAllocator_createSingleton()
     {
-        return UniquePtr<MemPool>(new MemPool(
+        return new MemPool(
             {
                 make_tuple(8, 2000),
                 make_tuple(16, 2000),
@@ -46,7 +46,7 @@ typedef AllocatorObject<SmallAllocator> SmallAllocatorObject;
                 make_tuple(128, 200),
                 make_tuple(256, 100),
                 make_tuple(512, 50)
-            }, "Small"_id));
+            }, "Small"_id);
     }
 #endif
 

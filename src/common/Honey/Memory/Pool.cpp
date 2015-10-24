@@ -34,8 +34,10 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
     }
 
     //keep track of chunk so that handles can reference their chunk by index
+    assert(_chunkCount < _chunks.size(), "Max chunks reached");
     _chunks[_chunkCount++] = Buffer<uint8>(chunk, chunkSize);
     _chunkSizeTotal += chunkSize;
+    _blockCount += blockCount;
     
     if (prev)
     {
@@ -108,15 +110,22 @@ void* MemPool::Bucket::alloc(szt size, uint8 align_, const char* srcFile, int sr
     return blockData(header);
 }
 
-void MemPool::Bucket::expand()
+void MemPool::Bucket::reserve(szt capacity)
 {
     SpinLock::Scoped _(_lock);
-    if (_freeCount) return;
-    szt expandCount = _usedCount / 2 + 1; //Expand 50%
+    if (_blockCount >= capacity) return;
+    szt expandCount = capacity - _blockCount;
     szt allocSize = blockOffsetMax() + blockStride() * expandCount;
     uint8* chunk = honey::alloc<uint8>(allocSize);
     assert(chunk, sout() << "Allocation failed: " << allocSize << " bytes");
     initChunk(chunk, allocSize, expandCount);
+}
+
+void MemPool::Bucket::expand()
+{
+    SpinLock::Scoped _(_lock);
+    if (_freeCount) return;
+    reserve(_blockCount + _blockCount/2 + 1); //Expand 50%
 }
 
 void MemPool::Bucket::free(BlockHeader* header)
@@ -350,16 +359,15 @@ String MemPool::printStats() const
     szt i = 0;
     for (auto& e : _buckets)
     {
-        szt blockCount = e->_freeCount + e->_usedCount;
         stream  << "Bucket #" << i++ << ":" << endl
                 << stringstream::indentInc << "{" << endl
                 << "Block Size: " << e->_blockSize << endl
-                << "Block Count Expansion: " << blockCount << " / " << e->_blockCountInit
-                    << " (" << Real(blockCount)/e->_blockCountInit*100 << "%)" << endl
+                << "Block Count Expansion: " << e->_blockCount << " / " << e->_blockCountInit
+                    << " (" << Real(e->_blockCount)/e->_blockCountInit*100 << "%)" << endl
                 << "Allocated Bytes: " << e->_chunkSizeTotal
                     << " (" << Real(e->_chunkSizeTotal)/allocTotal*100 << "%)" << endl
-                << "Blocks Used: " << e->_usedCount << " / " << blockCount
-                    << " (" << Real(e->_usedCount)/blockCount*100 << "%)" << endl
+                << "Blocks Used: " << e->_usedCount << " / " << e->_blockCount
+                    << " (" << Real(e->_usedCount)/e->_blockCount*100 << "%)" << endl
                 << "Avg Block Fill: " << e->_usedSize << " / " << e->_blockSize*e->_usedCount
                     << " (" << (e->_usedSize == 0 ? Real(0) : Real(e->_usedSize)/(e->_blockSize*e->_usedCount)*100) << "%)"
                 << stringstream::indentDec << endl << "}" << endl;

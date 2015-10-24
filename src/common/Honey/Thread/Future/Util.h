@@ -144,7 +144,7 @@ namespace priv
 
 struct AsyncSched;
 struct AsyncSched_tag {};
-SharedPtr<AsyncSched> async_createSingleton();
+AsyncSched* async_createSingleton();
 
 struct AsyncSched : thread::Pool, AsyncSched_tag
 {
@@ -161,7 +161,7 @@ struct AsyncSched : thread::Pool, AsyncSched_tag
 
 #ifndef future_async_createSingleton
     /// Default implementation
-    inline SharedPtr<AsyncSched> async_createSingleton()    { return new AsyncSched(3, 5); }
+    inline AsyncSched* async_createSingleton()              { return new AsyncSched(3, 5); }
 #endif
 
 /** \cond */

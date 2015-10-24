@@ -145,6 +145,7 @@ private:
             _bucketIndex(-1),
             _blockSize(blockSize),
             _blockCountInit(blockCount),
+            _blockCount(0),
             _chunkCount(0),
             _chunkSizeTotal(0),
             _freeHead(TaggedHandle()),
@@ -163,7 +164,9 @@ private:
         void initChunk(uint8* chunk, szt chunkSize, szt blockCount);
         /// Alloc a block with alignment byte boundary `align`
         void* alloc(szt size, uint8 align, const char* srcFile, int srcLine);
-        /// Increase number of blocks in bucket by allocating a new chunk
+        /// Ensure that there are a number of blocks available
+        void reserve(szt capacity);
+        /// Exponentially increase number of blocks in bucket
         void expand();
         /// Free a block
         void free(BlockHeader* header);
@@ -183,15 +186,16 @@ private:
         
         MemPool&                _pool;
         uint8                   _bucketIndex;
-        const szt               _blockSize;         ///< Data size of each block
-        const szt               _blockCountInit;    ///< Initial number of blocks
+        const szt               _blockSize;
+        const szt               _blockCountInit;
+        szt                     _blockCount;
         array<Buffer<uint8>, numeral<uint8>().max()> _chunks;    ///< System heap chunks
         Atomic<uint8>           _chunkCount;
         Atomic<szt>             _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         Atomic<TaggedHandle>    _freeHead;          ///< Head of free blocks list
-        Atomic<szt>             _freeCount;         ///< Number of free blocks
+        Atomic<szt>             _freeCount;
         TaggedHandle            _usedHead;          ///< Head of used blocks list
-        Atomic<szt>             _usedCount;         ///< Number of used blocks
+        Atomic<szt>             _usedCount;
         szt                     _usedSize;          ///< Total number of bytes allocated in used blocks
         SpinLock                _lock;
     };
@@ -250,7 +254,7 @@ private:
         MemPool&            _pool;
         Atomic<szt>         _allocTotal;        ///< Total number of bytes allocated from system heap
         BlockHeader*        _usedHead;          ///< Head of used blocks list
-        Atomic<szt>         _usedCount;         ///< Number of used blocks
+        Atomic<szt>         _usedCount;
         SpinLock            _lock;
     };
 
@@ -261,11 +265,11 @@ private:
     
     Id                          _id;
     const szt                   _blockAlign;        ///< alignment of all blocks
-    szt                         _blockSizeMax;      ///< Maximum block size
+    szt                         _blockSizeMax;
     vector<UniquePtr<Bucket>>   _buckets;
     std::map<szt, Bucket*>      _bucketMap;         ///< Buckets ordered by size
     UniquePtr<uint8>            _bucketChunk;       ///< Initial contiguous chunk of memory for all buckets, allocated from system heap
-    UniquePtr<Heap>             _heap;              ///< Heap allocator
+    UniquePtr<Heap>             _heap;
 };
 
 /// MemPool allocator
