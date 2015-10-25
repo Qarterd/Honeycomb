@@ -20,12 +20,11 @@ public:
     
     /// Ensure that enough storage is allocated for a number of objects
     void reserve(szt capacity)                      { _pool._buckets[0]->reserve(capacity); }
-    
     szt capacity() const                            { return _pool._buckets[0]->_blockCount; }
     
     /// Construct object and remove from free list
     template<class... Args>
-    T* construct(Args&&... args)                    { return new (_pool.alloc(sizeof(T))) T(forward<Args>(args)...); }
+    T* construct(Args&&... args)                    { return new (_pool.alloc(sizeof(T))) T{forward<Args>(args)...}; }
     
     /// Destroy object and add to free list
     void destroy(T* ptr)                            { assert(ptr); ptr->~T(); _pool.free(ptr); }
@@ -34,7 +33,7 @@ public:
     Handle handle(T* ptr) const
     {
         if (!ptr) return nullptr;
-        MemPool::Bucket::BlockHeader* header = MemPool::Bucket::blockHeader(ptr);
+        MemPool::Bucket::BlockHeader* header = MemPool::Bucket::blockHeader(reinterpret_cast<uint8*>(ptr));
         header->validate(MemPool::Bucket::BlockHeader::Debug::sigUsed);
         return header->handle;
     }

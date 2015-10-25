@@ -35,7 +35,8 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
 
     //keep track of chunk so that handles can reference their chunk by index
     assert(_chunkCount < _chunks.size(), "Max chunks reached");
-    _chunks[_chunkCount++] = Buffer<uint8>(chunk, chunkSize);
+    _chunks[_chunkCount] = Buffer<uint8>(chunk, chunkSize);
+    ++_chunkCount; //must increment only after initing element, or concurrent ops will fail
     _chunkSizeTotal += chunkSize;
     _blockCount += blockCount;
     

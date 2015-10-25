@@ -136,10 +136,11 @@ public:
         _threadDataCount(0),
         _threadData(bind(&HazardMem::initThreadData, this)) {}
     
-    Node& createNode()
+    template<class... Args>
+    Node& createNode(Args&&... args)
     {
         Node* node = _alloc.allocate(1);
-        _alloc.construct(node);
+        _alloc.construct(node, forward<Args>(args)...);
         ref(*node);
         return *node;
     }
@@ -274,7 +275,8 @@ private:
         assert(_threadDataCount < _threadMax, "Too many threads accessing memory manager");
         //Create new data and add to list
         auto threadData = new ThreadData(*this);
-        _threadDataList[_threadDataCount++] = UniquePtr<ThreadData>(threadData);
+        _threadDataList[_threadDataCount] = UniquePtr<ThreadData>(threadData);
+        ++_threadDataCount; //must increment only after initing element, or concurrent ops will fail
         return new ThreadDataRef{*threadData};
     }
 

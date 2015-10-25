@@ -59,7 +59,7 @@ void test()
         
         List list;
         vector<Thread> threads;
-        for (auto i : range(7)) { threads.push_back(Thread([&]{ ListThread::run(list); })); mt_unused(i); }
+        for (auto i : range(9)) { threads.push_back(Thread([&]{ ListThread::run(list); })); mt_unused(i); }
         for (auto& e : threads) e.start();
         for (auto& e : threads) e.join();
 
@@ -67,7 +67,6 @@ void test()
         debug_print(sout() << "List Size: " << list.size() << endl);
         for (auto& e : list) { debug_print(sout() << "List " << count++ << " : " << e << endl); mt_unused(e); }
     }
-    //=============================
 
     //=============================
     // SpscDeque
@@ -111,14 +110,57 @@ void test()
 
         int data;
         int count = 0;
-        debug_print(sout() << "Deque Size: " << list.size() << endl);
+        debug_print(sout() << "SpscDeque Size: " << list.size() << endl);
         while (list.pop_front(data))
         {
-            debug_print(sout() << "Deque " << count << " : " << data << endl);
+            debug_print(sout() << "SpscDeque " << count << " : " << data << endl);
             ++count;
         }          
     }
+    
     //=============================
+    // LockFree Stack
+    //=============================
+    {
+        typedef lockfree::Stack<int> List;
+
+        struct ListThread
+        {
+            static void run(List& list)
+            {
+                Chacha rand;
+                int data;
+                int count = 100;
+                for (int i = 0; i < count; ++i)
+                {
+                    switch (Discrete(rand, 0, 1).nextInt())
+                    {
+                    case 0:
+                        list.push(i);
+                        break;
+                    case 1:
+                        list.pop(data);
+                        break;
+                    }
+                }
+            }
+        };
+        
+        List list;
+        vector<Thread> threads;
+        for (auto i : range(10)) { threads.push_back(Thread([&]{ ListThread::run(list); })); mt_unused(i); }
+        for (auto& e : threads) e.start();
+        for (auto& e : threads) e.join();
+
+        int data;
+        int count = 0;
+        debug_print(sout() << "Stack Size: " << list.size() << endl);
+        while (list.pop(data))
+        {
+            debug_print(sout() << "Stack " << count << " : " << data << endl);
+            ++count;
+        }          
+    }
     
     //=============================
     // DepTask

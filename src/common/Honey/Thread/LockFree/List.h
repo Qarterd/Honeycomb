@@ -44,9 +44,12 @@ private:
             bool operator!=(const Link& rhs)                { return !operator==(rhs); }
         };
 
+        template<class T_>
+        Node(T_&& val)                                      : val(forward<T_>(val)) {}
+        
+        T val;
         Link next;
         Link prev;
-        T data;
     };
     typedef typename Node::Link Link;
 
@@ -59,7 +62,7 @@ public:
       * \param threadMax    Max number of threads that can access this container.
       *                     Use a thread pool so the threads have a longer life cycle than this container.
       */
-    List(const Alloc& alloc = Alloc(), int threadMax = 8) :
+    List(const Alloc& alloc = Alloc(), int threadMax = 10) :
         _mem(*this, alloc, threadMax),
         _size(0)
     {
@@ -80,9 +83,9 @@ public:
     
     /// Insert new element at beginning of list
     template<class T_>
-    void push_front(T_&& data)
+    void push_front(T_&& val)
     {
-        Node& node = createNode(forward<T_>(data));
+        Node& node = createNode(forward<T_>(val));
         Node* prev = _mem.deRefLink(_head);
         Node* next = _mem.deRefLink(prev->next);
         _backoff.reset();
@@ -103,9 +106,9 @@ public:
 
     /// Add new element onto end of list
     template<class T_>
-    void push_back(T_&& data)
+    void push_back(T_&& val)
     {
-        Node& node = createNode(forward<T_>(data));
+        Node& node = createNode(forward<T_>(val));
         Node* next = _mem.deRefLink(_tail);
         Node* prev = _mem.deRefLink(next->prev);
         _backoff.reset();
@@ -123,8 +126,8 @@ public:
         pushEnd(node, *next);
     }
 
-    /// Pop element from beginning of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_front(optional<T&> data = optnull)
+    /// Remove element from beginning of list, stores in `val`.  Returns true on success, false if there is no element to pop.
+    bool pop_front(optional<T&> val = optnull)
     {
         Node* prev = _mem.deRefLink(_head);
         _backoff.reset();
@@ -153,7 +156,7 @@ public:
                 prev = &correctPrev(*prev, *next);
                 _mem.releaseRef(*prev);
                 _mem.releaseRef(*next);
-                if (data) data = move(node->data);
+                if (val) val = move(node->val);
                 _mem.releaseRef(*node);
                 _mem.deleteNode(*node);
                 break;
@@ -166,8 +169,8 @@ public:
         return true;
     }
 
-    /// Pop element from end of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_back(optional<T&> data = optnull)
+    /// Remove element from end of list, stores in `val`.  Returns true on success, false if there is no element to pop.
+    bool pop_back(optional<T&> val = optnull)
     {
         Node* next = _mem.deRefLink(_tail);
         Node* node = _mem.deRefLink(next->prev);
@@ -192,7 +195,7 @@ public:
                 prev = &correctPrev(*prev, *next);
                 _mem.releaseRef(*prev);
                 _mem.releaseRef(*next);
-                if (data) data = move(node->data);
+                if (val) val = move(node->val);
                 _mem.releaseRef(*node);
                 _mem.deleteNode(*node);
                 break;
@@ -299,7 +302,7 @@ public:
         bool operator==(const Iter_& rhs) const             { return _cur == rhs._cur; }
         bool operator!=(const Iter_& rhs) const             { return !operator==(rhs); }
         
-        reference operator*() const                         { return _cur->data; }
+        reference operator*() const                         { return _cur->val; }
         pointer operator->() const                          { return &operator*(); }
 
         /// Returns true if iterator points to valid element that has not been deleted
@@ -366,32 +369,32 @@ public:
     ConstIterR rend() const                                 { return ConstIter(*this, false); }
     IterR rend()                                            { return Iter(*this, false); }
 
-    /// Get reference to front element.  Returns true on success, false if there is no element.
-    bool front(T& data)
+    /// Get a copy of the front element.  Returns true on success, false if there is no element.
+    bool front(T& val)
     {
         Iter it = begin();
         if (it == end() || !it.valid()) return false;
-        data = *it;
+        val = *it;
         return true;
     }
 
-    /// Get reference to back element.  Returns true on success, false if there is no element.
-    bool back(T& data)
+    /// Get a copy of the back element.  Returns true on success, false if there is no element.
+    bool back(T& val)
     {
         IterR it = rbegin();
         if (it == rend() || !it.valid()) return false;
-        data = *it;
+        val = *it;
         return true;
     }
 
     /// Insert element before iterator position.  Returns iterator pointing to new element.
     template<class T_>
-    Iter insert(const Iter& it, T_&& data)
+    Iter insert(const Iter& it, T_&& val)
     {
         Iter pos = it;
         assert(pos._cur != _head.ptr());
 
-        Node& node = createNode(forward<T_>(data));
+        Node& node = createNode(forward<T_>(val));
         Node* prev = _mem.deRefLink(pos._cur->prev);
         Node* next = nullptr;
         _backoff.reset();
@@ -420,8 +423,8 @@ public:
         return pos;
     }
 
-    /// Erase element at iterator position, store erased element in `data`, and advance iterator. Returns true if this thread erased and stored the element, false if already erased.
-    bool erase(Iter& it, optional<T&> data = optnull)
+    /// Erase element at iterator position, store erased element in `val`, and advance iterator. Returns true if this thread erased and stored the element, false if already erased.
+    bool erase(Iter& it, optional<T&> val = optnull)
     {
         bool erased = false;
         Node* node = it._cur;
@@ -450,7 +453,7 @@ public:
                 prev = &correctPrev(*prev, *next);
                 _mem.releaseRef(*prev);
                 _mem.releaseRef(*next);
-                if (data) data = move(node->data);
+                if (val) val = move(node->val);
                 _mem.deleteNode(*node);
                 break;
             }
@@ -523,13 +526,10 @@ private:
     }
 
     template<class T_>
-    Node& createNode(T_&& data)
+    Node& createNode(T_&& val)
     {
-        Node& node = _mem.createNode();
+        Node& node = _mem.createNode(forward<T_>(val));
         assert((reinterpret_cast<intptr_t>(&node) & ~Link::ptr_mask) == 0, "Pointer not 2-byte aligned, bits found outside mask.");
-        node.prev = Link();
-        node.next = Link();
-        node.data = forward<T_>(data);
         return node;
     }
 

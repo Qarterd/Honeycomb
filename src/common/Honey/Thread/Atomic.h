@@ -118,7 +118,7 @@ namespace atomic
 template<class T, bool B = std::is_integral<T>::value>
 class Atomic;
 
-/// Wrapper around trivially copyable type to make load/store operations atomic
+/// Wrapper around a trivially copyable type to make load/store operations atomic and sequentially consistent
 template<class T>
 class Atomic<T, false>
 {
@@ -136,7 +136,9 @@ class Atomic<T, false>
 public:
     static_assert(std::is_trivially_copyable<T>::value, "Atomic type must be trivially copyable");
     
+    /// Trivial constructor, does not initialize the underlying value
     Atomic() = default;
+    /// Initialize the underlying value to `val`
     Atomic(T val)                                               { operator=(val); }
     Atomic(const Atomic& val)                                   { operator=(val); }
 
@@ -157,7 +159,7 @@ private:
     SwapType _val;
 };
 
-/// Wrapper around integral type to make all operations atomic
+/// Wrapper around integral type to make all operations atomic and sequentially consistent
 template<class T>
 class Atomic<T, true>
 {
@@ -211,7 +213,7 @@ private:
     SwapType _val;
 };
 
-/// Wrapper around pointer type to make all operations atomic
+/// Wrapper around pointer type to make all operations atomic and sequentially consistent
 template<class T>
 class Atomic<T*, false>
 {
