@@ -10,15 +10,17 @@ namespace honey
 namespace lockfree
 {
 
-/// Lock-free doubly-linked list. Automatically expands to accommodate new elements.
+/// Lock-free doubly-linked list
 /**
   * Based on the paper: "Lock-free deques and doubly linked lists", Sundell, et al. - 2008
   *
   * \tparam T           Container element type
+  * \tparam Alloc_      Allocator for elements, should be lock-free.
+                        If using MemPool then ensure it has a bucket large enough to hold List<T>::Node.
   * \tparam Backoff     Backoff algorithm to reduce contention
   * \tparam iterMax     Max number of iterator instances per thread
   */
-template<class T, class Backoff = Backoff, uint8 iterMax = 2>
+template<class T, class Alloc_ = SmallAllocator<T>, class Backoff = Backoff, uint8 iterMax = 2>
 class List : HazardMemConfig, mt::NoCopy
 {
     template<class> friend class HazardMem;
@@ -50,14 +52,15 @@ private:
 
 public:
     typedef T value_type;
-
+    typedef Alloc_ Alloc;
+    
     /**
       * \param capacity     initial capacity
       * \param threadMax    Max number of threads that can access this container.
       *                     Use a thread pool so the threads have a longer life cycle than this container.
       */
-    List(szt capacity = 0, int threadMax = 8) :
-        _mem(*this, capacity, threadMax),
+    List(const Alloc& alloc = Alloc(), int threadMax = 8) :
+        _mem(*this, alloc, threadMax),
         _size(0)
     {
         _mem.storeRef(_head, &createNode(T()));
@@ -74,9 +77,6 @@ public:
         _mem.deleteNode(*_head.ptr());
         _mem.deleteNode(*_tail.ptr());
     }
-
-    /// Ensure that enough storage is allocated for a number of elements
-    void reserve(szt capacity)                              { _mem.reserve(capacity); }
     
     /// Insert new element at beginning of list
     template<class T_>

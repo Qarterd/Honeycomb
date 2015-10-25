@@ -3,7 +3,7 @@
 
 #include "Honey/Thread/Thread.h"
 #include "Honey/Thread/Atomic.h"
-#include "Honey/Thread/LockFree/FreeList.h"
+#include "Honey/Memory/SmallAllocator.h"
 
 namespace honey { namespace lockfree
 {
@@ -40,9 +40,11 @@ struct HazardMemLink
 /// Configuration interface for memory manager.  Inherit this class and override types and static members.
 struct HazardMemConfig
 {
-    typedef HazardMemNode         Node;
-    typedef HazardMemLink<Node>   Link;
-
+    typedef HazardMemNode           Node;
+    typedef HazardMemLink<Node>     Link;
+    /// Allocator for nodes, should be lock-free
+    typedef SmallAllocator<Node>    Alloc;
+    
     /// Number of links per node
     static const uint8 linkMax = 2;
     /// Number of links per node that may transiently point to a deleted node
@@ -56,7 +58,7 @@ struct HazardMemConfig
     void terminateNode(Node& node, bool concurrent);
 };
 
-/// Lock-free memory manager for concurrent algorithms.
+/// Lock-free memory manager, provides safe memory reclamation for concurrent algorithms.
 /**
   * Based on the paper: "Efficient and Reliable Lock-Free Memory Reclamation Based on Reference Counting", Gidenstam, et al. - 2005
   */
@@ -66,7 +68,8 @@ class HazardMem : mt::NoCopy
 public:
     typedef typename Config::Node Node;
     typedef typename Config::Link Link;
-
+    typedef typename Config::Alloc::template rebind<Node>::other Alloc;
+    
 private:
     /// Per thread data.  Linked list is maintained of all threads using the memory manager.
     struct ThreadData
@@ -74,6 +77,7 @@ private:
         ThreadData(HazardMem& mem) :
             mem(mem),
             delNodes(new DelNode[mem._threshClean]),
+            delHazards(mem._alloc),
             delHead(nullptr),
             delCount(0)
         {
@@ -90,12 +94,11 @@ private:
         {
             //Free all nodes waiting to be reclaimed
             for (DelNode* delNode = delHead; delNode; delNode = delNode->next)
-                mem._freeList.destruct(delNode->node);
+            {
+                mem._alloc.destroy(delNode->node.load());
+                mem._alloc.deallocate(delNode->node, 1);
+            }
         }
-
-        HazardMem&              mem;
-        array<Atomic<Node*>, Config::hazardMax> hazards;
-        vector<int8>            hazardFreeList;
 
         struct DelNode
         {
@@ -106,35 +109,37 @@ private:
             Atomic<bool>        done;
             DelNode*            next;
         };
+        typedef set<Node*, std::less<Node*>, typename Alloc::template rebind<Node*>::other> NodeLookup;
+        
+        HazardMem&              mem;
+        array<Atomic<Node*>, Config::hazardMax> hazards;
+        vector<int8>            hazardFreeList;
         UniquePtr<DelNode[]>    delNodes;
         vector<DelNode*>        delNodeFreeList;
-        set<Node*, std::less<Node*>, FreeListAllocator<Node*>> delHazards;
+        NodeLookup              delHazards;
         DelNode*                delHead;
         szt                     delCount;
     };
     
 public:
     /**
-      * \param config
       * \param threadMax    Max number of threads that can access the memory manager.
       *                     Use a thread pool and ensure that it has a longer life cycle than the mem manager.
       */ 
-    HazardMem(Config& config, szt capacity = 0, int threadMax = 8) :
+    HazardMem(Config& config, const Alloc& alloc, int threadMax) :
         _config(config),
+        _alloc(alloc),
         _threadMax(threadMax),
         _threshClean(_threadMax*(Config::hazardMax + Config::linkMax + Config::linkDelMax + 1)),
         _threshScan(Config::hazardMax*2 < _threshClean ? Config::hazardMax*2 : _threshClean),
-        _freeList(capacity),
         _threadDataList(_threadMax),
         _threadDataCount(0),
         _threadData(bind(&HazardMem::initThreadData, this)) {}
-
-    /// Ensure enough storage space for a number of nodes
-    void reserve(szt capacity)              { _freeList.reserve(capacity); }
     
     Node& createNode()
     {
-        Node* node = _freeList.construct();
+        Node* node = _alloc.allocate(1);
+        _alloc.construct(node);
         ref(*node);
         return *node;
     }
@@ -349,7 +354,8 @@ private:
                     _config.terminateNode(node, false);
                     //Free the node
                     td.delNodeFreeList.push_back(delNode);
-                    _freeList.destruct(&node);
+                    _alloc.destroy(&node);
+                    _alloc.deallocate(&node, 1);
                     continue;
                 }
                 _config.terminateNode(node, true);
@@ -367,10 +373,10 @@ private:
     }
 
     Config&                         _config;
+    Alloc                           _alloc;
     const int                       _threadMax;
     const szt                       _threshClean;
     const szt                       _threshScan;
-    FreeList<Node>                  _freeList;
     vector<UniquePtr<ThreadData>>   _threadDataList;
     Atomic<int>                     _threadDataCount;
     thread::Local<ThreadDataRef>    _threadData;

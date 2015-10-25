@@ -27,8 +27,8 @@ public:
     template<class... Args>
     T* construct(Args&&... args)                    { return new (_pool.alloc(sizeof(T))) T(forward<Args>(args)...); }
     
-    /// Destruct object and add to free list
-    void destruct(T* ptr)                           { assert(ptr); ptr->~T(); _pool.free(ptr); }
+    /// Destroy object and add to free list
+    void destroy(T* ptr)                            { assert(ptr); ptr->~T(); _pool.free(ptr); }
     
     /// Get lock-free handle for object
     Handle handle(T* ptr) const
