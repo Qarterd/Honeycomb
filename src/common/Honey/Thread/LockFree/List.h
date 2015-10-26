@@ -369,7 +369,7 @@ public:
     ConstIterR rend() const                                 { return ConstIter(*this, false); }
     IterR rend()                                            { return Iter(*this, false); }
 
-    /// Get a copy of the front element.  Returns true on success, false if there is no element.
+    /// Get a copy of the front element. Returns true on success, false if there is no element.
     bool front(T& val)
     {
         Iter it = begin();
@@ -378,7 +378,7 @@ public:
         return true;
     }
 
-    /// Get a copy of the back element.  Returns true on success, false if there is no element.
+    /// Get a copy of the back element. Returns true on success, false if there is no element.
     bool back(T& val)
     {
         IterR it = rbegin();
@@ -387,7 +387,7 @@ public:
         return true;
     }
 
-    /// Insert element before iterator position.  Returns iterator pointing to new element.
+    /// Insert element before iterator position. Returns iterator pointing to new element.
     template<class T_>
     Iter insert(const Iter& it, T_&& val)
     {

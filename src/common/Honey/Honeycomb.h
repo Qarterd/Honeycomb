@@ -117,6 +117,7 @@
 #include "Honey/Thread/LockFree/FreeList.h"
 #include "Honey/Thread/LockFree/HazardMem.h"
 #include "Honey/Thread/LockFree/List.h"
+#include "Honey/Thread/LockFree/Queue.h"
 #include "Honey/Thread/LockFree/SpscDeque.h"
 #include "Honey/Thread/LockFree/Stack.h"
 #include "Honey/Thread/Atomic.h"

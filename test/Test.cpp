@@ -69,7 +69,7 @@ void test()
     }
 
     //=============================
-    // SpscDeque
+    // LockFree SpscDeque
     //=============================
     {
         typedef lockfree::SpscDeque<int> List;
@@ -133,13 +133,16 @@ void test()
                 int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
-                    switch (Discrete(rand, 0, 1).nextInt())
+                    switch (Discrete(rand, 0, 2).nextInt())
                     {
                     case 0:
                         list.push(i);
                         break;
                     case 1:
                         list.pop(data);
+                        break;
+                    case 2:
+                        list.top(data);
                         break;
                     }
                 }
@@ -158,6 +161,56 @@ void test()
         while (list.pop(data))
         {
             debug_print(sout() << "Stack " << count << " : " << data << endl);
+            ++count;
+        }          
+    }
+    
+    //=============================
+    // LockFree Queue
+    //=============================
+    {
+        typedef lockfree::Queue<int> List;
+
+        struct ListThread
+        {
+            static void run(List& list)
+            {
+                Chacha rand;
+                int data;
+                int count = 100;
+                for (int i = 0; i < count; ++i)
+                {
+                    switch (Discrete(rand, 0, 3).nextInt())
+                    {
+                    case 0:
+                        list.push(i);
+                        break;
+                    case 1:
+                        list.pop(data);
+                        break;
+                    case 2:
+                        list.front(data);
+                        break;
+                    case 3:
+                        list.back(data);
+                        break;
+                    }
+                }
+            }
+        };
+        
+        List list;
+        vector<Thread> threads;
+        for (auto i : range(10)) { threads.push_back(Thread([&]{ ListThread::run(list); })); mt_unused(i); }
+        for (auto& e : threads) e.start();
+        for (auto& e : threads) e.join();
+
+        int data;
+        int count = 0;
+        debug_print(sout() << "Queue Size: " << list.size() << endl);
+        while (list.pop(data))
+        {
+            debug_print(sout() << "Queue " << count << " : " << data << endl);
             ++count;
         }          
     }

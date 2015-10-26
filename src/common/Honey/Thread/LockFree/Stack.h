@@ -6,7 +6,7 @@
 namespace honey { namespace lockfree
 {
 
-/// Lock-free FILO stack. Automatically expands to accommodate new elements.
+/// Lock-free FILO stack. Uses internal free-list allocator, automatically expands to accommodate new elements.
 template<class T>
 class Stack : mt::NoCopy
 {
@@ -16,13 +16,16 @@ class Stack : mt::NoCopy
         Node* next;
     };
     
-public:
-    typedef T value_type;
     typedef FreeList<Node> FreeList;
     typedef typename FreeList::TaggedHandle TaggedHandle;
     
+public:
+    typedef T value_type;
+    
     Stack(szt capacity = 0)                         : _freeList(capacity), _top(TaggedHandle()), _size(0) {}
-
+    
+    ~Stack()                                        { clear(); }
+    
     /// Ensure that enough storage is allocated for a number of elements
     void reserve(szt capacity)                      { _freeList.reserve(capacity); }
     szt capacity() const                            { return _freeList.capacity(); }
@@ -60,6 +63,22 @@ public:
         _freeList.destroy(node);
         return true;
     }
+    
+    /// Get a copy of the top element. Returns true on success, false if there is no element.
+    bool top(T& val)
+    {
+        //loop to ensure val we read is consistent with top, otherwise we could end up returning a destroyed value
+        TaggedHandle top;
+        do
+        {
+            if (!(top = _top)) return false;
+            val = _freeList.deref(top)->val;
+        } while (top != _top);
+        return true;
+    }
+    
+    /// Remove all elements
+    void clear()                                    { while (pop()); }
     
     bool empty() const                              { return !_size; }
     szt size() const                                { return _size; }

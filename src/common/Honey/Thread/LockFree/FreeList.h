@@ -6,7 +6,12 @@
 namespace honey { namespace lockfree
 {
 
-/// Lock-free free list, allocates objects and provides memory reclamation and automatic storage expansion. Based on MemPool.
+/// Lock-free free list, allocates re-usable objects and provides automatic storage expansion for concurrent algorithms
+/**
+  * Memory is only reclaimed upon destruction.
+  *
+  * \see HazardMem for lock-free memory reclamation.
+  */
 template<class T>
 class FreeList : mt::NoCopy
 {
@@ -22,23 +27,20 @@ public:
     void reserve(szt capacity)                      { _pool._buckets[0]->reserve(capacity); }
     szt capacity() const                            { return _pool._buckets[0]->_blockCount; }
     
+    /// Remove object from free list without constructing it
+    T* alloc()                                      { return static_cast<T*>(_pool.alloc(sizeof(T))); }
     /// Construct object and remove from free list
     template<class... Args>
-    T* construct(Args&&... args)                    { return new (_pool.alloc(sizeof(T))) T{forward<Args>(args)...}; }
+    T* construct(Args&&... args)                    { return new (alloc()) T{forward<Args>(args)...}; }
     
+    /// Add object to free list without destroying it
+    void free(T* ptr)                               { assert(ptr); _pool.free(ptr); }
     /// Destroy object and add to free list
-    void destroy(T* ptr)                            { assert(ptr); ptr->~T(); _pool.free(ptr); }
+    void destroy(T* ptr)                            { assert(ptr); ptr->~T(); free(ptr); }
     
-    /// Get lock-free handle for object
-    Handle handle(T* ptr) const
-    {
-        if (!ptr) return nullptr;
-        MemPool::Bucket::BlockHeader* header = MemPool::Bucket::blockHeader(reinterpret_cast<uint8*>(ptr));
-        header->validate(MemPool::Bucket::BlockHeader::Debug::sigUsed);
-        return header->handle;
-    }
-    
-    /// Get object from lock-free handle
+    /// Get compressed handle for object
+    Handle handle(T* ptr) const                     { return ptr ? MemPool::Bucket::blockHeader(reinterpret_cast<uint8*>(ptr))->handle : nullptr; }
+    /// Get object from compressed handle
     T* deref(Handle handle) const                   { return reinterpret_cast<T*>(MemPool::Bucket::blockData(_pool._buckets[0]->deref(handle))); }
     
 private:

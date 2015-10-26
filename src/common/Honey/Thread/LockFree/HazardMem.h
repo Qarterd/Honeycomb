@@ -13,18 +13,9 @@ struct HazardMemNode
 {
     HazardMemNode()                         : ref(0), trace(false), del(false) {}
 
-    Atomic<int>             ref;            ///< Reference count by all threads
-    Atomic<bool>            trace;          ///< Used in scan()
-    Atomic<bool>            del;            ///< Marked for deletion
-
-    /// Hazard pointer info. Each thread may contain a local reference to this node.
-    struct Hazard
-    {
-        Hazard()                            : index(-1), ref(0) {}
-        int8 index;                         ///< Index into hazard pointer list
-        int8 ref;                           ///< Reference count by single thread
-    };
-    thread::Local<Hazard>   hazard;
+    Atomic<int>     ref;        ///< Reference count by all threads
+    Atomic<bool>    trace;      ///< Used in scan()
+    Atomic<bool>    del;        ///< Marked for deletion
 };
 
 /// Base link class, contains a generic Cas-able data chunk.  The data chunk contains a pointer to a HazardMemNode.
@@ -82,6 +73,7 @@ private:
             delCount(0)
         {
             hazards.fill(nullptr);
+            hazardRefCounts.fill(0);
             
             hazardFreeList.reserve(hazards.size());
             for (auto i : range(hazards.size())) hazardFreeList.push_back(i);
@@ -99,7 +91,7 @@ private:
                 mem._alloc.deallocate(delNode->node, 1);
             }
         }
-
+        
         struct DelNode
         {
             DelNode()                       : node(nullptr), claim(0), done(false), next(nullptr) {}
@@ -113,7 +105,8 @@ private:
         
         HazardMem&              mem;
         array<Atomic<Node*>, Config::hazardMax> hazards;
-        vector<int8>            hazardFreeList;
+        array<uint8, Config::hazardMax> hazardRefCounts; ///< Reference count by single thread
+        vector<uint8>           hazardFreeList;
         UniquePtr<DelNode[]>    delNodes;
         vector<DelNode*>        delNodeFreeList;
         NodeLookup              delHazards;
@@ -152,7 +145,7 @@ public:
         node.del = true;
         node.trace = false;
 
-        //Get free del node
+        //get free del node
         assert(td.delNodeFreeList.size() > 0, "Not enough del nodes, algorithm problem");
         auto& delNode = *td.delNodeFreeList.back();
         td.delNodeFreeList.pop_back();
@@ -174,32 +167,36 @@ public:
     Node* deRefLink(Link& link)
     {
         ThreadData& td = threadData();
-        //Get free hazard index
+        //get free hazard index
         assert(td.hazardFreeList.size() > 0, "Not enough hazard pointers");
-        int8 index = td.hazardFreeList.back();
+        uint8 index = td.hazardFreeList.back();
 
         Node* node = nullptr;
         while(true)
         {
             node = link.ptr();
-            //Set up hazard
+            //init new hazard
             td.hazards[index] = node;
-            //Ensure that link is protected
+            //ensure that link is protected
             if (link.ptr() == node) break;
         }
 
-        //Only add hazard if pointer is valid
+        //only add hazard if pointer is valid
         if (node)
         {
-            auto& hazard = *node->hazard;
-            //If hazard is already referenced by this thread then we don't need a new hazard
-            if (hazard.ref++ > 0)
-                td.hazards[index] = nullptr;
-            else
+            //check if hazard is already referenced by this thread
+            sdt found = -1;
+            for (auto i: range(td.hazards.size())) if (i != index && td.hazards[i] == node) { found = i; break; }
+            if (found >= 0)
             {
-                hazard.index = index;
-                td.hazardFreeList.pop_back();
+                //don't need a new hazard
+                td.hazards[index] = nullptr;
+                index = found;
             }
+            else
+                //use new hazard
+                td.hazardFreeList.pop_back();
+            ++td.hazardRefCounts[index];
         }
         return node;
     }
@@ -207,32 +204,39 @@ public:
     /// Add reference to node, sets up hazard pointer
     void ref(Node& node)
     {
-        auto& hazard = *node.hazard;
-        //If hazard is already referenced by this thread then we don't need a new hazard
-        if (hazard.ref++ > 0) return;
-
         ThreadData& td = threadData();
-        //Get free hazard index
-        assert(td.hazardFreeList.size() > 0, "Not enough hazard pointers");
-        int8 index = td.hazardFreeList.back();
-        td.hazardFreeList.pop_back();
-        //Set up hazard
-        hazard.index = index;
-        td.hazards[index] = &node;
+        //check if hazard is already referenced by this thread
+        //we could use a map here but the hazard list is tiny for known algorithms
+        sdt index = -1;
+        for (auto i: range(td.hazards.size())) if (td.hazards[i] == &node) { index = i; break; }
+        
+        if (index < 0)
+        {
+            //get free hazard index
+            assert(td.hazardFreeList.size() > 0, "Not enough hazard pointers");
+            index = td.hazardFreeList.back();
+            td.hazardFreeList.pop_back();
+            //init new hazard
+            td.hazards[index] = &node;
+        }
+        ++td.hazardRefCounts[index];
     }
 
     /// Release a reference to a node, clears hazard pointer
     void releaseRef(Node& node)
     {
-        auto& hazard = *node.hazard;
-        //Only release if this thread has no more references
-        if (--hazard.ref > 0) return;
-        assert(hazard.ref == 0, "Hazard pointer already released");
-
         ThreadData& td = threadData();
-        //Return hazard index to free list
-        td.hazards[hazard.index] = nullptr;
-        td.hazardFreeList.push_back(hazard.index);
+        //get associated hazard pointer
+        sdt index = -1;
+        for (auto i: range(td.hazards.size())) if (td.hazards[i] == &node) { index = i; break; }
+        assert(index >= 0, "Hazard pointer not found");
+        
+        //only release if this thread has no more references
+        assert(td.hazardRefCounts[index], "Hazard pointer already released");
+        if (--td.hazardRefCounts[index]) return;
+        //release hazard index to free list
+        td.hazards[index] = nullptr;
+        td.hazardFreeList.push_back(index);
     }
 
     /// Compare and swap link.  Set link in a concurrent environment.  Returns false if the link was changed by another thread.
@@ -271,9 +275,9 @@ private:
     ThreadDataRef* initThreadData()
     {
         SpinLock::Scoped _(_threadDataLock);
-        //Increase thread count
+        //increase thread count
         assert(_threadDataCount < _threadMax, "Too many threads accessing memory manager");
-        //Create new data and add to list
+        //create new data and add to list
         auto threadData = new ThreadData(*this);
         _threadDataList[_threadDataCount] = UniquePtr<ThreadData>(threadData);
         ++_threadDataCount; //must increment only after initing element, or concurrent ops will fail
@@ -316,7 +320,7 @@ private:
     {
         ThreadData& td = threadData();
 
-        //Set trace to make sure ref == 0 is consistent across hazard check below
+        //set trace to make sure ref == 0 is consistent across hazard check below
         for (auto* delNode = td.delHead; delNode; delNode = delNode->next)
         {
             Node& node = *delNode->node;
@@ -328,7 +332,7 @@ private:
             }
         }
 
-        //Flag all del nodes that have a hazard so they are not reclaimed
+        //flag all del nodes that have a hazard so they are not reclaimed
         for (auto ti : range(_threadDataCount.load()))
         {
             ThreadData* tdata = _threadDataList[ti];
@@ -339,7 +343,7 @@ private:
             }
         }
 
-        //Reclaim nodes and build new list of del nodes that could not be reclaimed
+        //reclaim nodes and build new list of del nodes that could not be reclaimed
         typename ThreadData::DelNode* newDelHead = nullptr;
         szt newDelCount = 0;
 

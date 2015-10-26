@@ -136,7 +136,7 @@ void MemPool::Bucket::free(BlockHeader* header)
         {
             //Detach from used list
             SpinLock::Scoped _(_lock);
-            if (_usedHead == header->handle) _usedHead = header->next;
+            if (_usedHead.handle() == header->handle) _usedHead = header->next;
             if (header->debug.prev) deref(header->debug.prev)->next = header->next;
             if (header->next) deref(header->next)->debug.prev = header->debug.prev;
             _usedSize -= header->debug.size;

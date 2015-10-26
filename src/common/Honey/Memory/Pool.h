@@ -80,8 +80,8 @@ private:
             Handle(nullptr_t)                               : Handle() {}
             Handle(uint8 chunk, Int block)                  : index((block << 8) | chunk) {}
             
-            bool operator==(Handle handle) const            { return index == handle.index; }
-            bool operator!=(Handle handle) const            { return !operator==(handle); }
+            bool operator==(Handle rhs) const               { return index == rhs.index; }
+            bool operator!=(Handle rhs) const               { return !operator==(rhs); }
             explicit operator bool() const                  { return index != Int(-1); }
             
             uint8 chunk() const                             { return index & 0xFF; }
@@ -96,8 +96,13 @@ private:
             TaggedHandle()                                  : tag(0) {}
             TaggedHandle(Handle handle, Int tag)            : Handle(handle), tag(tag) {}
             
-            TaggedHandle& operator=(Handle handle)          { Handle::operator=(handle); return *this; }
+            TaggedHandle& operator=(Handle rhs)             { Handle::operator=(rhs); return *this; }
             
+            bool operator==(TaggedHandle rhs) const         { return Handle::operator==(rhs) && tag == rhs.tag; }
+            bool operator!=(TaggedHandle rhs) const         { return !operator==(rhs); }
+            
+            const Handle& handle() const                    { return *this; }
+            Handle& handle()                                { return *this; }
             Int nextTag() const                             { return tag+1; }
             
             Int tag;
