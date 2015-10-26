@@ -74,7 +74,7 @@ public:
         ++_size;
     }
     
-    /// Remove oldest element from the queue, stores copy in `val`. Returns true on success, false if there is no element to pop.
+    /// Remove oldest element from the queue, stores in `val`. Returns true on success, false if there is no element to pop.
     bool pop(optional<T&> val = optnull)
     {
         TaggedHandle head;
@@ -96,7 +96,7 @@ public:
             //ensure we have a next, it's possible that the list was empty and then changed before reading tail
             if (!next) continue;
             //tail is in position, read the value before cas, otherwise another pop can destroy next
-            if (val) val = _freeList.deref(next)->val;
+            if (val) val = _freeList.deref(next)->val; //copy val (not move) as there may be concurrent pop attempts
             //try to move head forward
             if (_head.cas(TaggedHandle(next, head.nextTag()), head)) break; //success
         }
