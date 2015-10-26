@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Honey/Thread/Future/Util.h"
-#include "Honey/Graph/Dep.h"
+#include "Honey/Thread/LockFree/Queue.h"
 
 namespace honey
 {
@@ -172,9 +172,10 @@ private:
     bool                                                _active;
     ConditionLock                                       _cond;
     bool                                                _condWait;
+    SpinLock                                            _condOne;
     multimap<MonoClock::TimePoint, PeriodicTask::Ptr>   _tasks;
     vector<PeriodicTask::Ptr>                           _due;
-    vector<tuple<Action, PeriodicTask::Ptr>>            _actions;
+    lockfree::Queue<tuple<Action, PeriodicTask::Ptr>>   _actions;
 };
 
 inline bool PeriodicTask::traceEnabled() const      { return PeriodicSched::trace; }

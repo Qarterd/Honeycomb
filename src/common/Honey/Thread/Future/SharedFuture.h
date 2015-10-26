@@ -44,7 +44,8 @@ class SharedFuture : public FutureBase, public FutureCommon<SharedFuture<R>, R>
     template<class> friend class SharedFuture;
     
 public:
-    typedef typename std::conditional<mt::isRef<R>::value || std::is_void<R>::value, R, typename mt::addConstRef<R>::type>::type Result;
+    typedef typename std::conditional<mt::isRef<R>::value || std::is_void<R>::value, R, typename mt::addConstRef<R>::type>::type ResultConstRef;
+    typedef typename std::conditional<mt::isRef<R>::value || std::is_void<R>::value, R, typename mt::addRef<R>::type>::type ResultRef;
     typedef future::priv::State<R> State;
     
     SharedFuture()                                              : _state(nullptr) {}
@@ -56,7 +57,8 @@ public:
     SharedFuture& operator=(SharedFuture&& rhs)                 { _state = move(rhs._state); return *this; }
 
     /// Get the future result, waiting if necessary. Throws any exception stored in the result. The result can be retrieved repeatedly.
-    Result get() const;
+    ResultConstRef get() const;
+    ResultRef get();
     
     /// Get the shared state
     State& __state() const                                      { assert(_state); return *_state; }
@@ -69,7 +71,14 @@ private:
 };
 
 template<class R>
-auto SharedFuture<R>::get() const -> Result
+auto SharedFuture<R>::get() const -> ResultConstRef
+{
+    wait();
+    if (_state->ex) _state->ex->raise();
+    return _state->result();
+}
+template<class R>
+auto SharedFuture<R>::get() -> ResultRef
 {
     wait();
     if (_state->ex) _state->ex->raise();
@@ -78,6 +87,12 @@ auto SharedFuture<R>::get() const -> Result
 
 template<>
 inline void SharedFuture<void>::get() const
+{
+    wait();
+    if (_state->ex) _state->ex->raise();
+}
+template<>
+inline void SharedFuture<void>::get()
 {
     wait();
     if (_state->ex) _state->ex->raise();

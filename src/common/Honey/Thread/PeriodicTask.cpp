@@ -107,19 +107,26 @@ void PeriodicSched::add(PeriodicTask& task)
 {
     task._due = MonoClock::now() + (task._delay ? *task._delay : task._period ? *task._period : MonoClock::Duration::zero());
     task._state = PeriodicTask::State::wait;
+    _actions.push(make_tuple(Action::add, &task));
     
+    SpinLock::Scoped one(_condOne, lock::Op::tryLock); //we only need one producer to signal consumer
+    if (!one) return;
     ConditionLock::Scoped _(_cond);
-    _actions.push_back(make_tuple(Action::add, &task));
     _condWait = false;
     _cond.signal();
+    one.unlock(); //allow next producer in before consumer processes signal
 }
 
 void PeriodicSched::remove(PeriodicTask& task)
 {
+    _actions.push(make_tuple(Action::remove, &task));
+    
+    SpinLock::Scoped one(_condOne, lock::Op::tryLock);
+    if (!one) return;
     ConditionLock::Scoped _(_cond);
-    _actions.push_back(make_tuple(Action::remove, &task));
     _condWait = false;
     _cond.signal();
+    one.unlock();
 }
 
 void PeriodicSched::run()
@@ -132,32 +139,29 @@ void PeriodicSched::run()
     
     while (_active)
     {
+        tuple<Action, PeriodicTask::Ptr> action;
+        while (_actions.pop(action))
         {
-            ConditionLock::Scoped _(_cond);
-            for (auto& e: _actions)
+            auto& task = get<1>(action);
+            switch (get<0>(action))
             {
-                auto& task = get<1>(e);
-                switch (get<0>(e))
+            case Action::add:
+                PeriodicTask_trace(*task, sout() << "Scheduled, due in " << Millisec(task->_due.load() - MonoClock::now()) << "ms");
+                _tasks.insert(make_pair(task->_due.load(), move(task)));
+                break;
+                
+            case Action::remove:
                 {
-                case Action::add:
-                    PeriodicTask_trace(*task, sout() << "Scheduled, due in " << Millisec(task->_due.load() - MonoClock::now()) << "ms");
-                    _tasks.insert(make_pair(task->_due.load(), move(task)));
-                    break;
-                    
-                case Action::remove:
+                    auto it = stdutil::findVal(_tasks, task->_due.load(), task);
+                    if (it != _tasks.end())
                     {
-                        auto it = stdutil::findVal(_tasks, task->_due.load(), task);
-                        if (it != _tasks.end())
-                        {
-                            if (task->_state == PeriodicTask::State::wait) task->cancelFunctor();
-                            PeriodicTask_trace(*task, "Cancelled");
-                            _tasks.erase(it);
-                        }
+                        if (task->_state == PeriodicTask::State::wait) task->cancelFunctor();
+                        PeriodicTask_trace(*task, "Cancelled");
+                        _tasks.erase(it);
                     }
-                    break;
                 }
+                break;
             }
-            _actions.clear();
         }
         
         for (auto it = _tasks.begin(); it != _tasks.end();)

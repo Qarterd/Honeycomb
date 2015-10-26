@@ -3,11 +3,12 @@
 
 #include "Honey/Thread/Thread.h"
 #include "Honey/Thread/Condition/Lock.h"
+#include "Honey/Thread/LockFree/Queue.h"
 
 namespace honey { namespace thread
 {
 
-/// Thread pool, spreads task execution across a pool of re-usable threads. Uses a work-stealing queue to ensure threads are never waiting.
+/// Spreads task execution across a pool of re-usable threads. Uses a lock-free work-stealing queue to ensure workers are never idle.
 class Pool : public SharedObj<Pool>
 {
 public:
@@ -65,24 +66,22 @@ private:
         /// Get next task
         TaskPtr next();
         
-        Pool&               _pool;
-        Thread              _thread;
-        bool                _active;
-        ConditionLock       _cond;
-        bool                _condWait;
-        deque<TaskPtr>      _tasks;
-        Atomic<szt>         _taskCount;
-        TaskPtr             _task;
+        Pool&                       _pool;
+        Thread                      _thread;
+        bool                        _active;
+        ConditionLock               _cond;
+        bool                        _condWait;
+        SpinLock                    _condOne;
+        lockfree::Queue<TaskPtr>    _tasks;
+        TaskPtr                     _task;
         static thread::Local<Worker*> _current;
     };
     
     void enqueue_(TaskPtr task);
     
-    szt                 _workerTaskMax;
-    Mutex               _lock;
-    vector<UniquePtr<Worker>> _workers;
-    deque<TaskPtr>      _tasks;
-    Atomic<szt>         _taskCount;
+    const szt                   _workerTaskMax;
+    vector<UniquePtr<Worker>>   _workers;
+    lockfree::Queue<TaskPtr>    _tasks;
 };
 
 } }

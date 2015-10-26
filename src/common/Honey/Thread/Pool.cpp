@@ -22,8 +22,7 @@ void Pool::Task::trace(const String& file, int line, const String& msg) const
 }
     
 Pool::Pool(szt workerCount, szt workerTaskMax) :
-    _workerTaskMax(workerTaskMax),
-    _taskCount(0)
+    _workerTaskMax(workerTaskMax)
 {       
     for (auto i: range(workerCount)) { _workers.push_back(make_unique<Worker>(*this)); mt_unused(i); }
     for (auto& e: _workers) e->start();
@@ -41,9 +40,9 @@ void Pool::enqueue_(TaskPtr task)
     sdt minIndex = -1;
     for (auto i: range(_workers.size()))
     {
-        auto& worker = *_workers[i];
-        if (worker._taskCount >= minSize) continue;
-        minSize = worker._taskCount;
+        auto size = _workers[i]->_tasks.size();
+        if (size >= minSize) continue;
+        minSize = size;
         minIndex = i;
     }
     
@@ -52,24 +51,20 @@ void Pool::enqueue_(TaskPtr task)
     {
         //Push to worker queue
         Worker& worker = *_workers[minIndex];
-        ConditionLock::Scoped _(worker._cond);
         if (worker._tasks.size() < _workerTaskMax)
         {
             added = true;
-            worker._tasks.push_back(move(task));
-            ++worker._taskCount;
-            Pool_trace(worker._tasks.back(), sout() << "Pushed to worker queue: " << worker._thread.threadId()
-                                                    << "; Queue size: " << worker._tasks.size());
+            Pool_trace(task, sout() << "Pushed to worker queue: " << worker._thread.threadId()
+                                    << "; Queue size: " << worker._tasks.size()+1);
+            worker._tasks.push(move(task));
         }
     }
     
     if (!added)
     {
         //All worker queues full, push to pool queue
-        Mutex::Scoped _(_lock);
-        _tasks.push_back(move(task));
-        ++_taskCount;
-        Pool_trace(_tasks.back(), sout() << "Pushed to pool queue. Queue size: " << _tasks.size());
+        Pool_trace(task, sout() << "Pushed to pool queue. Queue size: " << _tasks.size()+1);
+        _tasks.push(move(task));
     }
     
     //Find a waiting worker and signal it, start search at min index
@@ -77,10 +72,13 @@ void Pool::enqueue_(TaskPtr task)
     for (auto i: range(_workers.size()))
     {
         Worker& worker = *_workers[(first + i) % _workers.size()];
+        SpinLock::Scoped one(worker._condOne, lock::Op::tryLock); //we only need one producer to signal consumer
+        if (!one) continue;
         ConditionLock::Scoped _(worker._cond);
         if (!worker._condWait) continue;
         worker._condWait = false;
         worker._cond.signal();
+        one.unlock(); //allow next producer in before consumer processes signal
         break;
     }
 }
@@ -92,7 +90,7 @@ Pool::Worker::Worker(Pool& pool) :
     _thread(honey::bind(&Worker::run, this)),
     _active(false),
     _condWait(false),
-    _taskCount(0),
+    _tasks(pool._workerTaskMax),
     _task(nullptr)
 {
 }
@@ -139,12 +137,9 @@ auto Pool::Worker::next() -> TaskPtr
 {
     //Try to pop from our queue
     {
-        ConditionLock::Scoped _(_cond);
-        if (_tasks.size())
+        TaskPtr task;
+        if (_tasks.pop(task))
         {
-            TaskPtr task = move(_tasks.front());
-            _tasks.pop_front();
-            --_taskCount;
             Pool_trace(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
             return task;
         }
@@ -155,9 +150,9 @@ auto Pool::Worker::next() -> TaskPtr
     sdt maxIndex = -1;
     for (auto i: range(_pool._workers.size()))
     {
-        Worker& worker = *_pool._workers[i];
-        if (worker._taskCount <= maxSize) continue;
-        maxSize = worker._taskCount;
+        auto size = _pool._workers[i]->_tasks.size();
+        if (size <= maxSize) continue;
+        maxSize = size;
         maxIndex = i;
     }
     
@@ -165,12 +160,9 @@ auto Pool::Worker::next() -> TaskPtr
     {
         //Steal from other worker queue
         Worker& worker = *_pool._workers[maxIndex];
-        ConditionLock::Scoped _(worker._cond);
-        if (worker._tasks.size())
+        TaskPtr task;
+        if (worker._tasks.pop(task))
         {
-            TaskPtr task = move(worker._tasks.front());
-            worker._tasks.pop_front();
-            --worker._taskCount;
             Pool_trace(task, sout() << "Stolen from worker queue: " << worker._thread.threadId()
                                     << "; Queue size: " << worker._tasks.size());
             return task;
@@ -178,19 +170,15 @@ auto Pool::Worker::next() -> TaskPtr
     }
         
     //Pop task from pool queue
-    if (_pool._taskCount)
     {
-        Mutex::Scoped _(_pool._lock);
-        if (_pool._tasks.size())
+        TaskPtr task;
+        if (_pool._tasks.pop(task))
         {
-            TaskPtr task = move(_pool._tasks.front());
-            _pool._tasks.pop_front();
-            --_pool._taskCount;
             Pool_trace(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
             return task;
         }
     }
-    
+
     return nullptr;
 }
 

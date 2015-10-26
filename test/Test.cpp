@@ -130,7 +130,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 1000000;
+                int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 2).nextInt())
@@ -177,7 +177,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 1000000;
+                int count = 100;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 3).nextInt())
@@ -249,18 +249,18 @@ void test()
     // PeriodicTask
     //=============================
     {
-        //adds new task with 100ms period every 100ms, from a to e
-        std::map<Id, PeriodicTask_<void>::Ptr> tasks;
+        //asynchronously adds new tasks a-j with 50ms period and increasing delay
+        std::map<Id, SharedFuture<PeriodicTask_<void>::Ptr>> tasks;
         auto start = MonoClock::now();
-        for (auto i: range(5))
+        for (auto i: range(10))
         {
             String name = sout() << Char('a'+i);
-            tasks[name] = PeriodicSched::inst().schedule(
+            tasks[name] = future::async([=]() { return PeriodicSched::inst().schedule(
                 [=]{ Log_debug << PeriodicTask::current().info() << "elapsed " << Millisec(MonoClock::now() - start) << "ms"; },
-                100_ms, 100_ms*i, name);
+                50_ms, 50_ms*i, name); }).share();
         }
-        tasks["e"_id]->future().wait();
-        for (auto& e: values(tasks)) e->cancel();
+        tasks["j"_id].get()->future().wait();
+        for (auto& e: values(tasks)) e.get()->cancel();
     }
     
     {        
