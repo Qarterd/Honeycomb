@@ -46,7 +46,7 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
         TaggedHandle old;
         do
         {
-            old = _freeHead;
+            old = _freeHead.load(atomic::Order::acquire);
             prev->next = old;
         } while (!_freeHead.cas(TaggedHandle(first->handle, old.nextTag()), old));
         _freeCount += blockCount;
@@ -62,7 +62,7 @@ void* MemPool::Bucket::alloc(szt size, uint8 align_, const char* srcFile, int sr
     BlockHeader* header;
     do
     {
-        while (!(old = _freeHead)) expand();
+        while (!(old = _freeHead.load(atomic::Order::acquire))) expand();
         header = deref(old);
     } while (!_freeHead.cas(TaggedHandle(header->next, old.nextTag()), old));
     --_freeCount;
@@ -149,7 +149,7 @@ void MemPool::Bucket::free(BlockHeader* header)
     TaggedHandle old;
     do
     {
-        old = _freeHead;
+        old = _freeHead.load(atomic::Order::acquire);
         header->next = old;
     } while (!_freeHead.cas(TaggedHandle(header->handle, old.nextTag()), old));
     ++_freeCount;

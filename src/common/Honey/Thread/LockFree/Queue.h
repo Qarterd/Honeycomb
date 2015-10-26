@@ -6,7 +6,7 @@
 namespace honey { namespace lockfree
 {
 
-/// Lock-free FIFO queue. Uses internal free-list allocator, automatically expands to accommodate new elements.
+/// Lock-free FIFO queue. Uses auto-expanding freelist allocator so memory is only reclaimed upon destruction.
 /**
   * Based on the paper: "Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms", Michael, Scott - 1996
   */
@@ -55,10 +55,10 @@ public:
         TaggedHandle tail;
         while (true)
         {
-            tail = _tail;
-            TaggedHandle next = _freeList.deref(tail)->next;
+            tail = _tail.load(atomic::Order::acquire);
+            TaggedHandle next = _freeList.deref(tail)->next.load(atomic::Order::acquire);
             //ensure that tail and next are consistent
-            if (tail != _tail) continue;
+            if (tail != _tail.load(atomic::Order::acquire)) continue;
             //check if tail isn’t last
             if (next)
             {
@@ -80,11 +80,11 @@ public:
         TaggedHandle head;
         while (true)
         {
-            head = _head;
-            TaggedHandle tail = _tail;
-            TaggedHandle next = _freeList.deref(head)->next;
+            head = _head.load(atomic::Order::acquire);
+            TaggedHandle tail = _tail.load(atomic::Order::acquire);
+            TaggedHandle next = _freeList.deref(head)->next.load(atomic::Order::acquire);
             //ensure that head, tail and next are consistent
-            if (head != _head) continue;
+            if (head != _head.load(atomic::Order::acquire)) continue;
             //check if queue is empty or tail isn’t last
             if (head.handle() == tail)
             {
@@ -111,18 +111,18 @@ public:
     {
         while (true)
         {
-            TaggedHandle head = _head;
-            TaggedHandle tail = _tail;
-            TaggedHandle next = _freeList.deref(head)->next;
+            TaggedHandle head = _head.load(atomic::Order::acquire);
+            TaggedHandle tail = _tail.load(atomic::Order::acquire);
+            TaggedHandle next = _freeList.deref(head)->next.load(atomic::Order::acquire);
             //ensure that head, tail and next are consistent
-            if (head != _head) continue;
+            if (head != _head.load(atomic::Order::acquire)) continue;
             //check if queue is empty
             if (head.handle() == tail && !next) return false;
             //ensure we have a next, it's possible that the list was empty and then changed before reading tail
             if (!next) continue;
             //ensure val we read is consistent with head, otherwise we could end up returning a destroyed value
             val = _freeList.deref(next)->val;
-            if (head == _head) return true;
+            if (head == _head.load(atomic::Order::acquire)) return true;
         }
     }
 
@@ -131,11 +131,11 @@ public:
     {
         while (true)
         {
-            TaggedHandle head = _head;
-            TaggedHandle tail = _tail;
-            TaggedHandle next = _freeList.deref(tail)->next;
+            TaggedHandle head = _head.load(atomic::Order::acquire);
+            TaggedHandle tail = _tail.load(atomic::Order::acquire);
+            TaggedHandle next = _freeList.deref(tail)->next.load(atomic::Order::acquire);
             //ensure that tail and next are consistent
-            if (tail != _tail) continue;
+            if (tail != _tail.load(atomic::Order::acquire)) continue;
             //check if tail isn’t last
             if (next)
             {
@@ -147,7 +147,8 @@ public:
             if (head.handle() == tail) return false;
             //ensure val we read is consistent with head and tail, otherwise we could end up returning a destroyed value
             val = _freeList.deref(tail)->val;
-            if (head == _head && tail == _tail) return true;
+            if (head == _head.load(atomic::Order::acquire) &&
+                tail == _tail.load(atomic::Order::acquire)) return true;
         }
     }
     

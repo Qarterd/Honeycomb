@@ -130,7 +130,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
+                int count = 1000000;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 2).nextInt())
@@ -177,7 +177,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
+                int count = 1000000;
                 for (int i = 0; i < count; ++i)
                 {
                     switch (Discrete(rand, 0, 3).nextInt())

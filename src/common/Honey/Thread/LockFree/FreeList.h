@@ -6,7 +6,7 @@
 namespace honey { namespace lockfree
 {
 
-/// Lock-free free list, allocates re-usable objects and provides automatic storage expansion for concurrent algorithms
+/// Lock-free freelist, allocates re-usable objects and provides automatic storage expansion for concurrent algorithms
 /**
   * Memory is only reclaimed upon destruction.
   *
