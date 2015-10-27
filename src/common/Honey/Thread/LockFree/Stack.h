@@ -30,7 +30,7 @@ public:
     void reserve(szt capacity)                      { _freeList.reserve(capacity); }
     szt capacity() const                            { return _freeList.capacity(); }
     
-    /// Add new element onto top of stack
+    /// Add new element constructed with `val` onto the top of the stack
     template<class T_>
     void push(T_&& val)
     {
@@ -46,7 +46,7 @@ public:
         ++_size;
     }
     
-    /// Remove element from top of stack, stores in `val`. Returns true on success, false if there is no element to pop.
+    /// Remove element from the top of the stack and move it into `val`. Returns true on success, false if there is no element to pop.
     bool pop(optional<T&> val = optnull)
     {
         //Detach node from top

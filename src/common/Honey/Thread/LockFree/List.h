@@ -81,7 +81,7 @@ public:
         _mem.deleteNode(*_tail.ptr());
     }
     
-    /// Insert new element at beginning of list
+    /// Insert new element constructed with `val` at the beginning of the list
     template<class T_>
     void push_front(T_&& val)
     {
@@ -104,7 +104,7 @@ public:
         pushEnd(node, *next);
     }
 
-    /// Add new element onto end of list
+    /// Add new element constructed with `val` onto the end of the list
     template<class T_>
     void push_back(T_&& val)
     {
@@ -126,7 +126,7 @@ public:
         pushEnd(node, *next);
     }
 
-    /// Remove element from beginning of list, stores in `val`.  Returns true on success, false if there is no element to pop.
+    /// Remove element from the beginning of the list and move it into `val`.  Returns true on success, false if there is no element to pop.
     bool pop_front(optional<T&> val = optnull)
     {
         Node* prev = _mem.deRefLink(_head);
@@ -169,7 +169,7 @@ public:
         return true;
     }
 
-    /// Remove element from end of list, stores in `val`.  Returns true on success, false if there is no element to pop.
+    /// Remove element from the end of the list and move it into `val`.  Returns true on success, false if there is no element to pop.
     bool pop_back(optional<T&> val = optnull)
     {
         Node* next = _mem.deRefLink(_tail);
@@ -369,7 +369,7 @@ public:
     ConstIterR rend() const                                 { return ConstIter(*this, false); }
     IterR rend()                                            { return Iter(*this, false); }
 
-    /// Get a copy of the front element. Returns true on success, false if there is no element.
+    /// Get a copy of the element at the beginning of the list. Returns true on success, false if there is no element.
     bool front(T& val)
     {
         Iter it = begin();
@@ -378,7 +378,7 @@ public:
         return true;
     }
 
-    /// Get a copy of the back element. Returns true on success, false if there is no element.
+    /// Get a copy of the element the end of the list. Returns true on success, false if there is no element.
     bool back(T& val)
     {
         IterR it = rbegin();
@@ -387,7 +387,7 @@ public:
         return true;
     }
 
-    /// Insert element before iterator position. Returns iterator pointing to new element.
+    /// Insert new element constructed with `val` before iterator position. Returns iterator pointing to new element.
     template<class T_>
     Iter insert(const Iter& it, T_&& val)
     {
@@ -423,7 +423,7 @@ public:
         return pos;
     }
 
-    /// Erase element at iterator position, store erased element in `val`, and advance iterator. Returns true if this thread erased and stored the element, false if already erased.
+    /// Erase element at iterator position and move it into `val`, and advance iterator. Returns true if this thread erased the element, false if already erased.
     bool erase(Iter& it, optional<T&> val = optnull)
     {
         bool erased = false;

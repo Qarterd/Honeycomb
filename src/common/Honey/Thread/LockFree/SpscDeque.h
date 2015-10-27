@@ -44,9 +44,9 @@ public:
         _tail = _head;
     }
 
-    /// Insert new element at beginning of list
+    /// Insert new element constructed with `val` at the beginning of the list
     template<class T_>
-    void push_front(T_&& data)
+    void push_front(T_&& val)
     {
         //At size == 0, head and tail are vying to push the same first spot
         //At size == capacity-1, head and tail are vying to push the same last spot
@@ -55,47 +55,47 @@ public:
         SpinLock::Scoped __(_tailLock, _size == 0 || _size >= _capacity-1 ? lock::Op::lock : lock::Op::defer);
         if (_size == _capacity) expand();
         _head = ringDec(_head);
-        _alloc.construct(_data + _head, forward<T_>(data));
+        _alloc.construct(_data + _head, forward<T_>(val));
         ++_size;
     }
 
-    /// Add new element onto end of list
+    /// Add new element constructed with `val` onto the end of the list
     template<class T_>
-    void push_back(T_&& data)
+    void push_back(T_&& val)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
         //Lock head first to prevent deadlock
         if (_size == 0 || _size >= _capacity-1) { tailLock.unlock(); headLock.lock(); tailLock.lock(); }
         if (_size == _capacity) expand();
-        _alloc.construct(_data + _tail, forward<T_>(data));
+        _alloc.construct(_data + _tail, forward<T_>(val));
         _tail = ringInc(_tail);
         ++_size;
     }
 
-    /// Pop element from beginning of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_front(optional<T&> data = optnull)
+    /// Pop element from the beginning of the list and move it into `val`.  Returns true on success, false if there is no element to pop.
+    bool pop_front(optional<T&> val = optnull)
     {
         //At size == 1, head and tail are vying to pop the last spot
         SpinLock::Scoped _(_headLock);
         SpinLock::Scoped __(_tailLock, _size == 1 ? lock::Op::lock : lock::Op::defer);
         if (_size == 0) return false;
-        if (data) data = move(_data[_head]);
+        if (val) val = move(_data[_head]);
         _alloc.destroy(_data + _head);
         _head = ringInc(_head);
         --_size;
         return true;
     }
 
-    /// Pop element from end of list, stores in `data`.  Returns true on success, false if there is no element to pop.
-    bool pop_back(optional<T&> data = optnull)
+    /// Pop element from the end of the list and move it into `val`.  Returns true on success, false if there is no element to pop.
+    bool pop_back(optional<T&> val = optnull)
     {
         SpinLock::Scoped headLock(_headLock, lock::Op::defer);
         SpinLock::Scoped tailLock(_tailLock);
         if (_size == 1) { tailLock.unlock(); headLock.lock(); tailLock.lock(); }
         if (_size == 0) return false;
         _tail = ringDec(_tail);
-        if (data) data = move(_data[_tail]);
+        if (val) val = move(_data[_tail]);
         _alloc.destroy(_data + _tail);
         --_size;
         return true;

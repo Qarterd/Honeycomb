@@ -46,7 +46,7 @@ public:
     void reserve(szt capacity)                      { _freeList.reserve(capacity); }
     szt capacity() const                            { return _freeList.capacity(); }
     
-    /// Add new element onto the end of the queue
+    /// Add new element constructed with `val` onto the end of the queue
     template<class T_>
     void push(T_&& val)
     {
@@ -74,7 +74,7 @@ public:
         ++_size;
     }
     
-    /// Remove oldest element from the queue, stores in `val`. Returns true on success, false if there is no element to pop.
+    /// Remove oldest element from the queue and copy it into `val`. Returns true on success, false if there is no element to pop.
     bool pop(optional<T&> val = optnull)
     {
         TaggedHandle head;
