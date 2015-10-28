@@ -49,7 +49,7 @@ void Pool::enqueue_(TaskPtr task)
     bool added = false;
     if (minIndex >= 0)
     {
-        //Push to worker queue
+        //Push to smallest worker queue
         Worker& worker = *_workers[minIndex];
         if (worker._tasks.size() < _workerTaskMax)
         {
@@ -136,47 +136,44 @@ void Pool::Worker::run()
 auto Pool::Worker::next() -> TaskPtr
 {
     //Try to pop from our queue
+    TaskPtr task;
+    if (_tasks.pop(task))
     {
-        TaskPtr task;
-        if (_tasks.pop(task))
-        {
-            Pool_trace(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
-            return task;
-        }
+        Pool_trace(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
+        return task;
     }
     
-    //Find largest other worker queue
+    //Find largest worker queue
     szt maxSize = 0;
-    sdt maxIndex = -1;
+    Worker* maxWorker = nullptr;
     for (auto i: range(_pool._workers.size()))
     {
         auto size = _pool._workers[i]->_tasks.size();
         if (size <= maxSize) continue;
         maxSize = size;
-        maxIndex = i;
+        maxWorker = _pool._workers[i];
     }
     
-    if (maxIndex >= 0)
+    //Try to steal from largest worker queue
+    Worker* worker = nullptr;
+    if (maxWorker && maxWorker->_tasks.pop(task)) worker = maxWorker;
+    
+    //Try to steal from any worker queue
+    if (!worker) for (auto& e: _pool._workers) if (e->_tasks.pop(task)) { worker = e; break; }
+    
+    if (worker)
     {
-        //Steal from other worker queue
-        Worker& worker = *_pool._workers[maxIndex];
-        TaskPtr task;
-        if (worker._tasks.pop(task))
-        {
-            Pool_trace(task, sout() << "Stolen from worker queue: " << worker._thread.threadId()
-                                    << "; Queue size: " << worker._tasks.size());
-            return task;
-        }
+        assert(task);
+        Pool_trace(task, sout() << "Stolen from worker queue: " << worker->_thread.threadId()
+                                << "; Queue size: " << worker->_tasks.size());
+        return task;
     }
-        
-    //Pop task from pool queue
+    
+    //Try to pop task from pool queue
+    if (_pool._tasks.pop(task))
     {
-        TaskPtr task;
-        if (_pool._tasks.pop(task))
-        {
-            Pool_trace(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
-            return task;
-        }
+        Pool_trace(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
+        return task;
     }
 
     return nullptr;

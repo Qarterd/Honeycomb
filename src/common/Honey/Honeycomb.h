@@ -120,6 +120,7 @@
 #include "Honey/Thread/LockFree/Queue.h"
 #include "Honey/Thread/LockFree/SpscDeque.h"
 #include "Honey/Thread/LockFree/Stack.h"
+#include "Honey/Thread/LockFree/UnorderedMap.h"
 #include "Honey/Thread/Atomic.h"
 #include "Honey/Thread/DepTask.h"
 #include "Honey/Thread/PeriodicTask.h"

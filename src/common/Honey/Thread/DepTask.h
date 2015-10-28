@@ -93,9 +93,9 @@ protected:
     int                 _bindId;
     bool                _bindDirty;
     int                 _depUpWaitInit;
-    int                 _depUpWait;
+    Atomic<int>         _depUpWait;
     int                 _depDownWaitInit;
-    int                 _depDownWait;
+    Atomic<int>         _depDownWait;
     DepGraph::Vertex*   _vertex;
     bool                _onStack;
     Thread*             _thread;

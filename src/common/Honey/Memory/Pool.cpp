@@ -8,11 +8,13 @@ namespace honey
 
 void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
 {
-    //Align first block
+    //ensure that any handle tags in the block data begin at zero
+    std::fill_n(chunk, chunkSize, uint8(0));
+    //align first block
     uint8* blockData = alignCeil(chunk + sizeof(BlockHeader), _pool._blockAlign);
     BlockHeader* first = blockHeader(blockData);
     BlockHeader* prev = nullptr;
-    //Initialize and link all the new blocks in order
+    //initialize and link all the new blocks in order
     for (auto i : range(blockCount))
     {
         BlockHeader* header = blockHeader(blockData + blockStride()*i);
@@ -42,7 +44,7 @@ void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
     
     if (prev)
     {
-        //Attach chunk as free head
+        //attach chunk as free head
         TaggedHandle old;
         do
         {

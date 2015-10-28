@@ -137,7 +137,7 @@ namespace priv
     {
         if (!store.size()) return;
         for (sdt i = 0; i < store.rows(); ++i)
-            memset(&store(i, 0), 0, store.cols()*sizeof(typename StorageBlock<T>::Real));
+            std::fill_n(reinterpret_cast<uint8*>(&store(i, 0)), store.cols()*sizeof(typename StorageBlock<T>::Real), uint8(0));
     }
 
     /// Test by row between dense storages

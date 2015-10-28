@@ -113,6 +113,7 @@
 		37B612331BD81C6F006C3AEF /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
 		37BCBB5D1BDBEDA3001D133A /* Stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 		37BCBB5E1BDD348B001D133A /* Queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Queue.h; sourceTree = "<group>"; };
+		37BCBB5F1BDFF944001D133A /* UnorderedMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnorderedMap.h; sourceTree = "<group>"; };
 		37FEB41E1B5245010095BB69 /* libHoneycomb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libHoneycomb.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37FEB42E1B52477D0095BB69 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
 		37FEB42F1B52477D0095BB69 /* Meta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meta.h; sourceTree = "<group>"; };
@@ -779,6 +780,7 @@
 				37BCBB5E1BDD348B001D133A /* Queue.h */,
 				37ACC39A1BDAC99A003F75C9 /* SpscDeque.h */,
 				37BCBB5D1BDBEDA3001D133A /* Stack.h */,
+				37BCBB5F1BDFF944001D133A /* UnorderedMap.h */,
 			);
 			path = LockFree;
 			sourceTree = "<group>";

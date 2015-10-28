@@ -219,7 +219,7 @@ void test()
     // DepTask
     //=============================
     {
-        //Prints a b c d e f g h i j
+        //Prints (a-b or b-a) c-d (e-f or f-e) g-h-i-j
         std::map<Id, DepTask_<void>::Ptr> tasks;
         for (auto i: range(10))
         {
@@ -231,11 +231,12 @@ void test()
         tasks["i"_id]->deps().add(*tasks["h"_id]);
         tasks["h"_id]->deps().add(*tasks["g"_id]);
         tasks["g"_id]->deps().add(*tasks["f"_id]);
-        tasks["f"_id]->deps().add(*tasks["e"_id]);
+        tasks["g"_id]->deps().add(*tasks["e"_id]);
+        tasks["f"_id]->deps().add(*tasks["d"_id]);
         tasks["e"_id]->deps().add(*tasks["d"_id]);
         tasks["d"_id]->deps().add(*tasks["c"_id]);
         tasks["c"_id]->deps().add(*tasks["b"_id]);
-        tasks["b"_id]->deps().add(*tasks["a"_id]);
+        tasks["c"_id]->deps().add(*tasks["a"_id]);
         
         DepSched sched(future::AsyncSched::inst());
         for (auto& e: values(tasks)) sched.reg(*e);
@@ -858,7 +859,7 @@ void test()
     decipher[msg.length()+msg2.length()] = 0;
     
     {
-        debug_print(sout() << "Hash 1: " << hash::fast("some string") << " " << fromBytes<int>(toBytes(hash::fast("some string"))) << endl);
+        debug_print(sout() << "Hash 1: " << hash::fast("some string") << " " << fromBytes<szt>(toBytes(hash::fast("some string"))) << endl);
         debug_print(sout() << "Hash 2: " << toBytes(hash::fast("some string")) << endl);
         debug_print(sout() << "Hash 3: " << toBytes(hash::fast("some string", 1)) << endl);
         debug_print(sout() << "Secure Hash 1: " << hash::secure("some string") << endl);
@@ -977,20 +978,14 @@ void test()
     switch (id)
     {
     case "eggs"_id:
-        {
-            debug_print("IdSwitch: eggs\n");
-            break;
-        }
+        debug_print("IdSwitch: eggs\n");
+        break;
     case "foo_bar"_id:
-        {
-            debug_print("IdSwitch: foo_bar\n");
-            break;
-        }
+        debug_print("IdSwitch: foo_bar\n");
+        break;
     default:
-        {
-            debug_print("IdSwitch: default\n");
-            break;
-        }
+        debug_print("IdSwitch: default\n");
+        break;
     }
 
     typedef DepNode<int> DepNode;

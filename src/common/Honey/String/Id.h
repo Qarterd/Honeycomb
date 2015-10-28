@@ -29,7 +29,7 @@ public:
     Id()                                            : _hash(0) {}
     Id(const String& name)                          : debug_if(_name(name),) _hash(hash::fast(name)) {}
     /// Construct with precalculated hash
-    Id(const String& name, int hash)                : debug_if(_name(name),) _hash(hash) { assert(_hash == hash::fast(_name)); }
+    Id(const String& name, szt hash)                : debug_if(_name(name),) _hash(hash) { assert(_hash == hash::fast(_name)); }
     Id(const IdLiteral& rhs);
     Id(const Id& rhs)                               : debug_if(_name(rhs._name),) _hash(rhs._hash) {}
     Id(Id&& rhs)                                    : debug_if(_name(move(rhs._name)),) _hash(rhs._hash) {}
@@ -57,10 +57,10 @@ public:
         const String& name() const                  { return _name; }
     #endif
     /// Get hashed integral value of name
-    int hash() const                                { return _hash; }
+    szt hash() const                                { return _hash; }
     
     /// Same as hash()
-    operator int() const                            { return _hash; }
+    operator szt() const                            { return _hash; }
 
     #ifndef FINAL
         friend ostream& operator<<(ostream& os, const Id& val)      { return val._hash ? (val._name.length() ? os << val._name : os << val._hash) : os << "idnull"; }
@@ -74,7 +74,7 @@ protected:
     #ifndef FINAL
         String _name;
     #endif
-    int _hash;
+    szt _hash;
 };
 
 /// Id created from a string literal at compile-time. \see string literal operator `_id`
@@ -102,9 +102,9 @@ public:
     #ifndef FINAL
         constexpr const char* name() const          { return _name; }
     #endif
-    constexpr int hash() const                      { return _hash; }
+    constexpr szt hash() const                      { return _hash; }
     
-    constexpr operator int() const                  { return _hash; }
+    constexpr operator szt() const                  { return _hash; }
     
     #ifndef FINAL
         friend ostream& operator<<(ostream& os, const IdLiteral& val)   { return val._hash ? os << val._name : os << "idnull"; }
@@ -117,7 +117,7 @@ private:
     #ifndef FINAL
         const char* _name;
     #endif
-    int _hash;
+    szt _hash;
 };
 
 /// Null id

@@ -77,7 +77,7 @@ void storageFill(StorageDense<T>& store, typename StorageDense<T>::Real f)
                                                         { if (!store.size()) return; std::fill_n(store.data(), store.size(), f); }
 /// Fill dense storage with zeros
 template<class T>
-void storageFillZero(StorageDense<T>& store)            { if (!store.size()) return; memset(store.data(), 0, store.size()*sizeof(typename StorageDense<T>::Real)); }
+void storageFillZero(StorageDense<T>& store)            { if (!store.size()) return; std::fill_n(reinterpret_cast<uint8*>(store.data()), store.size()*sizeof(typename StorageDense<T>::Real), uint8(0)); }
 
 /// Test between dense storages
 template<class T, class T2>

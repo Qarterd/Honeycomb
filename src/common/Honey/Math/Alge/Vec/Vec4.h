@@ -493,8 +493,7 @@ public:
 
         const int dim = 4;
         char axes[] = {'x','y','z','w'};
-        bool used[4];
-        memset(used, 0, sizeof(used));
+        bool used[] = {false, false, false, false};
 
         for (int i = 0; i < dim; ++i)
         {

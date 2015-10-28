@@ -86,40 +86,36 @@ void DepTask::operator()()
     {
         if (!vertex->nodes().size()) continue;
         DepTask& e = ****vertex->nodes().begin();
-        Mutex::Scoped _(e._lock);
         if (--e._depDownWait > 0) continue;
+        Mutex::Scoped _(e._lock);
         e.finalize_();
-    }
-    
-    //Re-enqueue any downstream tasks that are waiting
-    for (auto& vertex: _vertex->links(DepNode::DepType::in))
-    {
-        if (!vertex->nodes().size()) continue;
-        DepTask& e = ****vertex->nodes().begin();
-        if (e._sched != _sched || e._bindId != _bindId) continue; //This task is not upstream of root
-        {
-            Mutex::Scoped _(e._lock);
-            if (--e._depUpWait > 0) continue;
-            if (e._state != State::depUpWait) continue;
-        }
-        _sched->enqueue_priv(e);
     }
     
     {
         Mutex::Scoped _(_lock);
-        //Root task must finalize itself
+        //Re-enqueue any downstream tasks that are waiting
+        for (auto& vertex: _vertex->links(DepNode::DepType::in))
+        {
+            if (!vertex->nodes().size()) continue;
+            DepTask& e = ****vertex->nodes().begin();
+            if (e._sched != _sched || e._bindId != _bindId) continue; //This task is not upstream of root
+            if (--e._depUpWait > 0) continue;
+            //Within enqueue_priv here we hold locks for both us and downstream,
+            //but deadlock is not possible because downstream never holds locks for both itself and upstream
+            _sched->enqueue_priv(e);
+        }
+
         if (this == _root.lock())
         {
+            //Root task must finalize itself
             --_depDownWait;
             finalize_();
-            return;
         }
-        //If we haven't been finalized yet then we must wait for downstream to finalize us
-        if (_state != State::idle)
+        else
         {
+            //We must wait for downstream to finalize us
             _state = State::depDownWait;
             DepTask_trace(*this, sout() << "Waiting for downstream. Wait task count: " << _depDownWait);
-            return;
         }
     }
 }

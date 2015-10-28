@@ -12,14 +12,18 @@ namespace bloom_filter { namespace priv
 {
     //Chacha rand;
     //for (auto i : range(40)) { debug_print(sout() << "0x" << toBytes(rand.next()) << ", "); }
-    const uint32 seeds[] =
+    const szt seeds[] =
     {
-        0x3c4c9a94, 0x90613611, 0xa7a1cc07, 0x6f30f04d, 0x8a661bf9, 0xd75db7b2, 0x69604c69, 0xb253c947, 0xd2e373b2, 0xe7c98da4,
-        0x8198391f, 0x88e9fa37, 0x6104fb19, 0xaf937c53, 0x9fcd60b4, 0xf1739c8d, 0x5486f17f, 0x0b16af9f, 0xb74d8b23, 0x69672728,
-        0x45e140de, 0xb7593ff6, 0x1e3edca9, 0x094253fd, 0x292d6971, 0x2a5dd7ba, 0x09d5675f, 0xfd94c32c, 0x36b4c151, 0x6ae80e45,
-        0x9614847a, 0x492e73c2, 0x95164f62, 0x4bd680a2, 0xecd0768f, 0x1d6b889b, 0x33650cfc, 0x60f7959b, 0xb1390020, 0xe1ead353,
+        0xdb4483562a5f36ff, 0x840395f33a66af21, 0xca05f26b983b1608, 0x417f61cdfa51ec50, 0xc4f71bdaa61c5f0a,
+        0x65f9ad3f686bcbf0, 0x5d1f06f6263e1fad, 0xd870e5b3fe55788c, 0x363cce99f9622ebb, 0xace25fdd05a5494f,
+        0x30e35db34e2c50ca, 0x9a16df8ff9bfcfcd, 0x2d1b1ee0a537b6ad, 0xdad1df07fa690423, 0x2d242813358715d6,
+        0x9dad2673f9457363, 0x663c165b2fff434b, 0x63cea82928715856, 0x190f3e857fc968b6, 0xb13e8aa9e4ce9f00,
+        0x31c367fc2cf7d88b, 0xe1857d120be7734d, 0xb8919e122e4a0500, 0x05a609f1a073deff, 0x6a885c7c03f6591f,
+        0xa1d1a11603e43d1d, 0x669e257e57ab5125, 0xe92c0e2c250e9577, 0xa57d9b9627836fb7, 0x7d3d61cc58e6dbb1,
+        0x6d91d2dffc3aa41b, 0x7eb6b9b082e29a40, 0x17562244bddb5f25, 0x8c97b82d0b35f465, 0xc96ba73c8e9cc097,
+        0xa17339b6ac9cfdea, 0xf9de67190407b36d, 0x2874c33264c963d6, 0x4eebd83e6ad8fa4b, 0xec84478e2553ad76
     };
-    const szt seedCount = sizeof(seeds) / sizeof(uint32);
+    const szt seedCount = sizeof(seeds) / sizeof(szt);
 } }
 /** \endcond */
 }

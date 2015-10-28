@@ -15,7 +15,7 @@ namespace bloom_filter
     namespace priv
     {
         extern const szt seedCount;
-        extern const uint32 seeds[];
+        extern const szt seeds[];
     }
     /** \endcond */
 
@@ -23,7 +23,7 @@ namespace bloom_filter
     template<class T>
     struct hash
     {
-        int operator()(const T& val, szt hashIndex) const       { return honey::hash::fast(ByteBufConst(reinterpret_cast<const byte*>(&val), sizeof(T)), priv::seeds[hashIndex]); }
+        szt operator()(const T& val, szt hashIndex) const       { return honey::hash::fast(ByteBufConst(reinterpret_cast<const byte*>(&val), sizeof(T)), priv::seeds[hashIndex]); }
     };
 
     /// Calculate optimal bloom parameters -- bit and hash count
@@ -38,7 +38,7 @@ namespace bloom_filter
     }
     
     /// Caches multiple hashes of an object.  The key can be inserted into a bloom filter and tested very quickly.
-    template<class T, class Alloc = std::allocator<int>>
+    template<class T, class Alloc = std::allocator<szt>>
     struct Key
     {
         Key() {}
@@ -51,7 +51,7 @@ namespace bloom_filter
         /// Generate and cache all the hashes for the object
         void hash(const T& obj)                                 { for (szt i = 0; i < hashes.size(); ++i) hashes[i] = hasher(obj,i); }
 
-        vector<int,Alloc> hashes;
+        vector<szt,Alloc> hashes;
         bloom_filter::hash<T> hasher;
     };
 
@@ -60,7 +60,7 @@ namespace bloom_filter
     template<class T, class Alloc>
     struct hash<Key<T,Alloc>>
     {
-        int operator()(const Key<T,Alloc>& val, szt hashIndex) const
+        szt operator()(const Key<T,Alloc>& val, szt hashIndex) const
         { assert(hashIndex < val.hashes.size(), "Key does not have enough hashes for bloom filter"); return val.hashes[hashIndex]; }
     };
     /** \endcond */
