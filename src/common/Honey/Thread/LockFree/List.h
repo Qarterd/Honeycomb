@@ -58,7 +58,7 @@ public:
     typedef Alloc_ Alloc;
     
     /**
-      * \param capacity     initial capacity
+      * \param alloc
       * \param threadMax    Max number of threads that can access this container.
       *                     Use a thread pool so the threads have a longer life cycle than this container.
       */
@@ -466,6 +466,8 @@ public:
     /// Remove all elements
     void clear()                                            { for (Iter it = begin(); it != end();) erase(it); }
 
+    /// Check whether the list does not contain any elements
+    bool empty() const                                      { return !size(); }
     /// Number of elements in list
     szt size() const                                        { sdt size = _size; return size > 0 ? size : 0; } //Size can be less than 0 temporarily because of concurrency
 

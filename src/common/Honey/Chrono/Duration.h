@@ -6,10 +6,8 @@
 
 namespace honey { template<class Rep, class Period> class Duration; }
 
-/** \cond */
 namespace std
 {
-/** \endcond */
     /// Get common duration between two durations. The period of the resulting duration is the greatest common divisor.
     /** \relates Duration */
     template<class Rep, class Period, class Rep2, class Period2>
@@ -17,9 +15,7 @@ namespace std
     {
         typedef honey::Duration<typename common_type<Rep,Rep2>::type, typename common_type<Period,Period2>::type> type;
     };
-/** \cond */
 }
-/** \endcond */
 
 namespace honey
 {
@@ -190,14 +186,10 @@ constexpr Hours operator"" _h(unsigned long long int n)         { return Hours(s
 
 }
 
-/** \cond */
 namespace std
 {
-/** \endcond */
     /// Duration to string
     /** \relates Duration */
     template<class Rep, class Period>
     ostream& operator<<(ostream& os, const honey::Duration<Rep,Period>& d)  { return os << d.count(); }
-/** \cond */
 }
-/** \endcond */

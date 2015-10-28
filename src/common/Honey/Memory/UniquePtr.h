@@ -106,7 +106,6 @@ UniquePtr<T> make_unique_auto_size(Args&&... args)                  { return Uni
 
 }
 
-/** \cond */
 namespace std
 {
     /// Allow class to be used as key in unordered containers
@@ -116,4 +115,3 @@ namespace std
         size_t operator()(const honey::UniquePtr<T,Fin>& val) const     { return reinterpret_cast<size_t>(val.get()); };
     };
 }
-/** \endcond */

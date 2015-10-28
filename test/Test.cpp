@@ -21,8 +21,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
-                for (int i = 0; i < count; ++i)
+                for (auto i : range(100))
                 {
                     switch (Discrete(rand, 0, 5).nextInt())
                     {
@@ -80,8 +79,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
-                for (int i = 0; i < count; ++i)
+                for (auto i : range(100))
                 {
                     switch (Discrete(rand, 0, 3).nextInt())
                     {
@@ -130,8 +128,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
-                for (int i = 0; i < count; ++i)
+                for (auto i : range(100))
                 {
                     switch (Discrete(rand, 0, 2).nextInt())
                     {
@@ -177,8 +174,7 @@ void test()
             {
                 Chacha rand;
                 int data;
-                int count = 100;
-                for (int i = 0; i < count; ++i)
+                for (auto i : range(100))
                 {
                     switch (Discrete(rand, 0, 3).nextInt())
                     {
@@ -212,6 +208,54 @@ void test()
         {
             debug_print(sout() << "Queue " << count << " : " << data << endl);
             ++count;
+        }          
+    }
+    
+    //=============================
+    // LockFree UnorderedMap
+    //=============================
+    {
+        typedef lockfree::UnorderedMap<int,int> List;
+        static const int count = 1000;
+        
+        struct ListThread
+        {
+            static void run(List& list)
+            {
+                Chacha rand;
+                int data;
+                for (auto i : range(count))
+                {
+                    mt_unused(i);
+                    int key = Discrete(rand, 0, Real_::sqrt(count)).nextInt();
+                    switch (Discrete(rand, 0, 2).nextInt())
+                    {
+                    case 0:
+                        list.insert(make_pair(key,-key));
+                        break;
+                    case 1:
+                        list.erase(key, data);
+                        break;
+                    case 2:
+                        list.find(key, data);
+                        break;
+                    }
+                }
+            }
+        };
+        
+        List list;
+        vector<Thread> threads;
+        for (auto i : range(10)) { threads.push_back(Thread([&]{ ListThread::run(list); })); mt_unused(i); }
+        for (auto& e : threads) e.start();
+        for (auto& e : threads) e.join();
+
+        int data;
+        debug_print(sout() << "UnorderedMap Size: " << list.size() << endl);
+        for (auto i : range(int(Real_::sqrt(count))))
+        {
+            if (!list.find(i, data)) continue;
+            debug_print(sout() << "UnorderedMap " << i << " : " << data << endl);
         }          
     }
     

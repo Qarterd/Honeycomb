@@ -102,12 +102,12 @@ struct BitOpCommon
     static uint32 pow2Ceil(uint32 x)                        { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; return ++x; }
     static uint64 pow2Ceil(uint64 x)                        { --x; x|=x>>1; x|=x>>2; x|=x>>4; x|=x>>8; x|=x>>16; x|=x>>32; return ++x; }
 
-    /// Calc log base 2 of unsigned integer, rounded down to nearest integer
-    static int log2Floor(uint32 x)                          { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1); }
-    static int log2Floor(uint64 x)                          { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1); }
-    /// Calc log base 2 of unsigned integer, rounded up to nearest integer
-    static int log2Ceil(uint32 x)                           { int32 y=(x&(x-1)); y|=-y; y>>=(32-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return popCount(x>>1)-y; }
-    static int log2Ceil(uint64 x)                           { int64 y=(x&(x-1)); y|=-y; y>>=(64-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return popCount(x>>1)-int(y); }
+    /// Calc log base 2 of unsigned integer, rounded down to nearest integer. Returns -1 if x is zero.
+    static int log2Floor(uint32 x)                          { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return x ? popCount(x>>1) : -1; }
+    static int log2Floor(uint64 x)                          { x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return x ? popCount(x>>1) : -1; }
+    /// Calc log base 2 of unsigned integer, rounded up to nearest integer. Returns -1 if x is zero.
+    static int log2Ceil(uint32 x)                           { int32 y=(x&(x-1)); y|=-y; y>>=(32-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); return x ? popCount(x>>1)-y : -1; }
+    static int log2Ceil(uint64 x)                           { int64 y=(x&(x-1)); y|=-y; y>>=(64-1); x|=(x>>1); x|=(x>>2); x|=(x>>4); x|=(x>>8); x|=(x>>16); x|=(x>>32); return x ? popCount(x>>1)-int(y) : -1; }
 
     /// Reverse order of bits in an unsigned integer
     static uint8 reverse(uint8 v)

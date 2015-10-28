@@ -164,10 +164,8 @@ inline const char* c_str(const char* str)                                   { re
 
 }
 
-/** \cond */
 namespace std
 {
-/** \endcond */
     /// \ingroup String
     /// @{
     
@@ -175,6 +173,4 @@ namespace std
     inline ostream& operator<<(ostream& os, const honey::Char* str)         { assert(str); return os << std::string(str, str + std::char_traits<honey::Char>::length(str)); }
     inline ostream& operator<<(ostream& os, const honey::Char val)          { honey::Char str[] = {val, 0}; return os << str; }
     /// @}
-/** \cond */
 }
-/** \endcond */

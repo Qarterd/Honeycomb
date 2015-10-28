@@ -13,30 +13,30 @@ namespace honey { namespace lockfree
 template<class T>
 class Queue : mt::NoCopy
 {
+    typedef typename FreeList<T>::TaggedHandle TaggedHandle;
+    
     struct Node
     {
-        typedef typename FreeList<Node*>::TaggedHandle TaggedHandle;
-        
         //init without overwriting previous tag
         template<class T_>
-        Node(T_&& val)                              : val(forward<T_>(val)) { reinterpret_cast<TaggedHandle&>(next).handle() = nullptr; }
-        //full init
-        template<class T_>
-        Node(T_&& val, TaggedHandle next)           : val(forward<T_>(val)), next(next) {}
+        Node(T_&& val) :
+            val(forward<T_>(val))
+        {
+            next.store(TaggedHandle(nullptr, next.load(atomic::Order::relaxed).nextTag()), atomic::Order::relaxed);
+        }
         
         T val;
         Atomic<TaggedHandle> next;
     };
     
     typedef FreeList<Node> FreeList;
-    typedef typename FreeList::TaggedHandle TaggedHandle;
     
 public:
     typedef T value_type;
     
     Queue(szt capacity = 0) :
         _freeList(capacity),
-        _head(TaggedHandle(_freeList.handle(_freeList.construct(T(), TaggedHandle())), 0)),
+        _head(TaggedHandle(_freeList.handle(_freeList.construct(T())), 0)),
         _tail(_head),
         _size(0) {}
 
@@ -44,6 +44,7 @@ public:
     
     /// Ensure that enough storage is allocated for a number of elements
     void reserve(szt capacity)                      { _freeList.reserve(capacity); }
+    /// The number of elements for which storage is allocated
     szt capacity() const                            { return _freeList.capacity(); }
     
     /// Add new element constructed with `val` onto the end of the queue
@@ -155,7 +156,9 @@ public:
     /// Remove all elements
     void clear()                                    { while (pop()); }
     
+    /// Check whether the queue does not contain any elements
     bool empty() const                              { return !_size; }
+    /// The number of elements in the queue
     szt size() const                                { return _size; }
     
 private:

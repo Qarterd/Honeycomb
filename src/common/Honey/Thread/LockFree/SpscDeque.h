@@ -32,6 +32,7 @@ public:
 
     ~SpscDeque()                                            { clear(); }
 
+    /// Resize the deque to contain a number of elements
     void resize(szt size, const T& initVal = T())
     {
         SpinLock::Scoped _(_headLock);
@@ -104,10 +105,9 @@ public:
     /// Remove all elements
     void clear()                                            { while (pop_back()); }
 
-    /// Number of elements in list
+    /// Number of elements in deque
     szt size() const                                        { return _size; }
-
-    /// Check if deque does not contain any elements
+    /// Check whether the deque does not contain any elements
     bool empty() const                                      { return size() == 0; }
 
 private:

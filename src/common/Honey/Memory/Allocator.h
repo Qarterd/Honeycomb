@@ -165,7 +165,6 @@ struct finalize
     void operator()(T* const& p)                { delete_(p,a); }
     Alloc a;
 };
-/** \cond */
 /// Specialization for array
 template<class T>
 struct finalize<T[], std::allocator<T>>
@@ -180,7 +179,6 @@ struct finalize<void, std::allocator<void>>
     void operator()(void*& p)                   { free(p); }
     void operator()(void* const& p)             { free(p); }
 };
-/** \endcond */
 
 /// @}
 

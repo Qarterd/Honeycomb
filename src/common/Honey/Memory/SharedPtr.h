@@ -429,7 +429,6 @@ private:
 
 }
 
-/** \cond */
 namespace std
 {
     /// Allow class to be used as key in unordered containers
@@ -439,4 +438,3 @@ namespace std
         size_t operator()(const honey::SharedPtr<T>& val) const     { return reinterpret_cast<size_t>(val.get()); };
     };
 }
-/** \endcond */

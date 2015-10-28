@@ -163,10 +163,8 @@ namespace ratio
 
 }
 
-/** \cond */
 namespace std
 {
-/** \endcond */
     /// Get common ratio between two ratios
     /** \relates Ratio */
     template<honey::int64 Num, honey::int64 Den, honey::int64 Num2, honey::int64 Den2>
@@ -178,6 +176,4 @@ namespace std
     public:
         typedef honey::Ratio<gcdNum, (Den / gcdDen) * Den2> type;
     };
-/** \cond */
 }
-/** \endcond */

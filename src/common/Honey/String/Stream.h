@@ -52,10 +52,9 @@ inline ostream& endl(ostream& os)
 
 }
 
-/** \cond */
+/// Standard Library Extensions
 namespace std
 {
-/** \endcond */
     /// \ingroup stringstream
     /// @{
     
@@ -132,7 +131,5 @@ namespace std
     ostream& operator<<(ostream& os, const honey::SharedPtr<T>& p)
                                                             { return p ? os << *p : os << "nullptr"; }
     /// @}
-/** \cond */
 }
-/** \endcond */
 

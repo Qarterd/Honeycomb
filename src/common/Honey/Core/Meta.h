@@ -308,7 +308,7 @@ template<int64 val> using abs                                   = Value<int64, (
 /// Get the sign of a number
 template<int64 val> using sign                                  = Value<int64, (val < 0) ? -1 : 1>;
 
-/// Calc log base 2 of unsigned integer, rounded down to nearest integer
+/// Calc log base 2 of unsigned integer, rounded down to nearest integer. Returns -1 if x is zero.
 template<uint64 x> struct log2Floor                             : Value<int, log2Floor<x/2>::value+1> {};
 template<> struct log2Floor<0>                                  : Value<int, -1> {};
 

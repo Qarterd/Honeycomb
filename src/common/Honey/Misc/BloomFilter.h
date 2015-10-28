@@ -131,7 +131,6 @@ private:
 
 }
 
-/** \cond */
 namespace std
 {
     /// Adapter for std hasher
@@ -146,4 +145,3 @@ namespace std
         }
     };
 }
-/** \endcond */

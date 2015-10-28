@@ -116,6 +116,8 @@ private:
     
 public:
     /**
+      * \param config
+      * \param alloc
       * \param threadMax    Max number of threads that can access the memory manager.
       *                     Use a thread pool and ensure that it has a longer life cycle than the mem manager.
       */ 

@@ -8,8 +8,6 @@ namespace honey
 
 void MemPool::Bucket::initChunk(uint8* chunk, szt chunkSize, szt blockCount)
 {
-    //ensure that any handle tags in the block data begin at zero
-    std::fill_n(chunk, chunkSize, uint8(0));
     //align first block
     uint8* blockData = alignCeil(chunk + sizeof(BlockHeader), _pool._blockAlign);
     BlockHeader* first = blockHeader(blockData);

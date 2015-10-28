@@ -4,9 +4,6 @@
 
 namespace honey
 {
-
-
-    
 /** \cond */
 namespace bloom_filter { namespace priv
 {

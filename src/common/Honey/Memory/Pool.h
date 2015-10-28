@@ -32,6 +32,7 @@ class MemPool : mt::NoCopy
 public:
     /**
       * \param buckets  A vector of tuples (blockSize, blockCount).
+      * \param id       display id for debugging
       *                 Buckets of blocks available to the pool for allocation.
       * \param align    Alignment byte boundary for all blocks. Alignment must be a power of two.
       */
@@ -194,7 +195,7 @@ private:
         const szt               _blockSize;
         const szt               _blockCountInit;
         szt                     _blockCount;
-        array<Buffer<uint8>, numeral<uint8>().max()> _chunks;    ///< System heap chunks
+        array<Buffer<uint8>, numeral<uint64>().sizeBits> _chunks;    ///< System heap chunks, this array is small as chunks grow exponentially
         Atomic<uint8>           _chunkCount;
         Atomic<szt>             _chunkSizeTotal;    ///< Total number of bytes allocated from system heap
         Atomic<TaggedHandle>    _freeHead;          ///< Head of free blocks list

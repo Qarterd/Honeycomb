@@ -108,6 +108,7 @@ struct sval : ByteArray<32>
 
 /// Generate a large secure hash value
 /**
+  * \param  bs
   * \param  key     Generate a keyed HMAC that can be used to verify message authenticity.
   *                 Each key produces a unique hash from the same data.
   */
@@ -121,6 +122,7 @@ inline sval secure(const String& str, optional<const sval&> key = optnull)      
 
 /// Generate secure keys derived from a password
 /**
+  * \param  password
   * \param  salt        randomly generated value to combat precomputed hash table attacks
   * \param  iterCount   number of PBKDF2 hash iterations, makes process computationally expensive to attack
   * \param  keyCount    number of returned keys

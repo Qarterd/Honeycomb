@@ -28,6 +28,7 @@ public:
     
     /// Ensure that enough storage is allocated for a number of elements
     void reserve(szt capacity)                      { _freeList.reserve(capacity); }
+    /// The number of elements for which storage is allocated
     szt capacity() const                            { return _freeList.capacity(); }
     
     /// Add new element constructed with `val` onto the top of the stack
@@ -80,7 +81,9 @@ public:
     /// Remove all elements
     void clear()                                    { while (pop()); }
     
+    /// Check whether the stack does not contain any elements
     bool empty() const                              { return !_size; }
+    /// The number of elements in the stack
     szt size() const                                { return _size; }
     
 private:

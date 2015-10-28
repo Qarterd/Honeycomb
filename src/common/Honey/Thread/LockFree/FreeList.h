@@ -25,6 +25,7 @@ public:
     
     /// Ensure that enough storage is allocated for a number of objects
     void reserve(szt capacity)                      { _pool._buckets[0]->reserve(capacity); }
+    /// The number of objects for which storage is allocated
     szt capacity() const                            { return _pool._buckets[0]->_blockCount; }
     
     /// Remove object from free list without constructing it
