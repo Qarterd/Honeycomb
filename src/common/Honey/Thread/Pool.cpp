@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Thread/Pool.h"
 #include "Honey/Thread/Future/Util.h"
@@ -8,7 +9,7 @@ namespace honey { namespace thread
 {
 
 #ifndef FINAL
-    #define Pool_trace(taskptr, msg)    if ((taskptr)->traceEnabled()) (taskptr)->trace(__FILE__, __LINE__, (msg));
+    #define Pool_trace(task, msg)   if ((task).traceEnabled()) (task).trace(__FILE__, __LINE__, (msg));
 #else
     #define Pool_trace(...) {}
 #endif
@@ -33,7 +34,7 @@ Pool::~Pool()
     for (auto& e: _workers) e->join();
 }
 
-void Pool::enqueue_(TaskPtr task)
+void Pool::enqueue(Task& task)
 {
     //Find smallest worker queue
     szt minSize = _workerTaskMax;
@@ -56,7 +57,7 @@ void Pool::enqueue_(TaskPtr task)
             added = true;
             Pool_trace(task, sout() << "Pushed to worker queue: " << worker._thread.threadId()
                                     << "; Queue size: " << worker._tasks.size()+1);
-            worker._tasks.push(move(task));
+            worker._tasks.push(&task);
         }
     }
     
@@ -64,7 +65,7 @@ void Pool::enqueue_(TaskPtr task)
     {
         //All worker queues full, push to pool queue
         Pool_trace(task, sout() << "Pushed to pool queue. Queue size: " << _tasks.size()+1);
-        _tasks.push(move(task));
+        _tasks.push(&task);
     }
     
     //Find a waiting worker and signal it, start search at min index
@@ -124,7 +125,7 @@ void Pool::Worker::run()
     
     while (_active)
     {
-        while ((_task = next())) _task();
+        while ((_task = next())) (*_task)();
         
         //Wait for a task to be queued (ignore any thread interrupts)
         ConditionLock::Scoped _(_cond);
@@ -133,13 +134,13 @@ void Pool::Worker::run()
     }
 }
 
-auto Pool::Worker::next() -> TaskPtr
+auto Pool::Worker::next() -> Task*
 {
     //Try to pop from our queue
-    TaskPtr task;
+    Task* task = nullptr;
     if (_tasks.pop(task))
     {
-        Pool_trace(task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
+        Pool_trace(*task, sout() << "Popped from worker queue. Queue size: " << _tasks.size());
         return task;
     }
     
@@ -164,7 +165,7 @@ auto Pool::Worker::next() -> TaskPtr
     if (worker)
     {
         assert(task);
-        Pool_trace(task, sout() << "Stolen from worker queue: " << worker->_thread.threadId()
+        Pool_trace(*task, sout() << "Stolen from worker queue: " << worker->_thread.threadId()
                                 << "; Queue size: " << worker->_tasks.size());
         return task;
     }
@@ -172,7 +173,7 @@ auto Pool::Worker::next() -> TaskPtr
     //Try to pop task from pool queue
     if (_pool._tasks.pop(task))
     {
-        Pool_trace(task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
+        Pool_trace(*task, sout() << "Popped from pool queue. Queue size: " << _pool._tasks.size());
         return task;
     }
 

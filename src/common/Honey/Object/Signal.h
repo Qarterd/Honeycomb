@@ -47,8 +47,10 @@ namespace priv
     template<class Signal, szt... Seq>
     struct SlotSignal<Signal,mt::idxseq<Seq...>> : SlotBase
     {
+        template<szt I> struct param            { typedef typename Signal::template param<I> type; };
+
         SlotSignal(const Id& id)                : SlotBase(id, Signal::id()) {}
-        virtual void operator()(const typename Signal::template param<Seq>&... args) = 0;
+        virtual void operator()(const typename param<Seq>::type&... args) = 0;
     };
 
     template<class Signal, class F, class Seq = mt::make_idxseq<Signal::arity>>
@@ -58,9 +60,11 @@ namespace priv
     {
         typedef SlotSignal<Signal> Super;
     public:
+        template<szt I> struct param            { typedef typename Signal::template param<I> type; };
+
         Slot(const Id& id, F&& f)               : Super(id), _f(forward<F>(f)) {}
 
-        virtual void operator()(const typename Signal::template param<Seq>&... args)
+        virtual void operator()(const typename param<Seq>::type&... args)
         {
             _f(args...);
         }

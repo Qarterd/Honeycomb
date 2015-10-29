@@ -90,20 +90,20 @@ public:
 /** \cond */
 namespace priv
 {
-    template<int cur, int end, class... Ts> struct typeAt;
-    template<int cur, int end, class T, class... Ts> struct typeAt<cur, end, T, Ts...>      : typeAt<cur+1, end, Ts...> {};
-    template<int cur, class T, class... Ts> struct typeAt<cur, cur, T, Ts...>               { typedef T type; };
-    template<int cur, int end> struct typeAt<cur, end> {};
+    template<szt cur, szt end, class... Ts> struct typeAt;
+    template<szt cur, szt end, class T, class... Ts> struct typeAt<cur, end, T, Ts...>      : typeAt<cur+1, end, Ts...> {};
+    template<szt cur, class T, class... Ts> struct typeAt<cur, cur, T, Ts...>               { typedef T type; };
+    template<szt cur, szt end> struct typeAt<cur, end> {};
     
-    template<int cur, class Match, class... Ts> struct typeIndex;
-    template<int cur, class Match, class T, class... Ts> struct typeIndex<cur, Match, T, Ts...> : typeIndex<cur+1, Match, Ts...> {};
-    template<int cur, class T, class... Ts> struct typeIndex<cur, T, T, Ts...>              : Value<int, cur> {};
-    template<int cur, class Match> struct typeIndex<cur, Match>                             : Value<int, -1> {};
+    template<szt cur, class Match, class... Ts> struct typeIndex;
+    template<szt cur, class Match, class T, class... Ts> struct typeIndex<cur, Match, T, Ts...> : typeIndex<cur+1, Match, Ts...> {};
+    template<szt cur, class T, class... Ts> struct typeIndex<cur, T, T, Ts...>              : Value<szt, cur> {};
+    template<szt cur, class Match> struct typeIndex<cur, Match>                             : Value<szt, -1> {};
 }
 /** \endcond */
 
 /// Get type at index of parameter pack
-template<int I, class... Ts> using typeAt                       = typename priv::typeAt<0, I, Ts...>::type;
+template<szt I, class... Ts> using typeAt                       = typename priv::typeAt<0, I, Ts...>::type;
 /// Get index of first matching type in parameter pack, returns -1 if not found
 template<class Match, class... Ts> using typeIndex              = priv::typeIndex<0, Match, Ts...>;
 
@@ -225,59 +225,6 @@ template<class T> using isIterator                              = priv::isIterat
   * \retval param<I>        parameter types, from 0 to `arity`-1
   */
 template<class T> struct funcTraits;
-
-
-/// Inherit to enable non-virtual functor calling. \see Funcptr
-struct FuncptrBase {};
-
-template<class Sig> struct Funcptr;
-
-/// Holds a function pointer so that a functor can be called non-virtually.  The functor must inherit from FuncptrBase. \see FuncptrCreate()
-template<class R, class... Args>
-struct Funcptr<R (Args...)>
-{
-    typedef R (FuncptrBase::*Func)(Args...);
-    
-    Funcptr()                                                   : base(nullptr), func(nullptr) {}
-    Funcptr(nullptr_t)                                          : Funcptr() {}
-    template<class F> Funcptr(F&& f)                            { operator=(forward<F>(f)); }
-    template<class F> Funcptr& operator=(F&& f)                 { base = &f; func = static_cast<Func>(&removeRef<F>::type::operator()); return *this; }
-    Funcptr& operator=(nullptr_t)                               { base = nullptr; func = nullptr; return *this; }
-    template<class... Args_>
-    R operator()(Args_&&... args) const                         { return (base->*func)(forward<Args_>(args)...); }
-    bool operator==(const Funcptr& rhs) const                   { return base == rhs.base && func == rhs.func; }
-    bool operator!=(const Funcptr& rhs) const                   { return !operator==(rhs); }
-    explicit operator bool() const                              { return base && func; }
-    
-    FuncptrBase* base;
-    Func func;
-};
-
-/// Specialization for void return type
-template<class... Args>
-struct Funcptr<void (Args...)>
-{
-    typedef void (FuncptrBase::*Func)(Args...);
-    
-    Funcptr()                                                   : base(nullptr), func(nullptr) {}
-    Funcptr(nullptr_t)                                          : Funcptr() {}
-    template<class F> Funcptr(F&& f)                            { operator=(forward<F>(f)); }
-    template<class F> Funcptr& operator=(F&& f)                 { base = &f; func = static_cast<Func>(&removeRef<F>::type::operator()); return *this; }
-    Funcptr& operator=(nullptr_t)                               { base = nullptr; func = nullptr; return *this; }
-    template<class... Args_>
-    void operator()(Args_&&... args) const                      { (base->*func)(forward<Args_>(args)...); }
-    bool operator==(const Funcptr& rhs) const                   { return base == rhs.base && func == rhs.func; }
-    bool operator!=(const Funcptr& rhs) const                   { return !operator==(rhs); }
-    explicit operator bool() const                              { return base && func; }
-    
-    FuncptrBase* base;
-    Func func;
-};
-
-/// Convenient method to create a Funcptr from a functor that inherits from FuncptrBase. \see Funcptr
-template<class F, class Sig = typename funcTraits<typename removeRef<F>::type>::Sig>
-Funcptr<Sig> FuncptrCreate(F&& f)                               { return Funcptr<Sig>(forward<F>(f)); }
-
 
 /// Create a global object that will be initialized upon first access, so it can be accessed safely from a static context
 #define mt_global(Class, Func, Ctor)                            inline UNBRACKET(Class)& Func()  { static UNBRACKET(Class) obj Ctor; return obj; }

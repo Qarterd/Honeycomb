@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/String/Hash.h"
 #include "Honey/String/Stream.h"
@@ -101,6 +102,8 @@ szt fast(ByteBufConst bs, szt seed)
     return get<0>(priv::murmur::hash(bs.data(), bs.size(), uint64(seed)));
 }
 
+szt fast(const String& str, szt seed)   { return fast(str.u8(), seed); }
+
 sval secure(ByteBufConst bs, optional<const sval&> key)
 {
     sval res;
@@ -132,6 +135,8 @@ sval secure(ByteBufConst bs, optional<const sval&> key)
     }
     return res;
 }
+
+sval secure(const String& str, optional<const sval&> key)   { return secure(str.u8(), key); }
 
 vector<sval> secureKeys(const String& password, const Bytes& salt, int iterCount, int keyCount)
 {

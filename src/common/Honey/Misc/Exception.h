@@ -104,7 +104,7 @@ public:
 
     /// Append custom error message
     template<class T>
-    MsgStream operator<<(T&& val)                                           { return forward<MsgStream>(MsgStream(*this) << std::forward<T>(val)); }
+    MsgStream operator<<(T&& val)                                           { MsgStream ms(*this); ms << std::forward<T>(val); return ms; }
     
     friend ostream& operator<<(ostream& os, const Exception& e)             { return os << e.what(); }
     

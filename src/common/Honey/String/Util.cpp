@@ -1,6 +1,8 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/String/Util.h"
+#include "Honey/Misc/Exception.h"
 
 namespace honey { namespace string
 {
@@ -101,12 +103,12 @@ void parseArgv(const String& str, int& argc, char**& argv)
     if (state == InArg) args.push_back(curArg.str());
     else if (state == InArgQuote) throw_ Exception() << "starting quote has no ending quote";
 
-    argc = size(args);
+    argc = stdutil::size(args);
     argv = new char*[args.size()];
     for (auto i: range(args.size()))
     {
         argv[i] = new char[args[i].length()+1];
-        std::strcpy(argv[i], args[i].c_str());
+        std::copy_n(args[i].c_str(), args[i].length()+1, argv[i]);
     }
 }
 

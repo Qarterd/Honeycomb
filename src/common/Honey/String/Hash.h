@@ -91,7 +91,7 @@ inline szt fast(const char* str, szt seed = 0)                              { re
 /// fast() for UTF-8 strings
 inline szt fast(const std::string& str, szt seed = 0)                       { return fast(ByteBufConst(reinterpret_cast<const byte*>(str.data()), str.length()), seed); }
 /// fast() for strings, converted to UTF-8 before hashing
-inline szt fast(const String& str, szt seed = 0)                            { return fast(str.u8(), seed); }
+inline szt fast(const String& str, szt seed = 0);
 /// Compile-time version of fast() for UTF-8 strings
 inline constexpr szt fast_(const char* str, szt len, szt seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 16, 0, uint64(seed), uint64(seed)); }
 
@@ -118,7 +118,7 @@ inline sval secure(const char* str, optional<const sval&> key = optnull)        
 /// secure() for UTF-8 strings
 inline sval secure(const std::string& str, optional<const sval&> key = optnull) { return secure(ByteBufConst(reinterpret_cast<const byte*>(str.data()), str.length()), key); }
 /// secure() for strings, converted to UTF-8 before hashing
-inline sval secure(const String& str, optional<const sval&> key = optnull)      { return secure(str.u8(), key); }
+sval secure(const String& str, optional<const sval&> key = optnull);
 
 /// Generate secure keys derived from a password
 /**

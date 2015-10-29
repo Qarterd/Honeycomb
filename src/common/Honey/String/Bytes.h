@@ -77,6 +77,7 @@ typename std::enable_if<std::is_integral<Int>::value, Int>::type
     case Endian::big:
         return static_cast<Int>(BitOp::fromPartsBig<Unsigned>(bs.data()));
     }
+    return 0;
 }
 
 /// Fixed array of N bytes

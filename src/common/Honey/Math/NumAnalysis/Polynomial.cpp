@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Math/NumAnalysis/Polynomial.h"
 #include "Honey/Math/NumAnalysis/Bisect.h"
@@ -219,7 +220,7 @@ auto Polynomial<Real>::roots(const Vec& c, Real epsilon, int iterMax) -> tuple<V
 template<class Real>
 auto Polynomial<Real>::rootsInRange(const Vec& c, Real min, Real max, Real epsilon, int iterMax) -> tuple<Vec, int>
 {
-    int degree = size(c)-1;
+    int degree = stdutil::size(c)-1;
     auto root = Vec(degree).fromZero();
     int count = 0;
 

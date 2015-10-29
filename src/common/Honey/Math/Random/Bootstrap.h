@@ -121,7 +121,7 @@ private:
     //Progress
     Real _progress;
     sdt sampleTotal;
-    sdt idx;
+    szt idx;
 
     //Calc locals
     UniquePtr<Vec[]> bootRes;
@@ -146,7 +146,7 @@ void Bootstrap<SampleT,Dim,Real>::calc(Real progressDelta)
 
     sdt sampleCount = 0;
 
-    if (sampleTotal - sampleAcc < bootSampleCount)
+    if (sampleTotal - sampleAcc < sdt(bootSampleCount))
     {
         //Get function result with bootstrap samples (random sampling with replacement)
         for (; idx < bootSampleCount; ++idx, ++sampleCount)

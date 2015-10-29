@@ -117,10 +117,8 @@ public:
         /// Get all keys mapped to this vertex
         const KeyList& keys() const                     { return keyList; }
         /// Get all vertices along in/out links
-        auto links(DepType type = DepType::out) -> decltype(honey::keys(declval<const LinkMap>()))
-                                                        { return honey::keys(const_cast<const Vertex*>(this)->linkMaps[static_cast<int>(type)]); }
-        auto links(DepType type = DepType::out) const -> decltype(honey::keys(declval<const LinkMapConst>()))
-                                                        { return honey::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[static_cast<int>(type)])); }
+        auto links(DepType type = DepType::out)         { return honey::keys(const_cast<const Vertex*>(this)->linkMaps[static_cast<int>(type)]); }
+        auto links(DepType type = DepType::out) const   { return honey::keys(reinterpret_cast<const LinkMapConst&>(linkMaps[static_cast<int>(type)])); }
 
     private:
         /// Add link, increment reference by count

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/Random/Gen.h"
+#include "Honey/String/Bytes.h"
 
 namespace honey
 {

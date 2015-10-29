@@ -8,6 +8,8 @@
 namespace honey { namespace atomic { namespace platform
 {
 
+typedef int64 SwapMaxType;
+
 /// x86 atomic ops
 /**
   * x86 uses a strong memory model:
@@ -23,7 +25,7 @@ namespace honey { namespace atomic { namespace platform
 class Op
 {
 public:
-    static int32 load(volatile const int32& val, Order::t o)
+    static int32 load(volatile const int32& val, Order o)
     {
         switch(o)
         {
@@ -44,7 +46,7 @@ public:
         }
     }
     
-    static void store(volatile int32& dst, int32 newVal, Order::t o)
+    static void store(volatile int32& dst, int32 newVal, Order o)
     {
         switch (o)
         {
@@ -62,19 +64,19 @@ public:
         }
     }
 
-    static bool cas(volatile int32& dst, int32 newVal, int32 cmp, Order::t)         { return InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(&dst), newVal, cmp) == cmp; }
+    static bool cas(volatile int32& dst, int32 newVal, int32 cmp, Order)        { return InterlockedCompareExchange(reinterpret_cast<volatile LONG*>(&dst), newVal, cmp) == cmp; }
     /// Optimized methods
-    static int32 swap(volatile int32& dst, int32 newVal, Order::t = Order::seqCst)  { return InterlockedExchange(reinterpret_cast<volatile LONG*>(&dst), newVal); }
-    static int32 inc(volatile int32& val, Order::t = Order::seqCst)                 { return InterlockedIncrement(reinterpret_cast<volatile LONG*>(&val))-1; }
-    static int32 dec(volatile int32& val, Order::t = Order::seqCst)                 { return InterlockedDecrement(reinterpret_cast<volatile LONG*>(&val))+1; }
+    static int32 swap(volatile int32& dst, int32 newVal, Order = Order::seqCst) { return InterlockedExchange(reinterpret_cast<volatile LONG*>(&dst), newVal); }
+    static int32 inc(volatile int32& val, Order = Order::seqCst)                { return InterlockedIncrement(reinterpret_cast<volatile LONG*>(&val))-1; }
+    static int32 dec(volatile int32& val, Order = Order::seqCst)                { return InterlockedDecrement(reinterpret_cast<volatile LONG*>(&val))+1; }
 
     /// Read is not atomic on 32-bit systems
-    static int64 load(const volatile int64& val, Order::t)                          { return _InterlockedCompareExchange64(const_cast<volatile LONGLONG*>(&val), 0, 0); }
+    static int64 load(const volatile int64& val, Order)                         { return _InterlockedCompareExchange64(const_cast<volatile LONGLONG*>(&val), 0, 0); }
     /// Write is not atomic on 32-bit systems
-    static void store(volatile int64& dst, int64 newVal, Order::t o)                { int64 v; do { v = dst; } while (!cas(dst, newVal, v, o)); }
-    static bool cas(volatile int64& dst, int64 newVal, int64 cmp, Order::t)         { return _InterlockedCompareExchange64(static_cast<volatile LONGLONG*>(&dst), newVal, cmp) == cmp; }
+    static void store(volatile int64& dst, int64 newVal, Order o)               { int64 v; do { v = dst; } while (!cas(dst, newVal, v, o)); }
+    static bool cas(volatile int64& dst, int64 newVal, int64 cmp, Order)        { return _InterlockedCompareExchange64(static_cast<volatile LONGLONG*>(&dst), newVal, cmp) == cmp; }
 
-    static void fence(Order::t o)
+    static void fence(Order o)
     {
         switch (o)
         {

@@ -116,8 +116,8 @@ class MtMapIter
 
     typedef typename Elem::Key Key;
     typedef typename Elem::Val Val;
-    typedef typename Head::Super::template findElem<Key>::Next Next;
-    typedef typename Head::Super::template findElem<Key>::Prev Prev;
+    typedef typename Head::Super::template _findElem<Key>::Next Next;
+    typedef typename Head::Super::template _findElem<Key>::Prev Prev;
 
 public:
     // Propogate const to pair value
@@ -205,63 +205,60 @@ public:
     typedef Val_ Val;   ///< Value type
     typedef List_ List; ///< Rest of map
 
-private:
-    static const bool isTail = std::is_same<List, mt::Void>::value;
-
-    /// Private functions for map elem
     template<bool isTail, szt _=0>
     struct priv
     {
-        /// We don't have this key, recurse towards tail
+        // We don't have this key, recurse towards tail
         template<class Key, class Prev>
-        struct findElem                                             : List::Super::template findElem<Key, Subclass> {};
+        struct _findElem                                             : List::Super::template _findElem<Key, Subclass> {};
 
-        /// Specialize for our key
+        // Specialize for our key
         template<class Prev_>
-        struct findElem<Key, Prev_>
+        struct _findElem<Key, Prev_>
         {
             typedef Subclass type;
             typedef Prev_ Prev;
             typedef List Next;
         };
 
-        /// Recurse to tail
-        template<szt Count> struct sizeR                            : List::Super::template sizeR<Count+1> {};
+        // Recurse to tail
+        template<szt Count> struct _sizeR                           : List::Super::template _sizeR<Count+1> {};
     };
 
-    /// Private functions for tail
+    // tail
     template<szt _>
     struct priv<true,_>
     {
         // Fallback for any key
         template<class Key, class Prev_>
-        struct findElem
+        struct _findElem
         {
             typedef Subclass type;
             typedef Prev_ Prev;
             typedef Subclass Next;
         };
 
-        /// End recursion
-        template<szt Count> struct sizeR                            : mt::Value<szt, Count> {};
+        // End recursion
+        template<szt Count> struct _sizeR                            : mt::Value<szt, Count> {};
     };
 
-    /// Find map list element with key at compile-time.  Also returns prev/next elements in list at key.
-    template<class Key, class Prev = Subclass>
-    struct findElem                                                 : priv<isTail>::template findElem<Key, Prev> {};
+    static const bool _isTail = std::is_same<List, mt::Void>::value;
 
-    /// Recursive size counter, size is at tail
+    // Find map list element with key at compile-time.  Also returns prev/next elements in list at key.
+    template<class Key, class Prev = Subclass>
+    struct _findElem                                                : priv<_isTail>::template _findElem<Key, Prev> {};
+
+    // Recursive size counter, size is at tail
     template<szt Count>
-    struct sizeR                                                    : priv<isTail>::template sizeR<Count> {};
+    struct _sizeR                                                   : priv<_isTail>::template _sizeR<Count> {};
     
-public:
     /// Check if key exists at compile-time
-    template<class Key> struct hasKey_                              : mt::Value<bool, !std::is_same<typename findElem<Key>::type, MtMapTail>::value> {};
+    template<class Key> struct hasKey_                              : mt::Value<bool, !std::is_same<typename _findElem<Key>::type, MtMapTail>::value> {};
     /// Check if has key
     template<class Key> bool hasKey(Key) const                      { return hasKey_<Key>::value; }
 
     /// Result type of get()
-    template<class Key> using getResult                             = typename findElem<Key>::type::Val;
+    template<class Key> using getResult                             = typename _findElem<Key>::type::Val;
 
     /// Result type of begin()
     typedef MtMapIter<Subclass> beginResult;
@@ -280,8 +277,8 @@ public:
     endResult_const end() const                                     { return endResult_const(subc()); }
 
     /// Result type of iter()
-    template<class Key> using iterResult                            = MtMapIter<Subclass, typename findElem<Key>::type>;
-    template<class Key> using iterResult_const                      = MtMapIter<const Subclass, typename findElem<Key>::type>;
+    template<class Key> using iterResult                            = MtMapIter<Subclass, typename _findElem<Key>::type>;
+    template<class Key> using iterResult_const                      = MtMapIter<const Subclass, typename _findElem<Key>::type>;
     
     /// Get iterator to element by key
     template<class Key>
@@ -289,63 +286,59 @@ public:
     template<class Key>
     iterResult_const<Key>   iter(Key) const                         { return iterResult_const<Key>(subc()); }
     
-private:
-    template<class... Pairs> struct insertResult_                   { typedef Subclass type; };
+    template<class... Pairs> struct _insertResult                   { typedef Subclass type; };
     template<class Val, class Key, class... Pairs>
-    struct insertResult_<Val, Key, Pairs...>
+    struct _insertResult<Val, Key, Pairs...>
     {
         static_assert(!hasKey_<Key>::value, "Insert failed. Key already exists.");
-        typedef MtMapElem<Key, Val, typename insertResult_<Pairs...>::type> type;
+        typedef MtMapElem<Key, Val, typename _insertResult<Pairs...>::type> type;
     };
     
     template<class PairSeq, class... Pairs> struct insertResult_seq;
     template<class... Seq, class... Pairs>
-    struct insertResult_seq<honey::priv::PairSeq<Seq...>, Pairs...> { typedef typename insertResult_<Seq...>::type type; };
+    struct insertResult_seq<honey::priv::PairSeq<Seq...>, Pairs...> { typedef typename _insertResult<Seq...>::type type; };
     
-public:
     /// Result type of insert(). New pairs are inserted at the front.
-    template<class... Pairs> using insertResult                     = typename insertResult_<Pairs...>::type;
+    template<class... Pairs> using insertResult                     = typename _insertResult<Pairs...>::type;
     
     /// Insert pairs of the form `(key() = value)` into the map
     template<class... Pairs>
     typename insertResult_seq<honey::priv::PairSeqGen<Pairs...>, Pairs...>::type
         insert(Pairs&&... pairs) const                              { return typename insertResult_seq<honey::priv::PairSeqGen<Pairs...>, Pairs...>::type(mt::tag<1>(), subc(), forward<Pairs>(pairs)...); }
     
-private:
     template<bool isTail, class... Keys>
-    struct eraseResult_
+    struct _eraseResult
     {
         typedef typename std::conditional<
             mt::typeIndex<Key, Keys...>::value >= 0,
-            typename List::Super::template eraseResult_<List::Super::isTail, Keys...>::type,
-            MtMapElem<Key, Val, typename List::Super::template eraseResult_<List::Super::isTail, Keys...>::type>
+            typename List::Super::template _eraseResult<List::Super::_isTail, Keys...>::type,
+            MtMapElem<Key, Val, typename List::Super::template _eraseResult<List::Super::_isTail, Keys...>::type>
         >::type type;
     };
     template<class... Keys>
-    struct eraseResult_<true, Keys...>                              { typedef MtMapTail type; };
+    struct _eraseResult<true, Keys...>                              { typedef MtMapTail type; };
     
-    template<class _=void> struct clearResult_                      { typedef MtMapTail type; };
+    template<class _=void> struct _clearResult                      { typedef MtMapTail type; };
     
-public:
     /// Result type of erase().  Reconstructs type without matching keys.
-    template<class... Keys> using eraseResult                       = typename eraseResult_<isTail, Keys...>::type;
+    template<class... Keys> using eraseResult                       = typename _eraseResult<_isTail, Keys...>::type;
     
     /// Erase keys from the map
     template<class... Keys>
     eraseResult<Keys...> erase(Keys...) const                       { return eraseResult<Keys...>(subc()); }
     
     /// Result type of clear()
-    typedef typename clearResult_<>::type clearResult;
+    typedef typename _clearResult<>::type clearResult;
     /// Clear map of all keys
     clearResult clear()                                             { return clearResult(); }
 
     /// Get size of map at compile-time
-    struct size_                                                    : sizeR<0> {};
+    struct size_                                                    : _sizeR<0> {};
     /// Get size of map
     szt size() const                                                { return size_::value; };
 
     /// Check if empty at compile-time
-    struct empty_                                                   : mt::Value<bool, isTail> {};
+    struct empty_                                                   : mt::Value<bool, _isTail> {};
     /// Check if empty
     bool empty() const                                              { return empty_::value; }
     
@@ -374,7 +367,7 @@ class MtMapElem : public MtMapCommon<MtMapElem<Key_,Val_,List_>, Key_, Val_, Lis
 public:
     using typename Super::Key;
     using typename Super::Val;
-    using typename Super::List;
+    typedef typename Super::List List;
     template<class Key> using hasKey_                               = typename Super::template hasKey_<Key>;
     using Super::hasKey;
     template<class Key> using getResult                             = typename Super::template getResult<Key>;
@@ -391,11 +384,11 @@ public:
     using Super::insert;
     template<class... Keys> using eraseResult                       = typename Super::template eraseResult<Keys...>;
     using Super::erase;
-    using typename Super::clearResult;
+    typedef typename Super::clearResult clearResult;
     using Super::clear;
-    using typename Super::size_;
+    typedef typename Super::size_ size_;
     using Super::size;
-    using typename Super::empty_;
+    typedef typename Super::empty_ empty_;
     using Super::empty;
 
     MtMapElem()                                                     { static_assert(honey::priv::isOptional<Val>::value, "Key not optional. Must provide key to constructor."); }

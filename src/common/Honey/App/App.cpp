@@ -1,7 +1,9 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/App/App.h"
 #include "Honey/App/Module.h"
+#include "Honey/Misc/Log.h"
 
 namespace honey
 {
@@ -58,7 +60,7 @@ void App::run()
             if (it != results.end())
             {
                 try { it->get(); }
-                catch (Terminated& e) {}
+                catch (Terminated&) {}
                 catch (std::exception& e)
                 {
                     Log::inst() << log::level::critical << e.what();
@@ -77,7 +79,7 @@ void App::run()
             default: break;
             }
         }
-        catch (Terminated& e)
+        catch (Terminated&)
         {
             if (_runMode != RunMode::term)
             {

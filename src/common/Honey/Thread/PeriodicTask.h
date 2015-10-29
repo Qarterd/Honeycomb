@@ -18,7 +18,6 @@ namespace mt { template<> struct is_base_of<honey::priv::SharedObj_tag, Periodic
 class PeriodicTask : public SharedObj<PeriodicTask>, thread::Pool::Task
 {
     friend class PeriodicSched;
-    friend struct mt::Funcptr<void ()>;
     
 public:
     typedef SharedPtr<PeriodicTask> Ptr;

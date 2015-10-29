@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Math/NumAnalysis/BisectN.h"
 #include "Honey/Misc/ScopeGuard.h"
@@ -34,7 +35,7 @@ bool BisectN<Real,Dim>::root()
         _corners[i] = corner(min,max,i);
 
     //Eval funcs at corners
-    for (auto fi: range(size(*_funcs)))
+    for (auto fi: range(stdutil::size(*_funcs)))
         for (auto i: range(childCount))
             _funcsCorners[fi][i] = _funcs->at(fi)(_corners[i]);
 
@@ -57,7 +58,7 @@ bool BisectN<Real,Dim>::root()
     }
 
     //Depth-first recursion through children
-    if (size(_nodes) == _depthMax) return false; //No recursion at max depth
+    if (stdutil::size(_nodes) == _depthMax) return false; //No recursion at max depth
     node.center = (min + max) / 2;
     for (auto i: range(childCount))
     {

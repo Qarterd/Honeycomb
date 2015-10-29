@@ -15,7 +15,8 @@ namespace honey
 namespace priv
 {
     struct SharedObj_tag {};
-    
+    template<class T> struct isIntrusive                : mt::Value<bool, mt::is_base_of<SharedObj_tag, T>::value> {};
+
     /// Control block for shared pointer.  Holds strong/weak reference counts.
     class SharedControl
     {
@@ -60,7 +61,7 @@ namespace priv
     };
     
     /// Control pointer storage for non-intrusive pointers
-    template<class Subclass, class T, bool isIntrusive = mt::is_base_of<SharedObj_tag, T>::value>
+    template<class Subclass, class T, bool isIntrusive = isIntrusive<T>::value>
     struct SharedControlPtr
     {
         SharedControlPtr()                              : __control(nullptr) {}
@@ -183,8 +184,6 @@ class SharedPtr : priv::SharedControlPtr<SharedPtr<T>, T>
     template<class T_, class U> friend SharedPtr<T_> dynamic_pointer_cast(const SharedPtr<U>&);
     template<class T_, class U> friend SharedPtr<T_> const_pointer_cast(const SharedPtr<U>&);
     
-    static const bool isIntrusive                                   = mt::is_base_of<priv::SharedObj_tag, T>::value;
-    
     template<class T_, bool = std::is_void<T_>::value> struct Ref_  { typedef T_& type; static type deref(T_* p) { return *p; } };
     template<class T_> struct Ref_<T_, true>                        { typedef T_ type;  static type deref(T_* p) {} };
     
@@ -196,13 +195,13 @@ public:
     SharedPtr(nullptr_t)                                            : _ptr(nullptr) {}
     
     /// Reference an object, allowing for implicit construction. For intrusive pointers only.
-    template<class U, typename std::enable_if<mt::True<U>::value && isIntrusive, int>::type=0>
+    template<class U, typename std::enable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     SharedPtr(U* ptr)                                               : _ptr(nullptr) { set(ptr); }
     /// Reference an object with finalizer and internal control block allocator. For non-intrusive pointers only.
     /**
       * Finalizer is run when reference count reaches 0 (deletes object by default).
       */
-    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && isIntrusive, int>::type=0>
+    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     explicit SharedPtr(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())    : _ptr(nullptr) { set(ptr, forward<Fin>(f), forward<Alloc>(a)); }
     
     /// Reference the object pointed to by another shared pointer
@@ -231,9 +230,9 @@ public:
     template<class U>
     SharedPtr& operator=(SharedPtr<U>&& rhs)                        { set(move(rhs)); return *this; }
     
-    template<class U, class Fin, typename std::enable_if<mt::True<U>::value && isIntrusive, int>::type=0>
+    template<class U, class Fin, typename std::enable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     SharedPtr& operator=(UniquePtr<U,Fin>&& rhs)                    { set(rhs.release()); return *this; }
-    template<class U, class Fin, typename mt::disable_if<mt::True<U>::value && isIntrusive, int>::type=0> 
+    template<class U, class Fin, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     SharedPtr& operator=(UniquePtr<U,Fin>&& rhs)                    { set(rhs.release(), move(rhs.finalizer())); return *this; }
     
     template<class U>
@@ -262,10 +261,10 @@ public:
     T* get() const                                                  { return _ptr; }
 
     /// Dereference the current object and reference a new object. For intrusive pointers only.
-    template<class U, typename std::enable_if<mt::True<U>::value && isIntrusive, int>::type=0>
+    template<class U, typename std::enable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     void set(U* ptr)                                                { setControl(ptr, ptr ? &ptr->SharedObj::_control() : nullptr); }
     /// Dereference the current object and reference a new object, with finalizer and internal control block allocator. For non-intrusive pointers only.
-    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && isIntrusive, int>::type=0>
+    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     void set(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())
     {
         typedef priv::SharedControl_<U,Fin,Alloc> Control;

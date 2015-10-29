@@ -1,7 +1,7 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
 #pragma once
 
-#include "Honey/Misc/Enum.h"
+#include "Honey/String/Id.h"
 #include "Honey/Math/Real.h"
 
 namespace honey
@@ -43,7 +43,7 @@ public:
     Property(const String& name)                            : PropertyBase(name) {}
     Property(const String& name, const T& val)              : PropertyBase(name), _val(val) {}
     Property(const String& name, T&& val)                   : PropertyBase(name), _val(move(val)) {}
-    Property(const Property& rhs)                           : PropertyBase(rhs._name), _val(rhs._val) {}
+    Property(const Property& rhs)                           : PropertyBase(rhs._name.name()), _val(rhs._val) {}
     
     /// Static function to get property type info
     static const NameId& s_type();

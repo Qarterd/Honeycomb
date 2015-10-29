@@ -33,7 +33,7 @@ class Vec : public VecBase<Vec<Dim,Real,Options,Alloc>>
 {
     typedef VecBase<Vec<Dim,Real,Options,Alloc>> Super;
 public:
-    using Super::s_size;
+    static const sdt s_size = Super::s_size;
     
     /// No init
     Vec() {}
@@ -70,7 +70,7 @@ typedef Vec<matrix::dynamic, Double, matrix::Option::vecRow>    VecRowN_d;
 /// It's not possible to inherit ctors, so this macro is required
 #define MATRIX_VEC_ADAPTER                                                                                              \
 public:                                                                                                                 \
-    using Super::s_size;                                                                                                \
+    static const sdt s_size = Super::s_size;                                                                            \
     using typename Super::Alloc;                                                                                        \
                                                                                                                         \
     Matrix() {}                                                                                                         \

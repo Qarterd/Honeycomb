@@ -33,9 +33,9 @@ protected:
     using Storage::assertIndex;
     
 public:
-    using Storage::s_rows;
-    using Storage::s_cols;
-    using Storage::s_size;
+    static const sdt s_rows = Storage::s_rows;
+    static const sdt s_cols = Storage::s_cols;
+    static const sdt s_size = Storage::s_size;
     using Storage::options;
     using typename Storage::Alloc;
     using Storage::subc;

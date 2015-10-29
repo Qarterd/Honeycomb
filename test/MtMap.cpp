@@ -1,7 +1,9 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "MtMap.h"
 #include "Honey/Misc/MtMap.h"
+#include "Honey/String/Stream.h"
 
 namespace honey
 {

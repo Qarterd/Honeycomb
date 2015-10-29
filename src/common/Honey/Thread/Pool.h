@@ -12,12 +12,14 @@ namespace honey { namespace thread
 class Pool : public SharedObj<Pool>
 {
 public:
-    /// All tasks must inherit from this class.  std::function is not used here to avoid the operator() virtual call.
-    struct Task : mt::FuncptrBase
+    /// All tasks must inherit from this class
+    struct Task
     {
         friend class Pool;
         friend class Worker;
         
+        virtual void operator()() = 0;
+
     protected:
         virtual void trace(const String& file, int line, const String& msg) const;
         virtual bool traceEnabled() const           { return false; }
@@ -31,24 +33,12 @@ public:
     ~Pool();
 
     /// Schedule a task for execution
-    template<class Task>
-    void enqueue(Task&& task)                       { enqueue_(TaskPtr(forward<Task>(task))); }
+    void enqueue(Task& task);
     
     /// Get the current task object of the calling thread.  Must be called from inside a task, returns null otherwise.
     static Task* current()                          { auto& ptr = Worker::current()._task; return ptr ? &(*ptr) : nullptr; }
     
 private:
-    struct TaskPtr : mt::Funcptr<void ()>
-    {
-        TaskPtr() = default;
-        TaskPtr(nullptr_t)                          : TaskPtr() {}
-        template<class Task>
-        TaskPtr(Task&& task)                        : mt::Funcptr<void ()>(forward<Task>(task)) {}
-    
-        Task& operator*() const                     { assert(base); return static_cast<Task&>(*base); }
-        Task* operator->() const                    { assert(base); return static_cast<Task*>(base); }
-    };
-    
     class Worker
     {
         friend class Pool;
@@ -64,7 +54,7 @@ private:
         void run();
         
         /// Get next task
-        TaskPtr next();
+        Task* next();
         
         Pool&                       _pool;
         Thread                      _thread;
@@ -72,16 +62,14 @@ private:
         ConditionLock               _cond;
         bool                        _condWait;
         SpinLock                    _condOne;
-        lockfree::Queue<TaskPtr>    _tasks;
-        TaskPtr                     _task;
+        lockfree::Queue<Task*>      _tasks;
+        Task*                       _task;
         static thread::Local<Worker*> _current;
     };
     
-    void enqueue_(TaskPtr task);
-    
     const szt                   _workerTaskMax;
     vector<UniquePtr<Worker>>   _workers;
-    lockfree::Queue<TaskPtr>    _tasks;
+    lockfree::Queue<Task*>      _tasks;
 };
 
 } }

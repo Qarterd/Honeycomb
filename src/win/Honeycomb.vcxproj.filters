@@ -1,898 +1,749 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="..\common\Honey\Thread\Atomic.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Bootstrap.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\CameraPersp.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Camera.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\CameraArcBall.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\CameraOrtho.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Clock.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\CullVol.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Graph\Dep.h">
-      <Filter>Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Enum.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Exception.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Frustum.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\FrustumPersp.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\FrustumOrtho.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Geom.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\String\Hash.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\String\Id.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\String\IdCache.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Scene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Object.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\Object.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\Property.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\Component.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Permute.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Random.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Gen.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Salsa.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Vegas.h">
-      <Filter>Math\Random</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Thread.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Memory\SmallAllocator.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Memory\UniquePtr.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Memory\SharedPtr.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\Tree.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\Tm.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\StdUtil.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\String\String.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\TimePoint.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Graph\Tree.h">
-      <Filter>Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Graph\TreeClone.h">
-      <Filter>Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\TreeIdMap.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Viewport.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\Space.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Core\Core.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Core\Mem.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Intersect.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Shape.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Trig.h">
-      <Filter>Math\Alge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Alge.h">
-      <Filter>Math\Alge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Memory\Pool.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\TreeSpace.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\BitOp.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Box.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Capsule.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Sphere.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Triangle.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Ray.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Rect.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Line.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\OrientBox.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Plane.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Cone.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\Cylinder.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Quat.h">
-      <Filter>Math\Alge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Transform.h">
-      <Filter>Math\Alge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\String\Stream.h">
-      <Filter>String</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\NspTreeSpace.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Graph\NspTree.h">
-      <Filter>Graph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Physics\Physics.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Geom\BoundVol.h">
-      <Filter>Math\Geom</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Honeycomb.h" />
-    <ClInclude Include="..\common\Honey\Misc\Debug.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\ListenerList.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\ListenerQueue.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\Signal.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\MtMap.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Core\Preprocessor.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Core\Meta.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Option.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\Listener.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Range.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Condition\Condition.h">
-      <Filter>Thread\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Future\Future.h">
-      <Filter>Thread\Future</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Future\PackagedTask.h">
-      <Filter>Thread\Future</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Future\Promise.h">
-      <Filter>Thread\Future</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Future\SharedFuture.h">
-      <Filter>Thread\Future</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Mutex.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\SharedMutex.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Util.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Future\Util.h">
-      <Filter>Thread\Future</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\BloomFilter.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\BitSet.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Condition\Lock.h">
-      <Filter>Thread\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Condition\Any.h">
-      <Filter>Thread\Condition</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\LockFree\Backoff.h">
-      <Filter>Thread\LockFree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\LockFree\List.h">
-      <Filter>Thread\LockFree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\LockFree\Mem.h">
-      <Filter>Thread\LockFree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Concur\Deque.h">
-      <Filter>Thread\Concur</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\List.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Concur\Salsa.h">
-      <Filter>Thread\Concur</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\ScopeGuard.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\ComObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Component.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Core\platform\Core.h">
-      <Filter>Core\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Core\platform\priv\Core.h">
-      <Filter>Core\platform\priv</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\Alge\platform\Quat.h">
-      <Filter>Math\Alge\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Misc\platform\Debug.h">
-      <Filter>Misc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Misc\platform\Clock.h">
-      <Filter>Misc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Thread\Condition\platform\Condition.h">
-      <Filter>Thread\Condition\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Thread\Lock\platform\Mutex.h">
-      <Filter>Thread\Lock\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Thread\platform\Thread.h">
-      <Filter>Thread\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Thread\platform\Atomic.h">
-      <Filter>Thread\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Scene\Com\Light.h">
-      <Filter>Scene\Com</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\PropertyObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Numeral.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\platform\Numeral.h">
-      <Filter>Math\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Quad.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Ratio.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Real.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Double.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Duration.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Float.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Test\Test.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Object\PropertyList.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Base.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Block.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Builder.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix4.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Traits.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\priv\Storage.h">
-      <Filter>Math\Alge\Matrix\priv</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\Alge\Matrix\platform\Matrix4.h">
-      <Filter>Math\Alge\Matrix\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Base.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Swiz.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec1.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec2.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec3.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec4.h">
-      <Filter>Math\Alge\Vec</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Vec\priv\Storage.h">
-      <Filter>Math\Alge\Vec\priv</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec2.h">
-      <Filter>Math\Alge\Vec\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec3.h">
-      <Filter>Math\Alge\Vec\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec4.h">
-      <Filter>Math\Alge\Vec\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Iter.h">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="Honey\String\platform\Stream.h">
-      <Filter>String\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Misc\Lazy.h">
-      <Filter>Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Unique.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Transfer.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Spin.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Lock\Shared.h">
-      <Filter>Thread\Lock</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\StudentT.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Binomial.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\BinomialNeg.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\ChiSqr.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Discrete.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\DiscreteGen.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gamma.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gaussian.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\HyperGeo.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Poisson.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Dist.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Uniform.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Weibull.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\Random\Dist\Beta.h">
-      <Filter>Math\Random\Dist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Svd.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BackSub.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Bisect.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BisectN.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Eigen.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Interp.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\LinearLeastSqr.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Minimize.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\MinimizeN.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Qrd.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Polynomial.h">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Honey\Thread\Task.h">
-      <Filter>Thread</Filter>
-    </ClInclude>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\App">
+      <UniqueIdentifier>{fed06ce3-e7f1-4258-b67e-16ab57bcc72b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chrono">
+      <UniqueIdentifier>{84537b5a-9422-46a8-a567-6edf859e1f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{3d3b81c3-f2d8-4706-9827-00560bc2ebcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graph">
+      <UniqueIdentifier>{99b726af-d19e-438c-9267-2cd3606e3883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{be43b078-a3ca-456d-90d5-0ee2dd81455c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Memory">
+      <UniqueIdentifier>{be5b4376-c726-4134-a869-b48dbc9e5a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Misc">
+      <UniqueIdentifier>{807bebc7-faeb-432f-b323-9d8e564f34f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Net">
+      <UniqueIdentifier>{46b048e7-b401-46e3-813e-e2964826a232}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{26106f1f-0547-4caf-9f0a-1d0701ca62d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\String">
+      <UniqueIdentifier>{d2e9607d-3533-464e-9e97-3949dba9a246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread">
+      <UniqueIdentifier>{f4906503-8a4b-4cc8-b1f8-6f41c5c182fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge">
+      <UniqueIdentifier>{94a436a5-1ec3-4cef-927e-f444299cbcdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\Condition">
+      <UniqueIdentifier>{ad7662cf-53fc-4bf6-9c8d-2ec82948ea34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\NumAnalysis">
+      <UniqueIdentifier>{55679939-2caf-4bb2-b0a1-df0c78513c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Random">
+      <UniqueIdentifier>{9ae47d56-d03d-4045-80bd-6f3338b0b5f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Random\Dist">
+      <UniqueIdentifier>{ad660e5c-1794-4ff3-8462-a9b43cff73af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\Future">
+      <UniqueIdentifier>{678a95e5-e611-41fc-8543-421245427239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\Lock">
+      <UniqueIdentifier>{649bbffd-8b66-496c-9d93-51cbeb60ff81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\LockFree">
+      <UniqueIdentifier>{0b6e3527-195e-454f-952f-42a11cc99d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Matrix">
+      <UniqueIdentifier>{8719f1fc-54bc-4b6f-87db-78a76e735cdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Vec">
+      <UniqueIdentifier>{c84d9cc4-d217-4d3c-a39c-c21c2f734667}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Matrix\priv">
+      <UniqueIdentifier>{5398d1ba-dc73-4136-958a-46fcd474d346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Vec\priv">
+      <UniqueIdentifier>{9eb4014b-0033-41c0-b890-619adbc99f6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chrono\platform">
+      <UniqueIdentifier>{fa03f8e1-0f93-4bc3-aca7-fad37610fd54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\platform">
+      <UniqueIdentifier>{f69e290a-0e53-470a-b958-852e79295176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\platform">
+      <UniqueIdentifier>{fff6654e-e6f2-4573-aced-fd1d1ce471a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\platform">
+      <UniqueIdentifier>{1dd9dd11-e843-4f97-beff-36a2add6ea5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Matrix\platform">
+      <UniqueIdentifier>{d427f0f0-0fee-4848-b56a-1eec9a4d5880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Alge\Vec\platform">
+      <UniqueIdentifier>{0117690e-38b3-4ff3-a582-1f11a48830f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math\Random\platform">
+      <UniqueIdentifier>{62e556fb-a314-451d-9d5e-95b5b4b38bbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Misc\platform">
+      <UniqueIdentifier>{a71f9e9a-60fb-4fd8-94ef-89d8be746fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Net\platform">
+      <UniqueIdentifier>{523a8171-23f0-4742-b953-06b79c1681ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\Condition\platform">
+      <UniqueIdentifier>{679af449-9293-4905-b341-de520ecbc9e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\Lock\platform">
+      <UniqueIdentifier>{6ba8e5a0-fa9a-4779-b6b0-3e94eae1f1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread\platform">
+      <UniqueIdentifier>{f61f6a47-03f3-4ea6-9153-62eeb87cd838}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\platform\priv">
+      <UniqueIdentifier>{b1019b8e-c3e3-4ab0-aad3-15996272f314}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\Honey\Scene\Camera.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="..\common\Honey\App\App.cpp">
+      <Filter>Source Files\App</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Com\CullVol.cpp">
-      <Filter>Scene\Com</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\FrustumOrtho.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\FrustumPersp.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Geom.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\String\Hash.cpp">
-      <Filter>String</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Scene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Object.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Random.cpp">
-      <Filter>Math\Random</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Salsa.cpp">
-      <Filter>Math\Random</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Thread\Thread.cpp">
-      <Filter>Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Com\Tm.cpp">
-      <Filter>Scene\Com</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\String\String.cpp">
-      <Filter>String</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Core\Core.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Intersect.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Alge\Alge.cpp">
-      <Filter>Math\Alge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Alge\Trig.cpp">
-      <Filter>Math\Alge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Memory\Pool.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Com\TreeSpace.cpp">
-      <Filter>Scene\Com</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Box.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Capsule.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Sphere.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Triangle.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Ray.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Line.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\OrientBox.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Plane.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Cone.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\Cylinder.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Alge\Quat.cpp">
-      <Filter>Math\Alge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Alge\Transform.cpp">
-      <Filter>Math\Alge</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Physics\Physics.cpp">
-      <Filter>Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Geom\BoundVol.cpp">
-      <Filter>Math\Geom</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Misc\Debug.cpp">
-      <Filter>Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Object\ListenerList.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Object\ListenerQueue.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Object\Listener.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Thread\Lock\SharedMutex.cpp">
-      <Filter>Thread\Lock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Misc\BloomFilter.cpp">
-      <Filter>Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Misc\BitSet.cpp">
-      <Filter>Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\List.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Object\ComObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Object\Component.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Com\Light.cpp">
-      <Filter>Scene\Com</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Float.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Quad.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Double.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Test\Test.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="..\common\Honey\App\Module.cpp">
+      <Filter>Source Files\App</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\Alge\Matrix\Matrix4.cpp">
-      <Filter>Math\Alge\Matrix</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Thread\Lock\Spin.cpp">
-      <Filter>Thread\Lock</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Scene\Com\NspTreeSpace.cpp">
-      <Filter>Scene\Com</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Graph\NspTree.cpp">
-      <Filter>Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Beta.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Binomial.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\BinomialNeg.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\StudentT.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\ChiSqr.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Discrete.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\DiscreteGen.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gamma.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gaussian.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\HyperGeo.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Poisson.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Dist.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Uniform.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\Random\Dist\Weibull.cpp">
-      <Filter>Math\Random\Dist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Svd.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Bisect.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\BisectN.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Eigen.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Interp.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\LinearLeastSqr.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Minimize.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\MinimizeN.cpp">
-      <Filter>Math\NumAnalysis</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Qrd.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Polynomial.cpp">
-      <Filter>Math\NumAnalysis</Filter>
+      <Filter>Source Files\Math\NumAnalysis</Filter>
     </ClCompile>
-    <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec4.cpp">
-      <Filter>Math\Alge\Vec\platform</Filter>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Qrd.cpp">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\NumAnalysis\Svd.cpp">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Beta.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Binomial.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\BinomialNeg.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\ChiSqr.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Discrete.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\DiscreteGen.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Dist.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gamma.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Gaussian.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\HyperGeo.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Poisson.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\StudentT.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Uniform.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Dist\Weibull.cpp">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Chacha.cpp">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Random.cpp">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Random\Simplex.cpp">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Memory\Pool.cpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Misc\BloomFilter.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Misc\Log.cpp">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Net\Socket.cpp">
+      <Filter>Source Files\Net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\ComObject.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\Component.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Object\ListenerList.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Bytes.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Encode.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Hash.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Json.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\String.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\String\Util.cpp">
+      <Filter>Source Files\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Future\Util.cpp">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Lock\SharedMutex.cpp">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Lock\Spin.cpp">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Lock\TimedMutex.cpp">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\DepTask.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\PeriodicTask.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Pool.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Thread\Thread.cpp">
+      <Filter>Source Files\Thread</Filter>
     </ClCompile>
     <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec2.cpp">
-      <Filter>Math\Alge\Vec\platform</Filter>
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
     </ClCompile>
     <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec3.cpp">
-      <Filter>Math\Alge\Vec\platform</Filter>
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
     </ClCompile>
-    <ClCompile Include="Honey\Misc\platform\Clock.cpp">
-      <Filter>Misc\platform</Filter>
+    <ClCompile Include="Honey\Math\Alge\Vec\platform\Vec4.cpp">
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Honey\Chrono\platform\Clock.cpp">
+      <Filter>Source Files\Chrono\platform</Filter>
     </ClCompile>
     <ClCompile Include="Honey\Misc\platform\Debug.cpp">
-      <Filter>Misc\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Honey\Thread\Lock\platform\Mutex.cpp">
-      <Filter>Thread\Lock\platform</Filter>
+      <Filter>Source Files\Misc\platform</Filter>
     </ClCompile>
     <ClCompile Include="Honey\Thread\platform\Thread.cpp">
-      <Filter>Thread\platform</Filter>
+      <Filter>Source Files\Thread\platform</Filter>
     </ClCompile>
     <ClCompile Include="Honey\Thread\Condition\platform\Condition.cpp">
-      <Filter>Thread\Condition\platform</Filter>
+      <Filter>Source Files\Thread\Condition\platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\Honey\Thread\Task.cpp">
-      <Filter>Thread</Filter>
+    <ClCompile Include="Honey\Thread\Lock\platform\Mutex.cpp">
+      <Filter>Source Files\Thread\Lock\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Honey\Math\Random\platform\Random.cpp">
+      <Filter>Source Files\Math\Random\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Honey\Net\platform\Socket.cpp">
+      <Filter>Source Files\Net\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Honeycomb_pch.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{ccfd2e1e-c3ae-406f-87ff-acaf80c3e20d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Com">
-      <UniqueIdentifier>{1083512d-6e29-4423-a3e8-884d4e8aff01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math">
-      <UniqueIdentifier>{d4d1969e-94bc-422d-a154-1c3005f61476}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Memory">
-      <UniqueIdentifier>{a3521fc7-6249-45a7-b6f5-87897c101979}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Misc">
-      <UniqueIdentifier>{66da0fd4-4109-43d2-9d28-5595e20376c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object">
-      <UniqueIdentifier>{c98deaf5-5ca0-45f3-be36-432c3ac7ed7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="String">
-      <UniqueIdentifier>{8ee806df-b342-4068-8439-7f400a186b66}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge">
-      <UniqueIdentifier>{582c83fb-1706-42e2-8721-2dc91a7b83ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Geom">
-      <UniqueIdentifier>{d8d76145-0513-45db-bc53-aeeb14f5e804}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Random">
-      <UniqueIdentifier>{2363cded-0ba5-4ca8-9c3d-4a215d7e4df8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graph">
-      <UniqueIdentifier>{37cbde47-39c6-476d-8ea6-60811fcba247}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread">
-      <UniqueIdentifier>{43e05faf-8901-44c5-ae16-a011dd8007c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{59cf4577-2d3b-4020-879b-d65be61e323e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Physics">
-      <UniqueIdentifier>{ed45c891-15ca-4e0a-b103-9804938c5cc0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Concur">
-      <UniqueIdentifier>{a02994de-96f2-4a3a-b935-3dcff9822dda}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Lock">
-      <UniqueIdentifier>{50791e31-d971-4313-a843-16e99c58e44b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Condition">
-      <UniqueIdentifier>{4640ca2d-914e-46fc-8754-48c79cb64929}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Future">
-      <UniqueIdentifier>{dc2b323b-42fb-4519-b70a-b91c0be6171d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\LockFree">
-      <UniqueIdentifier>{bcc8723c-4347-4dd8-a594-ce9d035f1deb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\platform">
-      <UniqueIdentifier>{bac68016-7199-4e6e-b544-900d1f0455d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\platform\priv">
-      <UniqueIdentifier>{0bb9a107-2186-4e14-b272-6be9fb35d8b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\platform">
-      <UniqueIdentifier>{0b054531-7bba-4d68-a008-cbf256781179}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Misc\platform">
-      <UniqueIdentifier>{6cb12141-d5a4-4d33-ba01-94a7463dc6be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Condition\platform">
-      <UniqueIdentifier>{2dd064ef-789d-4c70-b720-ec5bb2cc2ff1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\Lock\platform">
-      <UniqueIdentifier>{c7a2a8ac-55b8-45db-aa14-c7442da08442}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread\platform">
-      <UniqueIdentifier>{a8d72cf3-fa21-4112-9cb5-e050812e8e26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\platform">
-      <UniqueIdentifier>{cb71490b-f9ce-47a9-975b-c29f235fe468}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Test">
-      <UniqueIdentifier>{133a16ed-1cd7-400f-92e1-7fe1eb2269b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Matrix">
-      <UniqueIdentifier>{d83063a1-40b0-4576-8b99-b8c72f796ab6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Matrix\priv">
-      <UniqueIdentifier>{b3a80dbc-52f2-4f37-a691-0e46399092fa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Matrix\platform">
-      <UniqueIdentifier>{2e4826e6-c899-484c-85c4-a9bd6776c18a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Vec">
-      <UniqueIdentifier>{94d45b40-f0a4-4a15-a6cc-561e304dd9ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Vec\priv">
-      <UniqueIdentifier>{e4954166-5085-40b2-9bc1-dd7292100689}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Alge\Vec\platform">
-      <UniqueIdentifier>{da02e87f-23bb-4770-a487-ec346fc4a3d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="String\platform">
-      <UniqueIdentifier>{9eee9d50-a42c-45da-b862-1a597e35987a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\Random\Dist">
-      <UniqueIdentifier>{38decd5c-a884-4f39-9e33-b7d3f664331d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Math\NumAnalysis">
-      <UniqueIdentifier>{ac20d923-f3d8-492a-9c72-aad299448121}</UniqueIdentifier>
-    </Filter>
+    <ClInclude Include="..\common\Honey\App\App.h">
+      <Filter>Source Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\App\Module.h">
+      <Filter>Source Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Chrono\Clock.h">
+      <Filter>Source Files\Chrono</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Chrono\Duration.h">
+      <Filter>Source Files\Chrono</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Chrono\TimePoint.h">
+      <Filter>Source Files\Chrono</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Core\Core.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Core\Meta.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Core\Preprocessor.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Graph\Dep.h">
+      <Filter>Source Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Graph\Tree.h">
+      <Filter>Source Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Graph\TreeClone.h">
+      <Filter>Source Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\priv\Storage.h">
+      <Filter>Source Files\Math\Alge\Matrix\priv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Base.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Block.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Builder.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Iter.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix4.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Traits.h">
+      <Filter>Source Files\Math\Alge\Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Base.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Swiz.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec1.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec2.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec3.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec4.h">
+      <Filter>Source Files\Math\Alge\Vec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Vec\priv\Storage.h">
+      <Filter>Source Files\Math\Alge\Vec\priv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BackSub.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Bisect.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\BisectN.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Eigen.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Interp.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\LinearLeastSqr.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Minimize.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\MinimizeN.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Polynomial.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Qrd.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\NumAnalysis\Svd.h">
+      <Filter>Source Files\Math\NumAnalysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Beta.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Binomial.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\BinomialNeg.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\ChiSqr.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Discrete.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\DiscreteGen.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Dist.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gamma.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Gaussian.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\HyperGeo.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Poisson.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\StudentT.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Uniform.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Dist\Weibull.h">
+      <Filter>Source Files\Math\Random\Dist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Bootstrap.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Chacha.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Gen.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Permute.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Random.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Simplex.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Random\Vegas.h">
+      <Filter>Source Files\Math\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\Allocator.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\Buffer.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\Pool.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\SharedPtr.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\SmallAllocator.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Memory\UniquePtr.h">
+      <Filter>Source Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\BitOp.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\BitSet.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\BloomFilter.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Debug.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Enum.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Exception.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Lazy.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Log.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\MtMap.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Optional.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Range.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\ScopeGuard.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\StdUtil.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Misc\Variant.h">
+      <Filter>Source Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Net\Socket.h">
+      <Filter>Source Files\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Net\Stream.h">
+      <Filter>Source Files\Net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\ComObject.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\Component.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\Listener.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\ListenerList.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\ListenerQueue.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\Object.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\Property.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\PropertyList.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\PropertyObject.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Object\Signal.h">
+      <Filter>Source Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Bytes.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\ByteStream.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Encode.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Hash.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Id.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Json.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Stream.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\String.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\String\Util.h">
+      <Filter>Source Files\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Condition\Any.h">
+      <Filter>Source Files\Thread\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Condition\Condition.h">
+      <Filter>Source Files\Thread\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Condition\Lock.h">
+      <Filter>Source Files\Thread\Condition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Future\Future.h">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Future\PackagedTask.h">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Future\Promise.h">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Future\SharedFuture.h">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Future\Util.h">
+      <Filter>Source Files\Thread\Future</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Mutex.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Shared.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\SharedMutex.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Spin.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\TimedMutex.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Transfer.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Unique.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Lock\Util.h">
+      <Filter>Source Files\Thread\Lock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\Backoff.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\FreeList.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\HazardMem.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\List.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\Queue.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\SpscDeque.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\Stack.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\LockFree\UnorderedMap.h">
+      <Filter>Source Files\Thread\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Atomic.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\DepTask.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\PeriodicTask.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Pool.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Thread\Thread.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Core\platform\priv\Core.h">
+      <Filter>Source Files\Core\platform\priv</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Core\platform\Core.h">
+      <Filter>Source Files\Core\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\platform\Numeral.h">
+      <Filter>Source Files\Math\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Alge\platform\Quat.h">
+      <Filter>Source Files\Math\Alge\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Alge\Matrix\platform\Matrix4.h">
+      <Filter>Source Files\Math\Alge\Matrix\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec2.h">
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec3.h">
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Alge\Vec\platform\Vec4.h">
+      <Filter>Source Files\Math\Alge\Vec\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Chrono\platform\Clock.h">
+      <Filter>Source Files\Chrono\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Misc\platform\Debug.h">
+      <Filter>Source Files\Misc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Thread\platform\Atomic.h">
+      <Filter>Source Files\Thread\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Thread\platform\Thread.h">
+      <Filter>Source Files\Thread\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Thread\Condition\platform\Condition.h">
+      <Filter>Source Files\Thread\Condition\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Thread\Lock\platform\Mutex.h">
+      <Filter>Source Files\Thread\Lock\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Math\Random\platform\Random.h">
+      <Filter>Source Files\Math\Random\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Honey\Net\platform\Socket.h">
+      <Filter>Source Files\Net\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Honeycomb.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

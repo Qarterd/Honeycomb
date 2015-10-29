@@ -125,7 +125,7 @@ Permute_<Real>::Iter<T>::Iter(SharedPtr<State> state) :
 
 template<class Real>
 template<class T>
-typename Permute_<Real>::template Iter<T>& Permute_<Real>::Iter<T>::operator++()
+auto Permute_<Real>::Iter<T>::operator++() -> Iter&
 {
     if (_ps->k <= 0)
     {

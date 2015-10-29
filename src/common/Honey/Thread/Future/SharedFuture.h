@@ -11,7 +11,7 @@ namespace future { namespace priv
 {
     template<class R> struct wrappedResult<SharedFuture<R>>     { typedef R type; };
     
-    template<class R> struct unwrapOnReady<SharedFuture<R>> : mt::FuncptrBase, SmallAllocatorObject
+    template<class R> struct unwrapOnReady<SharedFuture<R>> : StateBase::onReadyCb, SmallAllocatorObject
     {
         unwrapOnReady(Promise<R>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
@@ -22,7 +22,7 @@ namespace future { namespace priv
         Promise<R> promise;
     };
     
-    template<> struct unwrapOnReady<SharedFuture<void>> : mt::FuncptrBase, SmallAllocatorObject
+    template<> struct unwrapOnReady<SharedFuture<void>> : StateBase::onReadyCb, SmallAllocatorObject
     {
         unwrapOnReady(Promise<void>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)

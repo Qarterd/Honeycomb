@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/Random/Dist/Gamma.h"
+#include "Honey/Math/Alge/Vec/Vec4.h"
 
 namespace honey
 {

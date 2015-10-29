@@ -21,13 +21,15 @@ namespace future
     {
         struct StateBase : SharedObj<StateBase>
         {
+            struct onReadyCb { virtual void operator()(StateBase& src) = 0; };
+
             template<class Alloc>
             StateBase(Alloc&& a)                                : SharedObj(forward<Alloc>(a)), ready(false), futureRetrieved(false) {}
 
             virtual ~StateBase()
             {
                 // onReady functors must delete themselves
-                if (!ready) for (auto& e : onReady) e(*this);
+                if (!ready) for (auto& e : onReady) (*e)(*this);
             }
             
             void setException(const Exception::ConstPtr& e, bool setReady = true)
@@ -40,8 +42,7 @@ namespace future
 
             void setReady()                                     { ConditionLock::Scoped _(waiters); setReady_(); }
             
-            template<class Func>
-            void addOnReady(Func&& f)
+            void addOnReady(onReadyCb& f)
             {
                 SharedPtr<StateBase> this_;
                 ConditionLock::Scoped _(waiters);
@@ -51,16 +52,15 @@ namespace future
                     f(*this);
                 }
                 else
-                    onReady.push_back(mt::FuncptrCreate(forward<Func>(f)));
+                    onReady.push_back(&f);
             }
             
             Exception::ConstPtr ex;
             bool ready;
             bool futureRetrieved;
             ConditionLock waiters;
-            //std::function is not used here to avoid the operator() virtual call.
             //Functors must delete themselves after running.  If src.ready is false then src is being destructed.
-            vector<mt::Funcptr<void (StateBase& src)>> onReady;
+            vector<onReadyCb*> onReady;
             
         protected:
             void setReady_()
@@ -68,7 +68,7 @@ namespace future
                 assert(!ready);
                 ready = true;
                 waiters.broadcast();
-                for (auto& e : onReady) e(*this);
+                for (auto& e : onReady) (*e)(*this);
             }
         };
 

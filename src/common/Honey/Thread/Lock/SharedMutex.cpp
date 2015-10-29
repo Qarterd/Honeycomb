@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Thread/Lock/SharedMutex.h"
 #include "Honey/Thread/Thread.h"

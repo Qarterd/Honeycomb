@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/Alge/Alge.h"
+#include "Honey/Misc/Optional.h"
 
 namespace honey
 {

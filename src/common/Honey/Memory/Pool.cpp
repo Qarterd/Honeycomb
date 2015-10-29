@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Memory/Pool.h"
 #include "Honey/Math/Alge/Alge.h"
@@ -76,7 +77,7 @@ void* MemPool::Bucket::alloc(szt size, uint8 align_, const char* srcFile, int sr
         //We want to revert to the original (no offset), then align the original
         uint8* original = blockData(header) - header->offset;
         uint8* aligned = alignCeil(original, align_);
-        assert(aligned - original < _blockSize, "Alignment too large for block");
+        assert(aligned - original < sdt(_blockSize), "Alignment too large for block");
         //Init new header
         Handle handle = header->handle;
         #ifdef DEBUG

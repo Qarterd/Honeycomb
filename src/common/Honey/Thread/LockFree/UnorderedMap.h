@@ -23,7 +23,7 @@ class UnorderedMap : mt::NoCopy
         using TaggedHandle::tag;
         
         MarkedHandle() = default;
-        MarkedHandle(Handle handle, Int tag, bool mark)     : TaggedHandle(handle, (tag<<1) | mark) {}
+        MarkedHandle(Handle handle, Int tag, bool mark)     : TaggedHandle(handle, (tag<<1) | Int(mark)) {}
         
         Int nextTag() const                                 { return (tag>>1)+1; }
         bool mark() const                                   { return tag & true; }
@@ -193,7 +193,7 @@ private:
     {
         szt segment = BitOp::log2Floor(i ? i : 1);
         Node* parent = i ? &getBucket(~(1<<segment) & i) : nullptr; //parent is index with MSB unset
-        auto& bucket = _segments[segment][i >= 2 ? i - (1<<segment) : i];
+        auto& bucket = _segments[segment][i >= 2 ? i - (szt(1)<<segment) : i];
         MarkedHandle old = bucket.load(atomic::Order::acquire);
         if (!old)
         {

@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Math/Alge/Matrix/Matrix4.h"
 #include "Honey/Math/Alge/Transform.h"
@@ -291,7 +292,7 @@ Matrix<4,4,Real,O> Matrix<4,4,Real,O>::adjugate() const
 }
 
 template<class Real, int O>
-Real Matrix<4,4,Real,O>::determinant() const
+auto Matrix<4,4,Real,O>::determinant() const -> Real
 {
     Real a0 = m( 0)*m( 5) - m( 1)*m( 4);
     Real a1 = m( 0)*m( 6) - m( 2)*m( 4);

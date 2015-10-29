@@ -1,6 +1,5 @@
 // Honeycomb, Copyright (C) 2013 Daniel Carter.  Distributed under the Boost Software License v1.0.
 #pragma hdrstop
-
 #include "Honey/Thread/Condition/Condition.h"
 #include "Honey/Memory/UniquePtr.h"
 #include "Honey/Thread/Lock/Spin.h"
@@ -62,8 +61,7 @@ void Condition::broadcast()
 
 bool Condition::wait(UniqueLock<honey::Mutex>& external, honey::MonoClock::TimePoint time)
 {
-    honey::thread::priv::InterruptWait _(static_cast<honey::Condition&>(*this), external.mutex());
-    auto __ = ScopeGuard(lock::lockGuard(external));
+    auto _ = ScopeGuard(lock::lockGuard(external));
 
     _waitLock->lock();
     ++_waitCount;
@@ -72,11 +70,11 @@ bool Condition::wait(UniqueLock<honey::Mutex>& external, honey::MonoClock::TimeP
     //Wait for both the semaphore and the high resolution timeout
     HANDLE handles[2] = { _sema };
     int handleCount = 1;
-    if (time != honey::MonoClock::TimePoint::max)
+    if (time != honey::MonoClock::TimePoint::max())
     {
         //Convert to windows 100 nanosecond period, negative time means relative
         LARGE_INTEGER sleepTime;
-        sleepTime.QuadPart = -Alge::max(time - honey::MonoClock::now(), honey::MonoClock::Duration::zero) / 100;
+        sleepTime.QuadPart = (-Alge::max(time - honey::MonoClock::now(), honey::MonoClock::Duration::zero()) / 100).count();
         verify(SetWaitableTimer(_timer, &sleepTime, 0, NULL, NULL, 0));
         handles[handleCount++] = _timer;
     }
@@ -94,7 +92,7 @@ bool Condition::wait(UniqueLock<honey::Mutex>& external, honey::MonoClock::TimeP
     if (lastWait)
         SetEvent(_waitDone);
     return res == WAIT_OBJECT_0;
-} //external.lock(); ~InterruptWait()
+} //external.lock()
 
 } }
 /** \endcond */

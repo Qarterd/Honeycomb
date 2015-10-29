@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Thread/Future/Util.h"
 
@@ -15,7 +16,7 @@ namespace priv
         for (auto& e : td.states)
         {
             ConditionLock::Scoped _(e->waiters);
-            stdutil::eraseVal(e->onReady, FuncptrCreate(*this));
+            stdutil::eraseVal(e->onReady, this);
         }
         td.states.clear();
     }

@@ -14,27 +14,21 @@ namespace honey
   */
 /// @{
 
-/// Safely get the size of a std container as a signed integer
-template<class StdContainer>
-int size(const StdContainer& cont)                      { return numeric_cast<int>(cont.size()); }
-
 /// Create a range over the keys of a map or map iterator range. \see values()
 template<class Range>
-auto keys(Range&& range) -> Range_<TupleIter<mt_iterOf(range),0>, TupleIter<mt_iterOf(range),0>>
-{
-    return honey::range(TupleIter<mt_iterOf(range),0>(begin(range)), TupleIter<mt_iterOf(range),0>(end(range)));
-}
+auto keys(Range&& range)                                { return honey::range(TupleIter<mt_iterOf(range),0>(begin(range)), TupleIter<mt_iterOf(range),0>(end(range))); }
 
 /// Create a range over the values of a map or map iterator range. \see keys()
 template<class Range>
-auto values(Range&& range) -> Range_<TupleIter<mt_iterOf(range),1>, TupleIter<mt_iterOf(range),1>>
-{
-    return honey::range(TupleIter<mt_iterOf(range),1>(begin(range)), TupleIter<mt_iterOf(range),1>(end(range)));
-}
+auto values(Range&& range)                              { return honey::range(TupleIter<mt_iterOf(range),1>(begin(range)), TupleIter<mt_iterOf(range),1>(end(range))); }
 
 /// See \ref StdUtil
 namespace stdutil
 {
+    /// Safely get the size of a std container as a signed integer
+    template<class StdContainer>
+    int size(const StdContainer& cont)                  { return numeric_cast<int>(cont.size()); }
+
     /// Convert reverse iterator to forward iterator
     template<class Iter>
     auto reverseIterToForward(Iter&& it) -> typename mt::removeRef<decltype(--it.base())>::type

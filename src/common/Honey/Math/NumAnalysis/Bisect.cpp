@@ -1,6 +1,8 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Math/NumAnalysis/Bisect.h"
+#include "Honey/Misc/Range.h"
 
 namespace honey
 {

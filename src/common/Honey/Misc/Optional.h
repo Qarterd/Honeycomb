@@ -20,8 +20,7 @@ static optnull_t optnull;
     Supports wrapped const/ref types. \see optional<T&> for wrapped ref types.
     
     Variables are commonly defined as pointers for the sole reason that pointers can exist in a null state.
-    In this case, an optional can be used instead of a pointer to make the behavior explicit and encourage stack allocation.
-    Optional syntax is also clearer for function calls:
+    In this case, an optional can be used instead of a pointer to make the behavior explicit:
  
         func(iterator* optIter = nullptr);  func(&iter)     ---->  func(optional<iterator> optIter = optnull);  func(iter)
         func(int* retVal = nullptr);        func(&retInt)   ---->  func(optional<int&> retVal = optnull);       func(retInt)
@@ -39,7 +38,7 @@ static optnull_t optnull;
         if (o == optnull) o = 'a';      //Set a default value if caller didn't specify a char
         rInt.bind(i);                   //Bind the reference before use
         rInt = 2;                       //Assignment to bound reference: i = 2
-        rInt.bind(&j);                  //Rebind to j from pointer
+        rInt.bind(j);                   //Rebind to j
         rInt = o;                       //j = the wrapped char in 'o'
         rInt = optnull;                 //Reset to null unbound reference
         int a = *o;                     //The * and -> operators can be used to retrieve the wrapped object
@@ -122,9 +121,9 @@ private:
 
 /// Specialization for references.
 /**
-  * The wrapped reference must be bound before it can be assigned, either construct with an object ref/pointer or call bind().
+  * The wrapped reference must be bound before it can be assigned, construct with an object ref or call bind().
   * All assignments operate on the bound object.
-  * Assigning to optnull or calling bind(nullptr) to will unbind the wrapped reference.
+  * Assigning to optnull will unbind the wrapped reference.
   *
   * \see optional
   */
@@ -134,25 +133,19 @@ class optional<T&>
     template<class T_> friend class optional;
 public:
     optional()                                      : _val(nullptr) {}
-    optional(T* rhs)                                : _val(nullptr) { bind(rhs); }
     optional(optnull_t)                             : _val(nullptr) {}
-    optional(const optional& rhs)                   : _val(nullptr) { bind(rhs._val); }
-    optional(optional& rhs)                         : _val(nullptr) { bind(rhs._val); }
-    optional(optional&& rhs)                        : _val(nullptr) { bind(rhs._val); }
-    template<class U> optional(const optional<U>& rhs)  : _val(nullptr) { bind(rhs._val); }
-    template<class U> optional(optional<U>& rhs)    : _val(nullptr) { bind(rhs._val); }
-    template<class U> optional(optional<U>&& rhs)   : _val(nullptr) { bind(rhs._val); }
+    optional(const optional& rhs)                   : _val(rhs._val) {}
+    optional(optional& rhs)                         : _val(rhs._val) {}
+    optional(optional&& rhs)                        : _val(rhs._val) {}
+    template<class U> optional(const optional<U>& rhs)  : _val(rhs._val) {}
+    template<class U> optional(optional<U>& rhs)    : _val(rhs._val) {}
+    template<class U> optional(optional<U>&& rhs)   : _val(rhs._val) {}
     template<class U> optional(U&& rhs)             : _val(nullptr) { bind(forward<U>(rhs)); }
 
     /// Bind wrapped reference to object
-    template<class U> void bind(U&& rhs)            { bind(&rhs); }
-    /// Bind wrapped reference from object pointer.  Unbinds if pointer is null.
-    template<class U> void bind(U* rhs)             { _val = rhs; }
+    template<class U> void bind(U&& rhs)            { _val = &rhs; }
     /// Unbinds object
-    void bind(nullptr_t)                            { _val = nullptr; }
-    
-    /// Unbinds object
-    optional& operator=(optnull_t)                  { bind(nullptr); return *this; }
+    optional& operator=(optnull_t)                  { _val = nullptr; return *this; }
 
     /// Assign wrapped object
     optional& operator=(const optional& rhs)        { return operator=<T&>(rhs); }

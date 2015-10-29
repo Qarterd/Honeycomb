@@ -7,6 +7,9 @@ dist
 xcuserdata
 
 #visual studio
-*.suo
+*.opensdf
 *.sdf
 *.vcxproj.user
+.vs
+ipch
+x64

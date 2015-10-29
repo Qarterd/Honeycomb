@@ -41,8 +41,8 @@ class Matrix<4,4,Real,Options> : public MatrixBase<Matrix<4,4,Real,Options>>
     using typename Super::Trig;
     
 public:
-    using Super::s_rows;
-    using Super::s_cols;
+    static const sdt s_rows = Super::s_rows;
+    static const sdt s_cols = Super::s_cols;
     using typename Super::VecCol;
     using typename Super::VecRow;
     using Super::mul;

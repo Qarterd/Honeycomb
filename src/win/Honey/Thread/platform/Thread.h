@@ -5,11 +5,30 @@
 namespace honey
 {
 
+namespace platform { class Thread; }
+
 namespace thread
 {
     namespace platform
     {
-        struct LocalStore;
+        /// Thread local store. Every thread has its own separate store, can be retrieved statically.
+        struct LocalStore
+        {
+            typedef honey::platform::Thread Thread;
+
+            /// Init for process
+            static bool init();
+            /// Create thread local store
+            static LocalStore& create(Thread& thread);
+            /// Destroy thread local store
+            static void destroy();
+            /// Get thread local store
+            static LocalStore& inst();
+
+            Thread* thread;
+
+            static int _index;
+        };
     }
     
     namespace current { namespace platform
@@ -38,9 +57,9 @@ public:
     void start();
     void join();
 
-    static const int priorityNormal                             = 0;
-    static const int priorityMin                                = -2;
-    static const int priorityMax                                = 2;
+    static int priorityNormal();
+    static int priorityMin();
+    static int priorityMax();
     void setPriority(int priority);
     int getPriority() const;
 

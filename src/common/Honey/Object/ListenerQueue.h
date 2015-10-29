@@ -42,14 +42,16 @@ namespace priv
     {
         typedef priv::SlotSignal<Signal> Super;
     public:
+        template<szt I> struct param            { typedef typename Signal::template param<I> type; };
+
         SlotQueue(const Id& id, F&& f)          : Super(id), _f(forward<F>(f)) {}
 
-        virtual void operator()(const typename Signal::template param<Seq>&... args)
+        virtual void operator()(const typename param<Seq>::type&... args)
         {
             SpinLock::Scoped _(_lock);
             _args.push_back(Args());
             Args& queued = _args.back();
-            mt_unpackEval(priv::SlotQueueArg<typename Signal::template param<Seq>>::store(get<Seq>(queued), args));
+            mt_unpackEval(priv::SlotQueueArg<typename param<Seq>::type>::store(get<Seq>(queued), args));
         }
 
         virtual void process()

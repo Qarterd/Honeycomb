@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/NumAnalysis/Bisect.h"
+#include "Honey/Math/Alge/Vec/Vec4.h"
 
 namespace honey
 {

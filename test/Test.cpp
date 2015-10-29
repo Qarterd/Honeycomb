@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Test.h"
 #include "Honey/Honeycomb.h"
@@ -40,14 +41,14 @@ void test()
                     case 4:
                         {
                             auto it = list.begin();
-                            for (int j = 0, end = Discrete(rand, 0, size(list)).nextInt(); j < end; ++j) ++it;
+                            for (int j = 0, end = Discrete(rand, 0, stdutil::size(list)).nextInt(); j < end; ++j) ++it;
                             list.insert(it, i);
                             break;
                         }
                     case 5:
                         {
                             auto it = list.begin();
-                            for (int j = 0, end = Discrete(rand, 0, size(list)).nextInt(); j < end; ++j) ++it;
+                            for (int j = 0, end = Discrete(rand, 0, stdutil::size(list)).nextInt(); j < end; ++j) ++it;
                             if (it != list.end()) list.erase(it, data);
                             break;
                         }
@@ -327,7 +328,6 @@ void test()
         future::waitAll(futures);
         verify(future::waitAny(futures) == futures.begin());
         
-        future::whenAll().get();
         future::whenAll(FutureCreate(), FutureCreate()).get();
         verify(future::whenAll(FutureCreate(1), FutureCreate(2)).get() == make_tuple(1, 2));
         verify(future::whenAny(FutureCreate(), FutureCreate()).get() == 0);
@@ -1021,10 +1021,10 @@ void test()
     Id id("foo_bar");
     switch (id)
     {
-    case "eggs"_id:
+    case "eggs"_id_:
         debug_print("IdSwitch: eggs\n");
         break;
-    case "foo_bar"_id:
+    case "foo_bar"_id_:
         debug_print("IdSwitch: foo_bar\n");
         break;
     default:

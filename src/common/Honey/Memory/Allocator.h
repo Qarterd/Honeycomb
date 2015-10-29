@@ -140,7 +140,12 @@ public:
     void* operator new[](szt size, const char* srcFile, int srcLine)        { return _alloc.allocate(size, srcFile, srcLine); }
     
     void operator delete(void* p)                                           { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete(void* p, void* ptr)                                { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete(void* p, const char* srcFile, int srcLine)         { _alloc.deallocate(static_cast<int8*>(p), 1); }
+
     void operator delete[](void* p)                                         { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete[](void* p, void* ptr)                              { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete[](void* p, const char* srcFile, int srcLine)       { _alloc.deallocate(static_cast<int8*>(p), 1); }
 
 private:
     static Alloc<int8> _alloc;

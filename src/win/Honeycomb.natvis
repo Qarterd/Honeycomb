@@ -6,7 +6,7 @@ Honeycomb visualizer for enhanced debugging in Visual Studio 11
 Copy this file to %USERPROFILE%\My Documents\Visual Studio 11\Visualizers\
 -->
   
-<Type Name="honey::EnumElemBase">
+<Type Name="honey::EnumElem">
     <DisplayString>{_val}</DisplayString>
     <Expand>
         <Item Name="[val]">_val</Item>

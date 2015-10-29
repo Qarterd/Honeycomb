@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Misc/Log.h"
 
@@ -32,7 +33,8 @@ namespace log
     {
         char sz[64];
         auto t = std::time(NULL);
-        std::strftime(sz, sizeof(sz), "%d/%b/%Y:%H:%M:%S", std::localtime(&t));
+        struct tm tm;
+        std::strftime(sz, sizeof(sz), "%d/%b/%Y:%H:%M:%S", localtime_r(&t, &tm));
         return sout() <<    "[" << sz << "] " <<
                             level.getKey().name().toUpper() << ": " <<
                             record;

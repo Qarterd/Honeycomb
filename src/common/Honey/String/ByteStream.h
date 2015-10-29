@@ -6,6 +6,7 @@
 #include "Honey/Misc/StdUtil.h"
 #include "Honey/String/Id.h"
 #include "Honey/Memory/SharedPtr.h"
+#include "Honey/Chrono/Duration.h"
 
 namespace honey
 {

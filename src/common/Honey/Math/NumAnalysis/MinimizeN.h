@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Honey/Math/NumAnalysis/Minimize.h"
+#include "Honey/Math/Alge/Vec/Vec4.h"
 
 namespace honey
 {

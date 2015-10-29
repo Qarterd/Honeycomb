@@ -61,7 +61,7 @@ namespace future { namespace priv
     
     template<class R> struct unwrapOnReady;
     
-    template<class R> struct unwrapOnReady<Future<R>> : mt::FuncptrBase, SmallAllocatorObject
+    template<class R> struct unwrapOnReady<Future<R>> : StateBase::onReadyCb, SmallAllocatorObject
     {
         unwrapOnReady(Promise<R>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
@@ -72,7 +72,7 @@ namespace future { namespace priv
         Promise<R> promise;
     };
     
-    template<> struct unwrapOnReady<Future<void>> : mt::FuncptrBase, SmallAllocatorObject
+    template<> struct unwrapOnReady<Future<void>> : StateBase::onReadyCb, SmallAllocatorObject
     {
         unwrapOnReady(Promise<void>&& promise) : promise(move(promise)) {}
         void operator()(StateBase& src)
@@ -112,7 +112,7 @@ public:
         Promise<R2> promise{SmallAllocator<int>()};
         auto future = promise.future();
         
-        struct onReady : mt::FuncptrBase, SmallAllocatorObject
+        struct onReady : StateBase::onReadyCb, SmallAllocatorObject
         {
             onReady(Promise<R2>&& promise) : promise(move(promise)) {}
             void operator()(StateBase& src)

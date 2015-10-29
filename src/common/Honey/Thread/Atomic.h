@@ -75,9 +75,13 @@ namespace atomic
         using Super::dec;
         
         /// val += rhs. Returns the initial value.
-        template<class T>
-        static T add(volatile T& val, T rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, v+rhs, v, o)); return v; }
+        template<class T, class T2>
+        static T add(volatile T& val, T2 rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, static_cast<T>(v+rhs), v, o)); return v; }
         
+        /// val -= rhs. Returns the initial value.
+        template<class T, class T2>
+        static T sub(volatile T& val, T2 rhs, Order o = Order::seqCst)               { T v; do { v = val; } while (!cas(val, static_cast<T>(v-rhs), v, o)); return v; }
+
         /// val &= rhs. Returns the initial value.
         template<class T>
         static T and_(volatile T& val, T rhs, Order o = Order::seqCst)              { T v; do { v = val; } while (!cas(val, v&rhs, v, o)); return v; }
@@ -164,6 +168,7 @@ template<class T>
 class Atomic<T, true>
 {
     typedef typename atomic::SwapType<T>::type SwapType;
+    typedef typename std::make_signed<SwapType>::type SwapTypeSigned;
     typedef atomic::Order Order;
     typedef atomic::Op Op;
     
@@ -200,11 +205,11 @@ public:
    
     void store(T val, Order o = Order::seqCst) volatile         { Op::store(_val, static_cast<SwapType>(val), o); }
     T load(Order o = Order::seqCst) const volatile              { return static_cast<T>(Op::load(_val, o)); }
-    T add(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<SwapType>(rhs), o) + rhs; }
-    T sub(T rhs, Order o = Order::seqCst) volatile              { return Op::add(_val, static_cast<SwapType>(-rhs), o) - rhs; }
-    T and_(T rhs, Order o = Order::seqCst) volatile             { return Op::and_(_val, static_cast<SwapType>(rhs), o) & rhs; }
-    T or_(T rhs, Order o = Order::seqCst) volatile              { return Op::or_(_val, static_cast<SwapType>(rhs), o) | rhs; }
-    T xor_(T rhs, Order o = Order::seqCst) volatile             { return Op::xor_(_val, static_cast<SwapType>(rhs), o) ^ rhs; }
+    T add(T rhs, Order o = Order::seqCst) volatile              { return static_cast<T>(Op::add(_val, rhs, o)) + rhs; }
+    T sub(T rhs, Order o = Order::seqCst) volatile              { return static_cast<T>(Op::sub(_val, rhs, o)) - rhs; }
+    T and_(T rhs, Order o = Order::seqCst) volatile             { return static_cast<T>(Op::and_(_val, static_cast<SwapType>(rhs), o)) & rhs; }
+    T or_(T rhs, Order o = Order::seqCst) volatile              { return static_cast<T>(Op::or_(_val, static_cast<SwapType>(rhs), o)) | rhs; }
+    T xor_(T rhs, Order o = Order::seqCst) volatile             { return static_cast<T>(Op::xor_(_val, static_cast<SwapType>(rhs), o)) ^ rhs; }
 
     /// Compare and swap.  If atomic is equal to comparand `cmp` then atomic is assigned to newVal and true is returned. Returns false otherwise.
     bool cas(T newVal, T cmp, Order o = Order::seqCst) volatile { return Op::cas(_val, static_cast<SwapType>(newVal), static_cast<SwapType>(cmp), o); }

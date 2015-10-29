@@ -32,7 +32,7 @@ void waitAll(Range&& range)                                 { return waitAll(for
 namespace priv
 {
     /// Helper to wait on multiple futures concurrently
-    class waitAny : public mt::FuncptrBase
+    class waitAny : public StateBase::onReadyCb
     {
     public:
         waitAny();
@@ -186,8 +186,7 @@ Future<typename std::result_of<Func(Args...)>::type>
   * To provide a custom global scheduler define `future_async_createSingleton` and implement future::async_createSingleton().
   */
 template<class Func, class... Args>
-Future<typename std::result_of<Func(Args...)>::type>
-    async(Func&& f, Args&&... args)                         { return async(AsyncSched::inst(), forward<Func>(f), forward<Args>(args)...); }
+auto async(Func&& f, Args&&... args)                        { return async(AsyncSched::inst(), forward<Func>(f), forward<Args>(args)...); }
     
 }
 
@@ -205,7 +204,7 @@ auto FutureCommon<Subclass, R>::then(Sched&& sched, Func&& f) -> Future<typename
     Promise<R2> promise{SmallAllocator<int>()};
     auto future = promise.future();
     
-    struct onReady : mt::FuncptrBase, SmallAllocatorObject
+    struct onReady : StateBase::onReadyCb, SmallAllocatorObject
     {
         onReady(Subclass&& cont, Promise<R2>&& promise, Sched&& sched, Func&& f) :
             cont(move(cont)), promise(move(promise)), sched(forward<Sched>(sched)), f(forward<Func>(f)) {}
@@ -302,8 +301,6 @@ namespace priv
 }
 /** \endcond */
 
-inline Future<tuple<>> whenAll()            { return FutureCreate(tuple<>()); }
-
 /// Returns a future to either a tuple of the results of all futures, or the first exception thrown by the futures.
 template<   class... Futures,
             class Result_ = typename std::decay<typename mt::removeRef<mt::typeAt<0, Futures...>>::type::Result>::type,
@@ -316,10 +313,10 @@ Future<Result> whenAll(Futures&&... fs)
     Promise<Result> promise{SmallAllocator<int>()};
     auto future = promise.future();
     
-    struct onReady : mt::FuncptrBase, SmallAllocatorObject
+    struct onReady : StateBase::onReadyCb, SmallAllocatorObject
     {
-        onReady(Promise<Result>&& promise, Futures&&... fs) :
-            promise(move(promise)), fs(forward<Futures>(fs)...), count(0), ready(0), max(sizeof...(fs)) {}
+        onReady(Promise<Result>&& promise, Futures&&... fs_) :
+            promise(move(promise)), fs(forward<Futures>(fs_)...), count(0), ready(0), max(sizeof...(fs_)) {}
         
         void operator()(StateBase& src)
         {
@@ -359,7 +356,7 @@ Future<Result> whenAll(Range&& range)
     Promise<Result> promise{SmallAllocator<int>()};
     auto future = promise.future();
     
-    struct onReady : mt::FuncptrBase, SmallAllocatorObject
+    struct onReady : StateBase::onReadyCb, SmallAllocatorObject
     {
         onReady(Promise<Result>&& promise, Range&& range) :
             promise(move(promise)), range(forward<Range>(range)), count(0), ready(0), max(countOf(range)) {}
@@ -402,10 +399,10 @@ Future<Result> whenAny(Futures&&... fs)
     Promise<Result> promise{SmallAllocator<int>()};
     auto future = promise.future();
     
-    struct onReady : mt::FuncptrBase, SmallAllocatorObject
+    struct onReady : StateBase::onReadyCb, SmallAllocatorObject
     {
-        onReady(Promise<Result>&& promise, Futures&&... fs) :
-            promise(move(promise)), fs(forward<Futures>(fs)...), count(0), max(sizeof...(fs)) {}
+        onReady(Promise<Result>&& promise, Futures&&... fs_) :
+            promise(move(promise)), fs(forward<Futures>(fs_)...), count(0), max(sizeof...(fs_)) {}
         
         void operator()(StateBase& src)
         {
@@ -447,7 +444,7 @@ Future<Result> whenAny(Range&& range)
     Promise<Result> promise{SmallAllocator<int>()};
     auto future = promise.future();
     
-    struct onReady : mt::FuncptrBase, SmallAllocatorObject
+    struct onReady : StateBase::onReadyCb, SmallAllocatorObject
     {
         onReady(Promise<Result>&& promise, Range&& range) :
             promise(move(promise)), range(forward<Range>(range)), count(0), max(countOf(range)) {}

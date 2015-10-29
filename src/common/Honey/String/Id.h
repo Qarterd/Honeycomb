@@ -126,8 +126,10 @@ private:
 /// Create an id from a string literal at compile-time.
 /**
   * This operator can be used in a case expression of a switch block (ex. case "foo"_id: ).
+  * For VS2015 compatibility _id_ must be used in switch blocks.
   */ 
-constexpr IdLiteral operator"" _id(const char* str, szt len)     { return IdLiteral(str, len); }
+constexpr IdLiteral operator"" _id(const char* str, szt len)    { return IdLiteral(str, len); }
+constexpr szt operator"" _id_(const char* str, szt len)         { return IdLiteral(str, len); }
 
 /** \cond */
 inline Id::Id(const IdLiteral& rhs)                         : debug_if(_name(rhs._name),) _hash(rhs._hash) {}

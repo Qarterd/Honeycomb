@@ -24,7 +24,7 @@ public:
     Property(const String& name, szt size, const T& val = T())      : PropertyBase(name), List(size, val) {}
     template<class Iter>
     Property(const String& name, Iter&& first, Iter&& last)         : PropertyBase(name), List(forward<Iter>(first), forward<Iter>(last)) {}
-    Property(const Property& rhs)                                   : PropertyBase(rhs._name), List(rhs) {}
+    Property(const Property& rhs)                                   : PropertyBase(rhs._name.name()), List(rhs) {}
     
     static const NameId& s_type();
     virtual const NameId& type() const                              { return s_type(); }

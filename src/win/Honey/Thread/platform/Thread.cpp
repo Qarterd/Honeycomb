@@ -1,6 +1,5 @@
 // Honeycomb, Copyright (C) 2013 Daniel Carter.  Distributed under the Boost Software License v1.0.
 #pragma hdrstop
-
 #include "Honey/Thread/Thread.h"
 
 /** \cond */
@@ -9,63 +8,47 @@ namespace honey
 
 namespace thread { namespace platform
 {
-    typedef honey::platform::Thread Thread;
-
-    /// Thread local store.  Every thread has its own separate store, can be retrieved statically.
-    struct LocalStore
+    bool LocalStore::init()
     {
-        /// Init for process
-        static bool _init;
-        static bool init()
+        static bool initOnce = false;
+        if (initOnce) return true;
+        initOnce = true;
+
+        _index = TlsAlloc();
+        assert(_index != TLS_OUT_OF_INDEXES);        
+        return true;
+    }
+
+    LocalStore& LocalStore::create(Thread& thread)
+    {
+        LocalStore& local = *new LocalStore();
+        local.thread = &thread;
+        verify(TlsSetValue(_index, &local));
+        return local;
+    }
+
+    void LocalStore::destroy()
+    {
+        delete_(&inst());
+        TlsSetValue(_index, nullptr);
+    }
+
+    LocalStore& LocalStore::inst()
+    {
+        static auto _ = init(); mt_unused(_);
+
+        LocalStore* local = static_cast<LocalStore*>(TlsGetValue(_index));
+        if (!local)
         {
-            static bool initOnce = false;
-            if (initOnce) return true;
-            initOnce = true;
-
-            _index = TlsAlloc();
-            assert(_index != TLS_OUT_OF_INDEXES);        
-            return true;
+            //Externally created thread (ex. Main)
+            create(*Thread::createExt());
+            local = static_cast<LocalStore*>(TlsGetValue(_index));
         }
-
-        /// Create thread local store
-        static LocalStore& create(Thread& thread)
-        {
-            LocalStore& local = *new LocalStore();
-            local.thread = &thread;
-            verify(TlsSetValue(_index, &local));
-            return local;
-        }
-
-        /// Destroy thread local store
-        static void destroy()
-        {
-            delete_(&inst());
-            TlsSetValue(_index, nullptr);
-        }
-
-        /// Get thread local store
-        static LocalStore& inst()
-        {
-            //Initializing here solves static order problem
-            static bool _init = init();
-            LocalStore* local = static_cast<LocalStore*>(TlsGetValue(_index));
-            if (!local)
-            {
-                //Externally created thread (ex. Main)
-                create(*Thread::createExt());
-                local = static_cast<LocalStore*>(TlsGetValue(_index));
-            }
-            assert(local, "Thread local data not created");
-            return *local;
-        }
-
-        Thread* thread;
-
-        static int _index;
-    };
+        assert(local, "Thread local data not created");
+        return *local;
+    }
 
     int LocalStore::_index;
-    bool LocalStore::_init = init();
 } }
 
 namespace platform
@@ -123,6 +106,10 @@ void Thread::join()
 {
     verify(WaitForSingleObject(_handle, INFINITE) == WAIT_OBJECT_0);
 }
+
+int Thread::priorityNormal()                    { return 0; }
+int Thread::priorityMin()                       { return -2; }
+int Thread::priorityMax()                       { return 2; }
 
 void Thread::setPriority(int priority)          { verify(SetThreadPriority(_handle, priority)); }
 int Thread::getPriority() const                 { return GetThreadPriority(_handle); }
