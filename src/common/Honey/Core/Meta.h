@@ -93,7 +93,7 @@ namespace priv
     template<szt cur, class Match, class... Ts> struct typeIndex;
     template<szt cur, class Match, class T, class... Ts> struct typeIndex<cur, Match, T, Ts...> : typeIndex<cur+1, Match, Ts...> {};
     template<szt cur, class T, class... Ts> struct typeIndex<cur, T, T, Ts...>              : Value<szt, cur> {};
-    template<szt cur, class Match> struct typeIndex<cur, Match>                             : Value<szt, -1> {};
+    template<szt cur, class Match> struct typeIndex<cur, Match>                             : Value<szt, szt(-1)> {};
 }
 /** \endcond */
 
