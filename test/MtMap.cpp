@@ -59,7 +59,8 @@ void mtmap_test()
                                                         //Erase keys from the map, it's ok if the keys don't exist
                                                         //Returns decltype(fooInsert)::eraseResult<...>::type
     auto fooErase = fooInsert.erase(key_id(), key_int());
-
+    mt_unused(fooErase);
+    
     auto empty = foo.clear();                           //Clear map of keys, returns MtMap<>
     assert(empty.empty());                              //Test if empty at run-time
 
