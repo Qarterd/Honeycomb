@@ -201,7 +201,7 @@ public:
     /**
       * Finalizer is run when reference count reaches 0 (deletes object by default).
       */
-    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
+    template<class U, class Fin = finalize<U>, class Alloc = typename defaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     explicit SharedPtr(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())    : _ptr(nullptr) { set(ptr, forward<Fin>(f), forward<Alloc>(a)); }
     
     /// Reference the object pointed to by another shared pointer
@@ -264,7 +264,7 @@ public:
     template<class U, typename std::enable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     void set(U* ptr)                                                { setControl(ptr, ptr ? &ptr->SharedObj::_control() : nullptr); }
     /// Dereference the current object and reference a new object, with finalizer and internal control block allocator. For non-intrusive pointers only.
-    template<class U, class Fin = finalize<U>, class Alloc = typename DefaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
+    template<class U, class Fin = finalize<U>, class Alloc = typename defaultAllocator<U>::type, typename mt::disable_if<mt::True<U>::value && priv::isIntrusive<T>::value, int>::type=0>
     void set(U* ptr, Fin&& f = Fin(), Alloc&& a = Alloc())
     {
         typedef priv::SharedControl_<U,Fin,Alloc> Control;
@@ -346,7 +346,7 @@ template<class T, class Alloc, class... Args, typename std::enable_if<mt::is_bas
 SharedPtr<T> alloc_shared(Alloc&& a, Args&&... args)                { return SharedPtr<T>(new (a.allocate(1)) T(forward<Args>(args)...)); }
 /// alloc_shared() using T::Allocator if available, otherwise std::allocator  
 /** \relates SharedPtr */
-template<class T, class... Args, class Alloc = typename DefaultAllocator<T>::type>
+template<class T, class... Args, class Alloc = typename defaultAllocator<T>::type>
 SharedPtr<T> make_shared(Args&&... args)                            { return alloc_shared<T>(Alloc(), forward<Args>(args)...); }
 
 /// \relates SharedPtr

@@ -33,7 +33,7 @@ namespace bloom_filter
         // m = -n*ln(p) / ln(2)^2
         szt bitCount = Alge_d::ceil(-Double(elemCount) * Alge_d::log(errorProb) / Alge_d::sqr(Alge_d::log(2)));
         // k = ln(2) * m / n
-        szt hashCount = Alge_d::ceil(Alge_d::log(2) * bitCount / elemCount);
+        szt hashCount = elemCount ? Alge_d::ceil(Alge_d::log(2) * bitCount / elemCount) : 0;
         return make_tuple(bitCount, hashCount);
     }
     

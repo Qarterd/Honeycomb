@@ -26,7 +26,7 @@ namespace honey
 /// \addtogroup Memory
 /// @{
 
-/// Allocate memory for `count` number of T objects.  Objects are not constructed.
+/// Allocate memory for `count` number of objects.  Objects are not constructed.
 template<class T>
 T* alloc(szt count = 1)                         { return static_cast<T*>(operator new(sizeof(T)*count)); }
 /// Deallocate memory and set pointer to null. Object is not destroyed.
@@ -76,11 +76,11 @@ void delete_(T*& p)                             { delete p; p = nullptr; }
 template<class T>
 void delete_(T* const& p)                       { delete p; }
 
-/// Destruct object, free memory using allocator and set pointer to null
+/// Destruct `count` number of objects, free memory using allocator and set pointer to null
 template<class T, class Alloc>
-void delete_(T*& p, Alloc&& a)                  { if (!p) return; a.destroy(p); a.deallocate(p,1); p = nullptr; }
+void delete_(T*& p, Alloc&& a, szt count = 1)       { if (!p) return; for (szt i = 0; i < count; ++i) a.destroy(p+i); a.deallocate(p, count); p = nullptr; }
 template<class T, class Alloc>
-void delete_(T* const& p, Alloc&& a)            { if (!p) return; a.destroy(p); a.deallocate(p,1); }
+void delete_(T* const& p, Alloc&& a, szt count = 1) { if (!p) return; for (szt i = 0; i < count; ++i) a.destroy(p+i); a.deallocate(p, count); }
 
 /// Destruct all array objects, free memory and set pointer to null
 template<class T>
@@ -132,45 +132,51 @@ public:
     template<class T> using Allocator = Alloc<T>;
 
     void* operator new(szt size)                                            { return _alloc.allocate(size); }
+    /// Placement new, does nothing
     void* operator new(szt, void* ptr)                                      { return ptr; }
     void* operator new(szt size, const char* srcFile, int srcLine)          { return _alloc.allocate(size, srcFile, srcLine); }
     
     void* operator new[](szt size)                                          { return _alloc.allocate(size); }
+    /// Placement new, does nothing
     void* operator new[](szt, void* ptr)                                    { return ptr; }
     void* operator new[](szt size, const char* srcFile, int srcLine)        { return _alloc.allocate(size, srcFile, srcLine); }
     
-    void operator delete(void* p)                                           { _alloc.deallocate(static_cast<int8*>(p), 1); }
-    void operator delete(void* p, void* ptr)                                { _alloc.deallocate(static_cast<int8*>(p), 1); }
-    void operator delete(void* p, const char* srcFile, int srcLine)         { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete(void* p, szt size)                                     { _alloc.deallocate(static_cast<uint8*>(p), size); }
+    /// Delete for placement new, does nothing
+    void operator delete(void* p, void* ptr)                                    {}
+    void operator delete(void* p, szt size, const char* srcFile, int srcLine)   { _alloc.deallocate(static_cast<uint8*>(p), size); }
 
-    void operator delete[](void* p)                                         { _alloc.deallocate(static_cast<int8*>(p), 1); }
-    void operator delete[](void* p, void* ptr)                              { _alloc.deallocate(static_cast<int8*>(p), 1); }
-    void operator delete[](void* p, const char* srcFile, int srcLine)       { _alloc.deallocate(static_cast<int8*>(p), 1); }
+    void operator delete[](void* p, szt size)                                   { _alloc.deallocate(static_cast<uint8*>(p), size); }
+    /// Delete for placement new, does nothing
+    void operator delete[](void* p, void* ptr)                                  {}
+    void operator delete[](void* p, szt size, const char* srcFile, int srcLine) { _alloc.deallocate(static_cast<uint8*>(p), size); }
 
 private:
-    static Alloc<int8> _alloc;
+    static Alloc<uint8> _alloc;
 };
-template<template<class> class Alloc> Alloc<int8> AllocatorObject<Alloc>::_alloc;
+template<template<class> class Alloc> Alloc<uint8> AllocatorObject<Alloc>::_alloc;
 
 /// Returns T::Allocator<T> if available, otherwise std::allocator<T>
 template<class T, class = std::true_type>
-struct DefaultAllocator                                                     { typedef std::allocator<T> type; };
+struct defaultAllocator                         { typedef std::allocator<T> type; };
 template<class T>
-struct DefaultAllocator<T[], std::true_type>                                { typedef std::allocator<T> type; };
+struct defaultAllocator<T[], std::true_type>    { typedef std::allocator<T> type; };
 template<class T>
-struct DefaultAllocator<T, typename mt::True<typename T::template Allocator<T>>::type>
-                                                                            { typedef typename T::template Allocator<T> type; };
+struct defaultAllocator<T, typename mt::True<typename T::template Allocator<T>>::type>
+                                                { typedef typename T::template Allocator<T> type; };
 
 /// Functor to delete a pointer
-template<class T, class Alloc = typename DefaultAllocator<T>::type>
+template<class T, class Alloc = typename defaultAllocator<T>::type>
 struct finalize
 {
-    finalize(Alloc a = Alloc())                 : a(move(a)) {}
-    void operator()(T*& p)                      { delete_(p,a); }
-    void operator()(T* const& p)                { delete_(p,a); }
+    finalize(Alloc a = Alloc(), szt count = 1)  : a(move(a)), count(count) {}
+    void operator()(T*& p)                      { delete_(p,a,count); }
+    void operator()(T* const& p)                { delete_(p,a,count); }
     Alloc a;
+    szt count;
 };
-/// Specialization for array
+/// Specialization for array.
+/** \note array placement-new can't be used with custom allocators as its overhead is compiler-specific */
 template<class T>
 struct finalize<T[], std::allocator<T>>
 {

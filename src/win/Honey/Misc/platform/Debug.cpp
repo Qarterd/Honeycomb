@@ -21,10 +21,14 @@ void print(const char* str) { print(String(str)); }
 void assertFail(const char* expr, const char* func, const char* file, int line, const String& msg)
 {
     #ifdef DEBUG
-        String assert_ = sout() << expr << "\nMessage: " << msg;
+        //show assert window
+        String msg_ = sout() << expr << "\nMessage: " << msg;
         String file_ = file;
-        _wassert(   std::wstring(assert_.begin(), assert_.end()).c_str(),
-                    std::wstring(file_.begin(), file_.end()).c_str(), line);
+        wchar_t module[256];
+        GetModuleFileName(NULL, module, sizeof(module));
+        bool res = _CrtDbgReportW(_CRT_ASSERT, std::wstring(file_.begin(), file_.end()).c_str(), line, module,
+            L"%ls", std::wstring(msg_.begin(), msg_.end()).c_str());
+        if (!res) return; //user clicked ignore, don't throw exception
     #endif
     String assert = sout()
         << "ASSERTION FAILED: " << expr << endl

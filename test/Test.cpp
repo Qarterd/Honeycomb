@@ -501,18 +501,6 @@ void test()
     }
 
     {
-        int count = 1000;
-        BloomFilter<int> bloom(count, 0.01);
-        for (auto i : range(count)) { bloom.insert(i); }
-        
-        int error = 0;
-        for (auto i : range(count)) { if (!bloom.contains(i)) ++error; }
-        // error == 0
-        for (auto i : range(count)) { if (bloom.contains(count+i)) ++error; }
-        // error ~= count * 0.01
-    }
-
-    {
         Real sinDif = -Real_::inf;
         int size = 1000;
         for (auto i : range(size))
@@ -1110,6 +1098,18 @@ void test()
     SmallAllocator<int>().deallocate(blah, 1);
     SmallAllocator<int>().pool().validate();
     
+    {
+        int count = 1000;
+        BloomFilter<int> bloom(count, 0.01);
+        for (auto i : range(count)) { bloom.insert(i); }
+
+        int error = 0;
+        for (auto i : range(count)) { if (!bloom.contains(i)) ++error; }
+        // error == 0
+        for (auto i : range(count)) { if (bloom.contains(count + i)) ++error; }
+        // error ~= count * 0.01
+    }
+
     {
         int count = 10000;
         int iter = 1000000;

@@ -163,7 +163,7 @@ private:
   * This wrapper dynamically allocates the object and stores a pointer internally.
   * The wrapper interface provides value semantics to the dynamic object.
   */
-template<class T, class Alloc = typename DefaultAllocator<T>::type>
+template<class T, class Alloc = typename defaultAllocator<T>::type>
 class recursive_wrap
 {
 public:

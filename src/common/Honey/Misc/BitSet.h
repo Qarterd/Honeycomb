@@ -17,11 +17,10 @@ public:
     static_assert(std::is_unsigned<Block>::value, "block type must be unsigned");
 
     /// Construct array with `size` number of bits, each initialized to `val`
-    BitSet_(szt size = 0, bool val = false, const Alloc& a = Alloc()) :
+    BitSet_(szt size = 0, bool val = false, const Alloc_& a = Alloc_()) :
         _alloc(a),
         _size(0),
-        _blockCount(0),
-        _blocks(nullptr, finalize<Block,Alloc>(_alloc))
+        _blockCount(0)
     {
         if (size) resize(size, val);
     }
@@ -37,16 +36,15 @@ public:
     /// Resize array to contain `size` number of bits, with new bits initialized to `val`
     void resize(szt size, bool val = false)
     {
-        assert(size >= 0);
         if (size == _size) return;
         //Allocate new blocks
         szt blockCount = size / bitsPerBlock + (size % bitsPerBlock != 0);
         Block* blocks = nullptr;
         if (size)
         {
-            blocks = new (_alloc.allocate(blockCount)) Block[blockCount];
+            blocks = _alloc.allocate(blockCount);
             //Copy old blocks
-            if (_blockCount) std::copy(_blocks.get(), _blocks.get() + (blockCount < _blockCount ? blockCount : _blockCount), blocks);
+            std::copy_n(_blocks.get(), blockCount < _blockCount ? blockCount : _blockCount, blocks);
         }
         //Init new bits if new array is larger
         sdt blockDif = blockCount - _blockCount;
@@ -55,13 +53,13 @@ public:
             //Init all new blocks
             std::fill_n(blocks + _blockCount, blockDif, val ? ~Block(0) : 0);
             //Init first new bits before new blocks
-            Block firstBits = unusedBitsMask();
-            if (firstBits) val ? blocks[_blockCount-1] |= firstBits : blocks[_blockCount-1] &= ~firstBits;
+            if (_blockCount) val ? blocks[_blockCount-1] |= unusedBitsMask() : blocks[_blockCount-1] &= ~unusedBitsMask();
         }
         //Assign new array
         _size = size;
         _blockCount = blockCount;
         _blocks.set(blocks);
+        _blocks.finalizer() = finalize<Block, Alloc>(_alloc, _blockCount);
         //Zero out unused bits
         trim();
     }
@@ -71,11 +69,11 @@ public:
     /// Set bit to value
     void set(szt index, bool val)               { val ? set(index) : reset(index); }
     /// Set all bits to true
-    void set()                                  { if (!_blockCount) return; std::fill_n(_blocks.get(), _blockCount, ~Block(0)); trim(); }
+    void set()                                  { std::fill_n(_blocks.get(), _blockCount, ~Block(0)); trim(); }
     /// Set bit to false
     void reset(szt index)                       { assert(index < size()); _blocks[blockIndex(index)] &= ~bitMask(index); }
     /// Set all bits false
-    void reset()                                { if (!_blockCount) return; std::fill_n(_blocks.get(), _blockCount, 0); }
+    void reset()                                { std::fill_n(_blocks.get(), _blockCount, 0); }
     /// Flip value of bit
     void flip(szt index)                        { assert(index < size()); _blocks[blockIndex(index)] ^= bitMask(index); }
     /// Flip values of all bits
@@ -129,7 +127,7 @@ private:
 
     /// Get mask for unused bits in last block
     Block unusedBitsMask() const                { szt bits = _size % bitsPerBlock; return bits ? ~((Block(1) << bits) - 1) : 0; }
-    /// It is convenient to always have the unused bits in last block be 0
+    /// For many methods the unused bits in the last block must be 0
     void trim()                                 { if (!_blockCount) return; _blocks[_blockCount-1] &= ~unusedBitsMask(); }
 
     Alloc _alloc;

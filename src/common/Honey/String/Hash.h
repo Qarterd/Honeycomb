@@ -91,7 +91,7 @@ inline szt fast(const char* str, szt seed = 0)                              { re
 /// fast() for UTF-8 strings
 inline szt fast(const std::string& str, szt seed = 0)                       { return fast(ByteBufConst(reinterpret_cast<const byte*>(str.data()), str.length()), seed); }
 /// fast() for strings, converted to UTF-8 before hashing
-inline szt fast(const String& str, szt seed = 0);
+szt fast(const String& str, szt seed = 0);
 /// Compile-time version of fast() for UTF-8 strings
 inline constexpr szt fast_(const char* str, szt len, szt seed = 0)          { return priv::murmur_constexpr::loop(str, len, len / 16, 0, uint64(seed), uint64(seed)); }
 

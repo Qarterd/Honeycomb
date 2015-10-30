@@ -18,13 +18,8 @@ namespace mt
 
 /// Remove the unused parameter warning
 #define mt_unused(Param)                                        (void)Param;
-/// Unpack and evaluate a parameter pack expression.  Ex. `void foo(Args... args) { mt_unpackEval(func(args)); }`
-#define mt_unpackEval(...)                                      mt::pass(((__VA_ARGS__), 0)...)
-
 /// Returns type T unchanged
 template<class T> struct identity                               { typedef T type; };
-/// Do nothing, can be used to evaluate an unpack expression.
-template<class... Args> void pass(Args...) {}
 /// Holds a constant integral value
 template<class T, T val> using Value                            = std::integral_constant<T, val>;
 /// Always returns true.  Can be used to force a clause to be type dependent.
@@ -131,6 +126,13 @@ template<class Array> using arraySize                           = Value<szt, siz
 template<class T, class... Ts>
 auto make_array(T&& t, Ts&&... ts) -> array<T, sizeof...(Ts)+1> { return {forward<T>(t), forward<Ts>(ts)...}; }
 
+/** \cond */
+namespace priv { inline void pass(std::initializer_list<int>) {} } //do nothing
+/** \endcond */
+
+/// Unpack and evaluate a parameter pack expression in sequence order.  Ex. `void foo(Args... args) { mt_unpackEval(func(args)); }`
+#define mt_unpackEval(...)                                      mt::priv::pass({((__VA_ARGS__), 0)...})
+
 inline void exec() {} //dummy to catch empty parameter pack
 /// Execute a list of functions. Use to expand parameter packs in arbitrary statements: `exec([&]() { accum += get<Seq>(tuple); }...)`.
 template<class Func, class... Funcs>
@@ -141,7 +143,7 @@ template<int64 begin, int64 end, int64 step = 1, class Func, class... Args, type
 void for_(Func&& f, Args&&... args)                             {}
 template<int64 begin, int64 end, int64 step = 1, class Func, class... Args, typename std::enable_if<begin != end, int>::type=0>
 void for_(Func&& f, Args&&... args)                             { f(begin, forward<Args>(args)...); for_<begin+step, end, step>(forward<Func>(f), forward<Args>(args)...); }
-    
+
 /// Create a method to check if a class has a member with matching name and type
 /**
   * `Result` stores the test result. `type` stores the member type if it exists, mt::Void otherwise.

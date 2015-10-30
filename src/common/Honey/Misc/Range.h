@@ -426,10 +426,9 @@ szt countOf(Range&& range)                                          { return red
 /// Delete all elements in range
 template<class Range>
 void deleteRange(Range&& range)                                     { for (auto& e : range) delete_(e); }
-
 /// Delete all elements in range using allocator
 template<class Range, class Alloc>
-void deleteRange(Range&& range, Alloc&& a)                          { for (auto& e : range) delete_(e, a); }
+void deleteRange(Range&& range, Alloc&& a, szt count = 1)           { for (auto& e : range) delete_(e, a, count); }
 
 
 /// Incremental integer iterator (step size = 1). See range(int, int) to create.

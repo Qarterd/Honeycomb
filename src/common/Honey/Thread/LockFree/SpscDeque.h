@@ -12,25 +12,35 @@ namespace honey { namespace lockfree
   *
   * Internally maintains a ring-buffer (traversing from head to tail may loop around end of buffer).
   */
-template<class T, class Alloc_ = typename DefaultAllocator<T>::type>
+template<class T, class Alloc_ = typename defaultAllocator<T>::type>
 class SpscDeque : mt::NoCopy
 {
 public:
     typedef T value_type;
     typedef typename Alloc_::template rebind<T>::other Alloc;
 
-    SpscDeque(szt size = 0, const T& initVal = T(), const Alloc& alloc = Alloc()) :
+    SpscDeque(szt capacity = 0, const Alloc& alloc = Alloc()) :
         _alloc(alloc),
-        _data(nullptr, finalize<T, Alloc>()),
         _capacity(0),
         _size(0),
         _head(0),
         _tail(0)
     {
-        resize(size, initVal);
+        reserve(capacity);
     }
 
     ~SpscDeque()                                            { clear(); }
+
+    /// Ensure that enough storage is allocated for a number of elements
+    void reserve(szt capacity)
+    {
+        SpinLock::Scoped _(_headLock);
+        SpinLock::Scoped __(_tailLock);
+        if (_capacity < capacity) setCapacity(capacity);
+    }
+
+    /// The number of elements for which storage is allocated
+    szt capacity() const                                    { return _capacity; }
 
     /// Resize the deque to contain a number of elements
     void resize(szt size, const T& initVal = T())
@@ -105,10 +115,10 @@ public:
     /// Remove all elements
     void clear()                                            { while (pop_back()); }
 
+    /// Check whether the deque does not contain any elements
+    bool empty() const                                      { return !_size; }
     /// Number of elements in deque
     szt size() const                                        { return _size; }
-    /// Check whether the deque does not contain any elements
-    bool empty() const                                      { return size() == 0; }
 
 private:
     szt ringIndex(szt index) const                          { return index % _capacity; }
@@ -145,6 +155,7 @@ private:
         for (sdt i = 0; i < dif; ++i) _alloc.destroy(_data + ringIndex(_head+size+i));
         //Set new array
         _data.set(data);
+        _data.finalizer() = finalize<T, Alloc>(_alloc, capacity);
         _capacity = capacity;
         _size = size;
         _head = 0;

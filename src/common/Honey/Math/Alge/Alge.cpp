@@ -1,4 +1,5 @@
 // Honeycomb, Copyright (C) 2015 NewGamePlus Inc.  Distributed under the Boost Software License v1.0.
+#pragma hdrstop
 
 #include "Honey/Math/Alge/Alge.h"
 #include "Honey/Math/NumAnalysis/Interp.h"
@@ -24,7 +25,7 @@ Real Alge_<Real>::log1p(const Real x)
     if(a < Real_::epsilon)
       return x;
 
-    static const Real P[] = {
+    static const Double P[] = {
         0.15141069795941984e-16L,
         0.35495104378055055e-15L,
         0.33333333333332835L,
@@ -35,7 +36,7 @@ Real Alge_<Real>::log1p(const Real x)
         0.011294864812099712L
         };
 
-    static const Real Q[] = {
+    static const Double Q[] = {
         1L,
         3.7274719063011499L,
         5.5387948649720334L,
@@ -70,9 +71,9 @@ Real Alge_<Real>::expm1(const Real x)
     if(a < Real_::epsilon)
         return x;
 
-    static const Real Y = 0.10281276702880859e1L;
-    static const Real n[] = { -0.28127670288085937e-1L, 0.51278186299064534e0L, -0.6310029069350198e-1L, 0.11638457975729296e-1L, -0.52143390687521003e-3L, 0.21491399776965688e-4L };
-    static const Real d[] = { 1, -0.45442309511354755e0L, 0.90850389570911714e-1L, -0.10088963629815502e-1L, 0.63003407478692265e-3L, -0.17976570003654402e-4L };
+    static const Double Y = 0.10281276702880859e1L;
+    static const Double n[] = { -0.28127670288085937e-1L, 0.51278186299064534e0L, -0.6310029069350198e-1L, 0.11638457975729296e-1L, -0.52143390687521003e-3L, 0.21491399776965688e-4L };
+    static const Double d[] = { 1, -0.45442309511354755e0L, 0.90850389570911714e-1L, -0.10088963629815502e-1L, 0.63003407478692265e-3L, -0.17976570003654402e-4L };
 
     Real result = x * Y + x *
                     (((((n[5] * x + n[4]) * x + n[3]) * x + n[2]) * x + n[1]) * x + n[0]) /

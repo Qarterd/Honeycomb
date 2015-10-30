@@ -226,7 +226,8 @@ auto FutureCommon<Subclass, R>::then(Sched&& sched, Func&& f) -> Future<typename
         Func f;
     };
 
-    subc()._state->addOnReady(*new onReady(move(subc()), move(promise), forward<Sched>(sched), forward<Func>(f)));
+    auto state = subc()._state; //get state here before it's moved out
+    state->addOnReady(*new onReady(move(subc()), move(promise), forward<Sched>(sched), forward<Func>(f)));
     return future;
 }
 

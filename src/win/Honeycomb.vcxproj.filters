@@ -305,6 +305,27 @@
     <ClCompile Include="Honeycomb_pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Alge.cpp">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Quat.cpp">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Transform.cpp">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Alge\Trig.cpp">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Double.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Float.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Honey\Math\Quad.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\Honey\App\App.h">
@@ -744,6 +765,36 @@
     </ClInclude>
     <ClInclude Include="..\common\Honey\Honeycomb.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Alge.h">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Quat.h">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Transform.h">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Alge\Trig.h">
+      <Filter>Source Files\Math\Alge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Double.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Float.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Numeral.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Quad.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Ratio.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Honey\Math\Real.h">
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

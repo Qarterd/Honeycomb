@@ -91,7 +91,7 @@ template<class T, class Alloc, class... Args, class Fin = finalize<T,typename mt
 UniquePtr<T,Fin> alloc_unique(Alloc&& a, Args&&... args)            { return UniquePtr<T,Fin>(new (a.allocate(1)) T(forward<Args>(args)...), Fin(forward<Alloc>(a))); }
 /// alloc_unique() using T::Allocator if available, otherwise std::allocator  
 /** \relates UniquePtr */
-template<class T, class... Args, typename mt::disable_if<std::is_array<T>::value, int>::type=0, class Alloc = typename DefaultAllocator<T>::type>
+template<class T, class... Args, typename mt::disable_if<std::is_array<T>::value, int>::type=0, class Alloc = typename defaultAllocator<T>::type>
 UniquePtr<T> make_unique(Args&&... args)                            { return alloc_unique<T>(Alloc(), forward<Args>(args)...); }
 /// Create a unique ptr to an array of `size` number of elements
 /** \relates UniquePtr */

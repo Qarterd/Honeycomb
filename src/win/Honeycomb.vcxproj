@@ -21,7 +21,13 @@
   <ItemGroup>
     <ClCompile Include="..\common\Honey\App\App.cpp" />
     <ClCompile Include="..\common\Honey\App\Module.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Alge\Alge.cpp" />
     <ClCompile Include="..\common\Honey\Math\Alge\Matrix\Matrix4.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Alge\Quat.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Alge\Transform.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Alge\Trig.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Double.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Float.cpp" />
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Bisect.cpp" />
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\BisectN.cpp" />
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Eigen.cpp" />
@@ -32,6 +38,7 @@
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Polynomial.cpp" />
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Qrd.cpp" />
     <ClCompile Include="..\common\Honey\Math\NumAnalysis\Svd.cpp" />
+    <ClCompile Include="..\common\Honey\Math\Quad.cpp" />
     <ClCompile Include="..\common\Honey\Math\Random\Chacha.cpp" />
     <ClCompile Include="..\common\Honey\Math\Random\Dist\Beta.cpp" />
     <ClCompile Include="..\common\Honey\Math\Random\Dist\Binomial.cpp" />
@@ -104,6 +111,7 @@
     <ClInclude Include="..\common\Honey\Graph\Tree.h" />
     <ClInclude Include="..\common\Honey\Graph\TreeClone.h" />
     <ClInclude Include="..\common\Honey\Honeycomb.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Alge.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Base.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Block.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Builder.h" />
@@ -112,6 +120,9 @@
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Matrix4.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\priv\Storage.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Matrix\Traits.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Quat.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Transform.h" />
+    <ClInclude Include="..\common\Honey\Math\Alge\Trig.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\Base.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\priv\Storage.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\Swiz.h" />
@@ -120,6 +131,8 @@
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec2.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec3.h" />
     <ClInclude Include="..\common\Honey\Math\Alge\Vec\Vec4.h" />
+    <ClInclude Include="..\common\Honey\Math\Double.h" />
+    <ClInclude Include="..\common\Honey\Math\Float.h" />
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\BackSub.h" />
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\Bisect.h" />
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\BisectN.h" />
@@ -131,6 +144,8 @@
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\Polynomial.h" />
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\Qrd.h" />
     <ClInclude Include="..\common\Honey\Math\NumAnalysis\Svd.h" />
+    <ClInclude Include="..\common\Honey\Math\Numeral.h" />
+    <ClInclude Include="..\common\Honey\Math\Quad.h" />
     <ClInclude Include="..\common\Honey\Math\Random\Bootstrap.h" />
     <ClInclude Include="..\common\Honey\Math\Random\Chacha.h" />
     <ClInclude Include="..\common\Honey\Math\Random\Dist\Beta.h" />
@@ -152,6 +167,8 @@
     <ClInclude Include="..\common\Honey\Math\Random\Random.h" />
     <ClInclude Include="..\common\Honey\Math\Random\Simplex.h" />
     <ClInclude Include="..\common\Honey\Math\Random\Vegas.h" />
+    <ClInclude Include="..\common\Honey\Math\Ratio.h" />
+    <ClInclude Include="..\common\Honey\Math\Real.h" />
     <ClInclude Include="..\common\Honey\Memory\Allocator.h" />
     <ClInclude Include="..\common\Honey\Memory\Buffer.h" />
     <ClInclude Include="..\common\Honey\Memory\Pool.h" />

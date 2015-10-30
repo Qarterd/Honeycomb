@@ -187,8 +187,11 @@ namespace numeral_priv
         constexpr float smallest() const    { return 1.175494351e-38f; }
         constexpr float epsilon() const     { return 1.192092896e-07f; }
         constexpr float one() const         { return 1.f; }
+        #pragma warning(push)
+        #pragma warning(disable:4723)
         constexpr float inf() const         { return 1.f / (1.f - one()); }
         constexpr float nan() const         { return 0.f / (1.f - one()); }
+        #pragma warning(pop)
     };
 
     template<> struct Info<double>
@@ -202,8 +205,11 @@ namespace numeral_priv
         constexpr double smallest() const   { return 2.2250738585072014e-308; }
         constexpr double epsilon() const    { return 2.2204460492503131e-016; }
         constexpr double one() const        { return 1.0; }
+        #pragma warning(push)
+        #pragma warning(disable:4723)
         constexpr double inf() const        { return 1.0 / (1.0 - one()); }
         constexpr double nan() const        { return 0.0 / (1.0 - one()); }
+        #pragma warning(pop)
     };
 }
 
