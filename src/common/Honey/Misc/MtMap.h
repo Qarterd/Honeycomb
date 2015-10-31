@@ -59,27 +59,6 @@ struct MtPair
     Val val;
 };
 
-/*
-/// Key constructed from string literal. \see operator ""_k()
-template<char... String>
-struct MtKey
-{
-    /// Id can be accessed with id()
-    static mt_global(const Id, id, (name()));
-    /// Generate pairs with any value. Pair may store ref to rvalue.
-    template<class Val> MtPair<MtKey, Val> operator=(Val&& val) { return MtPair<MtKey, Val>(forward<Val>(val)); }
-
-private:
-    static const char* name() { static const char name[sizeof...(String)+1] = { String...,'\0' }; return name; }
-};
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu-string-literal-operator-template"
-/// Construct a key type with name
-template<class Char, Char... String> constexpr auto operator ""_k() { return MtKey<String...>(); }
-#pragma clang diagnostic pop
-*/
-
 /// Construct a key type with name
 #define mtkey(Name)                                                             \
     struct Name                                                                 \
