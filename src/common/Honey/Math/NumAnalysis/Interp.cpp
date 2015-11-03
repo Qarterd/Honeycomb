@@ -96,7 +96,7 @@ auto Interp_<Real>::bezierRoots(Real y, Real v0, Real v1, Real v2, Real v3) -> t
     //Root finder is most stable if normalized to range [0,1]
     const Real eps = Real_::epsilon*10;
     Real norm_start = v0;
-    Real norm_dist = abs(v3 - v0);
+    Real norm_dist = Alge::abs(v3 - v0);
     if (!Alge::isNearZero(norm_dist, eps))
     {
         y = (y - norm_start)/norm_dist;
